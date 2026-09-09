@@ -1,9 +1,23 @@
 # Deploy the PharmaAgent OS backend to Railway
 
-Prepared 2026-09-09. Deploy **two services from this GitHub repository**. The
-website stays on Vercel; PostgreSQL and private source files stay in the existing
-Supabase project `wdaflyddglimtijvgazl`. This preparation does not deploy Railway
-or change the live website's backend.
+Updated 2026-09-09 for the new-account migration. **Two Railway services** use
+Supabase project `iqevzrztpdiysnojzpur`; the website is hosted in the new Vercel
+account. The imported dataset and 444 private source files are verified.
+
+- Website: https://pharmaagent-os-ochre.vercel.app
+- API readiness: https://daewoong-pharmaagentos-pharmaagentos.up.railway.app/health/ready
+- Railway project: `ee39ef7f-694b-4ddb-b1c7-6cdbc078974b`
+- Railway environment: `00fa2021-eaec-47ea-abc1-839572451872` (`PharmaAgentOS`)
+- API service: `42a7b375-3b14-4563-bf06-8da4a946a43b`
+- Worker service: `7685b37a-a658-4452-9769-f8dde80a7e13`
+- Vercel project: `prj_M3zkIDEbNVQKqAC0rdMNjn8lzATx`, team `davemaxuellkr-9654`
+
+The new Vercel project uses **Root Directory `apps/web`**, with
+`apps/web/vercel.json`. The repository-root `vercel.json` is the legacy combined
+Vercel API/worker deployment configuration; do not use it for this split setup.
+For CLI deployment from the repository root, specify
+`--local-config apps/web/vercel.json` and the new account's configuration/scope.
+Git auto-deployment still requires the new Vercel account's GitHub login connection.
 
 ```mermaid
 flowchart LR

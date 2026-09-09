@@ -10,6 +10,52 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-09 new-account database migration:** Imported the local `data.sql`
+application dataset into Supabase project `iqevzrztpdiysnojzpur` through its
+session pooler. The empty public schema received 59 current application tables,
+controlled migrations and runtime-role policies. All 21 exported application
+table counts were checked again after commit: 884 warning letters, 886 documents,
+884 document versions and 4,298 chunks, plus the exported related records.
+All 59 tables have RLS enabled; anon/authenticated have no table SELECT grants.
+Evidence: `.artifacts/migration-iqevzrztpdiysnojzpur/database-copy-result.json`.
+All 444 source files (20,454,044 bytes) are now uploaded to the new project's
+private `pharma-evidence` bucket. Every file was downloaded again and matched
+its expected SHA-256 checksum. Storage evidence is recorded in
+`.artifacts/migration-iqevzrztpdiysnojzpur/storage-copy-result.json`.
+Supabase-managed auth/storage SQL was not restored. The old projects were not
+modified. The user supplied the existing OpenAI key; model access was verified
+and it is configured only in the new Railway API and worker services.
+New-account access is verified for `davemaxuellkr@gmail.com` in both providers.
+Vercel credentials are isolated in `.artifacts/vercel-new-account`; CLI commands
+also use `--scope davemaxuellkr-9654`. The root `.vercel` project link now selects
+the new project; its previous metadata is backed up in ignored migration artifacts.
+The new Vercel project `pharmaagent-os` is deployed at
+https://pharmaagent-os-ochre.vercel.app (deployment
+`dpl_6P3HBh1TcsSkMi8vzjXM5pYwAiUU`). Railway target is project
+`ee39ef7f-694b-4ddb-b1c7-6cdbc078974b`, environment
+`00fa2021-eaec-47ea-abc1-839572451872`, API service
+`42a7b375-3b14-4563-bf06-8da4a946a43b`, with worker service
+`7685b37a-a658-4452-9769-f8dde80a7e13`. Both services are running. API readiness
+at https://daewoong-pharmaagentos-pharmaagentos.up.railway.app/health/ready
+returns HTTP 200 with database/object-store checks `ok`. The worker started
+scheduled ingestion and successfully fetched FDA robots/listing/table endpoints.
+Dedicated API/worker database login roles are created and verified to read all
+884 letters without owner/bypass-RLS privileges. Their credentials and new
+application signing/session credentials are in ignored migration artifacts.
+The new Vercel frontend uses root directory `apps/web`, the Railway API origin,
+polling research-worker mode, and newly generated signing/session credentials.
+Hosted browser checks load the live library (440 records in the default drug-only
+filter) and a document detail. An end-to-end research request progressed through
+planning/searching/reading/checking and completed with a saved result (five model
+calls, 15 events). A real Korean chat request returned HTTP 200 and rendered a
+`gpt-5-mini` answer with linked Safrel source citations. Evidence
+is under `.artifacts/migration-iqevzrztpdiysnojzpur/`.
+Vercel Git auto-deployment remains pending: `vercel git connect` was rejected
+because the new Vercel account lacks a GitHub login connection. The user has
+been asked to connect `its-davemaxuell` in Vercel account settings. Railway API
+and worker already use the new GitHub repository. No supplied secrets were
+found in tracked or unignored files.
+
 **2026-09-09 Railway import correction:** The new repository is
 `its-davemaxuell/daewoong-PharmaAgentOS`. A root `Dockerfile` now mirrors the API
 Dockerfile so Railway imports select Python instead of the root Supabase npm
