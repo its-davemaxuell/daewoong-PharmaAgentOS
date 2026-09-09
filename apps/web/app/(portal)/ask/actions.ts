@@ -3,6 +3,9 @@
 import { revalidatePath } from "next/cache";
 import {
   archiveChatThread,
+  branchChatThread,
+  rateChatMessage,
+  exportChatThread,
   cancelPendingChatMessage,
   clearChatThreadFocus,
   createChatThread,
@@ -137,6 +140,46 @@ export async function searchChatConversations(query: string) {
     items: result.data.items,
     unavailable: result.mode !== "live",
   };
+}
+
+export async function browseChatConversations(query = "", page = 1, archivedOnly = false) {
+  await requirePortalRole("viewer");
+  const result = await getChatThreads({ search: query.trim().slice(0, 200), page, limit: 20, archivedOnly });
+  if (result.mode !== "live") throw new Error("Conversation library unavailable");
+  return result.data;
+}
+
+export async function manageChatConversation(threadId: string, values: { title?: string; pinned?: boolean; archived?: boolean }) {
+  await requirePortalRole("viewer");
+  const id = normalizedId(threadId, "thread ID");
+  const thread = await updateChatThread(id, values);
+  revalidatePath(`/chat/${id}`);
+  return thread;
+}
+
+export async function branchChatConversation(threadId: string, messageId: string, includeMessage = true) {
+  await requirePortalRole("viewer");
+  return branchChatThread(normalizedId(threadId, "thread ID"), normalizedId(messageId, "message ID"), includeMessage);
+}
+
+export async function submitChatFeedback(threadId: string, messageId: string, rating: "helpful" | "unhelpful" | null) {
+  await requirePortalRole("viewer");
+  return rateChatMessage(normalizedId(threadId, "thread ID"), normalizedId(messageId, "message ID"), rating);
+}
+
+export async function selectChatSources(threadId: string, letterIds: string[]) {
+  await requirePortalRole("viewer");
+  if (letterIds.length > 10) throw new Error("Select up to 10 letters");
+  return updateChatThread(normalizedId(threadId, "thread ID"), {
+    activeLetterIds: letterIds.map((id) => normalizedId(id, "letter ID")),
+    retrievalPreference: letterIds.length ? "letter" : "auto",
+  });
+}
+
+export async function downloadChatConversation(threadId: string, format: "markdown" | "json" = "markdown") {
+  await requirePortalRole("viewer");
+  if (format !== "markdown" && format !== "json") throw new Error("Invalid export format");
+  return exportChatThread(normalizedId(threadId, "thread ID"), format);
 }
 
 export async function focusChatDocument(

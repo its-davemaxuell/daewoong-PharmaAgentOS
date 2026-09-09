@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { BilingualText, I18nProvider, type Locale } from "@/lib/i18n";
 import "./globals.css";
 import "./agent-theme.css";
+import "./chat-workspace.css";
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",

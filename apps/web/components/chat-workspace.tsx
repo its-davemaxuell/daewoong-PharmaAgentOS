@@ -4,20 +4,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowUp,
+  ArrowDown,
   Bot,
   CalendarDays,
   Check,
   ChevronDown,
-  ChevronUp,
   CircleAlert,
   Copy,
-  ExternalLink,
   FileSearch,
   FileText,
   Filter,
   LockKeyhole,
-  MessageSquare,
+  GitBranch,
+  Pencil,
+  Paperclip,
   Pin,
+  ThumbsUp,
+  ThumbsDown,
   Plus,
   RotateCcw,
   Search,
@@ -43,9 +46,14 @@ import {
   createChatConversation,
   focusChatDocument,
   updateChatPreferences,
+  branchChatConversation,
+  submitChatFeedback,
+  selectChatSources,
 } from "@/app/(portal)/ask/actions";
+import { ChatLibrary } from "@/components/chat-library";
+import { ChatThreadTools } from "@/components/chat-thread-tools";
+import { ChatEvidencePanel } from "@/components/chat-evidence-panel";
 import { useChatHistory } from "@/components/chat-history-context";
-import { PageGuide } from "@/components/page-guide";
 import { beginnerPrompts } from "@/lib/beginner-prompts";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -68,6 +76,7 @@ import type {
   RagFilter,
 } from "@/lib/types";
 import { formatDate } from "@/components/ui";
+import { isTableDivider, tableCells } from "@/lib/chat-markdown";
 
 type ChatTurn = {
   id: string;
@@ -88,6 +97,7 @@ type ChatTurn = {
   provisionalDraft?: string;
   streamAttempt?: number;
   streamPhase?: RagStreamPhase;
+  feedbackRating?: "helpful" | "unhelpful";
 };
 
 class ChatStreamFailure extends Error {
@@ -280,6 +290,7 @@ function turnsFromPersistedThread(thread: ChatThread | undefined, fallbackFilter
       return;
     }
     activeTurn.answer = answerFromPersistedMessage(message, thread.id, activeTurn.filters);
+    activeTurn.feedbackRating = message.feedbackRating;
   });
 
   return turns;
@@ -338,7 +349,7 @@ function MarkdownInline({
   });
 }
 
-function MarkdownCitationText({
+export function MarkdownCitationText({
   text,
   citations,
   onSelect,
@@ -375,8 +386,33 @@ function MarkdownCitationText({
     listItems = [];
   };
 
-  lines.forEach((rawLine) => {
+  let skipThrough = -1;
+  lines.forEach((rawLine, lineIndex) => {
+    if (lineIndex <= skipThrough) return;
     const line = rawLine.trimEnd();
+    if (line.trimStart().startsWith("```")) {
+      flushParagraph(); flushList();
+      let end = lineIndex + 1;
+      while (end < lines.length && !lines[end].trimStart().startsWith("```")) end += 1;
+      blocks.push(<pre key={`code-${lineIndex}`}><code>{lines.slice(lineIndex + 1, end).join("\n")}</code></pre>);
+      skipThrough = end;
+      return;
+    }
+    const headings = tableCells(line);
+    if (line.includes("|") && isTableDivider(lines[lineIndex + 1] ?? "", headings.length)) {
+      flushParagraph(); flushList();
+      const rows: string[][] = [];
+      let end = lineIndex + 2;
+      while (end < lines.length && lines[end].includes("|") && lines[end].trim()) {
+        rows.push(tableCells(lines[end])); end += 1;
+      }
+      blocks.push(<div className="chat-answer-table" key={`table-${lineIndex}`} tabIndex={0} role="region" aria-label={headings.join(" / ")}>
+        <table><thead><tr>{headings.map((cell, index) => <th scope="col" key={index}>{inline(cell, `th-${lineIndex}-${index}`)}</th>)}</tr></thead>
+          <tbody>{rows.map((row, index) => <tr key={index}>{headings.map((_, column) => <td key={column}>{inline(row[column] ?? "", `td-${lineIndex}-${index}-${column}`)}</td>)}</tr>)}</tbody>
+        </table></div>);
+      skipThrough = end - 1;
+      return;
+    }
     const heading = line.match(/^#{1,3}\s+(.+)$/);
     const boldHeading = line.match(/^\*\*(.+?)\*\*:?$/);
     const unordered = line.match(/^\s*[-*•]\s+(.+)$/);
@@ -669,6 +705,18 @@ export function ChatWorkspace({
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState(initialThread?.id);
   const [threadTitle, setThreadTitle] = useState(initialThread?.title ?? "");
+  const [threadPinnedAt, setThreadPinnedAt] = useState(initialThread?.pinnedAt);
+  const [threadArchivedAt, setThreadArchivedAt] = useState(initialThread?.archivedAt);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [evidenceTurnId, setEvidenceTurnId] = useState<string>();
+  const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
+  const [sourceSearch, setSourceSearch] = useState("");
+  const [selectedLetters, setSelectedLetters] = useState<string[]>(initialThread?.activeLetterIds ?? (initialLetterId ? [initialLetterId] : []));
+  const [actionError, setActionError] = useState<string>();
+  const [actionBusy, setActionBusy] = useState(false);
+  const actionBusyRef = useRef(false);
+  const [showJump, setShowJump] = useState(false);
+  const [draftLoaded, setDraftLoaded] = useState(false);
   const [activeLetterIds, setActiveLetterIds] = useState<string[]>(() => (
     initialThread?.activeLetterIds.length
       ? initialThread.activeLetterIds
@@ -689,7 +737,6 @@ export function ChatWorkspace({
     turnsFromPersistedThread(initialThread, initialRequiredLetterScope)
   ));
   const [selectedCitation, setSelectedCitation] = useState<Record<string, number | undefined>>({});
-  const [sourcesOpen, setSourcesOpen] = useState<Record<string, boolean>>({});
   const [copiedTurn, setCopiedTurn] = useState<string>();
   const [activeLandingSeed, setActiveLandingSeed] = useState(landingSeed);
   const [activeRequestTurnId, setActiveRequestTurnId] = useState<string>();
@@ -706,6 +753,42 @@ export function ChatWorkspace({
   const requestIdentityRef = useRef<{ threadId?: string; clientMessageId?: string }>({});
   const focusMutationRef = useRef(false);
   const preferenceMutationRef = useRef(false);
+  const draftKey = `pharma-chat-draft:${initialThread?.id ?? landingSeed}`;
+  const evidenceTrigger = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      try {
+        const saved = sessionStorage.getItem(draftKey);
+        if (saved) setQuestion(saved.slice(0, 2000));
+      } catch { /* The composer works when browser storage is disabled. */ }
+      setDraftLoaded(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (!draftLoaded) return;
+    try {
+      if (question) sessionStorage.setItem(draftKey, question);
+      else sessionStorage.removeItem(draftKey);
+    } catch { /* Draft recovery is optional, sending is independent. */ }
+    const composer = composerRef.current;
+    if (composer) {
+      composer.style.height = "auto";
+      composer.style.height = `${Math.min(composer.scrollHeight, 200)}px`;
+    }
+  }, [question, draftKey, draftLoaded]);
+
+  useEffect(() => {
+    const shortcut = (event: globalThis.KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault(); setLibraryOpen((value) => !value);
+      }
+    };
+    window.addEventListener("keydown", shortcut);
+    return () => window.removeEventListener("keydown", shortcut);
+  }, []);
 
   useEffect(() => {
     setHistoryActiveThreadId(activeThreadId);
@@ -853,6 +936,10 @@ export function ChatWorkspace({
       : "");
     setActiveThreadId(undefined);
     setThreadTitle("");
+    setThreadPinnedAt(undefined);
+    setThreadArchivedAt(undefined);
+    setEvidenceTurnId(undefined);
+    setActionError(undefined);
     setDocumentFocus(undefined);
     setFocusError(undefined);
     setActiveLetterIds(primaryLetterId ? [primaryLetterId] : []);
@@ -860,7 +947,6 @@ export function ChatWorkspace({
     setRetrievalMode(primaryLetterId ? "letter" : "auto");
     setFilters(primaryLetterId ? {} : initialCompany ? { company: initialCompany } : {});
     setSelectedCitation({});
-    setSourcesOpen({});
     requestControllerRef.current?.abort();
     requestControllerRef.current = undefined;
     requestIdentityRef.current = {};
@@ -947,6 +1033,8 @@ export function ChatWorkspace({
       || queryPendingRef.current
       || focusMutationRef.current
       || preferenceMutationRef.current
+      || actionBusyRef.current
+      || threadArchivedAt
     ) return;
     queryPendingRef.current = true;
     const requestController = new AbortController();
@@ -1107,10 +1195,6 @@ export function ChatWorkspace({
               }
             : item
         )));
-        setSourcesOpen((current) => ({
-          ...current,
-          [turnId]: verifiedAnswer.generationUsed && Boolean(verifiedAnswer.citations.length),
-        }));
         const returnedThreadId = verifiedAnswer.threadId;
         if (returnedThreadId) {
           const now = verifiedAnswer.generatedAt || new Date().toISOString();
@@ -1129,6 +1213,7 @@ export function ChatWorkspace({
               ? undefined
               : documentFocus,
             archivedAt: undefined,
+            pinnedAt: threadPinnedAt,
             lastMessageAt: now,
             createdAt: initialThread?.createdAt ?? now,
             updatedAt: now,
@@ -1137,6 +1222,11 @@ export function ChatWorkspace({
         }
         if (pendingRouteRef.current && pendingRouteRef.current === verifiedAnswer.threadId) {
           const persistedThreadId = pendingRouteRef.current;
+          try {
+            const unsent = composerRef.current?.value;
+            if (unsent) sessionStorage.setItem(`pharma-chat-draft:${persistedThreadId}`, unsent);
+            sessionStorage.removeItem(draftKey);
+          } catch { /* Keep the completed response available when draft storage is disabled. */ }
           pendingRouteRef.current = undefined;
           router.replace(`/chat/${persistedThreadId}`, { scroll: false });
         } else if (returnedThreadId) {
@@ -1234,26 +1324,10 @@ export function ChatWorkspace({
     setFilters((current) => ({ ...current, [key]: undefined }));
   };
 
-  const documentTypeLabel = (value: string) => {
-    if (value === "warning_letter" || value === "Warning letter") {
-      return text("Warning letter", "경고서한");
-    }
-    if (value === "response" || value === "Response letter") {
-      return text("Response", "답변서");
-    }
-    if (value === "closeout" || value === "Closeout letter") {
-      return text("Closeout", "종결서");
-    }
-    return value.replaceAll("_", " ");
-  };
-
   const selectCitation = (turnId: string, index: number) => {
+    evidenceTrigger.current = document.activeElement as HTMLElement;
     setSelectedCitation((current) => ({ ...current, [turnId]: index }));
-    setSourcesOpen((current) => ({ ...current, [turnId]: true }));
-    requestAnimationFrame(() => document.getElementById(`sources-${turnId}`)?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-    }));
+    setEvidenceTurnId(turnId);
   };
 
   const setCitationAsChatFocus = (turn: ChatTurn, citation: RagCitation) => {
@@ -1320,34 +1394,75 @@ export function ChatWorkspace({
     });
   };
 
+  const evidenceTurn = turns.find((turn) => turn.id === evidenceTurnId);
+  const currentSummary: ChatThreadSummary | undefined = activeThreadId ? {
+    id: activeThreadId, title: threadTitle, pinnedAt: threadPinnedAt, archivedAt: threadArchivedAt,
+    modelPreference: modelProfile, retrievalPreference: retrievalMode, activeLetterIds,
+    focus: documentFocus, createdAt: initialThread?.createdAt ?? "",
+    updatedAt: initialThread?.updatedAt ?? "", lastMessageAt: initialThread?.lastMessageAt ?? "",
+  } : undefined;
+  const actionsDisabled = pending || actionBusy || focusPending || preferencesPending || turns.some((turn) => turn.persistedPending);
+  const branchFrom = async (turn: ChatTurn, edit = false) => {
+    if (!activeThreadId || actionsDisabled || actionBusyRef.current) return;
+    const messageId = edit ? turn.answer?.userMessageId ?? turn.id : turn.answer?.assistantMessageId;
+    if (!messageId) return;
+    actionBusyRef.current = true; setActionBusy(true); setActionError(undefined);
+    try {
+      const branch = await branchChatConversation(activeThreadId, messageId, !edit);
+      if (edit) {
+        try { sessionStorage.setItem(`pharma-chat-draft:${branch.id}`, turn.question); }
+        catch { throw new Error("Draft recovery unavailable"); }
+      }
+      upsertThread(branch);
+      router.push(`/chat/${branch.id}`);
+    } catch {
+      setActionError(text("Could not open a new branch. Please try again.", "새 분기 대화를 열지 못했어요. 다시 시도하세요."));
+    } finally { actionBusyRef.current = false; setActionBusy(false); }
+  };
+  const rateAnswer = async (turn: ChatTurn, rating: "helpful" | "unhelpful") => {
+    if (!activeThreadId || !turn.answer?.assistantMessageId || actionBusyRef.current) return;
+    actionBusyRef.current = true; setActionBusy(true); setActionError(undefined);
+    try {
+      const saved = await submitChatFeedback(activeThreadId, turn.answer.assistantMessageId, turn.feedbackRating === rating ? null : rating);
+      setTurns((current) => current.map((item) => item.id === turn.id ? { ...item, feedbackRating: saved.feedbackRating } : item));
+    } catch { setActionError(text("Feedback was not saved. Please try again.", "평가가 저장되지 않았어요. 다시 시도하세요.")); }
+    finally { actionBusyRef.current = false; setActionBusy(false); }
+  };
+  const applySelectedLetters = async (nextIds = selectedLetters) => {
+    if (actionBusyRef.current) return;
+    actionBusyRef.current = true; setActionBusy(true); setActionError(undefined);
+    try {
+      if (activeThreadId) upsertThread(await selectChatSources(activeThreadId, nextIds));
+      setActiveLetterIds(nextIds); setSelectedLetters(nextIds); setDocumentFocus(undefined);
+      setRetrievalMode(nextIds.length ? "letter" : "auto");
+      setFilters({}); setSourcePickerOpen(false);
+      composerRef.current?.focus();
+    } catch { setActionError(text("Those sources could not be selected. Try again.", "자료를 선택하지 못했어요. 다시 시도하세요.")); }
+    finally { actionBusyRef.current = false; setActionBusy(false); }
+  };
+  const closeEvidence = () => {
+    setEvidenceTurnId(undefined);
+    requestAnimationFrame(() => evidenceTrigger.current?.isConnected ? evidenceTrigger.current.focus() : composerRef.current?.focus());
+  };
+
   return (
-    <div className={`chat-page${turns.length ? " chat-page--active" : ""}`}>
+    <div className={`chat-page chat-workbench${turns.length ? " chat-page--active" : ""}${evidenceTurn?.answer ? " chat-page--evidence" : ""}`}>
+      {libraryOpen && <ChatLibrary onClose={() => setLibraryOpen(false)} onUpdated={(thread) => {
+        if (thread.id === activeThreadId) { setThreadPinnedAt(thread.pinnedAt); setThreadArchivedAt(thread.archivedAt); setThreadTitle(thread.title); }
+      }} />}
       <div className="chat-page__surface">
-        <PageGuide
-          className="chat-page__guide"
-          title={{ ko: "AI에게 질문하기", en: "Ask the AI" }}
-          context={{ ko: "FDA 업무 도우미", en: "FDA research assistant" }}
-          description={{
-            ko: "궁금한 내용을 적으면 저장된 FDA 자료에서 근거를 찾아 설명해드립니다. 답변의 출처 번호를 눌러 원문을 확인하세요.",
-            en: "Ask a question to find and understand evidence in the saved FDA collection. Open the numbered references to check the original source.",
-          }}
-          actions={(
-            <div className="chat-header-actions">
-              {activeThreadId && threadTitle ? (
-                <span className="chat-active-title" title={threadTitle}>
-                  <MessageSquare size={14} aria-hidden="true" />
-                  {threadTitle}
-                </span>
-              ) : null}
-              {turns.length ? (
-                <button className="chat-new-button" type="button" onClick={clearConversation}>
-                  <Plus size={16} aria-hidden="true" />
-                  {text("New chat", "새 대화")}
-                </button>
-              ) : null}
-            </div>
-          )}
-        />
+        <header className="chat-workbench__header">
+          <div className="chat-workbench__heading"><FileSearch size={21} aria-hidden="true" /><h1>{text("FDA assistant", "FDA 어시스턴트")}</h1><small>FDA · Drugs</small></div>
+          <div className="chat-workbench__header-actions">
+            <button type="button" className="chat-tool-button" onClick={() => setLibraryOpen(true)} title={text("Search conversations · Ctrl/⌘ K", "대화 검색 · Ctrl/⌘ K")}><Search size={17} />{text("Conversations", "대화 목록")}</button>
+            <button className="chat-new-button" type="button" disabled={actionsDisabled} onClick={clearConversation}><Plus size={17} />{text("New chat", "새 대화")}</button>
+          </div>
+        </header>
+        {currentSummary && <ChatThreadTools thread={currentSummary} disabled={actionsDisabled} onChange={(thread) => {
+          setThreadTitle(thread.title); setThreadPinnedAt(thread.pinnedAt); setThreadArchivedAt(thread.archivedAt);
+        }} />}
+        {threadArchivedAt && <div className="chat-archive-notice" role="status">{text("This conversation is archived. Restore it from the conversation menu to continue.", "보관된 대화입니다. 대화 작업 메뉴에서 복원하면 이어서 질문할 수 있어요.")}</div>}
+        {actionError && <div className="chat-action-error" role="alert">{actionError}<button type="button" className="chat-icon-button" onClick={() => setActionError(undefined)} aria-label={text("Dismiss message", "메시지 닫기")}><X size={16} /></button></div>}
 
         {dataMode !== "live" ? (
           <div className="chat-service-notice" role="status">
@@ -1368,6 +1483,7 @@ export function ChatWorkspace({
             - conversation.scrollTop
             - conversation.clientHeight;
           followConversationRef.current = distanceFromBottom <= 120;
+          setShowJump(distanceFromBottom > 120);
         }}
       >
         {!turns.length ? (
@@ -1405,13 +1521,12 @@ export function ChatWorkspace({
         ) : null}
 
         {turns.map((turn, turnIndex) => {
-          const activeSourceIndex = selectedCitation[turn.id] ?? 0;
-          const activeSource = turn.answer?.citations[activeSourceIndex];
           const turnFilters = activeFilterEntries(turn.filters);
           return (
             <section className="chat-turn" key={turn.id}>
               <div className="chat-user-message">
                 <p>{turn.question}</p>
+                {turn.answer && <button type="button" className="chat-user-message__edit" disabled={actionsDisabled || !!threadArchivedAt} onClick={() => void branchFrom(turn, true)}><Pencil size={14} />{text("Edit question", "질문 수정")}</button>}
                 {turnFilters.length ? (
                   <div className="chat-turn__filter-summary">
                     <Filter size={13} aria-hidden="true" />
@@ -1587,83 +1702,13 @@ export function ChatWorkspace({
                   ) : null}
 
                   {turn.answer.citations.length ? (
-                    <div className="chat-sources" id={`sources-${turn.id}`}>
-                      <button
-                        className="chat-sources__toggle"
-                        type="button"
-                        aria-expanded={Boolean(sourcesOpen[turn.id])}
-                        onClick={() => setSourcesOpen((current) => ({
-                          ...current,
-                          [turn.id]: !current[turn.id],
-                        }))}
-                      >
-                        <span><FileText size={15} />{text(
-                          `Sources (${turn.answer.citations.length})`,
-                          `출처 (${turn.answer.citations.length})`,
-                        )}</span>
-                        {sourcesOpen[turn.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    <div className="chat-source-strip" id={`sources-${turn.id}`}>
+                      <button type="button" className="chat-source-strip__open" onClick={() => selectCitation(turn.id, 0)} aria-expanded={evidenceTurnId === turn.id}>
+                        <FileText size={16} />{text(`Sources (${turn.answer.citations.length})`, `출처 (${turn.answer.citations.length})`)}
                       </button>
-                      {sourcesOpen[turn.id] ? (
-                        <div className="chat-sources__body">
-                          <ol className="chat-source-tabs">
-                            {turn.answer.citations.map((citation, index) => (
-                              <li key={citation.id}>
-                                <button
-                                  className={index === activeSourceIndex ? "is-active" : ""}
-                                  type="button"
-                                  aria-pressed={index === activeSourceIndex}
-                                  onClick={() => setSelectedCitation((current) => ({ ...current, [turn.id]: index }))}
-                                >
-                                  <span>{index + 1}</span>
-                                  <div>
-                                    <strong>{citation.title || citation.company}</strong>
-                                    <small>{citation.company} · {documentTypeLabel(citation.documentType)} · {formatDate(citation.issueDate, undefined, locale)}</small>
-                                    <span className="chat-source-tabs__excerpt">{citation.anchor.replaceAll(/[-_/]+/g, " ")} · {citation.excerpt}</span>
-                                  </div>
-                                </button>
-                              </li>
-                            ))}
-                          </ol>
-                          {activeSource ? (
-                            <div className="chat-source-preview">
-                              <div className="chat-source-preview__meta">
-                                <span>{text("Official source excerpt", "공식 원문 발췌")}</span>
-                                <code>{activeSource.sourceVersion
-                                  ? `${activeSource.sourceVersion}${activeSource.sourceHash ? ` · ${activeSource.sourceHash.slice(0, 8)}` : ""}`
-                                  : activeSource.documentVersionId
-                                    ? `${text("Captured version", "수집 버전")} · ${activeSource.documentVersionId.slice(0, 8)}`
-                                  : text("Current captured version", "현재 수집 버전")}</code>
-                              </div>
-                              <blockquote lang="en">{activeSource.excerpt}</blockquote>
-                              <div className="chat-source-preview__links">
-                                <button
-                                  className="chat-source-focus"
-                                  type="button"
-                                  disabled={
-                                    focusPending
-                                    || preferencesPending
-                                    || !turn.answer?.assistantMessageId
-                                    || documentFocus?.warningLetterId === activeSource.letterId
-                                  }
-                                  aria-pressed={documentFocus?.warningLetterId === activeSource.letterId}
-                                  onClick={() => setCitationAsChatFocus(turn, activeSource)}
-                                >
-                                  <Pin size={13} aria-hidden="true" />
-                                  {documentFocus?.warningLetterId === activeSource.letterId
-                                    ? text("Using as main document", "기준 문서로 사용 중")
-                                    : text("Use as main document", "이 문서를 대화 기준으로 사용")}
-                                </button>
-                                <Link href={`/drug-letters/${activeSource.letterId}`}>
-                                  {text("Open dossier", "상세 기록 열기")} <FileText size={13} />
-                                </Link>
-                                <a href={activeSource.sourceUrl} target="_blank" rel="noreferrer">
-                                  {text("View on FDA.gov", "FDA.gov에서 보기")} <ExternalLink size={13} />
-                                </a>
-                              </div>
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
+                      <div>{turn.answer.citations.slice(0, 3).map((citation, index) => (
+                        <button key={citation.id} type="button" onClick={() => selectCitation(turn.id, index)}><span>{index + 1}</span>{citation.company}</button>
+                      ))}</div>
                     </div>
                   ) : null}
 
@@ -1697,8 +1742,11 @@ export function ChatWorkspace({
                         <button
                           type="button"
                           onClick={async () => {
-                            await navigator.clipboard?.writeText(turn.answer?.answer ?? "");
-                            setCopiedTurn(turn.id);
+                            try {
+                              if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+                              await navigator.clipboard.writeText(turn.answer?.answer ?? "");
+                              setCopiedTurn(turn.id);
+                            } catch { setActionError(text("Could not copy. Select the answer text to copy it.", "복사하지 못했어요. 답변 텍스트를 선택해 복사하세요.")); }
                           }}
                         >
                           {copiedTurn === turn.id ? <Check size={14} /> : <Copy size={14} />}
@@ -1706,15 +1754,13 @@ export function ChatWorkspace({
                         </button>
                         <button
                           type="button"
-                          disabled={pending || focusPending || preferencesPending}
-                          onClick={() => runQuery(
-                            turn.question,
-                            turn.filters,
-                            turns.slice(0, turnIndex),
-                          )}
+                          disabled={actionsDisabled}
+                          onClick={() => void branchFrom(turn)}
                         >
-                          <RotateCcw size={14} /> {text("Generate again", "다시 답변")}
+                          <GitBranch size={14} /> {text("Branch", "대화 분기")}
                         </button>
+                        <button type="button" disabled={actionsDisabled || !!threadArchivedAt} aria-label={text("Helpful answer", "도움이 된 답변")} aria-pressed={turn.feedbackRating === "helpful"} onClick={() => void rateAnswer(turn, "helpful")}><ThumbsUp size={16} /></button>
+                        <button type="button" disabled={actionsDisabled || !!threadArchivedAt} aria-label={text("Unhelpful answer", "도움이 되지 않은 답변")} aria-pressed={turn.feedbackRating === "unhelpful"} onClick={() => void rateAnswer(turn, "unhelpful")}><ThumbsDown size={16} /></button>
                       </div>
                     </footer>
                 </article>
@@ -1722,10 +1768,28 @@ export function ChatWorkspace({
             </section>
           );
         })}
+        {turns.at(-1)?.answer?.generationUsed && !pending && !threadArchivedAt && <div className="chat-followups">
+          <span>{text("Explore next", "이어서 살펴보기")}</span>
+          {[
+            text("Explain this in simpler terms", "더 쉽게 설명해 주세요"),
+            text("Which actions did FDA request in these sources?", "이 자료에서 FDA가 요청한 조치는 무엇인가요?"),
+            text("Organize this answer into a comparison table", "이 답변을 비교 표로 정리해 주세요"),
+          ].map((prompt) => <button type="button" key={prompt} onClick={() => { setQuestion(prompt); composerRef.current?.focus(); }}>{prompt}<ArrowUp size={14} /></button>)}
+        </div>}
         <div className="chat-scroll-anchor" ref={conversationEndRef} />
       </div>
 
       <div className="chat-composer-wrap">
+        {showJump && <button className="chat-jump" type="button" onClick={() => { conversationRef.current?.scrollTo({ top: conversationRef.current.scrollHeight }); followConversationRef.current = true; setShowJump(false); }}><ArrowDown size={16} />{text("Latest answer", "최근 답변")}</button>}
+        {sourcePickerOpen && <section className="chat-source-picker" aria-label={text("Choose FDA letters", "FDA 경고서한 선택")}>
+          <header><div><strong>{text("Add FDA letters", "FDA 경고서한 추가")}</strong><small>{text("Choose up to 10 letters to focus or compare", "집중 분석하거나 비교할 서한을 최대 10개 선택하세요")}</small></div><button type="button" className="chat-icon-button" onClick={() => setSourcePickerOpen(false)} aria-label={text("Close letter picker", "서한 선택 닫기")}><X size={18} /></button></header>
+          <input autoFocus type="search" value={sourceSearch} onChange={(event) => setSourceSearch(event.target.value)} placeholder={text("Search companies…", "기업 검색…")} aria-label={text("Search FDA letters", "FDA 경고서한 검색")} />
+          <div className="chat-source-picker__list">{letters.filter((letter) => letter.company.toLocaleLowerCase().includes(sourceSearch.toLocaleLowerCase())).slice(0, 60).map((letter) => <label key={letter.id}>
+            <input type="checkbox" checked={selectedLetters.includes(letter.id)} disabled={!selectedLetters.includes(letter.id) && selectedLetters.length >= 10} onChange={(event) => setSelectedLetters((current) => event.target.checked ? [...current, letter.id] : current.filter((id) => id !== letter.id))} />
+            <span><strong>{letter.company}</strong><small>{formatDate(letter.issueDate, undefined, locale)}</small></span>
+          </label>)}{!letters.some((letter) => letter.company.toLocaleLowerCase().includes(sourceSearch.toLocaleLowerCase())) && <p>{text("No matching letters.", "일치하는 서한이 없어요.")}</p>}</div>
+          <footer><span>{text(`${selectedLetters.length} selected`, `${selectedLetters.length}개 선택`)}</span><button type="button" disabled={actionBusy} onClick={() => setSelectedLetters([])}>{text("Clear", "선택 해제")}</button><button className="chat-send-button" type="button" disabled={actionsDisabled} onClick={() => void applySelectedLetters()}>{text("Use letters", "선택 적용")}</button></footer>
+        </section>}
         {filtersOpen ? (
           <section className="chat-filter-panel" aria-label={text("Evidence search filters", "증거 검색 필터")}>
             <header>
@@ -1843,7 +1907,16 @@ export function ChatWorkspace({
           </div>
         ) : null}
 
-        <div className="chat-composer">
+        <div className="chat-composer" aria-busy={pending}>
+          {activeLetterIds.length > 0 && <div className="chat-selected-letters" aria-label={text("Selected FDA letters", "선택한 FDA 경고서한")}>
+            {activeLetterIds.map((id) => {
+              const label = letters.find((letter) => letter.id === id)?.company ?? text("Selected letter", "선택한 서한");
+              return <button type="button" key={id} disabled={actionsDisabled || !!threadArchivedAt} title={label}
+                aria-label={text(`Remove ${label} from selected letters`, `선택한 서한에서 ${label} 제외`)} onClick={() => void applySelectedLetters(activeLetterIds.filter((item) => item !== id))}>
+                <FileText size={14} /><span>{label}</span><X size={13} />
+              </button>;
+            })}
+          </div>}
           <label className="chat-question-label" htmlFor="ai-question">{text("Your question", "궁금한 내용")}</label>
           <textarea
             id="ai-question"
@@ -1851,11 +1924,13 @@ export function ChatWorkspace({
             value={question}
             rows={2}
             maxLength={2000}
+            disabled={!!threadArchivedAt}
             placeholder={text("e.g. Explain FDA findings about cleaning validation in simple terms.", "예: 세척 밸리데이션 관련 FDA 지적 사항을 쉽게 설명해주세요.")}
             onChange={(event) => setQuestion(event.target.value)}
             onKeyDown={handleComposerKeyDown}
           />
           <div className="chat-composer__controls">
+            <button type="button" className="chat-tool-button" disabled={actionsDisabled || !!threadArchivedAt} aria-expanded={sourcePickerOpen} onClick={() => { setSelectedLetters(activeLetterIds); setSourcePickerOpen((value) => !value); setFiltersOpen(false); }}><Paperclip size={17} />{activeLetterIds.length ? text(`${activeLetterIds.length} letters`, `서한 ${activeLetterIds.length}개`) : text("Add letters", "서한 추가")}</button>
             <button className="chat-tool-button" type="button" aria-expanded={optionsOpen} aria-controls="chat-additional-options" onClick={() => { setOptionsOpen((open) => !open); setFiltersOpen(false); }}>
               <SlidersHorizontal size={15} aria-hidden="true" />
               {text("Search & answer options", "검색·답변 설정")}
@@ -1879,7 +1954,7 @@ export function ChatWorkspace({
               value={modelProfile}
               options={modelOptions}
               onChange={changeModelProfile}
-              disabled={focusPending || preferencesPending}
+              disabled={actionsDisabled || !!threadArchivedAt}
             />
             <ChatOptionMenu
               ariaLabel={text("Choose the evidence scope", "근거 범위 선택")}
@@ -1888,7 +1963,7 @@ export function ChatWorkspace({
               value={retrievalMode}
               options={retrievalOptions}
               onChange={changeRetrievalMode}
-              disabled={focusPending || preferencesPending}
+              disabled={actionsDisabled || !!threadArchivedAt}
             />
             </div>
             {activeRequestTurnId ? (
@@ -1909,6 +1984,8 @@ export function ChatWorkspace({
                   pending
                   || focusPending
                   || preferencesPending
+                  || actionBusy
+                  || !!threadArchivedAt
                   || question.trim().length < 3
                 }
                 onClick={() => runQuery(question)}
@@ -1920,6 +1997,7 @@ export function ChatWorkspace({
           </div>
         </div>
         <p className="chat-composer-note">
+          <span className="chat-character-count">{question.length}/2,000</span>
           {text(
             "Check AI answers against FDA sources. Enter to send · Shift + Enter for a new line.",
             "AI 답변은 FDA 원문과 대조하세요. Enter 전송 · Shift + Enter 줄바꿈.",
@@ -1927,6 +2005,9 @@ export function ChatWorkspace({
         </p>
       </div>
       </div>
+      {evidenceTurn?.answer && <ChatEvidencePanel citations={evidenceTurn.answer.citations} selected={selectedCitation[evidenceTurn.id] ?? 0}
+        onSelect={(index) => setSelectedCitation((current) => ({ ...current, [evidenceTurn.id]: index }))} onClose={closeEvidence}
+        onFocus={(citation) => setCitationAsChatFocus(evidenceTurn, citation)} disabled={actionsDisabled || !!threadArchivedAt || !evidenceTurn.answer.assistantMessageId} focusedLetterId={documentFocus?.warningLetterId} />}
     </div>
   );
 }

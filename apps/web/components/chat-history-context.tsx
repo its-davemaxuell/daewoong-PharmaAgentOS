@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import type { ChatThreadSummary } from "@/lib/types";
-import { mergeChatHistory } from "@/lib/chat-history-merge";
+import { compareChatActivity, mergeChatHistory } from "@/lib/chat-history-merge";
 
 type ChatHistoryContextValue = {
   threads: ChatThreadSummary[];
@@ -72,7 +72,7 @@ export function ChatHistoryProvider({
 
   const upsertThread = useCallback((thread: ChatThreadSummary) => {
     changedIds.current.add(thread.id);
-    setThreads((current) => [thread, ...current.filter((item) => item.id !== thread.id)]);
+    setThreads((current) => [thread, ...current.filter((item) => item.id !== thread.id)].sort(compareChatActivity));
   }, []);
 
   const removeThread = useCallback((threadId: string) => {

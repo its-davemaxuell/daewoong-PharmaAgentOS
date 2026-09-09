@@ -106,6 +106,19 @@ class Database:
             # zero-dependency local SQLite profile forward-compatible for this
             # prototype; deployed PostgreSQL uses the controlled schema migration.
             if connection.dialect.name == "sqlite":
+                for table, column, definition in (
+                    ("chat_threads", "pinned_at", "DATETIME"),
+                    ("chat_messages", "feedback_rating", "VARCHAR(10)"),
+                ):
+                    columns = {
+                        row[1] for row in (
+                            await connection.exec_driver_sql(f"PRAGMA table_info({table})")
+                        ).all()
+                    }
+                    if column not in columns:
+                        await connection.exec_driver_sql(
+                            f"ALTER TABLE {table} ADD COLUMN {column} {definition}"
+                        )
                 snapshot_columns = {
                     row[1]
                     for row in (

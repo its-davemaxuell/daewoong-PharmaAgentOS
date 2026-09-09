@@ -761,6 +761,8 @@ function normalizeChatMessage(value: unknown, index: number): ChatMessage | unde
     id,
     sequence: asNumber(first(record, "sequence", "sequence_no", "sequenceNo"), index + 1),
     role: role as ChatMessage["role"],
+    feedbackRating: record.feedback_rating === "helpful" || record.feedback_rating === "unhelpful"
+      ? record.feedback_rating : undefined,
     content,
     status,
     clientMessageId: asString(first(record, "client_message_id", "clientMessageId")) || undefined,
@@ -843,6 +845,7 @@ function normalizeChatThreadSummary(value: unknown): ChatThreadSummary | undefin
       ? focus
       : undefined,
     archivedAt: asString(first(record, "archived_at", "archivedAt")) || undefined,
+    pinnedAt: asString(first(record, "pinned_at", "pinnedAt")) || undefined,
     lastMessageAt: asString(first(record, "last_message_at", "lastMessageAt"), createdAt),
     createdAt,
     updatedAt: asString(first(record, "updated_at", "updatedAt"), createdAt),
@@ -866,11 +869,13 @@ export async function getChatThreads({
   page = 1,
   limit = 20,
   includeArchived = false,
+  archivedOnly = false,
   search,
 }: {
   page?: number;
   limit?: number;
   includeArchived?: boolean;
+  archivedOnly?: boolean;
   search?: string;
 } = {}): Promise<ApiResult<ChatThreadPage>> {
   try {
@@ -878,6 +883,7 @@ export async function getChatThreads({
       page: String(Math.max(1, Math.round(page))),
       limit: String(Math.min(100, Math.max(1, Math.round(limit)))),
       include_archived: String(includeArchived),
+      archived_only: String(archivedOnly),
     });
     const normalizedSearch = search?.trim().slice(0, 200);
     if (normalizedSearch) params.set("q", normalizedSearch);
@@ -948,6 +954,8 @@ export async function updateChatThread(
   id: string,
   input: {
     title?: string;
+    pinned?: boolean;
+    archived?: boolean;
     modelPreference?: ChatModelProfile;
     retrievalPreference?: ChatRetrievalMode;
     activeLetterIds?: string[];
@@ -957,6 +965,8 @@ export async function updateChatThread(
     method: "PATCH",
     body: JSON.stringify({
       title: input.title,
+      pinned: input.pinned,
+      archived: input.archived,
       model_preference: input.modelPreference,
       retrieval_preference: input.retrievalPreference,
       active_letter_ids: input.activeLetterIds,
@@ -969,6 +979,33 @@ export async function updateChatThread(
 
 export async function archiveChatThread(id: string): Promise<void> {
   await requestApi(`/api/v1/chat/threads/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+export async function branchChatThread(id: string, messageId: string, includeMessage: boolean) {
+  const payload = await requestApi(`/api/v1/chat/threads/${encodeURIComponent(id)}/branch`, {
+    method: "POST",
+    body: JSON.stringify({ message_id: messageId, include_message: includeMessage }),
+  });
+  const thread = normalizeChatThread(unwrapOne(payload));
+  if (!thread) throw new Error("Invalid conversation branch");
+  return thread;
+}
+
+export async function rateChatMessage(id: string, messageId: string, rating: "helpful" | "unhelpful" | null) {
+  const payload = await requestApi(`/api/v1/chat/threads/${encodeURIComponent(id)}/messages/${encodeURIComponent(messageId)}/feedback`, {
+    method: "PUT", body: JSON.stringify({ rating }),
+  });
+  const message = normalizeChatMessage(unwrapOne(payload), 0);
+  if (!message) throw new Error("Invalid answer feedback");
+  return message;
+}
+
+export async function exportChatThread(id: string, format: "markdown" | "json") {
+  const payload = asRecord(await requestApi(`/api/v1/chat/threads/${encodeURIComponent(id)}/export?format=${format}`));
+  if (!payload || typeof payload.content !== "string" || typeof payload.filename !== "string") {
+    throw new Error("Conversation export unavailable");
+  }
+  return { content: payload.content, filename: payload.filename, mediaType: asString(payload.media_type) };
 }
 
 export async function focusChatThreadOnCitation(

@@ -10,5 +10,11 @@ export function mergeChatHistory(
   for (const item of current) {
     if (changedIds.has(item.id)) merged.set(item.id, item);
   }
-  return [...merged.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  return [...merged.values()].sort(compareChatActivity);
+}
+
+export function compareChatActivity(a: ChatThreadSummary, b: ChatThreadSummary) {
+  return (b.pinnedAt ?? "").localeCompare(a.pinnedAt ?? "")
+    || b.lastMessageAt.localeCompare(a.lastMessageAt)
+    || b.updatedAt.localeCompare(a.updatedAt);
 }

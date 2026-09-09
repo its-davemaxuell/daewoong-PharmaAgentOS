@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import unicodedata
+from copy import deepcopy
 from datetime import UTC, datetime
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import func, or_, select
@@ -25,7 +26,9 @@ from app.models import (
 from app.schemas import (
     ChatDocumentFocusResponse,
     ChatDocumentFocusSelect,
+    ChatMessageFeedback,
     ChatMessageResponse,
+    ChatThreadBranch,
     ChatThreadCreate,
     ChatThreadDetail,
     ChatThreadPage,
@@ -77,6 +80,7 @@ def thread_summary(thread: ChatThread) -> ChatThreadSummary:
             else None
         ),
         archived_at=_as_utc(thread.archived_at),
+        pinned_at=_as_utc(thread.pinned_at),
         last_message_at=_as_utc(thread.last_message_at),
         created_at=_as_utc(thread.created_at),
         updated_at=_as_utc(thread.updated_at),
@@ -95,6 +99,7 @@ def message_response(message: ChatMessage) -> ChatMessageResponse:
         citations=message.citations or [],
         route_metadata=message.route_metadata or {},
         model_metadata=message.model_metadata or {},
+        feedback_rating=message.feedback_rating,
         created_at=_as_utc(message.created_at),
         updated_at=_as_utc(message.updated_at),
     )
@@ -160,11 +165,7 @@ async def _validated_active_letter_ids(
             )
         )
     ).all()
-    authorized = {
-        str(letter.id)
-        for chunk, letter in rows
-        if _acl_allows(chunk.acl, principal)
-    }
+    authorized = {str(letter.id) for chunk, letter in rows if _acl_allows(chunk.acl, principal)}
     if any(item not in authorized for item in normalized):
         raise HTTPException(status_code=422, detail="Active letter scope is not available")
     return normalized
@@ -172,6 +173,170 @@ async def _validated_active_letter_ids(
 
 def _clear_focus(thread: ChatThread) -> None:
     thread.focus = None
+
+
+@router.put("/{thread_id}/messages/{message_id}/feedback", response_model=ChatMessageResponse)
+async def rate_message(
+    thread_id: UUID,
+    message_id: UUID,
+    payload: ChatMessageFeedback,
+    principal: Principal = Depends(rag_principal),
+    session: AsyncSession = Depends(session_dependency),
+) -> ChatMessageResponse:
+    thread = await owned_thread_or_404(session, thread_id, principal.subject, for_update=True)
+    if thread.archived_at is not None:
+        raise HTTPException(status_code=409, detail="Archived chat threads are read-only")
+    message = await session.scalar(
+        select(ChatMessage)
+        .where(
+            ChatMessage.id == str(message_id),
+            ChatMessage.thread_id == thread.id,
+            ChatMessage.role == "assistant",
+            ChatMessage.status == "completed",
+        )
+        .with_for_update()
+    )
+    if message is None:
+        raise HTTPException(status_code=404, detail="Completed answer was not found")
+    message.feedback_rating = payload.rating
+    await session.commit()
+    return message_response(message)
+
+
+@router.post("/{thread_id}/branch", response_model=ChatThreadDetail, status_code=201)
+async def branch_thread(
+    thread_id: UUID,
+    payload: ChatThreadBranch,
+    principal: Principal = Depends(rag_principal),
+    session: AsyncSession = Depends(session_dependency),
+) -> ChatThreadDetail:
+    source = await owned_thread_or_404(session, thread_id, principal.subject, for_update=True)
+    messages = list(
+        (
+            await session.scalars(
+                select(ChatMessage)
+                .where(
+                    ChatMessage.thread_id == source.id,
+                )
+                .order_by(ChatMessage.sequence)
+            )
+        ).all()
+    )
+    target = next((item for item in messages if item.id == str(payload.message_id)), None)
+    if target is None:
+        raise HTTPException(status_code=404, detail="Branch point was not found")
+    if (payload.include_message and target.role != "assistant") or (
+        not payload.include_message and target.role != "user"
+    ):
+        raise HTTPException(status_code=422, detail="Include an answer or branch before a question")
+    prefix = [
+        item
+        for item in messages
+        if item.sequence < target.sequence
+        or (payload.include_message and item.sequence == target.sequence)
+    ]
+    if any(item.status != "completed" for item in prefix):
+        raise HTTPException(status_code=409, detail="Branch requires completed conversation turns")
+    branch = ChatThread(
+        id=str(uuid4()),
+        owner_subject=principal.subject,
+        title=source.title,
+        model_preference=source.model_preference,
+        retrieval_preference=source.retrieval_preference,
+        active_letter_ids=list(source.active_letter_ids or []),
+        focus=None,
+    )
+    session.add(branch)
+    await session.flush()
+    ids = {item.id: str(uuid4()) for item in prefix}
+    for sequence, item in enumerate(prefix, 1):
+        metadata = deepcopy(item.route_metadata or {})
+        metadata["branched_from_message_id"] = item.id
+        session.add(
+            ChatMessage(
+                id=ids[item.id],
+                thread_id=branch.id,
+                sequence=sequence,
+                role=item.role,
+                content=item.content,
+                status="completed",
+                in_reply_to_id=ids.get(item.in_reply_to_id),
+                # Request keys and feedback belong to the original execution, not the copy.
+                client_message_id=None,
+                rag_query_id=item.rag_query_id,
+                citations=deepcopy(item.citations or []),
+                route_metadata=metadata,
+                model_metadata=deepcopy(item.model_metadata or {}),
+                created_at=item.created_at,
+            )
+        )
+        # Flush in sequence so self-referencing reply IDs exist on SQLite and PostgreSQL.
+        await session.flush()
+    # Document focus may have been selected after the branch point. Never carry future
+    # conversation context into an earlier branch; citations can be selected again there.
+    branch.active_letter_ids = []
+    if branch.retrieval_preference == "letter":
+        branch.retrieval_preference = "auto"
+    branch.last_message_at = utcnow() if prefix else None
+    await session.commit()
+    return await _thread_detail(session, branch)
+
+
+@router.get("/{thread_id}/export")
+async def export_thread(
+    thread_id: UUID,
+    format: str = Query(default="markdown", pattern="^(markdown|json)$"),
+    principal: Principal = Depends(rag_principal),
+    session: AsyncSession = Depends(session_dependency),
+) -> dict[str, str]:
+    thread = await owned_thread_or_404(session, thread_id, principal.subject)
+    detail = await _thread_detail(session, thread)
+    if format == "json":
+        return {
+            "filename": f"conversation-{thread.id}.json",
+            "content": detail.model_dump_json(indent=2),
+            "media_type": "application/json",
+        }
+    lines = [
+        f"# {thread.title}",
+        "",
+        "PharmaAgent OS · Conversation export",
+        "AI-assisted work for human review. Verify claims against official FDA sources.",
+        f"Conversation: {thread.id}",
+        "",
+    ]
+    for message in detail.messages:
+        lines.extend(
+            [
+                f"## {'You' if message.role == 'user' else 'Assistant'}",
+                "",
+                f"{message.created_at.isoformat()} · {message.status}",
+                "",
+                message.content,
+                "",
+            ]
+        )
+        if message.citations:
+            lines.extend(["### Sources", ""])
+        for index, citation in enumerate(message.citations, 1):
+            data = citation.model_dump(mode="json")
+            lines.extend(
+                [
+                    f"[{index}] {data.get('company_name') or data.get('title') or 'FDA source'}",
+                    str(data.get("source_url", "")),
+                    f"Document version: {data.get('document_version_id', '')}",
+                    f"Chunk: {data.get('chunk_id', '')}",
+                    f"Location: {data.get('source_anchor', '')}",
+                    f"SHA-256: {data.get('source_hash') or 'Not available'}",
+                    str(data.get("excerpt", "")),
+                    "",
+                ]
+            )
+    return {
+        "filename": f"conversation-{thread.id}.md",
+        "content": "\n".join(lines),
+        "media_type": "text/markdown",
+    }
 
 
 async def _thread_detail(session: AsyncSession, thread: ChatThread) -> ChatThreadDetail:
@@ -193,12 +358,15 @@ async def list_threads(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=20, ge=1, le=100),
     include_archived: bool = Query(default=False),
+    archived_only: bool = Query(default=False),
     q: str | None = Query(default=None, max_length=200),
     principal: Principal = Depends(rag_principal),
     session: AsyncSession = Depends(session_dependency),
 ) -> ChatThreadPage:
     predicates = [ChatThread.owner_subject == principal.subject]
-    if not include_archived:
+    if archived_only:
+        predicates.append(ChatThread.archived_at.is_not(None))
+    elif not include_archived:
         predicates.append(ChatThread.archived_at.is_(None))
     normalized_query = _normalized_search_query(q)
     if normalized_query:
@@ -226,6 +394,7 @@ async def list_threads(
             .options(selectinload(ChatThread.focus))
             .where(*predicates)
             .order_by(
+                ChatThread.pinned_at.desc().nullslast(),
                 ChatThread.last_message_at.desc().nullslast(),
                 ChatThread.updated_at.desc(),
                 ChatThread.id,
@@ -340,19 +509,17 @@ async def patch_thread(
     settings: Settings = Depends(settings_dependency),
     session: AsyncSession = Depends(session_dependency),
 ) -> ChatThreadDetail:
-    thread = await owned_thread_or_404(
-        session, thread_id, principal.subject, for_update=True
-    )
+    thread = await owned_thread_or_404(session, thread_id, principal.subject, for_update=True)
     changes = payload.model_dump(exclude_unset=True)
     if thread.archived_at is not None and changes != {"archived": False}:
         raise HTTPException(status_code=409, detail="Archived chat threads are read-only")
     if "title" in changes:
         thread.title = changes["title"]
+    if "pinned" in changes:
+        thread.pinned_at = (thread.pinned_at or utcnow()) if changes["pinned"] else None
     if "model_preference" in changes:
         thread.model_preference = changes["model_preference"]
-    next_retrieval_preference = changes.get(
-        "retrieval_preference", thread.retrieval_preference
-    )
+    next_retrieval_preference = changes.get("retrieval_preference", thread.retrieval_preference)
     if "active_letter_ids" in changes:
         if next_retrieval_preference in {"corpus", "none"}:
             thread.active_letter_ids = []
@@ -384,9 +551,7 @@ async def focus_thread_on_citation(
     principal: Principal = Depends(rag_principal),
     session: AsyncSession = Depends(session_dependency),
 ) -> ChatThreadDetail:
-    thread = await owned_thread_or_404(
-        session, thread_id, principal.subject, for_update=True
-    )
+    thread = await owned_thread_or_404(session, thread_id, principal.subject, for_update=True)
     if thread.archived_at is not None:
         raise HTTPException(status_code=409, detail="Archived chat threads are read-only")
 
@@ -457,8 +622,7 @@ async def focus_thread_on_citation(
         thread.focus.source_message_id,
     ) == (letter.id, document.id, version.id, chunk.id, assistant_message.id)
     thread_scope_matches = (
-        thread.active_letter_ids == [letter.id]
-        and thread.retrieval_preference == "letter"
+        thread.active_letter_ids == [letter.id] and thread.retrieval_preference == "letter"
     )
     if focus_matches and thread_scope_matches:
         return await _thread_detail(session, thread)
@@ -495,9 +659,7 @@ async def clear_thread_focus(
     principal: Principal = Depends(rag_principal),
     session: AsyncSession = Depends(session_dependency),
 ) -> ChatThreadDetail:
-    thread = await owned_thread_or_404(
-        session, thread_id, principal.subject, for_update=True
-    )
+    thread = await owned_thread_or_404(session, thread_id, principal.subject, for_update=True)
     if thread.archived_at is not None:
         raise HTTPException(status_code=409, detail="Archived chat threads are read-only")
     _clear_focus(thread)
@@ -524,9 +686,7 @@ async def cancel_pending_message(
     normalized_client_id = client_message_id.strip()
     if not normalized_client_id or len(normalized_client_id) > 100:
         raise HTTPException(status_code=422, detail="Invalid client message ID")
-    thread = await owned_thread_or_404(
-        session, thread_id, principal.subject, for_update=True
-    )
+    thread = await owned_thread_or_404(session, thread_id, principal.subject, for_update=True)
     user_message = (
         await session.execute(
             select(ChatMessage)

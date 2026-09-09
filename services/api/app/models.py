@@ -636,6 +636,7 @@ class ChatThread(TimestampMixin, Base):
     retrieval_preference: Mapped[str] = mapped_column(String(20), nullable=False, default="auto")
     active_letter_ids: Mapped[list[str]] = mapped_column(JSON, default=list)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    pinned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_message_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
 
     messages: Mapped[list[ChatMessage]] = relationship(
@@ -676,6 +677,7 @@ class ChatMessage(TimestampMixin, Base):
     citations: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
     route_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     model_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    feedback_rating: Mapped[str | None] = mapped_column(String(10))
 
     thread: Mapped[ChatThread] = relationship(back_populates="messages")
 

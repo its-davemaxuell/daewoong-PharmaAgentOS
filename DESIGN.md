@@ -89,6 +89,14 @@ generated findings, source excerpts or exported brief to reduce interface copy.
 Chat has a labeled question field and a text send button. Model and retrieval
 controls expand on demand, with automatic defaults. Example IDs prefill questions
 without automatically sending them. Saved-source scope remains visible.
+The chatbot workspace keeps a bounded conversation column with a fixed composer.
+Numbered citations open a separate evidence reader beside the conversation on wide
+screens; on narrower screens the reader occupies the workspace until closed.
+The conversation library supports search, pins and archived items. A compact
+conversation menu contains rename and export. Edit and branch actions preserve
+the original conversation; feedback is separate from regulatory approval.
+The composer can select retained FDA letters and recover unsent text in the same
+browser tab. Supporting status and configuration remain secondary to the answer.
 Draft inputs use native radio controls, visible labels and an optional FDA link.
 An example fills only an empty question. Multiple local requests can be saved,
 reopened, updated, deleted with confirmation and downloaded as readable text;

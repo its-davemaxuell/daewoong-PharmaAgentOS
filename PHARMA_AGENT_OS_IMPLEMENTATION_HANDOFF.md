@@ -10,6 +10,42 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-09 chatbot workspace upgrade (local, not deployed):** Researched official
+Gemini, Perplexity and Claude interfaces and implemented a focused chat workspace
+with a desktop evidence reader, mobile source view, conversation library with
+server-side search/pagination, pin/rename/archive/restore, Markdown/JSON exports,
+answer feedback, and branch/edit-question actions that preserve the original
+transcript. The composer supports selected FDA letters, removable source chips,
+draft recovery, character count and autosizing. Answer rendering now supports
+semantic tables and fenced code without executing source HTML. Korean/English,
+existing streaming/stop behavior, citation validation and browser ownership remain.
+The API adds owner-scoped feedback, completed-prefix branching with copied source
+provenance, export, pinned ordering and archive-only listing. Apply
+`infra/migrations/20260909_chat_workspace.sql` before releasing the API, then the
+web app. It adds nullable pin/feedback columns and an activity index without
+changing existing RLS policies. SQLite development upgrade support is included.
+Local verification: full backend suite **578 passed, 9 skipped** before two final
+edge cases were added; all **6 chatbot workspace cases** pass on the final backend
+revision. Frontend **54 tests**, lint, TypeScript and production build pass.
+Browser checks pass all ten feature groups plus keyboard/focus and source-selection
+checks, including two-session isolation and both languages at 320/390/768/1024/1440px.
+No browser JavaScript errors or design-detector findings. Browser checks used an
+isolated signed local API, synthetic FDA fixtures and disabled model generation.
+Docker is stopped, so local PostgreSQL migration execution was unavailable; CI
+now applies the migration twice. Hosted migration, publication and a live-model
+check for this revision remain unperformed. See the
+[research and feature record](docs/product/chatbot-commercial-upgrade-20260909.md)
+and [verification evidence](docs/assurance/chatbot-workspace-20260909.md).
+
+Deployment was authorized on 2026-09-09. Release preparation confirmed the new
+Vercel project and its GitHub `main` integration. A read-only check of the correct
+Supabase project (`iqevzrztpdiysnojzpur`) found that the pin/feedback columns are
+still absent. The saved database accounts are runtime roles without DDL rights;
+the saved Supabase CLI session belongs to the previous account. Publication is
+pending either administrator access for the additive migration or confirmation
+that it was run in that project's SQL Editor. Do not push this API revision to
+the automatic production pipeline before verifying the migration.
+
 **2026-09-09 three-section navigation:** The user's requested separation replaces
 the everyday/specialist menus with FDA Warning Letter Chatbot, FDA AI Agent and
 Settings. Chat, letters, saved sources, trends, authorized source review and chat

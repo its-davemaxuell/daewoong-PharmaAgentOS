@@ -20,3 +20,9 @@ it("does not resurrect archived chats or replace a newer local revision", () => 
 it("accepts a fresh server snapshot for untouched chats", () => {
   expect(mergeChatHistory([thread("removed")], [thread("current")], new Set())).toEqual([thread("current")]);
 });
+
+it("keeps pinned conversations ahead of more recent chats after hydration", () => {
+  const pinned = { ...thread("pinned"), pinnedAt: "2026-09-08T00:00:00Z" };
+  const recent = thread("recent", "2026-09-09T00:00:00Z");
+  expect(mergeChatHistory([pinned], [recent], new Set(["pinned"]))).toEqual([pinned, recent]);
+});

@@ -327,6 +327,7 @@ class ChatThreadPatch(StrictModel):
     retrieval_preference: Literal["auto", "none", "metadata", "letter", "corpus"] | None = None
     active_letter_ids: list[UUID] | None = Field(default=None, max_length=20)
     archived: bool | None = None
+    pinned: bool | None = None
 
     @field_validator("title")
     @classmethod
@@ -342,7 +343,18 @@ class ChatThreadPatch(StrictModel):
     def require_change(self) -> ChatThreadPatch:
         if not self.model_fields_set:
             raise ValueError("at least one thread field is required")
+        if any(getattr(self, field) is None for field in self.model_fields_set):
+            raise ValueError("thread fields cannot be null")
         return self
+
+
+class ChatThreadBranch(StrictModel):
+    message_id: UUID
+    include_message: bool = True
+
+
+class ChatMessageFeedback(StrictModel):
+    rating: Literal["helpful", "unhelpful"] | None
 
 
 class ChatMessageResponse(StrictModel):
@@ -356,6 +368,7 @@ class ChatMessageResponse(StrictModel):
     citations: list[CitationResponse]
     route_metadata: dict[str, Any]
     model_metadata: dict[str, Any]
+    feedback_rating: Literal["helpful", "unhelpful"] | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -381,6 +394,7 @@ class ChatThreadSummary(StrictModel):
     retrieval_preference: Literal["auto", "none", "metadata", "letter", "corpus"]
     active_letter_ids: list[UUID]
     focus: ChatDocumentFocusResponse | None = None
+    pinned_at: datetime | None = None
     archived_at: datetime | None
     last_message_at: datetime | None
     created_at: datetime

@@ -250,6 +250,7 @@ export type RagAnswer = {
 };
 
 export type ChatMessage = {
+  feedbackRating?: "helpful" | "unhelpful";
   id: string;
   sequence: number;
   role: "user" | "assistant";
@@ -287,6 +288,7 @@ export type ChatDocumentFocus = {
 };
 
 export type ChatThreadSummary = {
+  pinnedAt?: string;
   id: string;
   title: string;
   modelPreference: ChatModelProfile;
