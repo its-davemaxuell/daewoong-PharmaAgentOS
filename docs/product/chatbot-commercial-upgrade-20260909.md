@@ -66,8 +66,9 @@ existing local schema-upgrade mechanism. CI applies the PostgreSQL migration
 twice to check repeatability.
 
 Deploy the API before the frontend. Roll back application code without dropping
-the additive columns. This implementation does not itself publish a deployment
-or mutate the hosted database.
+the additive columns. The user applied the production migration and authorized
+publication; the hosted release and verification evidence are recorded in
+`docs/assurance/chatbot-workspace-20260909.md`.
 
 ## Deliberate boundaries
 

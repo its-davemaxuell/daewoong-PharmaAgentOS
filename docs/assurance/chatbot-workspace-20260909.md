@@ -45,19 +45,18 @@ hosted CI run below verifies PostgreSQL migration execution and runs the gated
 PostgreSQL/Supabase checks and Temporal recovery in separate jobs.
 
 The local browser run exercises the real API, ownership/signing boundary and
-streaming path with deterministic source-only answers. A live model response was
-not requested for this revision. The existing hosted model configuration is not
-changed. Chat feedback does not approve a regulated record or train a model.
+streaming path with deterministic source-only answers. The subsequent production
+check below verifies real model generation. The existing hosted model configuration
+is unchanged. Chat feedback does not approve a regulated record or train a model.
 
-Deployment prerequisites: apply `infra/migrations/20260909_chat_workspace.sql`,
-then release the API and web application. Hosted migration, hosted browser checks,
-and a live-model request for this revision have not been performed.
+The additive migration is a deployment prerequisite. Production application and
+verification of that migration are recorded below.
 
 ## Release preparation and hosted CI
 
-The user authorized deployment on 2026-09-09. The upgrade is published to the
-`release/chatbot-workspace-20260909` branch; production `main` remains at
-`915cee941b15532e17ee45c78687914997573e5e` until the production schema is ready.
+The user authorized deployment on 2026-09-09. The upgrade was first published to
+`release/chatbot-workspace-20260909`; production remained at `915cee9` until the
+production migration was verified.
 
 [CI run 34366163895](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34366163895)
 passed all nine jobs on `063574157517c927a35939717913afca3ec6b718`:
@@ -79,13 +78,55 @@ Read-only production verification at 14:50 UTC found **34 threads and 86
 messages**, unchanged RLS on both chat tables, and neither new column nor the new
 index in Supabase project `iqevzrztpdiysnojzpur`. Runtime database roles cannot
 apply DDL, and the saved Supabase CLI session belongs to the previous account.
-Administrator access or execution in the correct project's SQL Editor is pending.
-Vercel access is restored, and the production web/API health endpoints return 200.
-The release branch has a successful frontend preview; it is not a qualified
-production release against the new backend.
+At that point, deployment was pending execution in the correct project's SQL
+Editor. Vercel access was restored and the existing production endpoints were
+healthy. The release branch also received a successful frontend preview.
 
 Ignored artifacts include `release-ci.json`, `release-status.json`,
 `production-schema-check.json`, the bounded migration runner, and the prepared
-hosted browser check. After migration verification, publish `main`, verify the
-Railway and Vercel release revisions, and execute the hosted browser/live-model
-check before recording production completion.
+hosted browser check.
+
+## Production release — 2026-09-10 KST
+
+The user applied the migration in Supabase project `iqevzrztpdiysnojzpur`.
+Verification at 16:38 UTC on September 9 confirmed both new columns, the expected
+index definition with `indisvalid=true` and `indisready=true`, and RLS still enabled
+on both tables. The original **34 conversations and 86 messages** were preserved.
+
+The initial release `08c09df108d73951571474ab016d0b109b1d32be` deployed successfully
+to both Railway and Vercel, with HTTP 200 web/API readiness and successful
+[quality CI](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34378078338)
+and [code security](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34378078374).
+
+Hosted checks confirmed a real `gpt-5-mini` answer with **six source citations**.
+The server-owned JSON export records `status=completed`, `generation_used=true`
+and the effective model ID. Chrome discarded the streamed network buffer during
+navigation in the first automation attempt, so subsequent verification uses the
+persisted export. No provider configuration changed.
+
+The browser flow caught a workspace remount after feedback and rename. Updating
+feedback changes the answer timestamp; the previous page key treated that as a
+new transcript and could close an open library during delayed revalidation.
+Revision `123353fdfadf1b2cb97b4cf23f37966cf7e2f96b` derives that key from message IDs,
+roles, statuses, content and citations instead. Three regression tests cover
+metadata-only updates, changed answer content, and stream/turn transitions.
+All **57 frontend tests**, lint, TypeScript and production build pass locally.
+
+The correction deployed successfully to Vercel (`dpl_DDjdGGVhSZNsgbaVk2jpBbx4iBKU`)
+and Railway (GitHub deployment `6354922182`). All **13 hosted verification groups**
+pass, with no browser JavaScript errors:
+
+- Draft recovery, real model generation, persisted answer and JSON export.
+- Evidence reader at 320, 390, 768, 1024 and 1440px.
+- Feedback persistence/removal, rename/pin and Markdown source export.
+- Feedback/rename revalidation preserves the open library and search query.
+- Search, archive/read-only/restore, branching and edit-question preservation.
+- Separate browser sessions cannot read another session's conversation.
+- The main flow's three verification conversations were archived.
+- English/Korean landing layouts at all five widths, with no horizontal overflow.
+
+The run resumed with its existing browser session after the refresh correction,
+without another model request. Results, the source-bearing model export, screenshots
+and the browser script are retained in `.artifacts/chat-workspace/production/` and
+the parent artifact directory. The live application is
+https://pharmaagent-os-ochre.vercel.app/ask.

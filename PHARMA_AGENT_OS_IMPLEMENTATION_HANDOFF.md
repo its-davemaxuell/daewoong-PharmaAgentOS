@@ -1,6 +1,6 @@
 # PharmaAgent OS implementation handoff
 
-**Handoff date:** 2026-09-09
+**Handoff date:** 2026-09-10
 
 **Next engineer:** Start with [the transfer brief](NEXT_ENGINEER_HANDOFF.md) for
 the publication state, production blockers, verification and ordered
@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-09 chatbot workspace upgrade (local, not deployed):** Researched official
+**2026-09-10 chatbot workspace upgrade (deployed and verified):** Researched official
 Gemini, Perplexity and Claude interfaces and implemented a focused chat workspace
 with a desktop evidence reader, mobile source view, conversation library with
 server-side search/pagination, pin/rename/archive/restore, Markdown/JSON exports,
@@ -35,24 +35,28 @@ Docker is stopped, so local PostgreSQL migration execution was unavailable.
 Hosted CI now passes all nine jobs: **580 backend tests**, the packaged API suite,
 frontend checks, PostgreSQL upgrade/repeatability and nine gated database tests,
 backup restoration, Temporal recovery, contract validation and image/secret scans.
-Production migration, publication and a live-model check for this revision remain
-unperformed. See the
+The user applied the production migration in Supabase's SQL Editor. A read-only
+check on 2026-09-09 at 16:38 UTC verified both columns, a valid/ready activity index,
+unchanged RLS, and all 34 existing conversations and 86 messages. The release is
+live on the connected Railway/Vercel production pipeline. A real `gpt-5-mini`
+answer with six citations was verified through its persisted JSON export. See the
 [research and feature record](docs/product/chatbot-commercial-upgrade-20260909.md)
 and [verification evidence](docs/assurance/chatbot-workspace-20260909.md).
 
-Deployment was authorized on 2026-09-09. Release preparation confirmed the new
-Vercel project and its GitHub `main` integration. A read-only check of the correct
-Supabase project (`iqevzrztpdiysnojzpur`) found that the pin/feedback columns are
-still absent. The saved database accounts are runtime roles without DDL rights;
-the saved Supabase CLI session belongs to the previous account. Publication is
-pending either administrator access for the additive migration or confirmation
-that it was run in that project's SQL Editor. Do not push this API revision to
-the automatic production pipeline before verifying the migration.
-The release branch is `release/chatbot-workspace-20260909`; all application code
-and CI changes passed in run `34366163895` at `063574157517c927a35939717913afca3ec6b718`.
-Production still serves `915cee941b15532e17ee45c78687914997573e5e`, with web/API
-health checks returning 200. The migration runner and live browser checks are
-prepared in ignored `.artifacts/chat-workspace/` files.
+Deployment was authorized on 2026-09-09 and the database-access blocker is resolved.
+The initial production release `08c09df` passed both CI workflows. Hosted browser
+testing exposed a refresh issue after feedback and rename: the message update
+timestamp changed the React workspace key and closed an open conversation library.
+Revision `123353f` uses a transcript-content digest, preserving open tools across
+metadata updates while still refreshing changed answers. All **57 frontend tests**,
+lint, TypeScript and production build passed locally. This correction is live;
+the exact feedback/rename/library sequence now passes in the hosted browser.
+All **13 hosted verification groups** pass, including feedback, both exports,
+search, archive/restore, branch/edit preservation, session isolation, the refresh
+regression and both languages at 320/390/768/1024/1440px, with no browser errors.
+The main verification flow's three conversations were archived. Deployment IDs,
+CI results and browser evidence are retained in ignored `.artifacts/chat-workspace/`
+files. The live application is https://pharmaagent-os-ochre.vercel.app/ask.
 
 **2026-09-09 three-section navigation:** The user's requested separation replaces
 the everyday/specialist menus with FDA Warning Letter Chatbot, FDA AI Agent and
