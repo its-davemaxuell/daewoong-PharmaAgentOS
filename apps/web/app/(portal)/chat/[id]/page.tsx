@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ChatWorkspace } from "@/components/chat-workspace";
 import { getChatLetter, getChatLetters, getChatThread } from "@/lib/api-client";
+import { chatTranscriptRevision } from "@/lib/chat-transcript-revision";
 
 export default async function ChatPage({
   params,
@@ -33,13 +34,7 @@ export default async function ChatPage({
     ? thread.activeLetterIds[0]
     : undefined;
   const initialLetter = letters.find((letter) => letter.id === initialLetterId);
-  const lastMessage = thread.messages.at(-1);
-  const conversationRevision = [
-    thread.messages.length,
-    lastMessage?.id ?? "empty",
-    lastMessage?.status ?? "none",
-    lastMessage?.updatedAt ?? lastMessage?.createdAt ?? "",
-  ].join(":");
+  const conversationRevision = chatTranscriptRevision(thread.messages);
   return (
     <ChatWorkspace
       key={`${thread.id}:${conversationRevision}`}
