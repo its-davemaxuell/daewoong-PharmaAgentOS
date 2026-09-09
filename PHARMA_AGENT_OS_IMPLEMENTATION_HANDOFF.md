@@ -10,6 +10,29 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-09 three-section navigation:** The user's requested separation replaces
+the everyday/specialist menus with FDA Warning Letter Chatbot, FDA AI Agent and
+Settings. Chat, letters, saved sources, trends, authorized source review and chat
+history belong to the chatbot section. Research, local drafts, specialist agents,
+team records, approvals and evaluations belong to the agent section. Settings
+contains preferences, Getting started, service operations and authorized admin.
+The new `/settings` page saves the existing shared language preference and links
+to guidance and service information. The active section opens on direct links;
+mobile focus trapping includes disclosure controls and excludes hidden content.
+Home remains absent from the menu; existing routes, logo links and role guards
+are preserved. The guide and design record reflect the new grouping.
+Verification and publication status: see
+[navigation evidence](docs/assurance/navigation-20260909.md).
+The user authorized deployment of all pending changes to the connected GitHub
+`main` production pipeline at https://pharmaagent-os-ochre.vercel.app.
+
+**2026-09-09 Home menu removal:** Removed the redundant Home/홈 entry from the
+shared desktop/mobile navigation at the user's request. Research agent is now
+the first everyday destination. The product logo still opens `/dashboard`, which
+retains its correct page title. Local verification passed all 50 frontend tests,
+lint, TypeScript and the production build; the UI detector reported no findings.
+This change is included in the three-section navigation release above.
+
 **2026-09-09 new-account database migration:** Imported the local `data.sql`
 application dataset into Supabase project `iqevzrztpdiysnojzpur` through its
 session pooler. The empty public schema received 59 current application tables,

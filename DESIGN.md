@@ -48,9 +48,16 @@ The home has one primary research entry, three quick-chat example rows and a sho
 visual sequence: You set the goal → Research agent finds and checks → You review
 the brief. Use the shared journey on Home and Help, and its compact variant above
 the research goal field. Personal review drafts remain at
-`/requests`; legacy saved-request bookmarks redirect there. Everyday navigation
-has six destinations. Specialist tools, drafts and operational tools
-expand in a separate section, automatically open on their active routes.
+`/requests`; legacy saved-request bookmarks redirect there. Navigation has three
+sections: FDA Warning Letter Chatbot (chat, letter library, saved sources, trends,
+source review and chat history), FDA AI Agent (research, drafts, specialist agents,
+team records, approvals and evaluations), and Settings (preferences, the guide,
+service operations and authorized administration). The current section opens
+automatically, including on deep links. Each section can be expanded with a
+keyboard or touch, and the navigation scrolls on short screens. The header names
+the section and current feature. Home is accessible through the product logo
+instead of a separate menu item. Preferences at `/settings` provide the shared
+language control and service guidance; the header keeps a language shortcut.
 
 ## Elevation & Depth
 

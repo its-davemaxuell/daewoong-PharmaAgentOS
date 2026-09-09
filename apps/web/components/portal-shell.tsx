@@ -24,6 +24,7 @@ import {
   PanelLeftOpen,
   Plus,
   Search,
+  Settings,
   ShieldCheck,
   X,
 } from "lucide-react";
@@ -39,33 +40,39 @@ import { formatDate } from "@/components/ui";
 import type { AppRole } from "@/lib/auth-types";
 import { useI18n } from "@/lib/i18n";
 
+const navSections = [
+  { id: "chatbot", en: "FDA Warning Letter Chatbot", ko: "FDA 경고서한 챗봇", icon: MessageSquareText },
+  { id: "agent", en: "FDA AI Agent", ko: "FDA AI 에이전트", icon: Network },
+  { id: "settings", en: "Settings", ko: "설정", icon: Settings },
+] as const;
+
 const navItems: Array<{
   en: string;
   ko: string;
   href: string;
   icon: typeof MessageSquareText;
   requiredRole?: AppRole;
-  advanced?: boolean;
+  section: typeof navSections[number]["id"];
 }> = [
-  { en: "Home", ko: "홈", href: "/dashboard", icon: GitBranch },
-  { en: "Research agent", ko: "리서치 에이전트", href: "/research", icon: Network },
-  { en: "Ask the AI", ko: "AI에게 질문하기", href: "/ask", icon: MessageSquareText },
-  { en: "FDA letter library", ko: "FDA 경고서한 찾기", href: "/drug-letters", icon: FileText },
-  { en: "Saved sources", ko: "저장한 자료", href: "/saved-views", icon: Bookmark },
-  { en: "My review drafts", ko: "내 검토 초안", href: "/requests", icon: BriefcaseBusiness, advanced: true },
-  { en: "Getting started", ko: "이용 방법", href: "/help", icon: CircleHelp },
-  { en: "Specialist agents", ko: "전문 에이전트", href: "/agents", icon: Network, advanced: true },
-  { en: "Team review records", ko: "팀 검토 기록", href: "/cases", icon: BriefcaseBusiness, advanced: true },
-  { en: "Review & approvals", ko: "검토 및 승인", href: "/approvals", icon: ClipboardCheck, advanced: true },
-  { en: "Regulatory trends", ko: "규제 동향", href: "/trends", icon: ChartNoAxesColumnIncreasing, advanced: true },
-  { en: "Agent evaluations", ko: "에이전트 평가", href: "/evaluations", icon: ShieldCheck, advanced: true },
-  { en: "Service operations", ko: "서비스 운영", href: "/control-tower", icon: ChartNoAxesColumnIncreasing, advanced: true },
-  { en: "Source review", ko: "원문 검토", href: "/review", icon: ClipboardCheck, requiredRole: "reviewer", advanced: true },
-  { en: "Admin", ko: "관리", href: "/admin", icon: ShieldCheck, requiredRole: "admin", advanced: true },
+  { en: "Chatbot", ko: "챗봇", href: "/ask", icon: MessageSquareText, section: "chatbot" },
+  { en: "Warning letter library", ko: "경고서한 자료실", href: "/drug-letters", icon: FileText, section: "chatbot" },
+  { en: "Saved sources", ko: "저장한 자료", href: "/saved-views", icon: Bookmark, section: "chatbot" },
+  { en: "Regulatory trends", ko: "규제 동향", href: "/trends", icon: ChartNoAxesColumnIncreasing, section: "chatbot" },
+  { en: "Source review", ko: "원문 검토", href: "/review", icon: ClipboardCheck, requiredRole: "reviewer", section: "chatbot" },
+  { en: "Research agent", ko: "리서치 에이전트", href: "/research", icon: Network, section: "agent" },
+  { en: "My review drafts", ko: "내 검토 초안", href: "/requests", icon: BriefcaseBusiness, section: "agent" },
+  { en: "Specialist agents", ko: "전문 에이전트", href: "/agents", icon: Network, section: "agent" },
+  { en: "Team review records", ko: "팀 검토 기록", href: "/cases", icon: BriefcaseBusiness, section: "agent" },
+  { en: "Review & approvals", ko: "검토 및 승인", href: "/approvals", icon: ClipboardCheck, section: "agent" },
+  { en: "Agent evaluations", ko: "에이전트 평가", href: "/evaluations", icon: ShieldCheck, section: "agent" },
+  { en: "Preferences", ko: "환경설정", href: "/settings", icon: Settings, section: "settings" },
+  { en: "Getting started", ko: "이용 방법", href: "/help", icon: CircleHelp, section: "settings" },
+  { en: "Service operations", ko: "서비스 운영", href: "/control-tower", icon: ChartNoAxesColumnIncreasing, section: "settings" },
+  { en: "Admin", ko: "관리", href: "/admin", icon: ShieldCheck, requiredRole: "admin", section: "settings" },
 ];
 
 function isActive(pathname: string, href: string) {
-  return pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
+  return pathname === href || pathname.startsWith(`${href}/`) || (href === "/ask" && pathname.startsWith("/chat/"));
 }
 
 export function PortalShell({
@@ -85,7 +92,6 @@ export function PortalShell({
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showNewLetterNotification, setShowNewLetterNotification] = useState(false);
-  const [menuSectionOpen, setMenuSectionOpen] = useState(true);
   const [historySectionOpen, setHistorySectionOpen] = useState(false);
   const [historyQuery, setHistoryQuery] = useState("");
   const [historyResults, setHistoryResults] = useState<ReturnType<typeof useChatHistory>["threads"]>();
@@ -110,6 +116,8 @@ export function PortalShell({
   const notificationStorageKey = "pharmaagent-os:new-letter-seen";
 
   const visibleNav = navItems.filter((item) => !item.requiredRole || roles.includes(item.requiredRole));
+  const activeItem = visibleNav.find((item) => isActive(pathname, item.href));
+  const activeSection = navSections.find((section) => section.id === activeItem?.section);
   const normalizedHistoryQuery = historyQuery.trim().toLocaleLowerCase();
   const localHistoryMatches = useMemo(() => (
     normalizedHistoryQuery
@@ -232,10 +240,13 @@ export function PortalShell({
     const activeSidebar: HTMLElement = sidebar;
 
     const focusableSelector =
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      'a[href], summary, button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
     const focusableElements = () =>
       Array.from(activeSidebar.querySelectorAll<HTMLElement>(focusableSelector)).filter(
-        (element) => element.getAttribute("aria-hidden") !== "true",
+        (element) => element.getAttribute("aria-hidden") !== "true"
+          && !element.closest("[inert]")
+          && element.getClientRects().length > 0
+          && getComputedStyle(element).visibility !== "hidden",
       );
 
     focusableElements()[0]?.focus();
@@ -314,7 +325,10 @@ export function PortalShell({
         </Link>
 
         <div className="portal-header__product" aria-label={text("Current service", "현재 서비스")}>
-          <span className="os-header-context"><strong>{(() => { const item = visibleNav.find((entry) => isActive(pathname, entry.href)); return item ? text(item.en, item.ko) : text("Research", "자료 조사"); })()}</strong></span>
+          <span className="os-header-context">
+            {activeSection ? <span>{text(activeSection.en, activeSection.ko)}</span> : null}
+            <strong>{activeItem ? text(activeItem.en, activeItem.ko) : text("Workspace", "워크스페이스")}</strong>
+          </span>
         </div>
 
         <div className="portal-header__actions">
@@ -388,46 +402,29 @@ export function PortalShell({
               <X size={18} aria-hidden="true" />
             </button>
           </div>
-          <details className="portal-service-guide">
-            <summary className="portal-service-guide__summary">
-              <CircleHelp size={16} aria-hidden="true" />
-              <span>{text("About this service", "서비스 안내")}</span>
-              <ChevronDown className="portal-service-guide__chevron" size={15} aria-hidden="true" />
-            </summary>
-            <div className="portal-service-guide__panel">
-              <strong>PharmaAgent OS</strong>
-              <p>{text(
-                "Your goal → Agent research → Your review. Saved FDA sources; final decisions stay with your team.",
-                "목표 입력 → 에이전트 조사 → 담당자 검토. 저장된 FDA 자료를 사용하며 최종 판단은 담당자가 합니다.",
-              )}</p>
-            </div>
-          </details>
         </div>
 
         <hr className="sidebar__rule portal-sidebar__divider" />
 
         <div className="portal-sidebar__sections">
-          <section className="portal-sidebar-section">
-            <button
-              className="portal-sidebar-section__trigger"
-              type="button"
-              aria-expanded={menuSectionOpen}
-              aria-controls="portal-menu-section"
-              onClick={() => setMenuSectionOpen((open) => !open)}
-            >
-              <span>{text("Everyday work", "업무 메뉴")}</span>
-              <ChevronDown size={15} aria-hidden="true" />
-            </button>
-            <div
-              className="portal-sidebar-section__collapse"
-              data-open={menuSectionOpen}
-              aria-hidden={!menuSectionOpen}
-              inert={menuSectionOpen ? undefined : true}
-            >
-              <div id="portal-menu-section" className="portal-sidebar-section__content">
-                <nav className="portal-sidebar__nav" aria-label={text("Service menu", "서비스 메뉴")}>
+          {navSections.map((section) => {
+            const SectionIcon = section.icon;
+            const sectionActive = activeSection?.id === section.id;
+            return (
+              <details
+                key={`${pathname}:${section.id}`}
+                className="portal-workspace-group"
+                data-active={sectionActive}
+                open={sectionActive || (!activeSection && section.id === "chatbot")}
+              >
+                <summary>
+                  <SectionIcon size={20} aria-hidden="true" />
+                  <span>{text(section.en, section.ko)}</span>
+                  <ChevronDown className="portal-workspace-group__chevron" size={16} aria-hidden="true" />
+                </summary>
+                <nav className="portal-sidebar__nav" aria-label={text(section.en, section.ko)}>
                   <ul className="nav-list portal-nav">
-                    {visibleNav.filter((item) => !item.advanced).map((item) => {
+                    {visibleNav.filter((item) => item.section === section.id).map((item) => {
                       const Icon = item.icon;
                       const active = isActive(pathname, item.href);
                       return (
@@ -435,8 +432,8 @@ export function PortalShell({
                           <Link
                             className={`nav-link portal-nav__link${active ? " nav-link--active portal-nav__link--active" : ""}`}
                             href={item.href}
+                            prefetch={false}
                             aria-current={active ? "page" : undefined}
-                            tabIndex={menuSectionOpen ? undefined : -1}
                             onClick={() => closeMenu()}
                           >
                             <Icon className="portal-nav__icon" size={17} strokeWidth={1.8} aria-hidden="true" />
@@ -447,158 +444,148 @@ export function PortalShell({
                     })}
                   </ul>
                 </nav>
-              </div>
-            </div>
-          </section>
-
-          <details key={pathname} className="os-advanced-nav" open={visibleNav.some((item) => item.advanced && isActive(pathname, item.href))}>
-            <summary>{text("Specialists & operations", "전문 도구 및 운영")}<ChevronDown size={15} /></summary>
-            <nav aria-label={text("Specialist and operations tools", "전문 도구 및 운영 메뉴")}>
-              {visibleNav.filter((item) => item.advanced).map((item) => {
-                const Icon = item.icon;
-                const active = isActive(pathname, item.href);
-                return <Link key={item.href} prefetch={false} className={`nav-link portal-nav__link${active ? " nav-link--active portal-nav__link--active" : ""}`} href={item.href} aria-current={active ? "page" : undefined} onClick={() => closeMenu()}><Icon size={20} aria-hidden="true" /><span>{text(item.en, item.ko)}</span></Link>;
-              })}
-            </nav>
-          </details>
-
-          <section
-            className="portal-sidebar-section portal-sidebar-section--history"
-            data-open={historySectionOpen}
-          >
-            <button
-              className="portal-sidebar-section__trigger"
-              type="button"
-              aria-expanded={historySectionOpen}
-              aria-controls="portal-history-section"
-              onClick={() => setHistorySectionOpen((open) => !open)}
-            >
-              <span>{text("Chat history", "대화 기록")}</span>
-              <ChevronDown size={15} aria-hidden="true" />
-            </button>
-            <div
-              className="portal-sidebar-section__collapse"
-              data-open={historySectionOpen}
-              aria-hidden={!historySectionOpen}
-              inert={historySectionOpen ? undefined : true}
-            >
-              <div id="portal-history-section" className="portal-sidebar-section__content">
-                <button
-                  className="portal-history-new"
-                  type="button"
-                  tabIndex={historySectionOpen ? undefined : -1}
-                  onClick={() => {
-                    setActiveThreadId(undefined);
-                    closeMenu();
-                    router.push(`/ask?new=${window.crypto.randomUUID()}`);
-                  }}
-                >
-                  <Plus size={15} aria-hidden="true" />
-                  {text("New chat", "새 대화")}
-                </button>
-                <label className="portal-history-search">
-                  <Search size={14} aria-hidden="true" />
-                  <span className="sr-only">{text("Search chat history", "대화 기록 검색")}</span>
-                  <input
-                    type="search"
-                    value={historyQuery}
-                    maxLength={200}
-                    tabIndex={historySectionOpen ? undefined : -1}
-                    placeholder={text("Search conversations", "대화 내용 검색")}
-                    onChange={(event) => {
-                      setHistoryQuery(event.target.value);
-                      setHistoryResults(undefined);
-                      if (!event.target.value.trim() && historyActionError === "search") {
-                        setHistoryActionError(undefined);
-                      }
-                    }}
-                  />
-                  {historySearching ? <LoaderCircle className="spin" size={13} aria-hidden="true" /> : null}
-                </label>
-                {historyUnavailable || historyIsPreview ? (
-                  <div className="portal-history-notice" role={historyIsPreview ? "status" : "alert"}>
-                    <p>{historyIsPreview
-                      ? text(
-                        "Chat history is not saved in local preview mode.",
-                        "로컬 미리보기 모드에서는 대화 기록이 저장되지 않습니다.",
-                      )
-                      : text(
-                        "Chat history could not be loaded. Existing conversations are unchanged.",
-                        "대화 기록을 불러오지 못했습니다. 기존 대화는 변경되지 않았습니다.",
-                      )}</p>
-                    {!historyIsPreview ? (
-                      <button type="button" onClick={reloadHistory}>
-                        {text("Try again", "다시 시도")}
-                      </button>
-                    ) : null}
-                  </div>
-                ) : null}
-                {historyActionError ? (
-                  <div className="portal-history-notice portal-history-notice--error" role="alert">
-                    <p>{historyActionError === "search"
-                      ? text(
-                        "Server search is unavailable. Showing local title matches.",
-                        "서버 검색을 사용할 수 없어 현재 목록의 제목 일치 결과를 표시합니다.",
-                      )
-                      : text(
-                        "The chat was not archived because the server did not confirm the change.",
-                        "서버가 변경을 확인하지 않아 대화를 보관하지 않았습니다.",
-                      )}</p>
-                    <button type="button" onClick={() => setHistoryActionError(undefined)}>
-                      {text("Dismiss", "닫기")}
+                {section.id === "chatbot" ? (
+                  <section
+                    className="portal-sidebar-section portal-sidebar-section--history"
+                    data-open={historySectionOpen}
+                  >
+                    <button
+                      className="portal-sidebar-section__trigger"
+                      type="button"
+                      aria-expanded={historySectionOpen}
+                      aria-controls="portal-history-section"
+                      onClick={() => setHistorySectionOpen((open) => !open)}
+                    >
+                      <span>{text("Chat history", "대화 기록")}</span>
+                      <ChevronDown size={15} aria-hidden="true" />
                     </button>
-                  </div>
-                ) : null}
-                <nav className="portal-history-list" aria-label={text("Saved chats", "저장된 대화")}>
-                  {historyLoading ? <p className="portal-history-empty" role="status">{text("Loading your conversations…", "대화 기록을 불러오고 있어요…")}</p> : null}
-                  {visibleThreads.length ? visibleThreads.map((thread) => {
-                    const active = thread.id === activeThreadId || pathname === `/chat/${thread.id}`;
-                    return (
-                      <div
-                        className={`portal-history-item${active ? " is-active" : ""}`}
-                        key={thread.id}
-                      >
-                        <Link
-                          href={`/chat/${thread.id}`}
-                          prefetch={false}
-                          scroll={false}
+                    <div
+                      className="portal-sidebar-section__collapse"
+                      data-open={historySectionOpen}
+                      aria-hidden={!historySectionOpen}
+                      inert={historySectionOpen ? undefined : true}
+                    >
+                      <div id="portal-history-section" className="portal-sidebar-section__content">
+                        <button
+                          className="portal-history-new"
+                          type="button"
                           tabIndex={historySectionOpen ? undefined : -1}
                           onClick={() => {
-                            setActiveThreadId(thread.id);
+                            setActiveThreadId(undefined);
                             closeMenu();
+                            router.push(`/ask?new=${window.crypto.randomUUID()}`);
                           }}
                         >
-                          <History size={13} aria-hidden="true" />
-                          <span>
-                            <strong>{thread.title}</strong>
-                            <small>{formatDate(thread.lastMessageAt, undefined, locale)}</small>
-                          </span>
-                        </Link>
-                        <button
-                          type="button"
-                          disabled={archivePending}
-                          tabIndex={historySectionOpen ? undefined : -1}
-                          title={text("Archive chat", "대화 보관")}
-                          aria-label={text(`Archive ${thread.title}`, `${thread.title} 대화 보관`)}
-                          onClick={() => archiveConversation(thread.id)}
-                        >
-                          <Archive size={13} aria-hidden="true" />
+                          <Plus size={15} aria-hidden="true" />
+                          {text("New chat", "새 대화")}
                         </button>
+                        <label className="portal-history-search">
+                          <Search size={14} aria-hidden="true" />
+                          <span className="sr-only">{text("Search chat history", "대화 기록 검색")}</span>
+                          <input
+                            type="search"
+                            value={historyQuery}
+                            maxLength={200}
+                            tabIndex={historySectionOpen ? undefined : -1}
+                            placeholder={text("Search conversations", "대화 내용 검색")}
+                            onChange={(event) => {
+                              setHistoryQuery(event.target.value);
+                              setHistoryResults(undefined);
+                              if (!event.target.value.trim() && historyActionError === "search") {
+                                setHistoryActionError(undefined);
+                              }
+                            }}
+                          />
+                          {historySearching ? <LoaderCircle className="spin" size={13} aria-hidden="true" /> : null}
+                        </label>
+                        {historyUnavailable || historyIsPreview ? (
+                          <div className="portal-history-notice" role={historyIsPreview ? "status" : "alert"}>
+                            <p>{historyIsPreview
+                              ? text(
+                                "Chat history is not saved in local preview mode.",
+                                "로컬 미리보기 모드에서는 대화 기록이 저장되지 않습니다.",
+                              )
+                              : text(
+                                "Chat history could not be loaded. Existing conversations are unchanged.",
+                                "대화 기록을 불러오지 못했습니다. 기존 대화는 변경되지 않았습니다.",
+                              )}</p>
+                            {!historyIsPreview ? (
+                              <button type="button" onClick={reloadHistory}>
+                                {text("Try again", "다시 시도")}
+                              </button>
+                            ) : null}
+                          </div>
+                        ) : null}
+                        {historyActionError ? (
+                          <div className="portal-history-notice portal-history-notice--error" role="alert">
+                            <p>{historyActionError === "search"
+                              ? text(
+                                "Server search is unavailable. Showing local title matches.",
+                                "서버 검색을 사용할 수 없어 현재 목록의 제목 일치 결과를 표시합니다.",
+                              )
+                              : text(
+                                "The chat was not archived because the server did not confirm the change.",
+                                "서버가 변경을 확인하지 않아 대화를 보관하지 않았습니다.",
+                              )}</p>
+                            <button type="button" onClick={() => setHistoryActionError(undefined)}>
+                              {text("Dismiss", "닫기")}
+                            </button>
+                          </div>
+                        ) : null}
+                        <nav className="portal-history-list" aria-label={text("Saved chats", "저장된 대화")}>
+                          {historyLoading ? <p className="portal-history-empty" role="status">{text("Loading your conversations…", "대화 기록을 불러오고 있어요…")}</p> : null}
+                          {visibleThreads.length ? visibleThreads.map((thread) => {
+                            const active = thread.id === activeThreadId || pathname === `/chat/${thread.id}`;
+                            return (
+                              <div
+                                className={`portal-history-item${active ? " is-active" : ""}`}
+                                key={thread.id}
+                              >
+                                <Link
+                                  href={`/chat/${thread.id}`}
+                                  prefetch={false}
+                                  scroll={false}
+                                  tabIndex={historySectionOpen ? undefined : -1}
+                                  onClick={() => {
+                                    setActiveThreadId(thread.id);
+                                    closeMenu();
+                                  }}
+                                >
+                                  <History size={13} aria-hidden="true" />
+                                  <span>
+                                    <strong>{thread.title}</strong>
+                                    <small>{formatDate(thread.lastMessageAt, undefined, locale)}</small>
+                                  </span>
+                                </Link>
+                                <button
+                                  type="button"
+                                  disabled={archivePending}
+                                  tabIndex={historySectionOpen ? undefined : -1}
+                                  title={text("Archive chat", "대화 보관")}
+                                  aria-label={text(`Archive ${thread.title}`, `${thread.title} 대화 보관`)}
+                                  onClick={() => archiveConversation(thread.id)}
+                                >
+                                  <Archive size={13} aria-hidden="true" />
+                                </button>
+                              </div>
+                            );
+                          }) : historyUnavailable || historyIsPreview || historyLoading ? null : (
+                            <p className="portal-history-empty">{normalizedHistoryQuery
+                              ? text("No conversations match those keywords.", "해당 키워드와 일치하는 대화가 없습니다.")
+                              : text("Saved conversations will appear here.", "저장된 대화가 여기에 표시됩니다.")}</p>
+                          )}
+                        </nav>
+                        <p className="portal-history-security">
+                          <LockKeyhole size={12} aria-hidden="true" />
+                          {text("Private to this browser session", "이 브라우저 세션에 비공개 저장")}
+                        </p>
                       </div>
-                    );
-                  }) : historyUnavailable || historyIsPreview || historyLoading ? null : (
-                    <p className="portal-history-empty">{normalizedHistoryQuery
-                      ? text("No conversations match those keywords.", "해당 키워드와 일치하는 대화가 없습니다.")
-                      : text("Saved conversations will appear here.", "저장된 대화가 여기에 표시됩니다.")}</p>
-                  )}
-                </nav>
-                <p className="portal-history-security">
-                  <LockKeyhole size={12} aria-hidden="true" />
-                  {text("Private to this browser session", "이 브라우저 세션에 비공개 저장")}
-                </p>
-              </div>
-            </div>
-          </section>
+                    </div>
+                  </section>
+                ) : null}
+              </details>
+            );
+          })}
         </div>
 
         <footer className="sidebar__footer portal-sidebar__footer">

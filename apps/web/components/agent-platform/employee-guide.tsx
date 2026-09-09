@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Download, FileSearch, MessageSquareText, Network, Play, ShieldCheck, Square } from "lucide-react";
+import { ArrowRight, BookOpen, Download, MessageSquareText, Network, Play, Settings, ShieldCheck, Square } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { ResearchJourney } from "./research-journey";
 import { ServiceScope } from "./service-scope";
@@ -10,9 +10,9 @@ import styles from "./employee-guide.module.css";
 export function EmployeeGuide() {
   const { text } = useI18n();
   const destinations = [
-    { icon: Network, href: "/research", title: text("Prepare a research brief", "리서치 브리핑 준비"), detail: text("Agent research · Live progress", "에이전트 조사 · 실시간 진행 확인") },
-    { icon: MessageSquareText, href: "/ask", title: text("Ask a quick question", "간단한 질문하기"), detail: text("AI answers · Follow-up questions", "AI 답변 · 이어서 질문") },
-    { icon: FileSearch, href: "/drug-letters", title: text("Find an FDA letter", "FDA 경고서한 찾기"), detail: text("Company search · Original documents", "회사명 검색 · 원문 확인") },
+    { icon: MessageSquareText, href: "/ask", title: text("FDA Warning Letter Chatbot", "FDA 경고서한 챗봇"), detail: text("Chatbot · Warning letters · Saved sources · Chat history", "챗봇 · 경고서한 · 저장한 자료 · 대화 기록") },
+    { icon: Network, href: "/research", title: text("FDA AI Agent", "FDA AI 에이전트"), detail: text("Agent research · Saved briefs · Review workflows", "에이전트 조사 · 저장된 브리핑 · 검토 워크플로") },
+    { icon: Settings, href: "/settings", title: text("Settings", "설정"), detail: text("Language · Getting started · Service information", "언어 · 이용 방법 · 서비스 안내") },
   ];
   const controls = [
     { icon: Square, title: text("Stop research", "리서치 중지"), detail: text("Stop further work; retain progress.", "추가 작업 중지 · 진행 내용 보관") },
