@@ -50,11 +50,11 @@ planning/searching/reading/checking and completed with a saved result (five mode
 calls, 15 events). A real Korean chat request returned HTTP 200 and rendered a
 `gpt-5-mini` answer with linked Safrel source citations. Evidence
 is under `.artifacts/migration-iqevzrztpdiysnojzpur/`.
-Vercel Git auto-deployment remains pending: `vercel git connect` was rejected
-because the new Vercel account lacks a GitHub login connection. The user has
-been asked to connect `its-davemaxuell` in Vercel account settings. Railway API
-and worker already use the new GitHub repository. No supplied secrets were
-found in tracked or unignored files.
+Vercel Git auto-deployment is now enabled and verified in project settings:
+GitHub repository `its-davemaxuell/daewoong-PharmaAgentOS`, production branch
+`main`, root directory `apps/web`, Next.js framework, and Git deployment creation
+enabled. Railway API and worker also use the new GitHub repository. No supplied
+secrets were found in tracked or unignored files.
 
 **2026-09-09 Railway import correction:** The new repository is
 `its-davemaxuell/daewoong-PharmaAgentOS`. A root `Dockerfile` now mirrors the API

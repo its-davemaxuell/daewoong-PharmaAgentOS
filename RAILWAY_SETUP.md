@@ -17,7 +17,8 @@ The new Vercel project uses **Root Directory `apps/web`**, with
 Vercel API/worker deployment configuration; do not use it for this split setup.
 For CLI deployment from the repository root, specify
 `--local-config apps/web/vercel.json` and the new account's configuration/scope.
-Git auto-deployment still requires the new Vercel account's GitHub login connection.
+Git auto-deployment is enabled for `its-davemaxuell/daewoong-PharmaAgentOS`, with
+`main` as the production branch and `apps/web` as the project root directory.
 
 ```mermaid
 flowchart LR
