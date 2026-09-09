@@ -31,9 +31,12 @@ Browser checks pass all ten feature groups plus keyboard/focus and source-select
 checks, including two-session isolation and both languages at 320/390/768/1024/1440px.
 No browser JavaScript errors or design-detector findings. Browser checks used an
 isolated signed local API, synthetic FDA fixtures and disabled model generation.
-Docker is stopped, so local PostgreSQL migration execution was unavailable; CI
-now applies the migration twice. Hosted migration, publication and a live-model
-check for this revision remain unperformed. See the
+Docker is stopped, so local PostgreSQL migration execution was unavailable.
+Hosted CI now passes all nine jobs: **580 backend tests**, the packaged API suite,
+frontend checks, PostgreSQL upgrade/repeatability and nine gated database tests,
+backup restoration, Temporal recovery, contract validation and image/secret scans.
+Production migration, publication and a live-model check for this revision remain
+unperformed. See the
 [research and feature record](docs/product/chatbot-commercial-upgrade-20260909.md)
 and [verification evidence](docs/assurance/chatbot-workspace-20260909.md).
 
@@ -45,6 +48,11 @@ the saved Supabase CLI session belongs to the previous account. Publication is
 pending either administrator access for the additive migration or confirmation
 that it was run in that project's SQL Editor. Do not push this API revision to
 the automatic production pipeline before verifying the migration.
+The release branch is `release/chatbot-workspace-20260909`; all application code
+and CI changes passed in run `34366163895` at `063574157517c927a35939717913afca3ec6b718`.
+Production still serves `915cee941b15532e17ee45c78687914997573e5e`, with web/API
+health checks returning 200. The migration runner and live browser checks are
+prepared in ignored `.artifacts/chat-workspace/` files.
 
 **2026-09-09 three-section navigation:** The user's requested separation replaces
 the everyday/specialist menus with FDA Warning Letter Chatbot, FDA AI Agent and
