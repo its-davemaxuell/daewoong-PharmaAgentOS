@@ -96,6 +96,9 @@ jobs:
         run: psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260908_fda_research_agent.sql
       - name: Apply chatbot workspace migration twice to verify repeatability
         run: |
+          # The disposable CI schema was created from current models above.
+          # Remove the new columns so the first pass exercises a real upgrade.
+          psql --set ON_ERROR_STOP=1 --command "ALTER TABLE public.chat_threads DROP COLUMN pinned_at; ALTER TABLE public.chat_messages DROP COLUMN feedback_rating;"
           psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260909_chat_workspace.sql
           psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260909_chat_workspace.sql
       - run: AGENT_OS_POSTGRES_TEST=1 pytest tests/test_agent_platform_postgres.py
