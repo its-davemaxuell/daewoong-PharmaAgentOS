@@ -166,9 +166,10 @@ jobs:
           COMPONENT: ${{ matrix.component }}
         run: |
           if [ "$COMPONENT" = api ]; then
+            diff -u services/api/Dockerfile Dockerfile
             docker build -f services/api/Dockerfile --target test -t pharma-api-tests:ci .
             docker run --rm pharma-api-tests:ci
-            docker build -f services/api/Dockerfile -t pharma-api:ci .
+            docker build -f Dockerfile -t pharma-api:ci .
             docker run --rm --read-only --tmpfs /tmp:rw,size=128m -e APP_ENV=test -e OBJECT_STORE_PATH=/tmp/objects -v "$PWD/scripts/container-smoke.py:/smoke.py:ro" pharma-api:ci python /smoke.py
           else
             docker build -t pharma-web:ci apps/web

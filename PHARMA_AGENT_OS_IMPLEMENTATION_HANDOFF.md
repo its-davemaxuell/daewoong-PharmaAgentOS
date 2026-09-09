@@ -10,6 +10,14 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-09 Railway import correction:** The new repository is
+`its-davemaxuell/daewoong-PharmaAgentOS`. A root `Dockerfile` now mirrors the API
+Dockerfile so Railway imports select Python instead of the root Supabase npm
+tooling. CI enforces equality and builds the root runtime image. The setup guide
+includes recovery from Railpack's missing start command error. Local file parity
+and diff checks passed; a local container build was unavailable because the
+Docker daemon was stopped. Railway deployment and readiness remain unverified.
+
 **2026-09-09 Railway backend preparation:** The backend now supports Railway API
 and persistent ingestion/research worker services using the existing Supabase
 database and storage. Daily incremental FDA collection, checkpoint recovery,

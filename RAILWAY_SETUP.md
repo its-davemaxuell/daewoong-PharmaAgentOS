@@ -22,8 +22,20 @@ flowchart LR
 
 In Railway, create a project, then two empty services named `api` and `worker`.
 Configure their variables/settings first, then connect each to
-`davemaxuell/daewoong-pharmaagentOS`, branch `main`, through **GitHub Repo**.
+`its-davemaxuell/daewoong-PharmaAgentOS`, branch `main`, through **GitHub Repo**.
 Both services build the same existing non-root Docker image.
+
+The root `Dockerfile` makes a repository import automatically select the Python
+API build. It mirrors `services/api/Dockerfile`; CI checks that they stay equal
+and builds the root runtime image. Update both files when changing the image.
+
+If a deployment reports **Detected Node / No start command detected**, deploy
+the latest `main` revision. In the service's **Variables**, set
+`RAILWAY_DOCKERFILE_PATH=services/api/Dockerfile`, keep **Root Directory** at `/`,
+and deploy the changes. The build should report **Using detected Dockerfile!**.
+The root npm package is local Supabase tooling, not the backend server. Continue
+with the API or worker settings below and supply the environment variables in
+section 2 before starting the service.
 
 | Setting | `api` | `worker` |
 | --- | --- | --- |
