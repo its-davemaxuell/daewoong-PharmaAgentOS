@@ -318,6 +318,7 @@ export function PortalShell({
         <Link
           className="wordmark wordmark--mobile portal-brand portal-brand--mobile"
           href="/dashboard"
+          prefetch={false}
           aria-label={text("PharmaAgent OS workspace", "PharmaAgent OS 워크스페이스")}
           onClick={() => closeMenu()}
         >
@@ -378,6 +379,7 @@ export function PortalShell({
             <Link
               className="wordmark portal-brand portal-brand--sidebar"
               href="/dashboard"
+              prefetch={false}
               aria-label={text("PharmaAgent OS workspace", "PharmaAgent OS 워크스페이스")}
               onClick={() => closeMenu()}
             >
