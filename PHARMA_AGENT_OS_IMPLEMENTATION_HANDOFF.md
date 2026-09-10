@@ -1,6 +1,6 @@
 # PharmaAgent OS implementation handoff
 
-**Handoff date:** 2026-09-10
+**Handoff date:** 2026-09-11
 
 **Next engineer:** Start with [the transfer brief](NEXT_ENGINEER_HANDOFF.md) for
 the publication state, production blockers, verification and ordered
@@ -9,6 +9,48 @@ next steps. This file remains the authoritative implementation record.
 **Authoritative workspace:** `C:\Users\user\Desktop\PharmaAgentOS`  
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
+
+**2026-09-11 production migration:** Applied the reviewed workspace migration,
+runtime grants and Supabase boundary in one transaction on `iqevzrztpdiysnojzpur`.
+All 59 pre-existing table counts were preserved; the three new workspace tables,
+API/browser/worker permissions, immutable-brief trigger and legacy bookmark
+backfill were verified. See `docs/assurance/workspace-production-migration-20260911.json`.
+Code is published in PR #14 on `release/linear-workspace-20260911`. Application
+rollout is in progress and is not yet claimed complete.
+
+**2026-09-11 hosted dataset preparation:** Read-only preflight of the current
+Supabase target passed with no data corrections needed. Backed up all 59 public
+application tables and downloaded/checksum-verified all 770 referenced evidence
+files. Restored the live export into isolated PostgreSQL 17; every original table's
+counts/content survived two workspace migration passes. One legacy bookmark
+converted correctly; all three database guard/boundary tests passed. The local
+restore container is stopped. Recovery artifacts are under
+`.artifacts/linear-workspace/dataset-ready-20260911/`; repeatable commands, recovery
+scope and rollout freshness requirements are in
+[the dataset preparation record](docs/assurance/workspace-dataset-preparation-20260911.md).
+Production migration and deployment have not been performed.
+
+**2026-09-11 workspace verification:** Local production build, TypeScript,
+ESLint, 74 frontend unit tests, API regression coverage, isolated PostgreSQL
+permissions/immutability and the repaired browser journeys passed. Final cached
+inspector p95 was 45–63ms in Chromium/Firefox and 305–334ms in Windows WebKit;
+the latter remains above the proposed 100ms target. The final 12 command/performance
+checks passed the separate regression ceiling. See the complete measurements,
+intermediate failures and rollout order in `LINEAR_WORKSPACE_IMPLEMENTATION.md`.
+No deployment or hosted database migration was performed.
+
+**2026-09-10 Linear-inspired workspace (local implementation):** Added attached
+light navigation, persistent Research and Sources workspaces, evidence inspectors,
+command actions, scoped query caching, workspace search, personal source-change
+triage, revision-aware saved views and immutable research brief snapshots. Added
+the PostgreSQL migration, runtime grants, Supabase boundary inventory and browser/
+API regression coverage. The new layout and motion contracts supersede the older
+floating-shell and route-arrival entries below. The existing brand symbol is
+preserved. See [the implementation and rollout record](LINEAR_WORKSPACE_IMPLEMENTATION.md)
+for the precise scope and verification. These changes have not been deployed;
+apply the additive migration before rolling out the API and web revisions.
+
+**2026-09-10 main brand icon:** Replaced the desktop and mobile header P tiles with the existing orange Daewoong symbol, reused from the browser icon as `public/brand/daewoong-symbol.svg`. Removed the indigo tile decoration and preserved existing responsive sizing, compact-header visibility and accessible Home links. Type checking and targeted ESLint passed. Local change; not deployed.
 
 **2026-09-10 navigation follow-up:** Renamed the Chatbot group, Help destination
 and Settings explanation to FDA Chatbot / FDA 챗봇. All three native navigation

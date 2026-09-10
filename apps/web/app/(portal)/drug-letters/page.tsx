@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getLetterPage, getSavedViews } from "@/lib/api-client";
-import { readLetterQuery, letterQueryString } from "@/lib/letter-query";
+import { readLetterQuery } from "@/lib/letter-query";
 import { LettersExplorer } from "@/components/letters-explorer";
 import { bookmarkedLetterIds } from "@/lib/letter-bookmarks";
 
@@ -14,6 +14,6 @@ export default async function DrugLettersPage({ searchParams }: {
   for (const [key, value] of Object.entries(raw)) if (value) params.set(key, Array.isArray(value) ? value[0] : value);
   const query = readLetterQuery(params);
   const [page, saved] = await Promise.all([getLetterPage(query), getSavedViews()]);
-  return <LettersExplorer key={letterQueryString(query)} initialPage={page.data}
+  return <LettersExplorer initialPage={page.data}
     initialSavedLetterIds={bookmarkedLetterIds(saved.data)} mode={page.mode} initialState={query} />;
 }

@@ -1,6 +1,6 @@
 ---
-name: PharmaAgent OS — Layered desk
-description: A bright, precise research workspace with dimensional white compartments.
+name: PharmaAgent OS — Attached workspace
+description: A bright, precise research workspace with attached navigation and persistent evidence inspection.
 colors:
   primary: "#5856d6"
   primary-deep: "#4442b8"
@@ -35,8 +35,9 @@ spacing:
 
 ## Overview
 
-The user approved composition A: bright, minimal, neat, content-rich, and modern,
-with dimensional compartments. This replaces the former navy/cobalt workbench.
+The September 10 Linear adaptation uses an attached light workspace and persistent
+list/detail geometry. It preserves composition A's indigo identity, existing brand
+asset and evidence-reading surfaces while reducing the surrounding chrome.
 PharmaAgent OS serves Korean and English-speaking employees working with retained
 FDA warning letters. Visual quality must extend to every route and state.
 
@@ -56,10 +57,12 @@ Compact does not mean tiny: data density comes from alignment and reduced chrome
 
 ## Layout
 
-At desktop a floating white 244px navigation compartment sits within a 256px rail.
-A 60px utility bar has a 12px top inset. Main content begins at 96px with 20px
-gutters. Maintain the three established navigation groups and their disclosure
-behavior. Brand opens Home; existing routes and capability guards remain.
+At desktop, attached 240px navigation and a 52px utility bar share flush boundaries.
+Main content uses 24px gutters and a 76px top offset. Primary destinations are
+Research, Sources, Saved work, Inbox and Chat; team review and operations are
+separate disclosure groups. Brand opens Home; capability guards remain.
+Evidence inspectors reserve 352px on wide screens and become native modal panels
+below 1280px. Research history stays mounted beside selected work.
 Home uses A's asymmetric desk: a layered objective tray and source collection on
 the left, workflow, quick questions and work shortcuts on the right. Task content
 occupies the first viewport; no decorative metrics or oversized empty hero.
@@ -82,7 +85,7 @@ glowing text, rotating objects, or depth that interferes with reading.
 
 Panels have 16px corners, controls 8px, inset trays 10px. Use crisp one-pixel
 boundaries on fields, clear focus outlines and modest 44px interaction targets.
-The P monogram is a small indigo raised tile. No new organization identity asset.
+The main brand icon uses the existing orange Daewoong symbol without a tile background.
 
 ## Components
 
@@ -105,16 +108,16 @@ passages in their source language. All generated comps are layout references:
 never implement their fictional accounts, uploads, broader source claims, records,
 or metrics. Existing functionality is the product truth.
 References: [Linear's workspace alignment and density](https://linear.app/now/how-we-redesigned-the-linear-ui); [Craft's document hierarchy](https://www.craft.do/).
-The user's approved composition A is the visual authority for this redesign.
+The approved Linear adaptation and `LINEAR_WORKSPACE_IMPLEMENTATION.md` define
+the current shell and interaction contracts; retained domain surfaces still use A.
 
 ## Implemented motion conventions
 
-`app/tokens.css` is authoritative for colors, elevation, geometry and motion;
-historical variable names remain compatibility aliases. Use 110ms press, 160ms
-hover/focus color, 240ms selection, 260ms panel opening (200ms exit) and 300ms context,
-with `cubic-bezier(.22,.8,.25,1)`. Translation is 4–8px for local presence; button
-press is at most 1px, with .98–.99 scale. No page-wide layout animation or card stagger.
-
+`app/tokens.css` retains semantic colors and shared domain tokens.
+`app/workspace.css` overrides the attached workspace geometry and local timing:
+100ms hover, immediate selection and 200ms inspector entry (140ms command entry).
+Navigation disclosures use the existing interruptible 200ms behavior. Reduced
+motion cancels movement. Geometry and focus, not decorative motion, carry context.
 Native selection controls share a decorative, tracking indicator. Its bounded
 Web Animations transform measures only a changed selection and cancels/restarts
 from the interrupted position. Native button, link, radio and tab semantics own
@@ -122,11 +125,10 @@ state. The whole track owns stacking so its moving background stays below every
 label; individual controls do not create isolated stacking contexts. The selection
 engine does not load Motion layout/drag features.
 
-After a deliberate route change, the receiving workspace settles 6px over 300ms.
-The persistent shell keeps its identity; initial loads, query refreshes, streamed
-tokens and polling do not replay this transition. Letter view and specialist
-selection use the same bounded movement with full text opacity. No exit wait,
-page remount, document crossfade, animated dimensions or delayed action.
+Route changes show content without a context-arrival translation. The persistent
+shell retains its identity; streamed tokens and polling do not replay movement.
+Closing an inspector restores the opening control, including pointer activation
+in WebKit. Pagination uses immediate scrolling. No exit wait or document crossfade.
 
 Motion's lazy `domAnimation` feature bundle and provider are local to ChatWorkspace;
 exiting surfaces become inert immediately. The native conversation dialog owns

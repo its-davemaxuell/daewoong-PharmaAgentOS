@@ -4,7 +4,7 @@ test("navigation groups slide, reverse immediately and respect reduced motion", 
   await context.addCookies([{ name: "dli_locale", value: "en", url: "http://127.0.0.1:3100" }]);
   await page.goto("/dashboard");
   await page.waitForLoadState("networkidle");
-  await expect(page.locator("summary").filter({ hasText: "FDA Chatbot" })).toBeVisible();
+  await expect(page.locator("summary").filter({ hasText: "Workspace" })).toBeVisible();
   for (const group of await page.locator(".portal-workspace-group").all()) {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const trigger = group.locator("summary");
@@ -30,7 +30,7 @@ test("navigation groups slide, reverse immediately and respect reduced motion", 
       const frames = (animation.effect as KeyframeEffect).getKeyframes();
       return { duration: animation.effect?.getTiming().duration, token: getComputedStyle(node).getPropertyValue("--motion-panel"), height: node.getBoundingClientRect().height, start: parseFloat(String(frames[0].height)), end: parseFloat(String(frames[1].height)) };
     });
-    expect(halfway.duration).toBe(260);
+    expect(halfway.duration).toBe(200);
     expect(halfway.height).toBeGreaterThan(halfway.start);
     expect(halfway.height).toBeLessThan(halfway.end);
     await pauseNext();

@@ -7,6 +7,29 @@
 
 ---
 
+## September 10 implementation addendum: personal workspace
+
+The user approved implementation of the Linear research adaptation. Apply the
+attached light shell with the existing indigo identity, local Pretendard and
+Streamline assets. Primary destinations are Research, Sources, Saved work, Inbox
+and Chat; formal team review and operational controls remain separate.
+
+Implement persistent research/source lists with contextual evidence inspection,
+owner-scoped memory caching, shared command actions, title/metadata search,
+revision-aware saved views, immutable completed-brief snapshots and a personal
+source-change inbox. New/Later/Done/Dismissed are personal triage states; they do
+not approve evidence, close a case or create a compliance decision. The first
+inbox visit establishes a fixed horizon thirty days earlier. Preserve existing
+browser-session identity, source admission, pinned evidence and run controls.
+
+The implementation map, migration order, validation evidence and deployment
+limits are recorded in [LINEAR_WORKSPACE_IMPLEMENTATION.md](LINEAR_WORKSPACE_IMPLEMENTATION.md).
+The current status remains in the implementation handoff. This addendum changes
+workspace interaction and adds personal persistence; the governed platform
+requirements below remain authoritative.
+
+---
+
 ## 1. Product definition
 
 **PharmaAgent OS is a governed, case-based AI agent platform that converts external pharmaceutical regulatory signals into evidence-backed internal review packages.**

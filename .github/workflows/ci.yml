@@ -126,7 +126,12 @@ jobs:
           psql --set ON_ERROR_STOP=1 --command "ALTER TABLE public.chat_threads DROP COLUMN pinned_at; ALTER TABLE public.chat_messages DROP COLUMN feedback_rating;"
           psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260909_chat_workspace.sql
           psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260909_chat_workspace.sql
+      - name: Apply personal workspace schema and immutable snapshots twice
+        run: |
+          psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260910_linear_workspace.sql
+          psql --set ON_ERROR_STOP=1 --file ../../infra/migrations/20260910_linear_workspace.sql
       - run: AGENT_OS_POSTGRES_TEST=1 pytest tests/test_agent_platform_postgres.py
+      - run: AGENT_OS_POSTGRES_TEST=1 pytest tests/test_workspace_postgres.py
       - name: Verify concurrent research admission, worker claims, and stop fencing
         run: AGENT_OS_POSTGRES_TEST=1 pytest tests/test_research_postgres.py
       - name: Verify scheduled ingestion and single active scraper on PostgreSQL

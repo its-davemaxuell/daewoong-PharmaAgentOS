@@ -1,0 +1,11 @@
+import type { ResearchBrief } from "./research-types";
+export type SearchKind = "sources" | "research" | "briefs" | "views" | "chats";
+export type SearchResult = { id: string; title: string; subtitle: string; href: string; kind: SearchKind };
+export type SearchPage = { groups: { kind: SearchKind; items: SearchResult[]; has_more: boolean }[]; page: number };
+export type TriageState = "new" | "later" | "done" | "dismissed";
+export type InboxItem = { id: string; letter_id: string; title: string; subtitle: string; event_type: string; version_id: string | null; detected_at: string; state: TriageState; revision: number; reason: string };
+export type InboxPage = { items: InboxItem[]; counts: Partial<Record<TriageState, number>>; page: number; has_more: boolean; starts_at: string };
+export type BriefSummary = { id: string; title: string; run_id: string; run_revision: number; content_hash: string; created_at: string };
+export type BriefSnapshot = BriefSummary & { snapshot: { objective: string; language: "ko" | "en"; result: ResearchBrief; review_state: "draft" } };
+export type SavedWorkspaceView = { id: string; name: string; description: string; view_kind: "source_view" | "source_bookmark"; source_id: string | null; open_url: string; revision: number; display: { sort?: string; pageSize?: number }; criteria: Record<string, string>; result_count: number };
+export type WorkspacePage<T> = { items: T[]; has_more: boolean; next_cursor?: string | null };

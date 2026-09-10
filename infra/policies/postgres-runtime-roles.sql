@@ -74,6 +74,12 @@ FROM fda_readonly_runtime;
 REVOKE SELECT ON public.research_runs, public.research_events FROM fda_readonly_runtime;
 GRANT SELECT, INSERT, UPDATE ON public.research_runs TO fda_api_runtime, fda_worker_runtime;
 GRANT SELECT, INSERT ON public.research_events TO fda_api_runtime, fda_worker_runtime;
+REVOKE ALL ON public.workspace_inbox_preferences, public.workspace_triage,
+  public.research_brief_snapshots FROM fda_readonly_runtime, fda_worker_runtime,
+  pharma_orchestrator_runtime, pharma_mcp_runtime;
+GRANT SELECT, INSERT ON public.workspace_inbox_preferences,
+  public.research_brief_snapshots TO fda_api_runtime;
+GRANT SELECT, INSERT, UPDATE ON public.workspace_triage TO fda_api_runtime;
 
 GRANT INSERT ON
   public.ai_summaries,

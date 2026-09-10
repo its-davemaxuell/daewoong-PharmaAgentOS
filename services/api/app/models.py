@@ -558,6 +558,12 @@ class Subscription(TimestampMixin, Base):
     channel: Mapped[str] = mapped_column(String(20), default="email")
     destination_id: Mapped[str] = mapped_column(String(255), nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
+    view_kind: Mapped[str] = mapped_column(
+        String(32), default="source_view", server_default="source_view"
+    )
+    source_id: Mapped[str | None] = mapped_column(String(36))
+    display: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, server_default="{}")
+    revision: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
     __table_args__ = (UniqueConstraint("owner_id", "name", name="uq_subscriptions_owner_name"),)
 
@@ -2412,9 +2418,7 @@ class IntegrationOutbox(Base):
     content: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     content_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[str] = mapped_column(String(40), nullable=False, default="DRAFT", index=True)
-    external_delivery_allowed: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    external_delivery_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     requested_by: Mapped[str] = mapped_column(String(255), nullable=False)
     reviewed_by: Mapped[str | None] = mapped_column(String(255))
     review_reason: Mapped[str | None] = mapped_column(Text)
@@ -2432,9 +2436,7 @@ class IntegrationOutbox(Base):
             "status IN ('DRAFT', 'REVIEWED_FOR_MANUAL_USE', 'CANCELLED')",
             name="integration_outbox_status",
         ),
-        CheckConstraint(
-            "external_delivery_allowed = false", name="integration_outbox_no_delivery"
-        ),
+        CheckConstraint("external_delivery_allowed = false", name="integration_outbox_no_delivery"),
         CheckConstraint("length(content_sha256) = 64", name="integration_outbox_hash"),
         CheckConstraint(
             "(status = 'DRAFT' AND reviewed_by IS NULL AND reviewed_at IS NULL) OR "
@@ -2474,8 +2476,11 @@ class ResearchRun(TimestampMixin, Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     __table_args__ = (
         UniqueConstraint("owner_id", "client_request_id", name="uq_research_owner_request"),
-        CheckConstraint("status IN ('queued','running','completed','stopped','failed',"
-                        "'limit_reached','insufficient_evidence')", name="research_status"),
+        CheckConstraint(
+            "status IN ('queued','running','completed','stopped','failed',"
+            "'limit_reached','insufficient_evidence')",
+            name="research_status",
+        ),
         CheckConstraint("language IN ('en','ko')", name="research_language"),
         CheckConstraint("model_calls >= 0 AND total_tokens >= 0", name="research_usage"),
         Index("ix_research_queue", "status", "lease_expires_at", "created_at"),
@@ -2494,6 +2499,41 @@ class ResearchEvent(Base):
     data: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     __table_args__ = (UniqueConstraint("run_id", "sequence", name="uq_research_event_sequence"),)
+
+
+class WorkspaceInboxPreference(Base):
+    __tablename__ = "workspace_inbox_preferences"
+    owner_id: Mapped[str] = mapped_column(String(255), primary_key=True)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class WorkspaceTriage(TimestampMixin, Base):
+    __tablename__ = "workspace_triage"
+    owner_id: Mapped[str] = mapped_column(String(255), primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("change_events.id"), primary_key=True)
+    state: Mapped[str] = mapped_column(String(20), default="new", nullable=False)
+    reason: Mapped[str] = mapped_column(String(1000), default="", nullable=False)
+    revision: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    __table_args__ = (
+        CheckConstraint(
+            "state IN ('new','later','done','dismissed')", name="workspace_triage_state"
+        ),
+    )
+
+
+class ResearchBriefSnapshot(Base):
+    __tablename__ = "research_brief_snapshots"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    owner_id: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    run_id: Mapped[str] = mapped_column(
+        ForeignKey("research_runs.id", ondelete="RESTRICT"), nullable=False
+    )
+    run_revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    snapshot: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    __table_args__ = (UniqueConstraint("owner_id", "run_id", "run_revision"),)
 
 
 class A2AExchange(Base):

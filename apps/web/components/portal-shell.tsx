@@ -26,7 +26,8 @@ import { Settings } from "@/components/icons/Settings";
 import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { X } from "@/components/icons/X";
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
-import { useContextArrival } from "./motion/use-context-arrival";
+import { openCommandMenu } from "./workspace/commands";
+import { DensityControl } from "./workspace/density-control";
 import { useMediaQuery } from "@/lib/ui-media";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -41,19 +42,19 @@ import { formatDate } from "@/components/ui";
 import type { AppRole } from "@/lib/auth-types";
 import { useI18n } from "@/lib/i18n";
 
-const navSections = [
+const legacyNavSections = [
   { id: "chatbot", en: "FDA Chatbot", ko: "FDA 챗봇", icon: MessageSquareText },
   { id: "agent", en: "FDA AI Agent", ko: "FDA AI 에이전트", icon: Network },
   { id: "settings", en: "Settings", ko: "설정", icon: Settings },
 ] as const;
 
-const navItems: Array<{
+const legacyNavItems: Array<{
   en: string;
   ko: string;
   href: string;
   icon: typeof MessageSquareText;
   requiredRole?: AppRole;
-  section: typeof navSections[number]["id"];
+  section: typeof legacyNavSections[number]["id"];
 }> = [
   { en: "Chatbot", ko: "챗봇", href: "/ask", icon: MessageSquareText, section: "chatbot" },
   { en: "Warning letter library", ko: "경고서한 자료실", href: "/drug-letters", icon: FileText, section: "chatbot" },
@@ -80,17 +81,32 @@ export function PortalShell({
   children,
   roles,
   newLetterNotification: initialNotification,
+  linearWorkspace = true,
 }: {
   children: React.ReactNode;
   roles: AppRole[];
+  linearWorkspace?: boolean;
   newLetterNotification: {
     latestEventId?: string;
     occurredAt?: string;
   };
 }) {
+  const navSections = linearWorkspace ? [
+    { id: "chatbot", en: "Workspace", ko: "워크스페이스", icon: MessageSquareText },
+    { id: "agent", en: "Team review", ko: "팀 검토", icon: Network },
+    { id: "settings", en: "Settings & operations", ko: "설정 및 운영", icon: Settings },
+  ] as const : legacyNavSections;
+  const navItems: typeof legacyNavItems = linearWorkspace ? [
+    { en: "Research", ko: "리서치", href: "/research", icon: Network, section: "chatbot" },
+    { en: "Sources", ko: "자료", href: "/drug-letters", icon: FileText, section: "chatbot" },
+    { en: "Saved work", ko: "저장한 작업", href: "/saved-work", icon: Bookmark, section: "chatbot" },
+    { en: "Inbox", ko: "수신함", href: "/inbox", icon: Bell, section: "chatbot" },
+    { en: "Chat", ko: "챗봇", href: "/ask", icon: MessageSquareText, section: "chatbot" },
+    ...legacyNavItems.filter(item => !["/research", "/ask", "/drug-letters", "/saved-views"].includes(item.href)),
+  ] : legacyNavItems;
   const router = useRouter();
   const pathname = usePathname();
-  const workspaceRef = useContextArrival<HTMLElement>(pathname);
+  const workspaceRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const mobileViewport = useMediaQuery("(max-width: 980px)");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -291,7 +307,7 @@ export function PortalShell({
   }, [menuOpen]);
 
   return (
-    <div className={`portal-shell${sidebarCollapsed ? " portal-shell--sidebar-collapsed" : ""}`}>
+    <div className={`${linearWorkspace ? "linear-workspace " : ""}portal-shell${sidebarCollapsed ? " portal-shell--sidebar-collapsed" : ""}`}>
       <header className="topbar portal-header" inert={menuOpen || undefined}>
         <button
           ref={sidebarExpandButtonRef}
@@ -325,7 +341,7 @@ export function PortalShell({
           aria-label={text("PharmaAgent OS workspace", "PharmaAgent OS 워크스페이스")}
           onClick={() => closeMenu()}
         >
-          <span className="os-brand-mark" aria-hidden="true">P</span>
+          <Image className="os-brand-mark" src="/brand/daewoong-symbol.svg" alt="" width={29} height={30} unoptimized />
           <span className="os-brand-lockup"><span className="os-brand-name">PharmaAgent<span>OS</span></span><small>{text("Evidence workspace", "근거 중심 리서치 워크스페이스")}</small></span>
         </Link>
 
@@ -337,17 +353,10 @@ export function PortalShell({
         </div>
 
         <div className="portal-header__actions">
-          <Link
-            className="topbar__search portal-header__search"
-            prefetch={false} href="/drug-letters"
-            aria-label={text("Search FDA Drug warning letters", "FDA 의약품 경고서한 검색")}
-          >
-            <Search size={16} aria-hidden="true" />
-            <span>{text("Search warning letters", "경고서한 검색")}</span>
-          </Link>
+          <button className="topbar__search portal-header__search" onClick={openCommandMenu} aria-label={text("Actions and workspace search", "작업 및 워크스페이스 검색")}><Search size={16} aria-hidden="true" /><span>{text("Search or run an action", "검색 또는 작업 실행")}</span><kbd>Ctrl K</kbd></button>
           <Link
             className={`portal-header__notification${showNewLetterNotification ? " has-new" : ""}`}
-            prefetch={false} href="/drug-letters?sort=posted-desc"
+            prefetch={false} href={linearWorkspace ? "/inbox" : "/drug-letters?sort=posted-desc"}
             aria-label={showNewLetterNotification
               ? text(
                   "New FDA warning letters are available. Open newest letters.",
@@ -365,6 +374,7 @@ export function PortalShell({
             ) : null}
           </Link>
           <LanguageToggle />
+          {linearWorkspace && <DensityControl />}
 
         </div>
       </header>
@@ -387,7 +397,7 @@ export function PortalShell({
               aria-label={text("PharmaAgent OS workspace", "PharmaAgent OS 워크스페이스")}
               onClick={() => closeMenu()}
             >
-              <span className="os-brand-mark" aria-hidden="true">P</span>
+              <Image className="os-brand-mark" src="/brand/daewoong-symbol.svg" alt="" width={29} height={30} unoptimized />
               <span className="os-brand-lockup"><span className="os-brand-name">PharmaAgent<span>OS</span></span><small>{text("Evidence workspace", "근거 중심 리서치 워크스페이스")}</small></span>
             </Link>
             <button

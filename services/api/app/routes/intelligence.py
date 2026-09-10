@@ -456,9 +456,7 @@ def _validate_analysis(
         requested_actions = _strings(
             raw.get("requested_actions"), f"findings[{index}].requested_actions"
         )
-        _require_analysis_prose(
-            title, f"findings[{index}].title", language=language, minimum=2
-        )
+        _require_analysis_prose(title, f"findings[{index}].title", language=language, minimum=2)
         _require_analysis_prose(
             finding_text, f"findings[{index}].finding", language=language, minimum=4
         )
@@ -984,9 +982,7 @@ async def generate_letter_ai_artifact(
                 prompt_version=settings.document_ai_prompt_version,
             )
             if summary:
-                cached = analysis_artifact_response(
-                    summary, findings, artifact_type=artifact_type
-                )
+                cached = analysis_artifact_response(summary, findings, artifact_type=artifact_type)
         if cached:
             add_audit_event(
                 session,
@@ -1104,8 +1100,8 @@ async def generate_letter_ai_artifact(
                         validation_feedback=validation_feedback,
                     )
                     try:
-                        summary_content, generated_findings, validation_report = (
-                            _validate_analysis(output, source_sections, language=language)
+                        summary_content, generated_findings, validation_report = _validate_analysis(
+                            output, source_sections, language=language
                         )
                         validation_report["generation_attempts"] = validation_attempt
                         break
@@ -1730,9 +1726,7 @@ def _chat_generator_candidates(
         if model_id in seen_models:
             continue
         seen_models.add(model_id)
-        candidates.append(
-            generator.with_model(model_id, thinking_level=thinking_levels[profile])
-        )
+        candidates.append(generator.with_model(model_id, thinking_level=thinking_levels[profile]))
     return candidates
 
 
@@ -2183,17 +2177,15 @@ async def _query_rag_impl(
                 ]
             )
             try:
-                answer, effective_generator, attempted_models = (
-                    await _generate_ai_with_fallback(
-                        selected_generators,
-                        method_name="stream_conversational_answer",
-                        stream_emitter=stream_emitter,
-                        arguments={
-                            "question": payload.question,
-                            "language": effective_language,
-                            "conversation_history": model_history,
-                        },
-                    )
+                answer, effective_generator, attempted_models = await _generate_ai_with_fallback(
+                    selected_generators,
+                    method_name="stream_conversational_answer",
+                    stream_emitter=stream_emitter,
+                    arguments={
+                        "question": payload.question,
+                        "language": effective_language,
+                        "conversation_history": model_history,
+                    },
                 )
                 if stream_emitter is not None:
                     stream_validation_completed = True
@@ -2497,13 +2489,15 @@ async def _query_rag_impl(
                             for index, citation in enumerate(citations, start=1)
                         ],
                     }
-                    answer, effective_generator, attempted_models = (
-                        await _generate_ai_with_fallback(
-                            selected_generators,
-                            method_name="stream_grounded_answer",
-                            stream_emitter=stream_emitter,
-                            arguments=generation_arguments,
-                        )
+                    (
+                        answer,
+                        effective_generator,
+                        attempted_models,
+                    ) = await _generate_ai_with_fallback(
+                        selected_generators,
+                        method_name="stream_grounded_answer",
+                        stream_emitter=stream_emitter,
+                        arguments=generation_arguments,
                     )
                     if stream_emitter is not None:
                         stream_validation_completed = True
@@ -3317,6 +3311,71 @@ def _saved_view_response(
     )
 
 
+def _bookmark_id(name: str) -> str | None:
+    if not name.startswith("Drug letter bookmark:"):
+        return None
+    try:
+        return str(UUID(name.removeprefix("Drug letter bookmark:")))
+    except ValueError:
+        return None
+
+
+def _view_display(value: dict) -> dict:
+    return {
+        "sort": value.get("sort")
+        if value.get("sort") in ("posted-desc", "posted-asc", "issued-desc", "company-asc")
+        else "posted-desc",
+        "pageSize": value.get("pageSize") if value.get("pageSize") in (20, 50, 100) else 20,
+    }
+
+
+async def _saved_view_sql_response(session, subscription, settings):
+    from app.routes.letter_search import search_query
+
+    criteria = _controlled_saved_view_criteria(subscription.criteria)
+    query = search_query(
+        session,
+        q=criteria.query,
+        subtype=criteria.drug_subtype,
+        category=criteria.category,
+        country=criteria.country,
+        lifecycle=criteria.lifecycle_state,
+        review=criteria.review_state,
+        document=criteria.linked_document,
+        posted_from=criteria.posted_from,
+        posted_to=criteria.posted_to,
+    )
+    source_id = subscription.source_id or _bookmark_id(subscription.name)
+    if source_id:
+        query = query.where(WarningLetter.id == source_id)
+    count, latest = (
+        await session.execute(
+            query.with_only_columns(
+                func.count(WarningLetter.id), func.max(WarningLetter.posted_date)
+            )
+        )
+    ).one()
+    result = _saved_view_response(subscription, settings=settings, records=[])
+    display = _view_display(subscription.display or {})
+    return result.model_copy(
+        update={
+            "result_count": count,
+            "last_matched": latest,
+            "view_kind": "source_bookmark" if source_id else "source_view",
+            "source_id": source_id,
+            "display": display,
+            "revision": subscription.revision,
+            "open_url": (
+                f"/drug-letters/{source_id}"
+                if source_id
+                else result.open_url
+                + ("&" if "?" in result.open_url else "?")
+                + f"sort={display['sort']}&pageSize={display['pageSize']}"
+            ),
+        }
+    )
+
+
 async def _owned_saved_view(
     session: AsyncSession,
     *,
@@ -3324,7 +3383,7 @@ async def _owned_saved_view(
     owner_id: str,
 ) -> Subscription:
     subscription = await session.scalar(
-        select(Subscription).where(
+        select(Subscription).with_for_update().where(
             Subscription.id == str(saved_view_id),
             Subscription.owner_id == owner_id,
         )
@@ -3336,6 +3395,9 @@ async def _owned_saved_view(
 
 @router.get("/saved-views", response_model=SavedViewPage, tags=["Letters"])
 async def saved_views(
+    kind: Literal["all", "source_view", "source_bookmark"] = "all",
+    source_id: UUID | None = None,
+    source_ids: list[UUID] | None = Query(default=None, max_length=100),
     cursor: str | None = Query(default=None, max_length=2_048),
     limit: int | None = Query(default=None, ge=1, le=100),
     page_size: int | None = Query(default=None, ge=1, le=100),
@@ -3347,23 +3409,35 @@ async def saved_views(
         offset = decode_cursor(cursor)
     except InvalidCursor as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    conditions = [Subscription.owner_id == principal.subject]
+    if kind != "all":
+        bookmark = Subscription.name.startswith("Drug letter bookmark:")
+        conditions.append(bookmark if kind == "source_bookmark" else ~bookmark)
+    if source_id:
+        conditions.append(Subscription.name == f"Drug letter bookmark:{source_id}")
+    if source_ids is not None:
+        conditions.append(
+            Subscription.name.in_([f"Drug letter bookmark:{item}" for item in source_ids])
+        )
+    requested = page_size if page_size is not None else limit
+    size = min(requested or settings.default_page_size, settings.max_page_size)
     rows = list(
         (
             await session.scalars(
                 select(Subscription)
-                .where(Subscription.owner_id == principal.subject)
+                .where(*conditions)
                 .order_by(Subscription.updated_at.desc(), Subscription.id.desc())
+                .offset(offset)
+                .limit(size + 1)
             )
         ).all()
     )
-    requested = page_size if page_size is not None else limit
-    page_rows, next_cursor, has_more = page_window(
-        rows,
-        offset=offset,
-        limit=min(requested or settings.default_page_size, settings.max_page_size),
-    )
-    records = await _saved_view_letter_records(session) if page_rows else []
-    page = [_saved_view_response(item, settings=settings, records=records) for item in page_rows]
+    page_rows, next_cursor, has_more = page_window(rows, offset=0, limit=size)
+    if has_more:
+        from app.pagination import encode_cursor
+
+        next_cursor = encode_cursor(offset + size)
+    page = [await _saved_view_sql_response(session, item, settings) for item in page_rows]
     return SavedViewPage(items=page, next_cursor=next_cursor, has_more=has_more)
 
 
@@ -3399,6 +3473,11 @@ async def create_saved_view(
         channel="email",
         destination_id=settings.notification_default_recipient,
         active=enabled,
+        display=_view_display(payload.display),
+        view_kind="source_bookmark"
+        if payload.name.startswith("Drug letter bookmark:")
+        else "source_view",
+        source_id=_bookmark_id(payload.name),
     )
     session.add(subscription)
     try:
@@ -3424,8 +3503,7 @@ async def create_saved_view(
         },
     )
     await session.commit()
-    records = await _saved_view_letter_records(session)
-    return _saved_view_response(subscription, settings=settings, records=records)
+    return await _saved_view_sql_response(session, subscription, settings)
 
 
 @router.patch(
@@ -3446,6 +3524,11 @@ async def update_saved_view(
         saved_view_id=saved_view_id,
         owner_id=principal.subject,
     )
+    if payload.expected_revision is not None and subscription.revision != payload.expected_revision:
+        raise HTTPException(409, "This saved view changed; refresh before editing")
+    if payload.display is not None:
+        subscription.display = _view_display(payload.display)
+    subscription.revision += 1
     before = {
         "name": subscription.name,
         "description": subscription.description,
@@ -3502,8 +3585,7 @@ async def update_saved_view(
         after=after,
     )
     await session.commit()
-    records = await _saved_view_letter_records(session)
-    return _saved_view_response(subscription, settings=settings, records=records)
+    return await _saved_view_sql_response(session, subscription, settings)
 
 
 @router.delete(

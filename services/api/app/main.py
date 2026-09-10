@@ -38,6 +38,7 @@ from app.security.secrets import build_secret_provider
 from app.storage import build_object_store
 from app.verification.router import router as verification_router
 from app.worker import recover_interrupted_local_jobs, run_worker
+from app.workspace.router import router as workspace_router
 
 
 def _problem(
@@ -187,6 +188,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(intelligence_router, prefix="/api/v1")
     app.include_router(chat_router, prefix="/api/v1")
     app.include_router(research_router, prefix="/api/v1")
+    app.include_router(workspace_router, prefix="/api/v1")
     app.include_router(admin_router, prefix="/api/v1")
     app.include_router(cases_router, prefix="/api/v1")
     app.include_router(approvals_router, prefix="/api/v1")

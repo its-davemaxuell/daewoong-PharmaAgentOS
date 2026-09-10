@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { SourceInspector, fetchSource } from "./workspace/source-inspector";
+import { SaveViewButton } from "./workspace/save-view-button";
+import { useWorkspaceScope } from "./workspace/provider";
+import { setWorkspaceParams, workspaceJson } from "@/lib/workspace-client";
+import type { SavedWorkspaceView, WorkspacePage } from "@/lib/workspace-types";
 import { SessionNotice } from "@/components/session-notice";
 import { SourceLink } from "@/components/source-link";
 import { letterQueryString, readLetterQuery, type LetterPage } from "@/lib/letter-query";
@@ -12,7 +19,7 @@ import { FilterX } from "@/components/icons/FilterX";
 import { Search } from "@/components/icons/Search";
 import { SlidersHorizontal } from "@/components/icons/SlidersHorizontal";
 import { X } from "@/components/icons/X";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";
 import { PageGuide } from "@/components/page-guide";
 import type { DataMode } from "@/lib/types";
@@ -122,24 +129,26 @@ export function SelectFilter({
   unavailableLabel: string;
   formatOption?: (option: string) => string;
 }) {
+  const id = useId();
+  const [search, setSearch] = useState("");
+  const { text } = useI18n();
   const hasOptions = values.length > 0;
   const stale = Boolean(value && !values.includes(value));
+  const visible = values.filter(option => option === value || formatOption(option).toLocaleLowerCase().includes(search.toLocaleLowerCase()));
   return (
-    <label className={`filter-field${hasOptions ? "" : " filter-field--unavailable"}`}>
-      <span>{label}</span>
+    <div className={`filter-field${hasOptions ? "" : " filter-field--unavailable"}`}>
+      <label htmlFor={id}>{label}</label>
+      {values.length > 8 && <input type="search" className="workspace-property-search" aria-label={text(`Search ${label} options`, `${label} 선택 항목 검색`)} placeholder={text("Find an option…", "항목 찾기…")} value={search} onChange={event => setSearch(event.target.value)} />}
       <div>
-        <select value={value} onChange={(event) => onChange(event.target.value)} disabled={!hasOptions && !stale}>
+        <select id={id} value={value} onChange={(event) => onChange(event.target.value)} disabled={!hasOptions && !stale}>
           <option value="">{hasOptions ? allLabel : unavailableLabel}</option>
           {stale ? <option value={value}>{formatOption(value)} — {unavailableLabel}</option> : null}
-          {values.map((option) => (
-            <option value={option} key={option}>
-              {formatOption(option)}
-            </option>
-          ))}
+          {visible.map((option) => <option value={option} key={option}>{formatOption(option)}</option>)}
         </select>
         <ChevronDown size={14} aria-hidden="true" />
       </div>
-    </label>
+      {search && !visible.length && <small role="status">{text("No matching options. Clear search to see all.", "일치하는 항목이 없습니다. 검색어를 지우면 전체 항목이 표시됩니다.")}</small>}
+    </div>
   );
 }
 
@@ -155,6 +164,11 @@ export function LettersExplorer({
   initialState?: LetterExplorerInitialState;
 }) {
   const { locale, text } = useI18n();
+  const params = useSearchParams();
+  const selected = params.get("selected");
+  const client = useQueryClient();
+  const scope = useWorkspaceScope();
+  const prefetch = (id: string) => { if (!client.isFetching({ queryKey: [scope, "source"] })) void client.prefetchQuery({ queryKey: [scope, "source", id], queryFn: ({ signal }) => fetchSource(id, signal) }); };
   const resultsRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState<Filters>({ ...emptyFilters, ...initialState.filters });
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -175,6 +189,16 @@ export function LettersExplorer({
   const options = Object.fromEntries(["subtype", "category", "country", "lifecycle", "review"].map(key => [key, (result.facets[key] ?? []).map(item => item.value)]));
   const documentOptions = (result.facets.document ?? []).map(item => item.value);
   const letters = result.items;
+  const bookmarkIds = letters.map(letter => letter.id);
+  useQuery({ queryKey: [scope, "bookmark-page", bookmarkIds], queryFn: async ({ signal }) => {
+    const params = new URLSearchParams({ limit: "100" });
+    bookmarkIds.forEach(id => params.append("source_ids", id));
+    const saved = await workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?${params}`, { signal });
+    if (!signal.aborted) for (const id of bookmarkIds) {
+      if (!client.getQueryData([scope, "bookmark-pending", id])) client.setQueryData([scope, "bookmark", id], saved.items.some(item => item.source_id === id || item.name === `Drug letter bookmark:${id}`));
+    }
+    return saved;
+  }, enabled: bookmarkIds.length > 0 });
   const total = result.total;
   const collectionTotal = result.collectionTotal;
   const activeFilterCount = Object.entries(filters).filter(([key, value]) => key !== "query" && value).length;
@@ -219,9 +243,11 @@ export function LettersExplorer({
       if (method !== "pop") window.history[method === "push" ? "pushState" : "replaceState"](window.history.state, "", `${window.location.pathname}?${queryString}`);
       setBusy(true); setFailed(false);
       try {
-        const response = await fetch(`/api/drug-letters?${queryString}`, { signal: controller.signal, cache: "no-store" });
-        if (!response.ok) throw new Error("Library unavailable");
-        const payload = await response.json();
+        const payload = await client.fetchQuery({ queryKey: [scope, "letters", queryString], queryFn: async () => {
+          const response = await fetch(`/api/drug-letters?${queryString}`, { signal: controller.signal, cache: "no-store" });
+          if (!response.ok) throw new Error("Library unavailable");
+          return response.json();
+        } });
         if (!payload.data || !Array.isArray(payload.data.items) || !Number.isSafeInteger(payload.data.total) || !payload.data.facets) throw new Error("Invalid library response");
         if (!controller.signal.aborted) setResult(payload.data);
       } catch {
@@ -229,16 +255,17 @@ export function LettersExplorer({
       } finally { if (!controller.signal.aborted) setBusy(false); }
     }, method === "replace" ? 250 : 0);
     return () => { window.clearTimeout(timer); controller.abort(); };
-  }, [queryString, retry]);
+  }, [queryString, retry, client, scope]);
 
   const selectPage = (page: number) => {
     historyMode.current = "push";
     setRequestedPage(page);
-    window.requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" }));
+    window.requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: "instant", block: "start" }));
   };
 
   return (
-    <div className="page-stack explorer-page">
+    <div className={`page-stack explorer-page${selected ? " workspace-has-inspector" : ""}`}>
+      {selected && <SourceInspector id={selected} onClose={() => setWorkspaceParams({ selected: null })} />}
       <SessionNotice />
       <PageGuide
         className="explorer-page__guide"
@@ -271,7 +298,7 @@ export function LettersExplorer({
             </button>
           ) : null}
         </label>
-        <ScopeBadge />
+        <ScopeBadge /><SaveViewButton query={{ filters, page: currentPage, pageSize, sort: sortOrder }} />
         <button
           className={`filter-toggle${filtersOpen ? " filter-toggle--open" : ""}`}
           type="button"
@@ -382,7 +409,7 @@ export function LettersExplorer({
                 </div>
                 <div className="letter-row__identity">
                   <div className="letter-row__titleline">
-                    <Link href={`/drug-letters/${letter.id}`} prefetch={false} lang="en">{letter.company}</Link>
+                    <Link href={`/drug-letters/${letter.id}`} onPointerEnter={() => prefetch(letter.id)} onFocus={() => prefetch(letter.id)} onClick={event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && event.button === 0) { event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); setWorkspaceParams({ selected: letter.id }); } }} prefetch={false} lang="en">{letter.company}</Link>
                     {isNewLetter(primaryDate) ? (
                       <span className="new-letter-mark" title={text("Posted within the last 7 days", "최근 7일 이내 게시됨")}>
                         NEW
@@ -448,6 +475,7 @@ export function LettersExplorer({
                 <div className="letter-row__actions">
                   <LetterBookmarkButton
                     letterId={letter.id}
+                    sourceTitle={letter.company}
                     initiallySaved={initialSavedLetterIds.includes(letter.id)}
                     compact
                   />

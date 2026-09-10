@@ -59,4 +59,5 @@ output/
 
 .tmp/
 .artifacts/
+.cache/
 services/api/app/_resources/

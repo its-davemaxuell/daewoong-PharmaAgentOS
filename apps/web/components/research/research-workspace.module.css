@@ -169,3 +169,6 @@
 @media (max-width: 640px) { .header h1 { font-size: 1.75rem; } .composer, .activity, .evidence, .saved, .brief, .taskHeader, .examples { padding: 18px; } }
 
 .composer::before { bottom: auto; height: 12px; }
+
+/* The persistent run list and inspector reduce the available content width. */
+:global(.research-desk:has(.workspace-inspector)) .workGrid { grid-template-columns: minmax(0,1fr); }

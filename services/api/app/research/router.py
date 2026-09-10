@@ -1,3 +1,4 @@
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
@@ -7,6 +8,7 @@ from sqlalchemy.orm import defer
 
 from app.dependencies import session_dependency
 from app.models import ResearchRun
+from app.pagination import InvalidCursor, decode_cursor, encode_cursor
 from app.security.auth import Principal, rag_principal
 
 from .schemas import CreateResearch
@@ -39,22 +41,44 @@ async def create_research(
 @router.get("")
 async def list_research(
     response: Response,
+    q: str = Query(default="", max_length=500),
+    status: Literal["all", "active", "completed", "attention"] = "all",
+    cursor: str | None = Query(default=None, max_length=2048),
+    limit: int = Query(default=30, ge=1, le=100),
     principal: Principal = Depends(rag_principal),
     session: AsyncSession = Depends(session_dependency),
 ):
     private(response)
+    try:
+        offset = decode_cursor(cursor)
+    except InvalidCursor as exc:
+        raise HTTPException(400, str(exc)) from exc
+    conditions = [ResearchRun.owner_id == principal.subject]
+    if q.strip():
+        escaped = q.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        conditions.append(ResearchRun.objective.ilike(f"%{escaped}%", escape="\\"))
+    if status != "all":
+        states = {
+            "active": ["queued", "running"],
+            "completed": ["completed"],
+            "attention": ["failed", "stopped", "limit_reached", "insufficient_evidence"],
+        }
+        conditions.append(ResearchRun.status.in_(states[status]))
     runs = (
         await session.scalars(
             select(ResearchRun)
-            .where(
-                ResearchRun.owner_id == principal.subject,
-            )
+            .where(*conditions)
             .options(defer(ResearchRun.checkpoint), defer(ResearchRun.result))
             .order_by(ResearchRun.updated_at.desc(), ResearchRun.id)
-            .limit(30)
+            .offset(offset)
+            .limit(limit + 1)
         )
     ).all()
-    return {"items": [summary(run) for run in runs]}
+    return {
+        "items": [summary(run) for run in runs[:limit]],
+        "has_more": len(runs) > limit,
+        "next_cursor": encode_cursor(offset + limit) if len(runs) > limit else None,
+    }
 
 
 @router.get("/{run_id}")

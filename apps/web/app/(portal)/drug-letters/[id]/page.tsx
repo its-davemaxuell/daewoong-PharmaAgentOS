@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DrugLetterDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const [{ data: letter }, savedViews] = await Promise.all([getPageLetter(id), getSavedViews()]);
+  const [{ data: letter }, savedViews] = await Promise.all([getPageLetter(id), getSavedViews(id)]);
   if (!letter) notFound();
   return <LetterDetail letter={letter} initiallySaved={bookmarkedLetterIds(savedViews.data).includes(id)} />;
 }
