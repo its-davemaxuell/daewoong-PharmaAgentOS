@@ -100,7 +100,8 @@ test("route matrix has no overflow, hydration failures or missing assets", async
         // This route redirects after the streamed shell. Network idle alone can
         // precede its client redirect, especially in WebKit on hosted runners.
         await expect(page).toHaveURL(/\/ask\?new=/);
-        await expect(page.locator("#ai-question")).toBeVisible();
+        // Next can retain the previous streamed tree hidden during the swap.
+        await expect(page.locator("#ai-question").filter({ visible: true })).toHaveCount(1);
       }
       await page.waitForLoadState("networkidle");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
