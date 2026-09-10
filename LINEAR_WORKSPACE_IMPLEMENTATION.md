@@ -195,3 +195,22 @@ three database guard/boundary tests passed. No data cleanup or re-embedding was
 needed for this migration. See the
 [preparation and recovery record](docs/assurance/workspace-dataset-preparation-20260911.md).
 This follow-up used hosted reads; hosted schema/data and deployments remain unchanged.
+
+## Release qualification follow-up
+
+PR #14 initially passed 86 of 90 hosted browser cases. The failures exposed a
+hidden streamed research form matching an unscoped locator, a same-origin sidebar
+request interrupted by the route matrix, and an error page during rapid WebKit
+performance samples. The checks now establish hydration from the actual sidebar
+response, select the visible Korean form, and retain browser-error assertions.
+Timing samples use 500 ms spacing outside the measured activation on every browser.
+This avoids the [WebKit History API quota](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/History.cpp)
+when Next synchronizes each native history update with another history write.
+The 30-sample count and 500 ms latency regression ceiling are unchanged. This is
+an isolated latency test, not sustained navigation-throughput qualification.
+
+Production schema migration has subsequently committed with verified table counts,
+bookmark backfill and runtime access boundaries. The fresh recovery copy is under
+`.artifacts/linear-workspace/predeploy-20260911/`; the public verification receipt is
+`docs/assurance/workspace-production-migration-20260911.json`. Application rollout
+remains in progress pending final browser CI and live verification.

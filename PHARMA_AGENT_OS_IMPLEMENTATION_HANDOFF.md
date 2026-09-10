@@ -10,6 +10,14 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-11 production migration:** Applied the reviewed workspace migration,
+runtime grants and Supabase boundary in one transaction on `iqevzrztpdiysnojzpur`.
+All 59 pre-existing table counts were preserved; the three new workspace tables,
+API/browser/worker permissions, immutable-brief trigger and legacy bookmark
+backfill were verified. See `docs/assurance/workspace-production-migration-20260911.json`.
+Code is published in PR #14 on `release/linear-workspace-20260911`. Application
+rollout is in progress and is not yet claimed complete.
+
 **2026-09-11 hosted dataset preparation:** Read-only preflight of the current
 Supabase target passed with no data corrections needed. Backed up all 59 public
 application tables and downloaded/checksum-verified all 770 referenced evidence

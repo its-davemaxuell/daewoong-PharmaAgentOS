@@ -18,9 +18,16 @@ test("workspace remains usable on narrow screens and with enlarged Korean text",
   await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.context().addCookies([{ name: "dli_locale", value: "ko", url: "http://127.0.0.1:3100" }]);
-  await page.goto("/research");
-  await page.evaluate(() => { localStorage.setItem("daewoong-fda-locale", "ko"); document.documentElement.style.fontSize = "200%"; });
-  await expect(page.locator("#research-goal")).toBeVisible();
+  await page.evaluate(() => localStorage.setItem("daewoong-fda-locale", "ko"));
+  await Promise.all([
+    page.waitForResponse(response => new URL(response.url()).pathname === "/api/portal/sidebar"),
+    page.goto("/research"),
+  ]);
+  await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
+  // Next may briefly retain a hidden streamed tree during the hydrated swap.
+  const goal = page.locator("#research-goal").filter({ visible: true });
+  await expect(goal).toHaveCount(1);
+  await expect(goal).toHaveAttribute("placeholder", /품질팀/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({ path: info.outputPath("korean-enlarged.png"), fullPage: true });
 });

@@ -172,7 +172,13 @@ test("route matrix has no overflow, hydration failures or missing assets", async
   for (const width of [320, 390, 768, 980, 981, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of ["/dashboard", "/drug-letters", "/ask", "/research", "/approvals"]) {
-      await page.goto(route);
+      // Wait for the hydrated shell's actual request before navigating away.
+      // WebKit reports an interrupted request during document unload as an
+      // access-control console error even for this same-origin endpoint.
+      await Promise.all([
+        page.waitForResponse(response => new URL(response.url()).pathname === "/api/portal/sidebar" && response.ok()),
+        page.goto(route),
+      ]);
       if (route === "/ask") {
         // This route redirects after the streamed shell. Network idle alone can
         // precede its client redirect, especially in WebKit on hosted runners.
