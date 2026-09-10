@@ -40,7 +40,7 @@ export function SystemSettings() {
 
       <section aria-labelledby="settings-about">
         <h2 id="settings-about">{text("About this service", "서비스 안내")}</h2>
-        <p>{text("FDA Warning Letter Chatbot brings together conversations and warning-letter sources. FDA AI Agent is your workspace for research goals, saved briefs, and review workflows.", "FDA 경고서한 챗봇에서 대화와 경고서한 자료를 함께 이용하세요. FDA AI 에이전트에서는 리서치 목표, 저장된 브리핑, 검토 워크플로를 관리할 수 있습니다.")}</p>
+        <p>{text("FDA Chatbot brings together conversations and warning-letter sources. FDA AI Agent is your workspace for research goals, saved briefs, and review workflows.", "FDA 챗봇에서 대화와 경고서한 자료를 함께 이용하세요. FDA AI 에이전트에서는 리서치 목표, 저장된 브리핑, 검토 워크플로를 관리할 수 있습니다.")}</p>
         <ServiceScope />
       </section>
     </article>

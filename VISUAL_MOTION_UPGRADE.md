@@ -220,6 +220,13 @@ budget, exact artifacts, performance limitation and reproduction commands.
 
 ## Streamline Light follow-up — 10 September 2026
 
+Subsequent navigation refinement: FDA Chatbot / FDA 챗봇 naming is consistent in
+shell, Help and Settings. `NavigationGroup` owns native details visibility and
+260ms interruptible height motion for all three groups. Closed content is inert;
+chevrons follow the requested state immediately. Production build, targeted lint
+and 12 focused cross-browser navigation/motion checks passed. Persistence, role
+filtering and history identity remain unchanged; no dependency added.
+
 | Surface / components | Visual change | Interaction / states | Verification |
 | --- | --- | --- | --- |
 | Shell, language, guide, shared UI | Fine outline navigation, utility, status and directional symbols | Existing selected/focus/hover/disabled colors and motion inherited; accessible names retained | Desktop/mobile captures; browser regression suite |

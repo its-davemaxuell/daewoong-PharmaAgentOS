@@ -36,12 +36,13 @@ import {
 } from "@/app/(portal)/ask/actions";
 import { useChatHistory } from "@/components/chat-history-context";
 import { LanguageToggle } from "@/components/language-toggle";
+import { NavigationGroup } from "./navigation-group";
 import { formatDate } from "@/components/ui";
 import type { AppRole } from "@/lib/auth-types";
 import { useI18n } from "@/lib/i18n";
 
 const navSections = [
-  { id: "chatbot", en: "FDA Warning Letter Chatbot", ko: "FDA 경고서한 챗봇", icon: MessageSquareText },
+  { id: "chatbot", en: "FDA Chatbot", ko: "FDA 챗봇", icon: MessageSquareText },
   { id: "agent", en: "FDA AI Agent", ko: "FDA AI 에이전트", icon: Network },
   { id: "settings", en: "Settings", ko: "설정", icon: Settings },
 ] as const;
@@ -417,21 +418,17 @@ export function PortalShell({
             const SectionIcon = section.icon;
             const sectionActive = activeSection?.id === section.id;
             return (
-              <details
+              <NavigationGroup
                 key={section.id}
-                className="portal-workspace-group"
-                data-active={sectionActive}
+                active={sectionActive}
                 open={disclosures[section.id] ?? (sectionActive || (!activeSection && section.id === "chatbot"))}
-              >
-                <summary onClick={(event) => {
-                  event.preventDefault();
-                  const open = !(event.currentTarget.parentElement as HTMLDetailsElement).open;
-                  setDisclosures(current => ({ ...current, [section.id]: open }));
-                }}>
+                onToggle={() => setDisclosures(current => ({ ...current, [section.id]: !(current[section.id] ?? (sectionActive || (!activeSection && section.id === "chatbot"))) }))}
+                label={<>
                   <SectionIcon size={20} aria-hidden="true" />
                   <span>{text(section.en, section.ko)}</span>
                   <ChevronDown className="portal-workspace-group__chevron" size={16} aria-hidden="true" />
-                </summary>
+                </>}
+              >
                 <nav className="portal-sidebar__nav" aria-label={text(section.en, section.ko)}>
                   <ul className="nav-list portal-nav">
                     {visibleNav.filter((item) => item.section === section.id).map((item) => {
@@ -594,7 +591,7 @@ export function PortalShell({
                     </div>
                   </section>
                 ) : null}
-              </details>
+              </NavigationGroup>
             );
           })}
         </div></SelectionGroup>

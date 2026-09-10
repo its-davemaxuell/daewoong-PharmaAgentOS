@@ -18,7 +18,7 @@ import styles from "./employee-guide.module.css";
 export function EmployeeGuide() {
   const { text } = useI18n();
   const destinations = [
-    { icon: MessageSquareText, href: "/ask", title: text("FDA Warning Letter Chatbot", "FDA 경고서한 챗봇"), detail: text("Chatbot · Warning letters · Saved sources · Chat history", "챗봇 · 경고서한 · 저장한 자료 · 대화 기록") },
+    { icon: MessageSquareText, href: "/ask", title: text("FDA Chatbot", "FDA 챗봇"), detail: text("Chatbot · Warning letters · Saved sources · Chat history", "챗봇 · 경고서한 · 저장한 자료 · 대화 기록") },
     { icon: Network, href: "/research", title: text("FDA AI Agent", "FDA AI 에이전트"), detail: text("Agent research · Saved briefs · Review workflows", "에이전트 조사 · 저장된 브리핑 · 검토 워크플로") },
     { icon: Settings, href: "/settings", title: text("Settings", "설정"), detail: text("Language · Getting started · Service information", "언어 · 이용 방법 · 서비스 안내") },
   ];

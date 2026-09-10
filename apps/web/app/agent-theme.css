@@ -38,7 +38,7 @@ body { color: var(--os-ink); background: var(--os-canvas); }
 .portal-sidebar__brand-row .portal-sidebar__collapse { margin-left: auto; width: 26px; height: 32px; min-width: 26px; padding: 3px; border: 0; background: transparent; color: var(--os-muted); }
 .portal-shell .portal-sidebar__divider { margin: 0 14px 12px; border: 0; border-top: 1px solid var(--os-rule); }
 .portal-shell .portal-sidebar__sections { padding: 0 10px; gap: 8px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccd0e0 transparent; }
-.portal-workspace-group { flex: 0 0 auto; min-width: 0; }
+.portal-workspace-group { flex: 0 0 auto; min-width: 0; min-height: 0; }
 .portal-workspace-group > summary { display: flex; align-items: center; gap: 9px; padding: 10px 9px; min-height: 42px; border-radius: 8px; color: var(--os-ink); font-size: .8125rem; font-weight: 650; line-height: 1.4; list-style: none; cursor: pointer; }
 .portal-workspace-group > summary::-webkit-details-marker { display: none; }
 .portal-workspace-group > summary > span { flex: 1; min-width: 0; }
@@ -46,8 +46,8 @@ body { color: var(--os-ink); background: var(--os-canvas); }
 .portal-workspace-group > summary:hover { background: var(--os-inset); }
 .portal-workspace-group[data-active="true"] > summary { color: var(--os-primary-deep); }
 .portal-workspace-group[data-active="true"] > summary > svg { color: var(--os-primary); }
-.portal-workspace-group[open] > summary > .portal-workspace-group__chevron { transform: rotate(180deg); }
-.portal-shell .portal-workspace-group > nav { padding: 2px 0 4px; }
+.portal-workspace-group[data-expanded="true"] > summary > .portal-workspace-group__chevron { transform: rotate(180deg); }
+.portal-shell .portal-workspace-group__content > nav { padding: 2px 0 4px; }
 .portal-shell .portal-sidebar__nav { padding: 0; }
 .portal-shell .portal-nav { gap: 2px; }
 .portal-shell .portal-nav__link { padding: 9px 11px; min-height: 40px; gap: 11px; font-size: .8125rem; font-weight: 450; line-height: 1.5; border: 0; border-radius: 8px; background: transparent; color: #51566b; }

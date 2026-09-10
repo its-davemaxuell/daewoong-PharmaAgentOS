@@ -158,6 +158,13 @@ These inform interaction principles; the approved Layered desk remains the visua
 
 ### Iconography — Streamline Light
 
+Navigation group disclosures slide between their measured heights over 260ms,
+using the shared panel timing/easing. Native details remains open only until its
+closing animation finishes; content becomes inert immediately. Repeated clicks
+reverse from the current height. Reduced motion settles immediately, including
+when the preference changes during a transition. CSS time tokens must support
+both `ms` and `s` after production minification. No new animation dependency.
+
 Use locally bundled SVGs from Streamline's CC BY 4.0 Ultimate Light free collection.
 The reviewed source selection, license and adaptations live in
 `apps/web/components/icons/`. Import an individual icon module so unrelated artwork

@@ -10,6 +10,17 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-10 navigation follow-up:** Renamed the Chatbot group, Help destination
+and Settings explanation to FDA Chatbot / FDA 챗봇. All three native navigation
+groups now slide open/closed over 260ms with interruptible height animation,
+immediate inert closing content, keyboard semantics and reduced-motion cancellation.
+Existing disclosure persistence and account-scoped history remain unchanged.
+Production build/type checking and targeted ESLint passed; 12 focused browser
+checks passed across Chromium/Firefox/WebKit (submenu geometry/reversal, reduced
+motion, keyboard, disclosure persistence, mobile drawer and route continuity).
+The production CSS optimizer converts 260ms to .26s; both units are handled and
+the browser regression asserts the actual 260ms duration.
+
 **2026-09-10 Streamline Light icon upgrade:** All 30 former Lucide consumers now
 use local, individually imported Streamline Light modules: 94 roles from 66 reviewed
 CC BY 4.0 source SVGs. Removed lucide-react, added no dependency, and retained the
