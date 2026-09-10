@@ -20,7 +20,10 @@ import { useI18n } from "@/lib/i18n";
 import { beginnerPrompts } from "@/lib/beginner-prompts";
 import { formatDate } from "@/components/ui";
 import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
-import type { Letter } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { sourcePageOptions } from "@/lib/source-queries";
+import { letterQueryString, readLetterQuery } from "@/lib/letter-query";
+import { useWorkspaceScope } from "../workspace/provider";
 import styles from "./beginner-home.module.css";
 
 export function BeginnerHome() {
@@ -97,20 +100,11 @@ export function BeginnerHome() {
 
 function SourcePreview() {
   const { text, locale } = useI18n();
-  const [sources, setSources] = useState<Letter[]>();
-  const [failed, setFailed] = useState(false);
-  const [preview, setPreview] = useState(false);
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("/api/drug-letters?page=1&pageSize=20&sort=posted-desc", { signal: controller.signal, cache: "no-store" })
-      .then(async response => {
-        if (!response.ok) throw new Error("Source collection unavailable");
-        const payload = await response.json();
-        if (!Array.isArray(payload.data?.items)) throw new Error("Invalid source collection");
-        if (!controller.signal.aborted) { setSources(payload.data.items.slice(0, 5)); setPreview(payload.mode === "seeded"); }
-      }).catch(() => { if (!controller.signal.aborted) setFailed(true); });
-    return () => controller.abort();
-  }, []);
+  const scope = useWorkspaceScope();
+  const page = useQuery(sourcePageOptions(scope, letterQueryString(readLetterQuery(new URLSearchParams()))));
+  const sources = page.data?.data.items.slice(0, 5);
+  const failed = page.isError;
+  const preview = page.data?.mode === "seeded";
   return <section className={styles.panel} aria-labelledby="home-sources-title">
     <div className={styles.sectionHeading}><h2 id="home-sources-title">{text("Source library", "원문 자료실")}</h2><Link prefetch={false} href="/drug-letters">{text("View library", "자료실 보기")}<ArrowUpRight size={15} /></Link></div>
     <p className={styles.panelIntro}>{preview ? text("Isolated preview records", "격리된 미리보기 레코드") : text("Recently posted letters in the retained collection.", "저장된 자료 중 최근 게시된 경고서한입니다.")}</p>

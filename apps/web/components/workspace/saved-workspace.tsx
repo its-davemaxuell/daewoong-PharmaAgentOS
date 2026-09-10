@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { briefListOptions } from "@/lib/workspace-queries";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { setWorkspaceParams, workspaceJson, WorkspaceError } from "@/lib/workspace-client";
-import type { BriefSnapshot, BriefSummary, SavedWorkspaceView, WorkspacePage } from "@/lib/workspace-types";
+import type { BriefSnapshot, SavedWorkspaceView, WorkspacePage } from "@/lib/workspace-types";
 import { SourceLink } from "../source-link";
 import { useWorkspaceScope } from "./provider";
 import { ActionButton } from "./commands";
@@ -23,21 +24,21 @@ export function SavedWorkspace() {
   const [error, setError] = useState(false);
   const [editing, setEditing] = useState<SavedWorkspaceView>();
   const [busy, setBusy] = useState<string>();
-  const briefs = useQuery({ queryKey: [scope, "briefs", page], queryFn: ({ signal }) => workspaceJson<WorkspacePage<BriefSummary>>(`research/briefs?page=${page}`, { signal }), enabled: tab === "briefs" });
+  const briefs = useQuery({ ...briefListOptions(scope, page), enabled: tab === "briefs" });
   const views = useQuery({ queryKey: [scope, "views", tab, cursor], queryFn: ({ signal }) => workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?limit=20&kind=${tab === "sources" ? "source_bookmark" : "source_view"}&cursor=${encodeURIComponent(cursor)}`, { signal }), enabled: tab === "sources" || tab === "views" });
   async function remove(id: string) {
     setBusy(id); setError(false);
-    try { await workspaceJson(`saved-views/${id}`, { method: "DELETE" }); await client.invalidateQueries({ queryKey: [scope, "views"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark"] }); }
+    try { await workspaceJson(`saved-views/${id}`, { method: "DELETE" }); await client.invalidateQueries({ queryKey: [scope, "views"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark-page"] }); }
     catch { setError(true); } finally { setBusy(undefined); }
   }
   const tabs = [["briefs", text("Briefs", "브리핑")], ["sources", text("Sources", "자료")], ["views", text("Saved views", "저장한 보기")], ["drafts", text("Local drafts", "기기 내 초안")]];
   return <section className="workspace-page"><WorkspaceHeading title={text("Saved work", "저장한 작업")} subtitle={text("Brief snapshots, sources, and reusable views in this browser session.", "이 브라우저 세션의 브리핑 스냅샷, 원문 및 저장한 보기입니다.")} />
     <div className="workspace-viewbar">{tabs.map(([id, label]) => <button key={id} aria-pressed={tab === id} onClick={() => setWorkspaceParams({ tab: id, page: null, cursor: null, brief: null })}>{label}</button>)}</div>
     {error && <p className="workspace-feedback" role="alert">{text("Could not remove the saved item. Please try again.", "저장 항목을 제거하지 못했습니다. 다시 시도하세요.")}</p>}
-    {tab === "drafts" ? <div className="workspace-empty"><p>{text("Review drafts remain stored on this device. They are separate from server-saved brief snapshots.", "검토 초안은 이 기기에 저장되며 서버의 브리핑 스냅샷과 별도입니다.")}</p><Link href="/requests">{text("Open local drafts", "기기 내 초안 열기")}</Link></div> : tab === "briefs" ? briefs.isPending ? <WorkspaceLoading /> : briefs.isError ? <WorkspaceErrorState retry={() => void briefs.refetch()} /> : <>
+    {tab === "drafts" ? <div className="workspace-empty"><p>{text("Review drafts remain stored on this device. They are separate from server-saved brief snapshots.", "검토 초안은 이 기기에 저장되며 서버의 브리핑 스냅샷과 별도입니다.")}</p><Link href="/requests">{text("Open local drafts", "기기 내 초안 열기")}</Link></div> : tab === "briefs" ? briefs.isPending ? <WorkspaceLoading /> : !briefs.data ? <WorkspaceErrorState retry={() => void briefs.refetch()} /> : <>{briefs.isError && <WorkspaceErrorState retry={() => void briefs.refetch()} />}
       {!briefs.data.items.length && <div className="workspace-empty">{text("Save a completed research brief to retain its exact evidence and content.", "완료된 리서치 브리핑을 저장하여 근거와 내용을 그대로 보존하세요.")} <Link href="/research">{text("Open Research", "리서치 열기")}</Link></div>}
       <ul className="workspace-list">{briefs.data.items.map(item => <li key={item.id}><button onClick={event => { event.currentTarget.focus({ preventScroll: true }); setWorkspaceParams({ brief: item.id }); }}><span><strong>{item.title}</strong><small>{text("Draft snapshot", "초안 스냅샷")} · {item.created_at.slice(0, 10)}</small></span><span>↗</span></button></li>)}</ul><Pagination page={page} hasMore={briefs.data.has_more} onChange={next => setWorkspaceParams({ page: String(next) })} />
-    </> : views.isPending ? <WorkspaceLoading /> : views.isError ? <WorkspaceErrorState retry={() => void views.refetch()} /> : <>
+    </> : views.isPending ? <WorkspaceLoading /> : !views.data ? <WorkspaceErrorState retry={() => void views.refetch()} /> : <>{views.isError && <WorkspaceErrorState retry={() => void views.refetch()} />}
       <ul className="workspace-list">{views.data.items.filter(item => (item.view_kind === "source_bookmark" || item.name.startsWith("Drug letter bookmark:")) === (tab === "sources")).map(item => <li key={item.id}><Link href={item.open_url} prefetch={false}><span><strong>{tab === "sources" ? item.description || item.name : item.name}</strong><small>{tab === "views" ? text(`${item.result_count} matching sources`, `일치하는 원문 ${item.result_count}건`) : text("Saved source", "저장한 원문")}</small></span></Link>{tab === "views" && <button onClick={event => { event.currentTarget.focus({ preventScroll: true }); setEditing(item); }}>{text("Edit", "편집")}</button>}<button disabled={Boolean(busy)} onClick={() => void remove(item.id)}>{busy === item.id ? text("Removing…", "제거 중…") : text("Remove", "제거")}</button></li>)}</ul>
       {!views.data.items.some(item => (item.view_kind === "source_bookmark" || item.name.startsWith("Drug letter bookmark:")) === (tab === "sources")) && <div className="workspace-empty">{text("No saved items on this page. Save a source or a filter view in Sources.", "이 페이지에 저장 항목이 없습니다. 자료 화면에서 원문이나 필터 보기를 저장하세요.")}</div>}
       <div className="workspace-pagination"><button disabled={!cursor} onClick={() => setWorkspaceParams({ cursor: null })}>{text("First page", "첫 페이지")}</button><button disabled={!views.data.has_more} onClick={() => setWorkspaceParams({ cursor: views.data.next_cursor || null })}>{text("Next page", "다음 페이지")}</button></div>

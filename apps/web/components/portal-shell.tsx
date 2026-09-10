@@ -28,6 +28,7 @@ import { X } from "@/components/icons/X";
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
 import { openCommandMenu } from "./workspace/commands";
 import { DensityControl } from "./workspace/density-control";
+import { useNavigationPrefetch } from "./workspace/use-navigation-prefetch";
 import { useMediaQuery } from "@/lib/ui-media";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -105,6 +106,7 @@ export function PortalShell({
     ...legacyNavItems.filter(item => !["/research", "/ask", "/drug-letters", "/saved-views"].includes(item.href)),
   ] : legacyNavItems;
   const router = useRouter();
+  const { prepare: prefetchNavigation, shouldPrefetch } = useNavigationPrefetch();
   const pathname = usePathname();
   const workspaceRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -449,7 +451,10 @@ export function PortalShell({
                           <Link
                             className={`nav-link portal-nav__link ui-selection-control${active ? " nav-link--active portal-nav__link--active" : ""}`}
                             href={item.href}
-                            prefetch={false}
+                            prefetch={shouldPrefetch(item.href)}
+                            onPointerEnter={() => prefetchNavigation(item.href)}
+                            onFocus={() => prefetchNavigation(item.href)}
+                            onTouchStart={() => prefetchNavigation(item.href)}
                             aria-current={active ? "page" : undefined}
                             onClick={() => closeMenu()}
                           >

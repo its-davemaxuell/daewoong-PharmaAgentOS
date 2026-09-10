@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { sourcePageOptions } from "@/lib/source-queries";
 import { SourceInspector, fetchSource } from "./workspace/source-inspector";
 import { SaveViewButton } from "./workspace/save-view-button";
 import { useWorkspaceScope } from "./workspace/provider";
@@ -154,12 +155,10 @@ export function SelectFilter({
 
 export function LettersExplorer({
   initialPage,
-  initialSavedLetterIds,
   mode,
   initialState = {},
 }: {
   initialPage: LetterPage;
-  initialSavedLetterIds: string[];
   mode: DataMode;
   initialState?: LetterExplorerInitialState;
 }) {
@@ -190,7 +189,7 @@ export function LettersExplorer({
   const documentOptions = (result.facets.document ?? []).map(item => item.value);
   const letters = result.items;
   const bookmarkIds = letters.map(letter => letter.id);
-  useQuery({ queryKey: [scope, "bookmark-page", bookmarkIds], queryFn: async ({ signal }) => {
+  const bookmarks = useQuery({ queryKey: [scope, "bookmark-page", bookmarkIds], queryFn: async ({ signal }) => {
     const params = new URLSearchParams({ limit: "100" });
     bookmarkIds.forEach(id => params.append("source_ids", id));
     const saved = await workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?${params}`, { signal });
@@ -235,27 +234,37 @@ export function LettersExplorer({
     return () => window.removeEventListener("popstate", restore);
   }, []);
   useEffect(() => {
-    if (firstRequest.current) { firstRequest.current = false; return; }
+    const initial = firstRequest.current;
+    firstRequest.current = false;
     const controller = new AbortController();
     const method = historyMode.current;
     historyMode.current = "replace";
     const timer = window.setTimeout(async () => {
-      if (method !== "pop") window.history[method === "push" ? "pushState" : "replaceState"](window.history.state, "", `${window.location.pathname}?${queryString}`);
+      if (!initial && method !== "pop") window.history[method === "push" ? "pushState" : "replaceState"](window.history.state, "", `${window.location.pathname}?${queryString}`);
       setBusy(true); setFailed(false);
       try {
-        const payload = await client.fetchQuery({ queryKey: [scope, "letters", queryString], queryFn: async () => {
-          const response = await fetch(`/api/drug-letters?${queryString}`, { signal: controller.signal, cache: "no-store" });
-          if (!response.ok) throw new Error("Library unavailable");
-          return response.json();
-        } });
-        if (!payload.data || !Array.isArray(payload.data.items) || !Number.isSafeInteger(payload.data.total) || !payload.data.facets) throw new Error("Invalid library response");
+        const options = sourcePageOptions(scope, queryString);
+        const cached = client.getQueryData(options.queryKey);
+        if (cached) setResult(cached.data);
+        const payload = await client.fetchQuery(options);
         if (!controller.signal.aborted) setResult(payload.data);
       } catch {
         if (!controller.signal.aborted) setFailed(true);
       } finally { if (!controller.signal.aborted) setBusy(false); }
-    }, method === "replace" ? 250 : 0);
+    }, !initial && method === "replace" ? 250 : 0);
     return () => { window.clearTimeout(timer); controller.abort(); };
   }, [queryString, retry, client, scope]);
+
+  // Receive background refreshes for the currently displayed filter as well as
+  // direct requests. Other cached pages must never overwrite this view.
+  useEffect(() => client.getQueryCache().subscribe(event => {
+    if (event.type !== "updated" || event.action.type !== "success") return;
+    const [owner, kind, query] = event.query.queryKey;
+    if (owner === scope && kind === "letters" && query === queryString) {
+      const payload = client.getQueryData(sourcePageOptions(scope, queryString).queryKey);
+      if (payload) { setResult(payload.data); setFailed(false); }
+    }
+  }), [client, scope, queryString]);
 
   const selectPage = (page: number) => {
     historyMode.current = "push";
@@ -346,6 +355,7 @@ export function LettersExplorer({
       </div> : null}
       <p role="status" aria-live="polite">{busy ? text("Updating results…", "검색 결과 갱신 중…") : failed ? text("Could not load the library. Your filters and last results are preserved.", "자료를 불러오지 못했습니다. 검색 조건과 마지막 결과는 유지됩니다.") : text(`${total} results`, `검색 결과 ${total}건`)}</p>
       {failed ? <button type="button" className="button button--secondary" disabled={busy} onClick={() => setRetry(value => value + 1)}>{text("Retry", "다시 시도")}</button> : null}
+      {bookmarks.isError && <p className="workspace-feedback" role="alert">{text("Saved status could not be refreshed. Source results are still available.", "저장 상태를 갱신하지 못했습니다. 원문 검색 결과는 계속 확인할 수 있습니다.")} <button onClick={() => void bookmarks.refetch()}>{text("Retry saved status", "저장 상태 다시 확인")}</button></p>}
       <div ref={resultsRef} className="archive-meta dossier-reveal dossier-reveal--delay-2" >
         <div className="archive-meta__count">
           <span>{text("Search results", "검색 결과")}</span>
@@ -476,7 +486,7 @@ export function LettersExplorer({
                   <LetterBookmarkButton
                     letterId={letter.id}
                     sourceTitle={letter.company}
-                    initiallySaved={initialSavedLetterIds.includes(letter.id)}
+                    managed
                     compact
                   />
                   <SourceLink

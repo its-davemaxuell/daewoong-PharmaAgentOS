@@ -10,6 +10,17 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-11 navigation cache upgrade (locally verified):** Sources now
+uses the session-scoped browser cache for its initial page as well as filters;
+Home and menu preloading share that request. Bookmarks load independently,
+primary routes preload after idle and other menus preload on intent. Cached
+workspace lists remain visible during failed refreshes. No migration is needed.
+Build, TypeScript, lint, 77 unit tests and all 24 focused browser checks pass.
+Local repeated Sources visits take 69–75ms; the live baseline was 9.7–11.2 seconds
+per visit. Publication and hosted remeasurement are next. See
+[the navigation verification record](docs/assurance/navigation-cache-20260911.md)
+for scope, test results and publication status.
+
 **2026-09-11 production migration:** Applied the reviewed workspace migration,
 runtime grants and Supabase boundary in one transaction on `iqevzrztpdiysnojzpur`.
 All 59 pre-existing table counts were preserved; the three new workspace tables,

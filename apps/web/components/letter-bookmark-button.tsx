@@ -17,12 +17,14 @@ export function LetterBookmarkButton({
   compact = false,
   onChange,
   sourceTitle,
+  managed = false,
 }: {
   letterId: string;
-  initiallySaved: boolean;
+  initiallySaved?: boolean;
   compact?: boolean;
   onChange?: (saved: boolean) => void;
   sourceTitle?: string;
+  managed?: boolean;
 }) {
   const { text } = useI18n();
   const scope = useWorkspaceScope();
@@ -31,17 +33,17 @@ export function LetterBookmarkButton({
   const state = useQuery({ queryKey: key, queryFn: async ({ signal }) => {
     const response = await workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?source_id=${letterId}&limit=1`, { signal });
     return response.items.length > 0;
-  }, initialData: initiallySaved });
+  }, initialData: initiallySaved, enabled: !managed });
   const saved = state.data;
   const pendingKey = [scope, "bookmark-pending", letterId];
   const sharedPending = useQuery({ queryKey: pendingKey, queryFn: () => false, initialData: false, enabled: false }).data;
   const [error, setError] = useState(false);
   const [pending, startTransition] = useTransition();
   const busy = useRef(false);
-  const label = sharedPending ? text("Saving source preference…", "원문 저장 설정 반영 중…") : saved ? text("Source saved", "원문 저장됨") : text("Save source", "원문 저장");
+  const label = saved === undefined ? text("Checking saved status…", "저장 상태 확인 중…") : sharedPending ? text("Saving source preference…", "원문 저장 설정 반영 중…") : saved ? text("Source saved", "원문 저장됨") : text("Save source", "원문 저장");
 
   const toggle = () => {
-    if (busy.current || client.getQueryData(pendingKey)) return;
+    if (saved === undefined || busy.current || client.getQueryData(pendingKey)) return;
     busy.current = true;
     const nextSaved = !saved;
     client.setQueryData(pendingKey, true);
@@ -74,7 +76,7 @@ export function LetterBookmarkButton({
       title={error
         ? text("Bookmark could not be updated. Try again.", "북마크를 변경하지 못했습니다. 다시 시도하세요.")
         : label}
-      disabled={pending || sharedPending}
+      disabled={pending || sharedPending || saved === undefined}
       aria-busy={pending || undefined}
       onClick={toggle}
     >
