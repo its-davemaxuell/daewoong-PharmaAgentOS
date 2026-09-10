@@ -10,14 +10,19 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-11 navigation cache upgrade (locally verified):** Sources now
+**2026-09-11 navigation cache upgrade (deployed):** Sources now
 uses the session-scoped browser cache for its initial page as well as filters;
 Home and menu preloading share that request. Bookmarks load independently,
 primary routes preload after idle and other menus preload on intent. Cached
 workspace lists remain visible during failed refreshes. No migration is needed.
 Build, TypeScript, lint, 77 unit tests and all 24 focused browser checks pass.
-Local repeated Sources visits take 69–75ms; the live baseline was 9.7–11.2 seconds
-per visit. Publication and hosted remeasurement are next. See
+Application commit `1819244` is on `main`; Vercel and both Railway deployments
+succeeded. Hosted Sources visits improved from 9.7–11.2 seconds to 140–255ms;
+Saved work and Research measured 79–140ms. Six hosted desktop/mobile checks in
+Chromium, Firefox and WebKit passed in English/Korean with one source-page read
+per session, no page errors and no horizontal overflow. All ten quality/security
+jobs and the separate code-security workflow pass, including 213 browser tests
+and 588 backend tests (10 gated skips). See
 [the navigation verification record](docs/assurance/navigation-cache-20260911.md)
 for scope, test results and publication status.
 

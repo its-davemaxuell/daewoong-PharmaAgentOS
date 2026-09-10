@@ -83,6 +83,36 @@ for the hosted comparison; first visits can still wait for data or route code.
 
 ## Publication
 
-Pending final verification and publication through the existing GitHub-to-Vercel
-production integration. Railway services consume the same repository; this
-change contains no API or worker behavior changes.
+Application commit `1819244fdd3ce6114a39eca78f068ac7c4d0c14c` is pushed to `main`.
+Vercel production and both Railway services report success for that commit.
+The live alias is https://pharmaagent-os-ochre.vercel.app; its production
+deployment is https://pharmaagent-finp3kucn-davemaxuellkr-9654.vercel.app.
+No hosted database or infrastructure configuration was changed.
+
+Read-only hosted timing at 17:46 UTC, using the same browser and sequence as the
+baseline:
+
+| Destination | First visit | Second visit | Third visit |
+| --- | ---: | ---: | ---: |
+| Sources, first rows visible | 255 ms | 140 ms | 169 ms |
+| Saved work, heading visible | 114 ms | 104 ms | 93 ms |
+| Research, history panel visible | 140 ms | 91 ms | 79 ms |
+
+Sources improved from 9.7–11.2 seconds to 0.14–0.26 seconds in these observations.
+The browser reported no page errors. A completely cold direct visit can still
+wait for its first data request; this is not an offline-navigation guarantee.
+
+At 17:48 UTC, six further hosted checks passed: Chromium, Firefox and WebKit,
+each with English at 1440px and Korean at 390px. Sources → Saved work → Research
+→ Sources preserved the first source title and twenty bounded rows. Each fresh
+browser context made exactly one source-page request, with no page errors or
+horizontal overflow. No saved work was mutated. The local reproducible smoke
+script, JSON and screenshots are in `.artifacts/navigation-cache/`.
+
+GitHub's [code-security run](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34510081437)
+and all ten jobs in the [full quality-and-security run](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34510081375)
+passed. The full browser suite passed **213 tests** in 15.2 minutes; the backend
+passed **588 tests, with 10 gated tests skipped**. Frontend unit tests, build/lint,
+PostgreSQL schema, Temporal recovery, contracts, container checks, deployment
+rendering and secret scanning passed. The closing documentation update changes
+no application code and records the already verified application revision above.
