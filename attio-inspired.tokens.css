@@ -1,0 +1,255 @@
+/*
+ * Original Attio-inspired foundation for Dave — 2026-09-10.
+ * NOT extracted from Attio. NOT Attio's proprietary design system.
+ * Apply .attio-reference to an application root to use the example classes.
+ * Includes no third-party font files or copied product assets.
+ * CSS is a starting point; focus trapping, ARIA, routing, and state are app work.
+ */
+:root {
+  --ar-canvas: #f7f8fa;
+  --ar-surface: #ffffff;
+  --ar-hover: #f1f3f5;
+  --ar-selected: #eef4ff;
+  --ar-border: #e5e7eb;
+  --ar-border-strong: #d1d5db;
+  --ar-control-border: #7b8493;
+  --ar-text: #202124;
+  --ar-text-secondary: #626D80;
+  --ar-accent: #2563eb;
+  --ar-success: #15803d;
+  --ar-warning: #b45309;
+  --ar-error: #b42318;
+  --ar-success-bg: #f0fdf4;
+  --ar-warning-bg: #fffbeb;
+  --ar-error-bg: #fef3f2;
+
+  --ar-space-1: 4px;
+  --ar-space-2: 8px;
+  --ar-space-3: 12px;
+  --ar-space-4: 16px;
+  --ar-space-6: 24px;
+  --ar-space-8: 32px;
+
+  --ar-nav-width: 240px;
+  --ar-header-height: 52px;
+  --ar-toolbar-height: 44px;
+  --ar-row-height: 38px;
+  --ar-button-height: 32px;
+  --ar-touch-target: 44px;
+  --ar-inspector-width: 400px;
+  --ar-radius-control: 7px;
+  --ar-radius-surface: 12px;
+
+  --ar-font-ui: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans KR", sans-serif;
+  --ar-font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --ar-text-meta: 12px;
+  --ar-text-ui: 14px;
+  --ar-text-reading: 17px;
+  --ar-text-heading: 22px;
+
+  --ar-motion-fast: 120ms;
+  --ar-motion-menu: 160ms;
+  --ar-motion-panel: 220ms;
+  --ar-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ar-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ar-shadow-overlay: 0 8px 28px rgb(16 24 40 / 10%),
+    0 2px 6px rgb(16 24 40 / 5%);
+}
+
+.attio-reference {
+  color: var(--ar-text);
+  background: var(--ar-canvas);
+  font: 400 var(--ar-text-ui) / 1.45 var(--ar-font-ui);
+}
+
+.attio-reference,
+.attio-reference *,
+.attio-reference *::before,
+.attio-reference *::after {
+  box-sizing: border-box;
+}
+
+.attio-reference .ar-shell {
+  display: grid;
+  grid-template-columns: var(--ar-nav-width) minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+.attio-reference .ar-nav {
+  min-width: 0;
+  padding: var(--ar-space-3);
+  border-right: 1px solid var(--ar-border);
+}
+
+.attio-reference .ar-workspace {
+  min-width: 0;
+  background: var(--ar-surface);
+}
+
+.attio-reference .ar-header,
+.attio-reference .ar-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ar-space-2);
+  padding-inline: var(--ar-space-4);
+  border-bottom: 1px solid var(--ar-border);
+}
+
+.attio-reference .ar-header { min-height: var(--ar-header-height); }
+.attio-reference .ar-toolbar { min-height: var(--ar-toolbar-height); flex-wrap: wrap; }
+
+.attio-reference .ar-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.attio-reference .ar-workbench[data-inspector="open"] {
+  grid-template-columns: minmax(0, 1fr) var(--ar-inspector-width);
+}
+
+.attio-reference .ar-main { min-width: 0; }
+.attio-reference .ar-inspector {
+  min-width: 0;
+  background: var(--ar-surface);
+  border-left: 1px solid var(--ar-border);
+}
+
+/* Keep reading content stable; no page-wide entry animation is applied. */
+.attio-reference .ar-reading {
+  max-width: 76ch;
+  margin-inline: auto;
+  padding: var(--ar-space-6);
+  font-size: var(--ar-text-reading);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.attio-reference .ar-heading {
+  margin: 0;
+  font-size: var(--ar-text-heading);
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.attio-reference .ar-meta {
+  color: var(--ar-text-secondary);
+  font-size: var(--ar-text-meta);
+}
+
+.attio-reference .ar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ar-space-2);
+  min-height: var(--ar-button-height);
+  padding: 5px 10px;
+  border: 1px solid var(--ar-border-strong);
+  border-radius: var(--ar-radius-control);
+  background: var(--ar-surface);
+  color: var(--ar-text);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--ar-motion-fast) var(--ar-ease-standard),
+    border-color var(--ar-motion-fast) var(--ar-ease-standard);
+}
+
+.attio-reference .ar-button:hover:not(:disabled) { background: var(--ar-hover); }
+.attio-reference .ar-button:active:not(:disabled) { border-color: var(--ar-control-border); }
+.attio-reference .ar-button:disabled { cursor: not-allowed; opacity: 0.6; }
+.attio-reference .ar-button[data-variant="primary"] {
+  background: var(--ar-accent);
+  border-color: var(--ar-accent);
+  color: #ffffff;
+}
+.attio-reference .ar-button[data-variant="primary"]:hover:not(:disabled) {
+  background: var(--ar-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.attio-reference .ar-input {
+  min-height: var(--ar-button-height);
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--ar-control-border);
+  border-radius: var(--ar-radius-control);
+  color: var(--ar-text);
+  background: var(--ar-surface);
+  font: inherit;
+}
+
+.attio-reference :focus-visible {
+  outline: 2px solid var(--ar-accent);
+  outline-offset: 3px;
+}
+
+.attio-reference .ar-table-scroll { overflow: auto; }
+.attio-reference .ar-table { width: 100%; border-collapse: collapse; }
+.attio-reference .ar-table th,
+.attio-reference .ar-table td {
+  height: var(--ar-row-height);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ar-border);
+  text-align: start;
+}
+.attio-reference .ar-table th { font-weight: 500; color: var(--ar-text-secondary); }
+.attio-reference .ar-table tbody tr:hover { background: var(--ar-hover); }
+.attio-reference .ar-table tbody tr[aria-selected="true"] { background: var(--ar-selected); }
+
+.attio-reference .ar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ar-space-1);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: var(--ar-text-meta);
+  font-weight: 500;
+}
+/* A visible text label is required; never communicate status by color alone. */
+.attio-reference .ar-status[data-status="success"] { color: var(--ar-success); background: var(--ar-success-bg); }
+.attio-reference .ar-status[data-status="warning"] { color: var(--ar-warning); background: var(--ar-warning-bg); }
+.attio-reference .ar-status[data-status="error"] { color: var(--ar-error); background: var(--ar-error-bg); }
+
+.attio-reference .ar-overlay {
+  border: 1px solid var(--ar-border);
+  border-radius: var(--ar-radius-surface);
+  background: var(--ar-surface);
+  box-shadow: var(--ar-shadow-overlay);
+}
+
+/* Apply only when a new transient surface actually enters, not on every rerender. */
+.attio-reference .ar-enter {
+  animation: ar-enter var(--ar-motion-menu) var(--ar-ease-enter) both;
+}
+@keyframes ar-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1200px) {
+  .attio-reference .ar-workbench[data-inspector="open"] { grid-template-columns: minmax(0, 1fr); }
+  .attio-reference .ar-inspector { border-left: 0; border-top: 1px solid var(--ar-border); }
+}
+
+@media (max-width: 800px) {
+  .attio-reference .ar-shell { grid-template-columns: minmax(0, 1fr); }
+  .attio-reference .ar-nav { border-right: 0; border-bottom: 1px solid var(--ar-border); }
+  .attio-reference .ar-reading { padding: var(--ar-space-4); }
+}
+
+@media (pointer: coarse) {
+  .attio-reference .ar-button,
+  .attio-reference .ar-input { min-height: var(--ar-touch-target); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attio-reference *,
+  .attio-reference *::before,
+  .attio-reference *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

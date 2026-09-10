@@ -109,9 +109,14 @@ class Database:
                 for table, column, definition in (
                     ("chat_threads", "pinned_at", "DATETIME"),
                     ("chat_messages", "feedback_rating", "VARCHAR(10)"),
+                    ("subscriptions", "view_kind", "VARCHAR(32) NOT NULL DEFAULT 'source_view'"),
+                    ("subscriptions", "source_id", "VARCHAR(36)"),
+                    ("subscriptions", "display", "JSON NOT NULL DEFAULT '{}'"),
+                    ("subscriptions", "revision", "INTEGER NOT NULL DEFAULT 0"),
                 ):
                     columns = {
-                        row[1] for row in (
+                        row[1]
+                        for row in (
                             await connection.exec_driver_sql(f"PRAGMA table_info({table})")
                         ).all()
                     }
@@ -146,6 +151,16 @@ class Database:
                         await connection.exec_driver_sql("PRAGMA table_info(subscriptions)")
                     ).all()
                 }
+                await connection.exec_driver_sql(
+                    "CREATE TRIGGER IF NOT EXISTS immutable_brief_update "
+                    "BEFORE UPDATE ON research_brief_snapshots BEGIN "
+                    "SELECT RAISE(ABORT, 'Research brief snapshots are immutable'); END"
+                )
+                await connection.exec_driver_sql(
+                    "CREATE TRIGGER IF NOT EXISTS immutable_brief_delete "
+                    "BEFORE DELETE ON research_brief_snapshots BEGIN "
+                    "SELECT RAISE(ABORT, 'Research brief snapshots are immutable'); END"
+                )
                 if subscription_columns and "description" not in subscription_columns:
                     await connection.exec_driver_sql(
                         "ALTER TABLE subscriptions ADD COLUMN description "
@@ -164,8 +179,7 @@ class Database:
                 }
                 if plan_columns and "workflow_template_version_id" not in plan_columns:
                     await connection.exec_driver_sql(
-                        "ALTER TABLE case_plans ADD COLUMN "
-                        "workflow_template_version_id VARCHAR(36)"
+                        "ALTER TABLE case_plans ADD COLUMN workflow_template_version_id VARCHAR(36)"
                     )
                     await connection.exec_driver_sql(
                         "CREATE INDEX IF NOT EXISTS "
@@ -185,8 +199,7 @@ class Database:
                 ):
                     if approval_columns and column_name not in approval_columns:
                         await connection.exec_driver_sql(
-                            f"ALTER TABLE approval_requests ADD COLUMN "
-                            f"{column_name} {column_type}"
+                            f"ALTER TABLE approval_requests ADD COLUMN {column_name} {column_type}"
                         )
                 embedding_columns = {
                     row[1]

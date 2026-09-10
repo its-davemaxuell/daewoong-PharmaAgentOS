@@ -641,20 +641,26 @@ class SavedViewCriteria(StrictModel):
     drug_subtype: str | None = Field(default=None, max_length=200)
     category: str | None = Field(default=None, max_length=300)
     country: str | None = Field(default=None, max_length=120)
-    lifecycle_state: Literal[
-        "ACTIVE",
-        "NEW",
-        "UPDATED",
-        "RESPONSE_ADDED",
-        "CLOSEOUT_ADDED",
-        "RESTORED",
-    ] | None = None
-    review_state: Literal[
-        "auto_approved",
-        "approved",
-        "needs_revision",
-        "rejected",
-    ] | None = None
+    lifecycle_state: (
+        Literal[
+            "ACTIVE",
+            "NEW",
+            "UPDATED",
+            "RESPONSE_ADDED",
+            "CLOSEOUT_ADDED",
+            "RESTORED",
+        ]
+        | None
+    ) = None
+    review_state: (
+        Literal[
+            "auto_approved",
+            "approved",
+            "needs_revision",
+            "rejected",
+        ]
+        | None
+    ) = None
     linked_document: Literal["response", "closeout", "open"] | None = None
     posted_from: date | None = None
     posted_to: date | None = None
@@ -688,6 +694,7 @@ class SavedViewCreateRequest(StrictModel):
     description: str = Field(default="", max_length=1_000)
     criteria: SavedViewCriteria = Field(default_factory=SavedViewCriteria)
     cadence: SavedViewCadence = "off"
+    display: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("name")
     @classmethod
@@ -708,6 +715,8 @@ class SavedViewUpdateRequest(StrictModel):
     description: str | None = Field(default=None, max_length=1_000)
     criteria: SavedViewCriteria | None = None
     cadence: SavedViewCadence | None = None
+    display: dict[str, Any] | None = None
+    expected_revision: int | None = Field(default=None, ge=0)
 
     @field_validator("name")
     @classmethod
@@ -742,6 +751,10 @@ class SavedViewResponse(StrictModel):
     open_url: str
     created_at: datetime
     updated_at: datetime
+    view_kind: str = "source_view"
+    source_id: str | None = None
+    display: dict[str, Any] = Field(default_factory=dict)
+    revision: int = 0
 
 
 class SavedViewPage(StrictModel):

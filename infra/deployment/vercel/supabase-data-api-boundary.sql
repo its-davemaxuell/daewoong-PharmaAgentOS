@@ -21,7 +21,8 @@ DECLARE
     'relation_evidence', 'release_approvals', 'research_runs', 'research_events', 'reviews', 'run_events',
     'scope_decisions', 'skill_versions', 'subscriptions', 'tool_invocations',
     'tool_versions', 'verification_reports', 'violations', 'warning_letters',
-    'workflow_template_versions'
+    'workflow_template_versions', 'workspace_inbox_preferences', 'workspace_triage',
+    'research_brief_snapshots'
   ];
 BEGIN
   FOREACH table_name IN ARRAY app_tables LOOP

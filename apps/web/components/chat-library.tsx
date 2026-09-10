@@ -20,6 +20,7 @@ export function ChatLibrary({ open, onClose, onUpdated }: { open: boolean; onClo
   const { upsertThread, removeThread } = useChatHistory();
   const dialog = useRef<HTMLDialogElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
   const [query, setQuery] = useState("");
   const [archived, setArchived] = useState(false);
   const [page, setPage] = useState(1);
@@ -30,8 +31,13 @@ export function ChatLibrary({ open, onClose, onUpdated }: { open: boolean; onClo
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (open) { dialog.current?.showModal(); searchInput.current?.focus(); }
-    else dialog.current?.close();
+    if (open) {
+      returnFocus.current = document.activeElement as HTMLElement;
+      dialog.current?.showModal(); searchInput.current?.focus();
+    } else if (dialog.current?.open) {
+      dialog.current.close();
+      if (returnFocus.current?.isConnected) returnFocus.current.focus({ preventScroll: true });
+    }
   }, [open]);
   useEffect(() => {
     if (!open) return;

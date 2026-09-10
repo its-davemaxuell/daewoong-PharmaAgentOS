@@ -1416,7 +1416,7 @@ function normalizeSavedView(value: unknown): SavedView | undefined {
   };
 }
 
-export async function getSavedViews(): Promise<ApiResult<SavedView[]>> {
+export async function getSavedViews(letterId?: string): Promise<ApiResult<SavedView[]>> {
   if (!API_BASE_URL) {
     return {
       data: seedSavedViews,
@@ -1424,7 +1424,7 @@ export async function getSavedViews(): Promise<ApiResult<SavedView[]>> {
       detail: "API_BASE_URL is not configured; showing the isolated local preview dataset.",
     };
   }
-  const payload = await requestApi("/api/v1/saved-views?limit=100");
+  const payload = await requestApi(`/api/v1/saved-views?limit=100${letterId ? `&source_id=${encodeURIComponent(letterId)}` : ""}`);
   const views = unwrapList(payload)
     .map(normalizeSavedView)
     .filter((view): view is SavedView => Boolean(view));

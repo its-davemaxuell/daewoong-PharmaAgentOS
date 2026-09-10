@@ -5,6 +5,7 @@ import { BilingualText, I18nProvider, type Locale } from "@/lib/i18n";
 import "./globals.css";
 import "./tokens.css";
 import "./agent-theme.css";
+import "./workspace.css";
 
 
 const pretendard = localFont({

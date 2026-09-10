@@ -7,65 +7,21 @@ test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name: "dli_locale", value: "en", url: origin }]);
 });
 
-test("selected tray travels beneath labels and local context transitions without remounting", async ({ page }) => {
+test("selection is immediate and workspace navigation retains the shell without arrival movement", async ({ page }) => {
   await page.goto(`/drug-letters/${threadId}`);
   const tabs = page.getByRole("tab");
   await tabs.nth(2).click();
   await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
   await tabs.nth(0).click();
   await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
-  // Pause at a deterministic point to inspect actual interpolation, not a settled screenshot.
-  await page.evaluate(async () => {
-    await Promise.allSettled(document.getAnimations().map(animation => animation.finished));
-    const animate = Element.prototype.animate;
-    Element.prototype.animate = function (...args) {
-      const animation = animate.apply(this, args);
-      if (this.matches("[data-motion-indicator], [role=tabpanel], main")) {
-        animation.pause(); animation.currentTime = 80;
-      }
-      return animation;
-    };
-  });
-  const original = await tabs.nth(0).boundingBox();
-  await tabs.nth(2).click();
-  await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
-  const target = await tabs.nth(2).boundingBox();
-  const indicator = page.locator(".record-tab-list [data-motion-indicator]");
-  const moving = await indicator.boundingBox();
-  expect(moving!.x).toBeGreaterThan(original!.x + 10);
-  expect(moving!.x).toBeLessThan(target!.x - 10);
-  expect(await tabs.nth(2).evaluate(node => getComputedStyle(node).isolation)).toBe("auto");
-  expect(await page.getByRole("tabpanel").evaluate(node => node.getAnimations().map(a => ({ id: a.id, duration: a.effect!.getTiming().duration, opacity: getComputedStyle(node).opacity })))).toEqual([{ id: "context-arrival", duration: 300, opacity: "1" }]);
-  // A new click interrupts the transition and immediately changes the real view.
-  await tabs.nth(1).click();
-  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
-  expect(await indicator.evaluate(node => node.getAnimations().length)).toBe(1);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await tabs.nth(0).click();
-  await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
-  expect(await page.getByRole("tabpanel").evaluate(node => node.getAnimations().length)).toBe(0);
-});
-
-test("workspace navigation settles once while retaining the shell and respecting reduced motion", async ({ page }) => {
-  await page.goto("/dashboard");
-  await page.getByRole("button", { name: "Switch interface to 한국어", exact: true }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-locale", "ko");
-  await page.evaluate(() => {
-    document.querySelector("main")!.setAttribute("data-retained-shell", "true");
-    const animate = Element.prototype.animate;
-    Element.prototype.animate = function (...args) {
-      const animation = animate.apply(this, args);
-      if (this.matches("main")) { animation.pause(); animation.currentTime = 100; }
-      return animation;
-    };
-  });
+  await page.evaluate(() => document.querySelector("main")!.setAttribute("data-retained-shell", "true"));
   await page.locator('.portal-nav__link[href="/drug-letters"]').click();
   await expect(page).toHaveURL(/\/drug-letters$/);
   await expect(page.locator("main")).toHaveAttribute("data-retained-shell", "true");
-  expect(await page.locator("main").evaluate(node => node.getAnimations().map(a => ({ id: a.id, duration: a.effect!.getTiming().duration })))).toEqual([{ id: "context-arrival", duration: 300 }]);
+  expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.locator('.portal-nav__link[href="/saved-views"]').click();
-  await expect(page).toHaveURL(/\/saved-views$/);
+  await page.locator('.portal-nav__link[href="/saved-work"]').click();
+  await expect(page).toHaveURL(/\/saved-work$/);
   expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
 });
 
@@ -215,7 +171,8 @@ test("bookmark pending state prevents duplicate writes and failure never looks s
   const bookmark = page.locator(".letter-bookmark-button").first();
   await bookmark.click();
   await expect(bookmark).toBeDisabled();
-  await expect(bookmark).toHaveAttribute("aria-pressed", "false");
+  await expect(bookmark).toHaveAttribute("aria-pressed", "true");
+  await expect(bookmark).toContainText("Saving source preference");
   await expect(bookmark).toHaveAttribute("aria-busy", "true");
   await bookmark.evaluate(node => { (node as HTMLButtonElement).click(); });
   await expect.poll(() => mutations).toBe(1);

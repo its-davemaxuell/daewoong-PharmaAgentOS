@@ -20,10 +20,11 @@ const api = createServer((req, res) => {
   if (url.pathname === "/api/v1/letters/search") {
     const query = url.searchParams.get("q") || "";
     if (query === "failure") { res.statusCode = 500; return res.end(JSON.stringify({ detail: "Fixture unavailable" })); }
-    const total = query === "no-match" ? 0 : url.searchParams.get("document") === "response" ? 1 : 10041;
+    const fixtureSize = /^fixture-(100|1000|10000)$/.test(query) ? Number(query.slice(8)) : 10041;
+    const total = query === "no-match" ? 0 : url.searchParams.get("document") === "response" ? 1 : fixtureSize;
     const pageSize = Number(url.searchParams.get("page_size") || 20);
     const page = Math.min(Number(url.searchParams.get("page") || 1), Math.max(1, Math.ceil(total / pageSize)));
-    data = { total, collectionTotal: 10041, page, pageSize, facets, items: Array.from({ length: Math.min(pageSize, Math.max(0, total - (page - 1) * pageSize)) }, (_, index) => ({ ...source, id: index === 0 && page === 1 ? id : `${id.slice(0, 24)}${String((page - 1) * pageSize + index + 1).padStart(12, "0")}`, company_name: `${source.company_name} ${(page - 1) * pageSize + index + 1}`, has_response: page === 1 && index === 0 })) };
+    data = { total, collectionTotal: 10041, page, pageSize, facets, items: Array.from({ length: Math.min(pageSize, Math.max(0, total - (page - 1) * pageSize)) }, (_, index) => ({ ...source, id: index === 0 && page === 1 ? id : `${id.slice(0, 24)}${String((page - 1) * pageSize + index + 1).padStart(12, "0")}`, company_name: `${source.company_name} ${(page - 1) * pageSize + index + 1}${query.startsWith("fixture-") ? " · 장기 보존 원문 검토 자료 및 제조 품질 검증 / Long retained evidence and manufacturing quality validation source title" : ""}`, has_response: page === 1 && index === 0 })) };
   } else if (url.pathname === "/api/v1/letters" || url.pathname === "/api/v1/letters/catalog") {
     data = { items: [{ ...source, categories: ["Validation"], regulations: ["21 CFR 211.67"] }], total: 1, has_more: false };
   } else if (url.pathname === "/api/v1/dashboard") {

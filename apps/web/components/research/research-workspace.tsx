@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
+import { ResearchRunList } from "../workspace/research-list";
+import { SaveBriefButton } from "../workspace/save-brief-button";
+import { SourceInspector } from "../workspace/source-inspector";
+import { useWorkspaceScope } from "../workspace/provider";
+import { setWorkspaceParams } from "@/lib/workspace-client";
+import { ActionButton } from "../workspace/commands";
 import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
 import { trustedFdaUrl } from "@/lib/evidence-state";
 import { SessionNotice } from "@/components/session-notice";
@@ -29,7 +36,7 @@ import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { Square } from "@/components/icons/Square";
 import { Target } from "@/components/icons/Target";
 import { useI18n } from "@/lib/i18n";
-import { mergeResearchRun, researchActive, researchText, type ResearchEvent, type ResearchRun, type ResearchSource, type ResearchStatus, type ResearchSummary } from "@/lib/research-types";
+import { mergeResearchRun, researchActive, researchText, type ResearchEvent, type ResearchRun, type ResearchSource, type ResearchStatus } from "@/lib/research-types";
 import { ResearchJourney } from "@/components/agent-platform/research-journey";
 import { ServiceScope } from "@/components/agent-platform/service-scope";
 import { Button, SkeletonRows, InlineFeedback } from "../controls";
@@ -109,7 +116,7 @@ function sourceUrl(source: ResearchSource) { return trustedFdaUrl(source.source_
 export function ResearchWorkspace() {
   const searchParams = useSearchParams();
   const runId = searchParams.get("run") || "";
-  return <ResearchWorkspaceInner key={runId} runId={runId} />;
+  return <div className="research-desk"><ResearchRunList selected={runId} /><ResearchWorkspaceInner key={runId} runId={runId} /></div>;
 }
 
 function ResearchWorkspaceInner({ runId }: { runId: string }) {
@@ -126,10 +133,12 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
     }, 0);
     return () => clearTimeout(timer);
   }, [runId]);
-  const [run, setRun] = useState<ResearchRun>();
   const [newEventSequences, setNewEventSequences] = useState<Set<number>>(() => new Set());
-  const [saved, setSaved] = useState<ResearchSummary[]>([]);
-  const [savedFailed, setSavedFailed] = useState(false);
+  const queryClient = useQueryClient();
+  const scope = useWorkspaceScope();
+  const [run, setRun] = useState<ResearchRun>(() => queryClient.getQueryData([scope, "research-run", runId]) as ResearchRun);
+  const peekSource = useSearchParams().get("evidence") || undefined;
+  const setPeekSource = (id?: string) => setWorkspaceParams({ evidence: id || null });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<number>();
   const [copyFailed, setCopyFailed] = useState(false);
@@ -139,21 +148,14 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   const [copied, setCopied] = useState(false);
   const [showAllActivity, setShowAllActivity] = useState(false);
   const [now, setNow] = useState(0);
-  const currentRun = useRef<ResearchRun | undefined>(undefined);
+  const currentRun = useRef<ResearchRun | undefined>(run);
   const createRequest = useRef<{ value: string; id: string } | undefined>(undefined);
   const activityList = useRef<HTMLOListElement>(null);
   const followActivity = useRef(true);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
 
-  const refreshSaved = useCallback(async () => {
-    try {
-      const response = await requestJson("/api/research");
-      if (!Array.isArray(response.items)) throw new Error("Invalid task list");
-      setSaved(response.items);
-      setSavedFailed(false);
-    } catch { setSavedFailed(true); }
-  }, []);
+  const refreshSaved = useCallback(async () => { await queryClient.invalidateQueries({ queryKey: [scope, "research-list"] }); }, [queryClient, scope]);
 
   useEffect(() => { const timer = setTimeout(() => void refreshSaved(), 0); return () => clearTimeout(timer); }, [refreshSaved]);
   useEffect(() => {
@@ -173,7 +175,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
         const merged = mergeResearchRun(previous, incoming);
         if (previous?.id === incoming.id && incoming.revision > previous.revision) setNewEventSequences(new Set(incoming.events.filter(event => event.sequence > previous.revision).map(event => event.sequence)));
         currentRun.current = merged;
-        setRun(merged);
+        if (!previous || incoming.revision > previous.revision) { setRun(merged); queryClient.setQueryData([scope, "research-run", runId], merged); }
         setNow(Date.now());
         setConnectionLost(false);
         setError(undefined);
@@ -191,7 +193,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
     };
     void poll();
     return () => { active = false; controller.abort(); clearTimeout(timer); };
-  }, [refreshSaved, retry, runId]);
+  }, [refreshSaved, retry, runId, queryClient, scope]);
 
   const runStatus = run?.status;
   useEffect(() => {
@@ -286,7 +288,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       <section className={styles.taskHeader} aria-label={text("Research task", "리서치 작업")}>
         <div className={styles.statusRow}><span data-research-status={run.status} className={`${styles.status} ${active ? styles.statusActive : ""}`}>{active && !connectionLost ? <LoaderCircle className={styles.spin} size={16} /> : run.status === "completed" ? <Check size={17} /> : <Circle size={15} />}{text(...labels[run.status])}</span><span>{text("Sources read", "확인한 근거")} {run.sources.length}</span><span>{text("Elapsed", "경과 시간")} {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}</span></div>
         <h2>{run.objective}</h2>
-        <div className={styles.taskActions}><p><CloudCheck size={18} aria-hidden="true" />{active ? text("Runs in the background · Progress saved", "페이지를 닫아도 계속 진행 · 자동 저장") : text("Saved · Reopen in this browser session", "저장 완료 · 같은 브라우저에서 다시 열기")}</p>{active ? <button type="button" className="button button--secondary" disabled={pending} onClick={() => void control("stop")}><Square size={16} />{text("Stop research", "리서치 중지")}</button> : run.status === "completed" ? <a className="button button--primary" href="#research-brief" onClick={() => document.getElementById("research-brief")?.focus()}><FileText size={18} />{text("View brief", "브리핑 보기")}<ArrowRight size={18} /></a> : run.can_resume ? <button type="button" className="button button--primary" disabled={pending} onClick={() => void control("resume")}><Play size={17} />{text("Resume research", "리서치 이어서 진행")}</button> : null}</div>
+        <div className={styles.taskActions}><p><CloudCheck size={18} aria-hidden="true" />{active ? text("Runs in the background · Progress saved", "페이지를 닫아도 계속 진행 · 자동 저장") : text("Saved · Reopen in this browser session", "저장 완료 · 같은 브라우저에서 다시 열기")}</p>{active ? <ActionButton actionId="research.stop" label={text("Stop research", "리서치 중지")} type="button" className="button button--secondary" disabled={pending} onClick={() => void control("stop")}><Square size={16} />{text("Stop research", "리서치 중지")}</ActionButton> : run.status === "completed" ? <a className="button button--primary" href="#research-brief" onClick={() => document.getElementById("research-brief")?.focus()}><FileText size={18} />{text("View brief", "브리핑 보기")}<ArrowRight size={18} /></a> : run.can_resume ? <ActionButton actionId="research.resume" label={text("Resume research", "리서치 이어가기")} type="button" className="button button--primary" disabled={pending} onClick={() => void control("resume")}><Play size={17} />{text("Resume research", "리서치 이어서 진행")}</ActionButton> : null}</div>
       </section>
       <SelectionGroup><ol className={styles.stages} aria-label={text("Research stages", "리서치 단계")}>{stages.map((stage) => {
         const done = run.events.some((event) => event.kind === stage.done);
@@ -319,18 +321,16 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       </div>
 
       {run.status === "completed" && brief?.findings ? <section id="research-brief" tabIndex={-1} className={styles.brief} aria-labelledby="research-brief-title">
-        <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { setCopyFailed(false); await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setCopyFailed(true); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
+        <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { setCopyFailed(false); await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setCopyFailed(true); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><SaveBriefButton runId={run.id} revision={run.revision} /><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
         <h2 id="research-brief-title">{brief.title}</h2><h3>{text("Findings from the FDA sources", "FDA 원문에서 확인한 내용")}</h3>
-        <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={() => setOpenSource(id)}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
+        <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={(event) => { event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); setPeekSource(id); }}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
         <h3 className={styles.briefHeading}><Target size={21} aria-hidden="true" />{text("Questions for your team", "우리 팀의 검토 질문")}</h3><ul>{brief.review_questions?.map((question) => <li key={question}>{question}</li>)}</ul>
         <details className={styles.reviewNotes}><summary><ShieldCheck size={19} aria-hidden="true" />{text("Limits & review notes", "조사의 한계와 검토 안내")}<ChevronRight size={16} aria-hidden="true" /></summary><ul>{brief.limitations?.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
         <p className={styles.scope}>{text("Check FDA originals before use. This AI draft is not a compliance decision.", "사용 전 FDA 원문을 확인하세요. AI 초안은 규정 준수 판단이 아닙니다.")}</p></details>
       </section> : active ? <div className={styles.waitingBrief}><FileText size={23} /><div><strong>{text("Brief in preparation", "브리핑 준비 중")}</strong><p>{text("Available after the evidence check", "근거 검토 후 확인할 수 있습니다")}</p></div></div> : null}
     </> : null}
 
-    <section className={styles.saved} aria-labelledby="saved-research-title"><div className={styles.sectionTitle}><h2 id="saved-research-title">{text("Your research tasks", "내 리서치 작업")}</h2><button type="button" onClick={() => void refreshSaved()}>{text("Refresh list", "목록 새로고침")}</button></div>
-      {savedFailed ? <p role="status">{text("Saved tasks could not be loaded. Refresh the list to try again.", "저장한 작업을 불러오지 못했습니다. 목록을 새로고침해 주세요.")}</p> : saved.length ? <ul>{saved.map((task) => <li key={task.id}><Link href={`/research?run=${task.id}`} prefetch={false} aria-current={task.id === runId ? "page" : undefined}><span><strong>{task.objective}</strong><small>{new Date(task.created_at).toLocaleDateString(locale === "ko" ? "ko-KR" : "en-US")}</small></span><span className={styles.savedStatus}>{text(...(labels[task.status] || labels.queued))}</span><ArrowRight size={18} /></Link></li>)}</ul> : <p>{text("Your saved tasks will appear here.", "저장한 작업이 여기에 표시됩니다.")}</p>}
-    </section>
+    {peekSource && run?.sources.find(source => source.id === peekSource) && <SourceInspector id={run.sources.find(source => source.id === peekSource)!.letter_id} source={run.sources.find(source => source.id === peekSource)} onClose={() => setPeekSource(undefined)} />}
   </div>;
 }
 

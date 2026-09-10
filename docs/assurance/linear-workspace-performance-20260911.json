@@ -1,0 +1,5025 @@
+{
+  "verification_date": "2026-09-11",
+  "base_commit": "50e2d70",
+  "modified_worktree": true,
+  "note": "Windows workstation, production fixture build, serial browser runs. No hosted service or field INP measurement. Proposed 100 ms target remains unmet in Windows WebKit. All final runs passed the separate 500 ms regression ceiling.",
+  "initial_with_trace_recording": [
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 34.79999999701977,
+          "usefulContent": 34.79999999701977,
+          "animationComplete": 234.79999999701977
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24.099999994039536,
+          "animationComplete": 221.09999999403954
+        },
+        {
+          "acknowledgment": 37.5,
+          "usefulContent": 37.5,
+          "animationComplete": 217.90000000596046
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33,
+          "animationComplete": 232.3999999910593
+        },
+        {
+          "acknowledgment": 22.799999997019768,
+          "usefulContent": 22.799999997019768,
+          "animationComplete": 204.59999999403954
+        },
+        {
+          "acknowledgment": 28.599999994039536,
+          "usefulContent": 28.599999994039536,
+          "animationComplete": 229.20000000298023
+        },
+        {
+          "acknowledgment": 25.900000005960464,
+          "usefulContent": 26,
+          "animationComplete": 226.20000000298023
+        },
+        {
+          "acknowledgment": 24.400000005960464,
+          "usefulContent": 24.400000005960464,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 44.29999999701977,
+          "usefulContent": 44.29999999701977,
+          "animationComplete": 272.5
+        },
+        {
+          "acknowledgment": 37.400000005960464,
+          "usefulContent": 37.5,
+          "animationComplete": 249.5
+        },
+        {
+          "acknowledgment": 28.099999994039536,
+          "usefulContent": 28.099999994039536,
+          "animationComplete": 248.8999999910593
+        },
+        {
+          "acknowledgment": 34.29999999701977,
+          "usefulContent": 34.5,
+          "animationComplete": 238.40000000596046
+        },
+        {
+          "acknowledgment": 49.19999998807907,
+          "usefulContent": 49.29999999701977,
+          "animationComplete": 257.3999999910593
+        },
+        {
+          "acknowledgment": 33.29999999701977,
+          "usefulContent": 33.3999999910593,
+          "animationComplete": 266.09999999403954
+        },
+        {
+          "acknowledgment": 33.099999994039536,
+          "usefulContent": 33.20000000298023,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 30.799999997019768,
+          "usefulContent": 30.799999997019768,
+          "animationComplete": 246.70000000298023
+        },
+        {
+          "acknowledgment": 39.6000000089407,
+          "usefulContent": 39.6000000089407,
+          "animationComplete": 230.5
+        },
+        {
+          "acknowledgment": 46.19999998807907,
+          "usefulContent": 46.19999998807907,
+          "animationComplete": 234.5
+        },
+        {
+          "acknowledgment": 34.79999999701977,
+          "usefulContent": 34.8999999910593,
+          "animationComplete": 245.3999999910593
+        },
+        {
+          "acknowledgment": 37.70000000298023,
+          "usefulContent": 37.79999999701977,
+          "animationComplete": 226.90000000596046
+        },
+        {
+          "acknowledgment": 25.200000002980232,
+          "usefulContent": 25.200000002980232,
+          "animationComplete": 225.70000000298023
+        },
+        {
+          "acknowledgment": 27.5,
+          "usefulContent": 27.5,
+          "animationComplete": 253.29999999701977
+        },
+        {
+          "acknowledgment": 31.599999994039536,
+          "usefulContent": 31.599999994039536,
+          "animationComplete": 245.5
+        },
+        {
+          "acknowledgment": 31,
+          "usefulContent": 31,
+          "animationComplete": 261.29999999701977
+        },
+        {
+          "acknowledgment": 32.6000000089407,
+          "usefulContent": 32.70000000298023,
+          "animationComplete": 248.40000000596046
+        },
+        {
+          "acknowledgment": 31.399999991059303,
+          "usefulContent": 31.399999991059303,
+          "animationComplete": 255.09999999403954
+        },
+        {
+          "acknowledgment": 30.200000002980232,
+          "usefulContent": 30.200000002980232,
+          "animationComplete": 253.40000000596046
+        },
+        {
+          "acknowledgment": 32.099999994039536,
+          "usefulContent": 32.099999994039536,
+          "animationComplete": 248.79999999701977
+        },
+        {
+          "acknowledgment": 48.70000000298023,
+          "usefulContent": 48.79999999701977,
+          "animationComplete": 246.5
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33.1000000089407,
+          "animationComplete": 270.40000000596046
+        }
+      ],
+      "p95": {
+        "acknowledgment": 48.70000000298023,
+        "usefulContent": 48.79999999701977,
+        "animationComplete": 270.40000000596046
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 46.599999994039536,
+          "usefulContent": 46.599999994039536,
+          "animationComplete": 278.19999998807907
+        },
+        {
+          "acknowledgment": 34.8999999910593,
+          "usefulContent": 34.8999999910593,
+          "animationComplete": 233.70000000298023
+        },
+        {
+          "acknowledgment": 12.900000005960464,
+          "usefulContent": 12.900000005960464,
+          "animationComplete": 222.40000000596046
+        },
+        {
+          "acknowledgment": 15.299999997019768,
+          "usefulContent": 15.299999997019768,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 17.900000005960464,
+          "usefulContent": 18,
+          "animationComplete": 238.90000000596046
+        },
+        {
+          "acknowledgment": 43.5,
+          "usefulContent": 43.5,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 39.6000000089407,
+          "usefulContent": 39.6000000089407,
+          "animationComplete": 214.6000000089407
+        },
+        {
+          "acknowledgment": 38.6000000089407,
+          "usefulContent": 38.6000000089407,
+          "animationComplete": 210.6000000089407
+        },
+        {
+          "acknowledgment": 34.30000001192093,
+          "usefulContent": 34.30000001192093,
+          "animationComplete": 237.1000000089407
+        },
+        {
+          "acknowledgment": 35.20000000298023,
+          "usefulContent": 35.20000000298023,
+          "animationComplete": 247.1000000089407
+        },
+        {
+          "acknowledgment": 27.5,
+          "usefulContent": 30.400000005960464,
+          "animationComplete": 243.29999999701977
+        },
+        {
+          "acknowledgment": 30.799999997019768,
+          "usefulContent": 30.899999991059303,
+          "animationComplete": 244.59999999403954
+        },
+        {
+          "acknowledgment": 35.5,
+          "usefulContent": 35.6000000089407,
+          "animationComplete": 244.5
+        },
+        {
+          "acknowledgment": 33.400000005960464,
+          "usefulContent": 33.400000005960464,
+          "animationComplete": 248.5
+        },
+        {
+          "acknowledgment": 35.6000000089407,
+          "usefulContent": 35.70000000298023,
+          "animationComplete": 240.70000000298023
+        },
+        {
+          "acknowledgment": 34.1000000089407,
+          "usefulContent": 34.1000000089407,
+          "animationComplete": 246.1000000089407
+        },
+        {
+          "acknowledgment": 32.099999994039536,
+          "usefulContent": 32.099999994039536,
+          "animationComplete": 252.59999999403954
+        },
+        {
+          "acknowledgment": 31.5,
+          "usefulContent": 31.5,
+          "animationComplete": 240.3999999910593
+        },
+        {
+          "acknowledgment": 35,
+          "usefulContent": 35,
+          "animationComplete": 245.6000000089407
+        },
+        {
+          "acknowledgment": 45.20000000298023,
+          "usefulContent": 45.20000000298023,
+          "animationComplete": 291.5
+        },
+        {
+          "acknowledgment": 31.700000002980232,
+          "usefulContent": 31.700000002980232,
+          "animationComplete": 239.40000000596046
+        },
+        {
+          "acknowledgment": 31.900000005960464,
+          "usefulContent": 32,
+          "animationComplete": 255.70000000298023
+        },
+        {
+          "acknowledgment": 45.79999999701977,
+          "usefulContent": 45.900000005960464,
+          "animationComplete": 252.5
+        },
+        {
+          "acknowledgment": 38.900000005960464,
+          "usefulContent": 39,
+          "animationComplete": 245.40000000596046
+        },
+        {
+          "acknowledgment": 39.8999999910593,
+          "usefulContent": 39.8999999910593,
+          "animationComplete": 229.29999999701977
+        },
+        {
+          "acknowledgment": 40.8999999910593,
+          "usefulContent": 41,
+          "animationComplete": 244
+        },
+        {
+          "acknowledgment": 44.80000001192093,
+          "usefulContent": 44.900000005960464,
+          "animationComplete": 265.6000000089407
+        },
+        {
+          "acknowledgment": 48.3999999910593,
+          "usefulContent": 48.3999999910593,
+          "animationComplete": 260.19999998807907
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39.1000000089407,
+          "animationComplete": 267.80000001192093
+        },
+        {
+          "acknowledgment": 47.70000000298023,
+          "usefulContent": 47.70000000298023,
+          "animationComplete": 256.90000000596046
+        }
+      ],
+      "p95": {
+        "acknowledgment": 47.70000000298023,
+        "usefulContent": 47.70000000298023,
+        "animationComplete": 278.19999998807907
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 253.20000000298023
+        },
+        {
+          "acknowledgment": 18.600000008940697,
+          "usefulContent": 18.600000008940697,
+          "animationComplete": 231.6000000089407
+        },
+        {
+          "acknowledgment": 28.200000002980232,
+          "usefulContent": 28.200000002980232,
+          "animationComplete": 235.5
+        },
+        {
+          "acknowledgment": 34.5,
+          "usefulContent": 34.5,
+          "animationComplete": 236.40000000596046
+        },
+        {
+          "acknowledgment": 37.6000000089407,
+          "usefulContent": 37.6000000089407,
+          "animationComplete": 229.5
+        },
+        {
+          "acknowledgment": 32.29999999701977,
+          "usefulContent": 32.29999999701977,
+          "animationComplete": 259.29999999701977
+        },
+        {
+          "acknowledgment": 17.600000008940697,
+          "usefulContent": 17.600000008940697,
+          "animationComplete": 244.5
+        },
+        {
+          "acknowledgment": 19.900000005960464,
+          "usefulContent": 19.900000005960464,
+          "animationComplete": 237.29999999701977
+        },
+        {
+          "acknowledgment": 41.70000000298023,
+          "usefulContent": 41.79999999701977,
+          "animationComplete": 272.09999999403954
+        },
+        {
+          "acknowledgment": 34.30000001192093,
+          "usefulContent": 34.30000001192093,
+          "animationComplete": 256
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45.099999994039536,
+          "animationComplete": 259.5
+        },
+        {
+          "acknowledgment": 39.8999999910593,
+          "usefulContent": 39.8999999910593,
+          "animationComplete": 254.3999999910593
+        },
+        {
+          "acknowledgment": 42.79999999701977,
+          "usefulContent": 42.79999999701977,
+          "animationComplete": 246.79999999701977
+        },
+        {
+          "acknowledgment": 27,
+          "usefulContent": 27,
+          "animationComplete": 242.40000000596046
+        },
+        {
+          "acknowledgment": 30.900000005960464,
+          "usefulContent": 30.900000005960464,
+          "animationComplete": 242.20000000298023
+        },
+        {
+          "acknowledgment": 49.69999998807907,
+          "usefulContent": 49.79999999701977,
+          "animationComplete": 250.8999999910593
+        },
+        {
+          "acknowledgment": 33.70000000298023,
+          "usefulContent": 33.70000000298023,
+          "animationComplete": 249.59999999403954
+        },
+        {
+          "acknowledgment": 46.5,
+          "usefulContent": 46.599999994039536,
+          "animationComplete": 252.70000000298023
+        },
+        {
+          "acknowledgment": 34.80000001192093,
+          "usefulContent": 34.900000005960464,
+          "animationComplete": 246.70000000298023
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33,
+          "animationComplete": 254.70000000298023
+        },
+        {
+          "acknowledgment": 28.799999997019768,
+          "usefulContent": 28.899999991059303,
+          "animationComplete": 261.79999999701977
+        },
+        {
+          "acknowledgment": 33.8999999910593,
+          "usefulContent": 33.8999999910593,
+          "animationComplete": 248.3999999910593
+        },
+        {
+          "acknowledgment": 45.29999999701977,
+          "usefulContent": 45.3999999910593,
+          "animationComplete": 264.3999999910593
+        },
+        {
+          "acknowledgment": 35.80000001192093,
+          "usefulContent": 35.900000005960464,
+          "animationComplete": 264.20000000298023
+        },
+        {
+          "acknowledgment": 52.099999994039536,
+          "usefulContent": 52.20000000298023,
+          "animationComplete": 254.79999999701977
+        },
+        {
+          "acknowledgment": 33.70000000298023,
+          "usefulContent": 33.70000000298023,
+          "animationComplete": 266.20000000298023
+        },
+        {
+          "acknowledgment": 40.3999999910593,
+          "usefulContent": 40.3999999910593,
+          "animationComplete": 228.70000000298023
+        },
+        {
+          "acknowledgment": 27.799999997019768,
+          "usefulContent": 27.799999997019768,
+          "animationComplete": 223.09999999403954
+        },
+        {
+          "acknowledgment": 49.79999999701977,
+          "usefulContent": 49.8999999910593,
+          "animationComplete": 255.29999999701977
+        },
+        {
+          "acknowledgment": 30.799999997019768,
+          "usefulContent": 30.899999991059303,
+          "animationComplete": 242.09999999403954
+        }
+      ],
+      "p95": {
+        "acknowledgment": 49.79999999701977,
+        "usefulContent": 49.8999999910593,
+        "animationComplete": 266.20000000298023
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 57,
+          "usefulContent": 57,
+          "animationComplete": 257
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 74,
+          "usefulContent": 74,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 225
+        },
+        {
+          "acknowledgment": 62,
+          "usefulContent": 62,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 55,
+          "usefulContent": 55,
+          "animationComplete": 219
+        },
+        {
+          "acknowledgment": 75,
+          "usefulContent": 75,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 63,
+          "usefulContent": 63,
+          "animationComplete": 246
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 225
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 219
+        },
+        {
+          "acknowledgment": 55,
+          "usefulContent": 55,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 56,
+          "usefulContent": 56,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 66,
+          "usefulContent": 66,
+          "animationComplete": 250
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 60,
+          "usefulContent": 60,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 57,
+          "usefulContent": 57,
+          "animationComplete": 238
+        },
+        {
+          "acknowledgment": 28,
+          "usefulContent": 28,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 246
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 217
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 76,
+          "usefulContent": 76,
+          "animationComplete": 251
+        },
+        {
+          "acknowledgment": 62,
+          "usefulContent": 62,
+          "animationComplete": 247
+        },
+        {
+          "acknowledgment": 75,
+          "usefulContent": 75,
+          "animationComplete": 229
+        }
+      ],
+      "p95": {
+        "acknowledgment": 75,
+        "usefulContent": 75,
+        "animationComplete": 251
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 67,
+          "usefulContent": 67,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 30,
+          "usefulContent": 30,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 214
+        },
+        {
+          "acknowledgment": 28,
+          "usefulContent": 28,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 42,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 27,
+          "usefulContent": 27,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 79,
+          "usefulContent": 79,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 61,
+          "usefulContent": 61,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 26,
+          "usefulContent": 26,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 77,
+          "usefulContent": 77,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 95,
+          "usefulContent": 96,
+          "animationComplete": 251
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 38,
+          "usefulContent": 38,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 228
+        },
+        {
+          "acknowledgment": 59,
+          "usefulContent": 59,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 36,
+          "usefulContent": 36,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 53,
+          "usefulContent": 53,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 74,
+          "usefulContent": 74,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 240
+        }
+      ],
+      "p95": {
+        "acknowledgment": 79,
+        "usefulContent": 79,
+        "animationComplete": 242
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 75,
+          "usefulContent": 75,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 60,
+          "usefulContent": 60,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 53,
+          "usefulContent": 53,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 82,
+          "usefulContent": 82,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 56,
+          "usefulContent": 56,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 74,
+          "usefulContent": 74,
+          "animationComplete": 259
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 68,
+          "usefulContent": 68,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 86,
+          "usefulContent": 86,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 56,
+          "usefulContent": 56,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 28,
+          "usefulContent": 28,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 49,
+          "usefulContent": 49,
+          "animationComplete": 228
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 49,
+          "usefulContent": 49,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 28,
+          "usefulContent": 28,
+          "animationComplete": 225
+        },
+        {
+          "acknowledgment": 71,
+          "usefulContent": 71,
+          "animationComplete": 252
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 225
+        }
+      ],
+      "p95": {
+        "acknowledgment": 82,
+        "usefulContent": 82,
+        "animationComplete": 252
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 190,
+          "usefulContent": 190,
+          "animationComplete": 375
+        },
+        {
+          "acknowledgment": 178,
+          "usefulContent": 178,
+          "animationComplete": 394
+        },
+        {
+          "acknowledgment": 234,
+          "usefulContent": 234,
+          "animationComplete": 405
+        },
+        {
+          "acknowledgment": 295,
+          "usefulContent": 296,
+          "animationComplete": 433
+        },
+        {
+          "acknowledgment": 212,
+          "usefulContent": 212,
+          "animationComplete": 359
+        },
+        {
+          "acknowledgment": 280,
+          "usefulContent": 280,
+          "animationComplete": 441
+        },
+        {
+          "acknowledgment": 329,
+          "usefulContent": 329,
+          "animationComplete": 510
+        },
+        {
+          "acknowledgment": 304,
+          "usefulContent": 304,
+          "animationComplete": 453
+        },
+        {
+          "acknowledgment": 374,
+          "usefulContent": 375,
+          "animationComplete": 375
+        },
+        {
+          "acknowledgment": 294,
+          "usefulContent": 294,
+          "animationComplete": 444
+        },
+        {
+          "acknowledgment": 332,
+          "usefulContent": 332,
+          "animationComplete": 333
+        },
+        {
+          "acknowledgment": 318,
+          "usefulContent": 318,
+          "animationComplete": 318
+        },
+        {
+          "acknowledgment": 380,
+          "usefulContent": 380,
+          "animationComplete": 381
+        },
+        {
+          "acknowledgment": 404,
+          "usefulContent": 404,
+          "animationComplete": 405
+        },
+        {
+          "acknowledgment": 298,
+          "usefulContent": 298,
+          "animationComplete": 452
+        },
+        {
+          "acknowledgment": 451,
+          "usefulContent": 451,
+          "animationComplete": 452
+        },
+        {
+          "acknowledgment": 204,
+          "usefulContent": 204,
+          "animationComplete": 380
+        },
+        {
+          "acknowledgment": 290,
+          "usefulContent": 290,
+          "animationComplete": 435
+        },
+        {
+          "acknowledgment": 300,
+          "usefulContent": 300,
+          "animationComplete": 301
+        },
+        {
+          "acknowledgment": 354,
+          "usefulContent": 354,
+          "animationComplete": 355
+        },
+        {
+          "acknowledgment": 212,
+          "usefulContent": 212,
+          "animationComplete": 347
+        },
+        {
+          "acknowledgment": 231,
+          "usefulContent": 231,
+          "animationComplete": 398
+        },
+        {
+          "acknowledgment": 296,
+          "usefulContent": 296,
+          "animationComplete": 446
+        },
+        {
+          "acknowledgment": 320,
+          "usefulContent": 320,
+          "animationComplete": 320
+        },
+        {
+          "acknowledgment": 328,
+          "usefulContent": 328,
+          "animationComplete": 489
+        },
+        {
+          "acknowledgment": 280,
+          "usefulContent": 280,
+          "animationComplete": 280
+        },
+        {
+          "acknowledgment": 511,
+          "usefulContent": 511,
+          "animationComplete": 511
+        },
+        {
+          "acknowledgment": 403,
+          "usefulContent": 403,
+          "animationComplete": 404
+        },
+        {
+          "acknowledgment": 302,
+          "usefulContent": 302,
+          "animationComplete": 302
+        },
+        {
+          "acknowledgment": 310,
+          "usefulContent": 310,
+          "animationComplete": 468
+        }
+      ],
+      "p95": {
+        "acknowledgment": 451,
+        "usefulContent": 451,
+        "animationComplete": 510
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 344,
+          "usefulContent": 344,
+          "animationComplete": 344
+        },
+        {
+          "acknowledgment": 283,
+          "usefulContent": 283,
+          "animationComplete": 445
+        },
+        {
+          "acknowledgment": 468,
+          "usefulContent": 468,
+          "animationComplete": 599
+        },
+        {
+          "acknowledgment": 312,
+          "usefulContent": 312,
+          "animationComplete": 460
+        },
+        {
+          "acknowledgment": 298,
+          "usefulContent": 298,
+          "animationComplete": 469
+        },
+        {
+          "acknowledgment": 372,
+          "usefulContent": 372,
+          "animationComplete": 585
+        },
+        {
+          "acknowledgment": 285,
+          "usefulContent": 285,
+          "animationComplete": 433
+        },
+        {
+          "acknowledgment": 283,
+          "usefulContent": 283,
+          "animationComplete": 436
+        },
+        {
+          "acknowledgment": 218,
+          "usefulContent": 219,
+          "animationComplete": 361
+        },
+        {
+          "acknowledgment": 295,
+          "usefulContent": 295,
+          "animationComplete": 295
+        },
+        {
+          "acknowledgment": 208,
+          "usefulContent": 208,
+          "animationComplete": 351
+        },
+        {
+          "acknowledgment": 299,
+          "usefulContent": 299,
+          "animationComplete": 452
+        },
+        {
+          "acknowledgment": 586,
+          "usefulContent": 586,
+          "animationComplete": 586
+        },
+        {
+          "acknowledgment": 304,
+          "usefulContent": 304,
+          "animationComplete": 478
+        },
+        {
+          "acknowledgment": 301,
+          "usefulContent": 301,
+          "animationComplete": 302
+        },
+        {
+          "acknowledgment": 218,
+          "usefulContent": 218,
+          "animationComplete": 354
+        },
+        {
+          "acknowledgment": 309,
+          "usefulContent": 309,
+          "animationComplete": 532
+        },
+        {
+          "acknowledgment": 305,
+          "usefulContent": 305,
+          "animationComplete": 306
+        },
+        {
+          "acknowledgment": 475,
+          "usefulContent": 475,
+          "animationComplete": 475
+        },
+        {
+          "acknowledgment": 297,
+          "usefulContent": 297,
+          "animationComplete": 298
+        },
+        {
+          "acknowledgment": 324,
+          "usefulContent": 324,
+          "animationComplete": 492
+        },
+        {
+          "acknowledgment": 298,
+          "usefulContent": 298,
+          "animationComplete": 467
+        },
+        {
+          "acknowledgment": 338,
+          "usefulContent": 339,
+          "animationComplete": 339
+        },
+        {
+          "acknowledgment": 436,
+          "usefulContent": 436,
+          "animationComplete": 436
+        },
+        {
+          "acknowledgment": 210,
+          "usefulContent": 210,
+          "animationComplete": 351
+        },
+        {
+          "acknowledgment": 329,
+          "usefulContent": 329,
+          "animationComplete": 487
+        },
+        {
+          "acknowledgment": 327,
+          "usefulContent": 327,
+          "animationComplete": 327
+        },
+        {
+          "acknowledgment": 465,
+          "usefulContent": 465,
+          "animationComplete": 465
+        },
+        {
+          "acknowledgment": 309,
+          "usefulContent": 309,
+          "animationComplete": 522
+        },
+        {
+          "acknowledgment": 282,
+          "usefulContent": 282,
+          "animationComplete": 429
+        }
+      ],
+      "p95": {
+        "acknowledgment": 475,
+        "usefulContent": 475,
+        "animationComplete": 586
+      }
+    },
+    {
+      "method": "Production fixture build. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "samples": [
+        {
+          "acknowledgment": 288,
+          "usefulContent": 288,
+          "animationComplete": 288
+        },
+        {
+          "acknowledgment": 351,
+          "usefulContent": 351,
+          "animationComplete": 500
+        },
+        {
+          "acknowledgment": 582,
+          "usefulContent": 582,
+          "animationComplete": 582
+        },
+        {
+          "acknowledgment": 292,
+          "usefulContent": 292,
+          "animationComplete": 472
+        },
+        {
+          "acknowledgment": 287,
+          "usefulContent": 288,
+          "animationComplete": 440
+        },
+        {
+          "acknowledgment": 436,
+          "usefulContent": 436,
+          "animationComplete": 437
+        },
+        {
+          "acknowledgment": 295,
+          "usefulContent": 295,
+          "animationComplete": 437
+        },
+        {
+          "acknowledgment": 266,
+          "usefulContent": 266,
+          "animationComplete": 447
+        },
+        {
+          "acknowledgment": 295,
+          "usefulContent": 295,
+          "animationComplete": 453
+        },
+        {
+          "acknowledgment": 439,
+          "usefulContent": 439,
+          "animationComplete": 439
+        },
+        {
+          "acknowledgment": 271,
+          "usefulContent": 271,
+          "animationComplete": 271
+        },
+        {
+          "acknowledgment": 320,
+          "usefulContent": 320,
+          "animationComplete": 321
+        },
+        {
+          "acknowledgment": 285,
+          "usefulContent": 285,
+          "animationComplete": 286
+        },
+        {
+          "acknowledgment": 281,
+          "usefulContent": 281,
+          "animationComplete": 439
+        },
+        {
+          "acknowledgment": 213,
+          "usefulContent": 213,
+          "animationComplete": 337
+        },
+        {
+          "acknowledgment": 405,
+          "usefulContent": 406,
+          "animationComplete": 406
+        },
+        {
+          "acknowledgment": 293,
+          "usefulContent": 293,
+          "animationComplete": 456
+        },
+        {
+          "acknowledgment": 347,
+          "usefulContent": 347,
+          "animationComplete": 348
+        },
+        {
+          "acknowledgment": 288,
+          "usefulContent": 288,
+          "animationComplete": 430
+        },
+        {
+          "acknowledgment": 314,
+          "usefulContent": 314,
+          "animationComplete": 314
+        },
+        {
+          "acknowledgment": 299,
+          "usefulContent": 300,
+          "animationComplete": 471
+        },
+        {
+          "acknowledgment": 626,
+          "usefulContent": 626,
+          "animationComplete": 626
+        },
+        {
+          "acknowledgment": 314,
+          "usefulContent": 314,
+          "animationComplete": 314
+        },
+        {
+          "acknowledgment": 303,
+          "usefulContent": 303,
+          "animationComplete": 468
+        },
+        {
+          "acknowledgment": 302,
+          "usefulContent": 302,
+          "animationComplete": 303
+        },
+        {
+          "acknowledgment": 300,
+          "usefulContent": 300,
+          "animationComplete": 300
+        },
+        {
+          "acknowledgment": 354,
+          "usefulContent": 354,
+          "animationComplete": 354
+        },
+        {
+          "acknowledgment": 403,
+          "usefulContent": 403,
+          "animationComplete": 404
+        },
+        {
+          "acknowledgment": 294,
+          "usefulContent": 294,
+          "animationComplete": 470
+        },
+        {
+          "acknowledgment": 281,
+          "usefulContent": 281,
+          "animationComplete": 281
+        }
+      ],
+      "p95": {
+        "acknowledgment": 582,
+        "usefulContent": 582,
+        "animationComplete": 582
+      }
+    }
+  ],
+  "without_recording_before_css_simplification": [
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "frameCalibration": [
+        13.899999991059303,
+        16.30000001192093,
+        18.099999994039536,
+        14.799999997019768,
+        17.5,
+        15.799999997019768,
+        16.600000008940697,
+        17.200000002980232,
+        16.899999991059303,
+        16.5,
+        16.200000002980232,
+        16.900000005960464,
+        18.099999994039536,
+        15.200000002980232,
+        16.599999994039536,
+        16.700000002980232,
+        16.900000005960464,
+        16.69999998807907,
+        16.30000001192093,
+        17
+      ],
+      "samples": [
+        {
+          "acknowledgment": 26.599999994039536,
+          "usefulContent": 26.700000002980232,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 40.900000005960464,
+          "usefulContent": 41.099999994039536,
+          "animationComplete": 257.5
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.29999999701977,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 238.69999998807907
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.29999999701977,
+          "animationComplete": 219.70000000298023
+        },
+        {
+          "acknowledgment": 34.6000000089407,
+          "usefulContent": 34.6000000089407,
+          "animationComplete": 234.1000000089407
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.400000005960464,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 29.700000002980232,
+          "usefulContent": 29.700000002980232,
+          "animationComplete": 229.90000000596046
+        },
+        {
+          "acknowledgment": 34.79999999701977,
+          "usefulContent": 34.79999999701977,
+          "animationComplete": 216.59999999403954
+        },
+        {
+          "acknowledgment": 45.8999999910593,
+          "usefulContent": 46,
+          "animationComplete": 245.59999999403954
+        },
+        {
+          "acknowledgment": 28.5,
+          "usefulContent": 28.69999998807907,
+          "animationComplete": 245.79999999701977
+        },
+        {
+          "acknowledgment": 36.20000000298023,
+          "usefulContent": 36.400000005960464,
+          "animationComplete": 252.29999999701977
+        },
+        {
+          "acknowledgment": 46.79999999701977,
+          "usefulContent": 46.79999999701977,
+          "animationComplete": 246.3999999910593
+        },
+        {
+          "acknowledgment": 44.70000000298023,
+          "usefulContent": 44.70000000298023,
+          "animationComplete": 263.30000001192093
+        },
+        {
+          "acknowledgment": 45.099999994039536,
+          "usefulContent": 45.20000000298023,
+          "animationComplete": 261.79999999701977
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.400000005960464,
+          "animationComplete": 252.20000000298023
+        },
+        {
+          "acknowledgment": 33.900000005960464,
+          "usefulContent": 33.900000005960464,
+          "animationComplete": 248.1000000089407
+        },
+        {
+          "acknowledgment": 37.900000005960464,
+          "usefulContent": 38,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 39.20000000298023,
+          "usefulContent": 39.29999999701977,
+          "animationComplete": 239.40000000596046
+        },
+        {
+          "acknowledgment": 33.70000000298023,
+          "usefulContent": 33.70000000298023,
+          "animationComplete": 231.59999999403954
+        },
+        {
+          "acknowledgment": 36.400000005960464,
+          "usefulContent": 36.400000005960464,
+          "animationComplete": 247.6000000089407
+        },
+        {
+          "acknowledgment": 37.70000000298023,
+          "usefulContent": 37.70000000298023,
+          "animationComplete": 254.90000000596046
+        },
+        {
+          "acknowledgment": 23.899999991059303,
+          "usefulContent": 23.899999991059303,
+          "animationComplete": 238.3999999910593
+        },
+        {
+          "acknowledgment": 43.79999999701977,
+          "usefulContent": 43.900000005960464,
+          "animationComplete": 243.59999999403954
+        },
+        {
+          "acknowledgment": 49.400000005960464,
+          "usefulContent": 49.400000005960464,
+          "animationComplete": 247.70000000298023
+        },
+        {
+          "acknowledgment": 37.400000005960464,
+          "usefulContent": 37.400000005960464,
+          "animationComplete": 214.80000001192093
+        },
+        {
+          "acknowledgment": 31.200000002980232,
+          "usefulContent": 31.200000002980232,
+          "animationComplete": 248.20000000298023
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.3999999910593,
+          "animationComplete": 236.19999998807907
+        },
+        {
+          "acknowledgment": 29.599999994039536,
+          "usefulContent": 29.700000002980232,
+          "animationComplete": 230.5
+        },
+        {
+          "acknowledgment": 30.700000002980232,
+          "usefulContent": 30.700000002980232,
+          "animationComplete": 230.90000000596046
+        }
+      ],
+      "p95": {
+        "acknowledgment": 46.79999999701977,
+        "usefulContent": 46.79999999701977,
+        "animationComplete": 261.79999999701977
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        7.199999988079071,
+        15.900000005960464,
+        18.299999997019768,
+        15.700000002980232,
+        16.799999997019768,
+        16.600000008940697,
+        16.299999997019768,
+        16.299999997019768,
+        17.099999994039536,
+        16.5,
+        16.400000005960464,
+        17.5,
+        17.099999994039536,
+        16,
+        16.900000005960464,
+        16.200000002980232,
+        17,
+        17.200000002980232,
+        15.699999988079071,
+        16.700000002980232
+      ],
+      "samples": [
+        {
+          "acknowledgment": 34.70000000298023,
+          "usefulContent": 34.80000001192093,
+          "animationComplete": 234.6000000089407
+        },
+        {
+          "acknowledgment": 33.8999999910593,
+          "usefulContent": 33.8999999910593,
+          "animationComplete": 232.3999999910593
+        },
+        {
+          "acknowledgment": 37.099999994039536,
+          "usefulContent": 37.099999994039536,
+          "animationComplete": 220.70000000298023
+        },
+        {
+          "acknowledgment": 40.400000005960464,
+          "usefulContent": 40.400000005960464,
+          "animationComplete": 257.5
+        },
+        {
+          "acknowledgment": 21.799999997019768,
+          "usefulContent": 21.799999997019768,
+          "animationComplete": 221
+        },
+        {
+          "acknowledgment": 28,
+          "usefulContent": 28.099999994039536,
+          "animationComplete": 243.5
+        },
+        {
+          "acknowledgment": 36,
+          "usefulContent": 36,
+          "animationComplete": 235.20000000298023
+        },
+        {
+          "acknowledgment": 28.5,
+          "usefulContent": 28.5,
+          "animationComplete": 228.59999999403954
+        },
+        {
+          "acknowledgment": 34.80000001192093,
+          "usefulContent": 34.80000001192093,
+          "animationComplete": 218.40000000596046
+        },
+        {
+          "acknowledgment": 45.900000005960464,
+          "usefulContent": 45.900000005960464,
+          "animationComplete": 246.40000000596046
+        },
+        {
+          "acknowledgment": 32.5,
+          "usefulContent": 32.6000000089407,
+          "animationComplete": 231.29999999701977
+        },
+        {
+          "acknowledgment": 30.099999994039536,
+          "usefulContent": 30.099999994039536,
+          "animationComplete": 230.59999999403954
+        },
+        {
+          "acknowledgment": 44.80000001192093,
+          "usefulContent": 44.80000001192093,
+          "animationComplete": 244.70000000298023
+        },
+        {
+          "acknowledgment": 32.19999998807907,
+          "usefulContent": 32.19999998807907,
+          "animationComplete": 231.59999999403954
+        },
+        {
+          "acknowledgment": 35,
+          "usefulContent": 35.099999994039536,
+          "animationComplete": 235.79999999701977
+        },
+        {
+          "acknowledgment": 37,
+          "usefulContent": 37,
+          "animationComplete": 253.29999999701977
+        },
+        {
+          "acknowledgment": 29.200000002980232,
+          "usefulContent": 29.299999997019768,
+          "animationComplete": 229.40000000596046
+        },
+        {
+          "acknowledgment": 32.79999999701977,
+          "usefulContent": 32.79999999701977,
+          "animationComplete": 248.70000000298023
+        },
+        {
+          "acknowledgment": 28.80000001192093,
+          "usefulContent": 28.80000001192093,
+          "animationComplete": 246.1000000089407
+        },
+        {
+          "acknowledgment": 53.79999999701977,
+          "usefulContent": 53.79999999701977,
+          "animationComplete": 233.09999999403954
+        },
+        {
+          "acknowledgment": 35.29999999701977,
+          "usefulContent": 35.400000005960464,
+          "animationComplete": 236.5
+        },
+        {
+          "acknowledgment": 38.099999994039536,
+          "usefulContent": 38.20000000298023,
+          "animationComplete": 215.59999999403954
+        },
+        {
+          "acknowledgment": 33.20000000298023,
+          "usefulContent": 33.29999999701977,
+          "animationComplete": 249.90000000596046
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33,
+          "animationComplete": 248.6000000089407
+        },
+        {
+          "acknowledgment": 35.19999998807907,
+          "usefulContent": 35.19999998807907,
+          "animationComplete": 246.3999999910593
+        },
+        {
+          "acknowledgment": 36.20000000298023,
+          "usefulContent": 36.20000000298023,
+          "animationComplete": 246.20000000298023
+        },
+        {
+          "acknowledgment": 30.5,
+          "usefulContent": 30.5,
+          "animationComplete": 246.70000000298023
+        },
+        {
+          "acknowledgment": 45.70000000298023,
+          "usefulContent": 45.70000000298023,
+          "animationComplete": 245.90000000596046
+        },
+        {
+          "acknowledgment": 24.19999998807907,
+          "usefulContent": 24.19999998807907,
+          "animationComplete": 224.59999999403954
+        },
+        {
+          "acknowledgment": 46.70000000298023,
+          "usefulContent": 46.79999999701977,
+          "animationComplete": 263.90000000596046
+        }
+      ],
+      "p95": {
+        "acknowledgment": 46.70000000298023,
+        "usefulContent": 46.79999999701977,
+        "animationComplete": 257.5
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        7.4000000059604645,
+        11.200000002980232,
+        16.5,
+        18.200000002980232,
+        15.199999988079071,
+        16.700000002980232,
+        16.5,
+        17.5,
+        17.5,
+        15.600000008940697,
+        15.899999991059303,
+        17.400000005960464,
+        16.5,
+        16,
+        17,
+        16.200000002980232,
+        17,
+        16.399999991059303,
+        17.600000008940697,
+        15.899999991059303
+      ],
+      "samples": [
+        {
+          "acknowledgment": 38.099999994039536,
+          "usefulContent": 38.099999994039536,
+          "animationComplete": 220.59999999403954
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 229.59999999403954
+        },
+        {
+          "acknowledgment": 37.30000001192093,
+          "usefulContent": 37.30000001192093,
+          "animationComplete": 236.80000001192093
+        },
+        {
+          "acknowledgment": 33.900000005960464,
+          "usefulContent": 33.900000005960464,
+          "animationComplete": 234.40000000596046
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.29999999701977,
+          "animationComplete": 235.90000000596046
+        },
+        {
+          "acknowledgment": 28.5,
+          "usefulContent": 28.5,
+          "animationComplete": 210.09999999403954
+        },
+        {
+          "acknowledgment": 23.100000008940697,
+          "usefulContent": 23.200000002980232,
+          "animationComplete": 204.80000001192093
+        },
+        {
+          "acknowledgment": 34.20000000298023,
+          "usefulContent": 34.20000000298023,
+          "animationComplete": 233.20000000298023
+        },
+        {
+          "acknowledgment": 37.19999998807907,
+          "usefulContent": 37.19999998807907,
+          "animationComplete": 220.59999999403954
+        },
+        {
+          "acknowledgment": 43.29999999701977,
+          "usefulContent": 43.29999999701977,
+          "animationComplete": 243.19999998807907
+        },
+        {
+          "acknowledgment": 45.20000000298023,
+          "usefulContent": 45.20000000298023,
+          "animationComplete": 262.20000000298023
+        },
+        {
+          "acknowledgment": 30.5,
+          "usefulContent": 30.5,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 29.700000002980232,
+          "usefulContent": 29.799999997019768,
+          "animationComplete": 246.59999999403954
+        },
+        {
+          "acknowledgment": 24.80000001192093,
+          "usefulContent": 24.80000001192093,
+          "animationComplete": 238.6000000089407
+        },
+        {
+          "acknowledgment": 37.29999999701977,
+          "usefulContent": 37.400000005960464,
+          "animationComplete": 230.40000000596046
+        },
+        {
+          "acknowledgment": 36.5,
+          "usefulContent": 36.5,
+          "animationComplete": 253.09999999403954
+        },
+        {
+          "acknowledgment": 26.400000005960464,
+          "usefulContent": 26.400000005960464,
+          "animationComplete": 221.80000001192093
+        },
+        {
+          "acknowledgment": 35.400000005960464,
+          "usefulContent": 35.6000000089407,
+          "animationComplete": 247.1000000089407
+        },
+        {
+          "acknowledgment": 37.400000005960464,
+          "usefulContent": 37.400000005960464,
+          "animationComplete": 237.70000000298023
+        },
+        {
+          "acknowledgment": 31.100000008940697,
+          "usefulContent": 31.200000002980232,
+          "animationComplete": 245.6000000089407
+        },
+        {
+          "acknowledgment": 34.20000000298023,
+          "usefulContent": 34.20000000298023,
+          "animationComplete": 251.40000000596046
+        },
+        {
+          "acknowledgment": 29.200000002980232,
+          "usefulContent": 29.200000002980232,
+          "animationComplete": 246.70000000298023
+        },
+        {
+          "acknowledgment": 37.79999999701977,
+          "usefulContent": 37.79999999701977,
+          "animationComplete": 254.3999999910593
+        },
+        {
+          "acknowledgment": 32.900000005960464,
+          "usefulContent": 33,
+          "animationComplete": 231.6000000089407
+        },
+        {
+          "acknowledgment": 23.799999997019768,
+          "usefulContent": 23.799999997019768,
+          "animationComplete": 240.5
+        },
+        {
+          "acknowledgment": 32.1000000089407,
+          "usefulContent": 32.20000000298023,
+          "animationComplete": 232.5
+        },
+        {
+          "acknowledgment": 38.400000005960464,
+          "usefulContent": 38.400000005960464,
+          "animationComplete": 255.20000000298023
+        },
+        {
+          "acknowledgment": 32.5,
+          "usefulContent": 32.6000000089407,
+          "animationComplete": 233.30000001192093
+        },
+        {
+          "acknowledgment": 34.70000000298023,
+          "usefulContent": 34.70000000298023,
+          "animationComplete": 252
+        },
+        {
+          "acknowledgment": 39.599999994039536,
+          "usefulContent": 39.599999994039536,
+          "animationComplete": 239
+        }
+      ],
+      "p95": {
+        "acknowledgment": 43.29999999701977,
+        "usefulContent": 43.29999999701977,
+        "animationComplete": 255.20000000298023
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "frameCalibration": [
+        1,
+        2,
+        16,
+        11,
+        2,
+        4,
+        4,
+        6,
+        3,
+        3,
+        4,
+        6,
+        3,
+        4,
+        6,
+        3,
+        6,
+        2,
+        5,
+        4
+      ],
+      "samples": [
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 47,
+          "usefulContent": 47,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 53,
+          "usefulContent": 53,
+          "animationComplete": 249
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 227
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 59,
+          "usefulContent": 59,
+          "animationComplete": 247
+        },
+        {
+          "acknowledgment": 53,
+          "usefulContent": 53,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 228
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 31,
+          "usefulContent": 31,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 41,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 75,
+          "usefulContent": 75,
+          "animationComplete": 266
+        },
+        {
+          "acknowledgment": 62,
+          "usefulContent": 62,
+          "animationComplete": 242
+        }
+      ],
+      "p95": {
+        "acknowledgment": 62,
+        "usefulContent": 62,
+        "animationComplete": 249
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        1,
+        4,
+        4,
+        41,
+        13,
+        22,
+        11,
+        0,
+        4,
+        5,
+        4,
+        4,
+        4,
+        4,
+        5,
+        4,
+        4,
+        5,
+        4,
+        4
+      ],
+      "samples": [
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 69,
+          "usefulContent": 69,
+          "animationComplete": 252
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 47,
+          "usefulContent": 47,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 243
+        },
+        {
+          "acknowledgment": 60,
+          "usefulContent": 60,
+          "animationComplete": 250
+        },
+        {
+          "acknowledgment": 60,
+          "usefulContent": 60,
+          "animationComplete": 251
+        },
+        {
+          "acknowledgment": 49,
+          "usefulContent": 49,
+          "animationComplete": 243
+        },
+        {
+          "acknowledgment": 49,
+          "usefulContent": 49,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 56,
+          "usefulContent": 56,
+          "animationComplete": 245
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 245
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 240
+        },
+        {
+          "acknowledgment": 54,
+          "usefulContent": 54,
+          "animationComplete": 243
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 58,
+          "usefulContent": 58,
+          "animationComplete": 248
+        },
+        {
+          "acknowledgment": 54,
+          "usefulContent": 54,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 61,
+          "usefulContent": 61,
+          "animationComplete": 257
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 246
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 245
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 47,
+          "usefulContent": 47,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 238
+        }
+      ],
+      "p95": {
+        "acknowledgment": 61,
+        "usefulContent": 61,
+        "animationComplete": 252
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        38,
+        8,
+        0,
+        34,
+        10,
+        1,
+        11,
+        4,
+        3,
+        4,
+        5,
+        5,
+        2,
+        4,
+        5,
+        4,
+        6,
+        4,
+        4,
+        2
+      ],
+      "samples": [
+        {
+          "acknowledgment": 36,
+          "usefulContent": 36,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 47,
+          "usefulContent": 47,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 238
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 51,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 59,
+          "usefulContent": 59,
+          "animationComplete": 254
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 60,
+          "usefulContent": 60,
+          "animationComplete": 244
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 54,
+          "usefulContent": 54,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 51,
+          "usefulContent": 51,
+          "animationComplete": 238
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 45,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 35,
+          "usefulContent": 35,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 48,
+          "usefulContent": 48,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 53,
+          "usefulContent": 54,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 46,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 47,
+          "usefulContent": 47,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 238
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 43,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 229
+        }
+      ],
+      "p95": {
+        "acknowledgment": 59,
+        "usefulContent": 59,
+        "animationComplete": 244
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "frameCalibration": [
+        48,
+        49,
+        48,
+        42,
+        45,
+        48,
+        19,
+        16,
+        16,
+        15,
+        15,
+        16,
+        29,
+        16,
+        15,
+        15,
+        15,
+        16,
+        15,
+        14
+      ],
+      "samples": [
+        {
+          "acknowledgment": 193,
+          "usefulContent": 193,
+          "animationComplete": 350
+        },
+        {
+          "acknowledgment": 143,
+          "usefulContent": 143,
+          "animationComplete": 296
+        },
+        {
+          "acknowledgment": 173,
+          "usefulContent": 173,
+          "animationComplete": 402
+        },
+        {
+          "acknowledgment": 210,
+          "usefulContent": 210,
+          "animationComplete": 334
+        },
+        {
+          "acknowledgment": 187,
+          "usefulContent": 187,
+          "animationComplete": 308
+        },
+        {
+          "acknowledgment": 247,
+          "usefulContent": 247,
+          "animationComplete": 364
+        },
+        {
+          "acknowledgment": 292,
+          "usefulContent": 292,
+          "animationComplete": 412
+        },
+        {
+          "acknowledgment": 256,
+          "usefulContent": 256,
+          "animationComplete": 387
+        },
+        {
+          "acknowledgment": 248,
+          "usefulContent": 248,
+          "animationComplete": 364
+        },
+        {
+          "acknowledgment": 296,
+          "usefulContent": 296,
+          "animationComplete": 413
+        },
+        {
+          "acknowledgment": 210,
+          "usefulContent": 210,
+          "animationComplete": 332
+        },
+        {
+          "acknowledgment": 214,
+          "usefulContent": 214,
+          "animationComplete": 337
+        },
+        {
+          "acknowledgment": 326,
+          "usefulContent": 326,
+          "animationComplete": 327
+        },
+        {
+          "acknowledgment": 201,
+          "usefulContent": 201,
+          "animationComplete": 329
+        },
+        {
+          "acknowledgment": 272,
+          "usefulContent": 272,
+          "animationComplete": 434
+        },
+        {
+          "acknowledgment": 282,
+          "usefulContent": 282,
+          "animationComplete": 402
+        },
+        {
+          "acknowledgment": 263,
+          "usefulContent": 263,
+          "animationComplete": 391
+        },
+        {
+          "acknowledgment": 217,
+          "usefulContent": 217,
+          "animationComplete": 351
+        },
+        {
+          "acknowledgment": 199,
+          "usefulContent": 199,
+          "animationComplete": 336
+        },
+        {
+          "acknowledgment": 274,
+          "usefulContent": 274,
+          "animationComplete": 407
+        },
+        {
+          "acknowledgment": 261,
+          "usefulContent": 261,
+          "animationComplete": 393
+        },
+        {
+          "acknowledgment": 297,
+          "usefulContent": 297,
+          "animationComplete": 420
+        },
+        {
+          "acknowledgment": 218,
+          "usefulContent": 218,
+          "animationComplete": 379
+        },
+        {
+          "acknowledgment": 207,
+          "usefulContent": 207,
+          "animationComplete": 333
+        },
+        {
+          "acknowledgment": 208,
+          "usefulContent": 208,
+          "animationComplete": 332
+        },
+        {
+          "acknowledgment": 250,
+          "usefulContent": 250,
+          "animationComplete": 392
+        },
+        {
+          "acknowledgment": 277,
+          "usefulContent": 277,
+          "animationComplete": 405
+        },
+        {
+          "acknowledgment": 198,
+          "usefulContent": 198,
+          "animationComplete": 326
+        },
+        {
+          "acknowledgment": 254,
+          "usefulContent": 254,
+          "animationComplete": 380
+        },
+        {
+          "acknowledgment": 268,
+          "usefulContent": 268,
+          "animationComplete": 398
+        }
+      ],
+      "p95": {
+        "acknowledgment": 297,
+        "usefulContent": 297,
+        "animationComplete": 420
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        93,
+        86,
+        86,
+        21,
+        15,
+        16,
+        15,
+        14,
+        17,
+        29,
+        15,
+        16,
+        14,
+        16,
+        14,
+        15,
+        15,
+        15,
+        15,
+        16
+      ],
+      "samples": [
+        {
+          "acknowledgment": 295,
+          "usefulContent": 296,
+          "animationComplete": 296
+        },
+        {
+          "acknowledgment": 206,
+          "usefulContent": 206,
+          "animationComplete": 345
+        },
+        {
+          "acknowledgment": 235,
+          "usefulContent": 235,
+          "animationComplete": 355
+        },
+        {
+          "acknowledgment": 202,
+          "usefulContent": 202,
+          "animationComplete": 319
+        },
+        {
+          "acknowledgment": 209,
+          "usefulContent": 209,
+          "animationComplete": 346
+        },
+        {
+          "acknowledgment": 285,
+          "usefulContent": 285,
+          "animationComplete": 401
+        },
+        {
+          "acknowledgment": 267,
+          "usefulContent": 267,
+          "animationComplete": 391
+        },
+        {
+          "acknowledgment": 209,
+          "usefulContent": 209,
+          "animationComplete": 333
+        },
+        {
+          "acknowledgment": 315,
+          "usefulContent": 315,
+          "animationComplete": 436
+        },
+        {
+          "acknowledgment": 247,
+          "usefulContent": 247,
+          "animationComplete": 389
+        },
+        {
+          "acknowledgment": 205,
+          "usefulContent": 205,
+          "animationComplete": 330
+        },
+        {
+          "acknowledgment": 270,
+          "usefulContent": 270,
+          "animationComplete": 394
+        },
+        {
+          "acknowledgment": 247,
+          "usefulContent": 247,
+          "animationComplete": 372
+        },
+        {
+          "acknowledgment": 253,
+          "usefulContent": 253,
+          "animationComplete": 372
+        },
+        {
+          "acknowledgment": 295,
+          "usefulContent": 295,
+          "animationComplete": 420
+        },
+        {
+          "acknowledgment": 208,
+          "usefulContent": 208,
+          "animationComplete": 339
+        },
+        {
+          "acknowledgment": 245,
+          "usefulContent": 245,
+          "animationComplete": 365
+        },
+        {
+          "acknowledgment": 212,
+          "usefulContent": 212,
+          "animationComplete": 336
+        },
+        {
+          "acknowledgment": 237,
+          "usefulContent": 237,
+          "animationComplete": 350
+        },
+        {
+          "acknowledgment": 290,
+          "usefulContent": 290,
+          "animationComplete": 415
+        },
+        {
+          "acknowledgment": 226,
+          "usefulContent": 226,
+          "animationComplete": 338
+        },
+        {
+          "acknowledgment": 186,
+          "usefulContent": 186,
+          "animationComplete": 308
+        },
+        {
+          "acknowledgment": 249,
+          "usefulContent": 249,
+          "animationComplete": 383
+        },
+        {
+          "acknowledgment": 269,
+          "usefulContent": 269,
+          "animationComplete": 397
+        },
+        {
+          "acknowledgment": 266,
+          "usefulContent": 266,
+          "animationComplete": 380
+        },
+        {
+          "acknowledgment": 243,
+          "usefulContent": 243,
+          "animationComplete": 363
+        },
+        {
+          "acknowledgment": 246,
+          "usefulContent": 246,
+          "animationComplete": 377
+        },
+        {
+          "acknowledgment": 199,
+          "usefulContent": 199,
+          "animationComplete": 309
+        },
+        {
+          "acknowledgment": 179,
+          "usefulContent": 180,
+          "animationComplete": 295
+        },
+        {
+          "acknowledgment": 249,
+          "usefulContent": 249,
+          "animationComplete": 374
+        }
+      ],
+      "p95": {
+        "acknowledgment": 295,
+        "usefulContent": 296,
+        "animationComplete": 420
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        85,
+        84,
+        78,
+        80,
+        78,
+        23,
+        14,
+        15,
+        15,
+        15,
+        15,
+        31,
+        16,
+        15,
+        15,
+        15,
+        15,
+        16,
+        14,
+        15
+      ],
+      "samples": [
+        {
+          "acknowledgment": 321,
+          "usefulContent": 321,
+          "animationComplete": 445
+        },
+        {
+          "acknowledgment": 187,
+          "usefulContent": 187,
+          "animationComplete": 312
+        },
+        {
+          "acknowledgment": 224,
+          "usefulContent": 224,
+          "animationComplete": 358
+        },
+        {
+          "acknowledgment": 216,
+          "usefulContent": 216,
+          "animationComplete": 364
+        },
+        {
+          "acknowledgment": 303,
+          "usefulContent": 303,
+          "animationComplete": 414
+        },
+        {
+          "acknowledgment": 196,
+          "usefulContent": 196,
+          "animationComplete": 322
+        },
+        {
+          "acknowledgment": 211,
+          "usefulContent": 211,
+          "animationComplete": 339
+        },
+        {
+          "acknowledgment": 282,
+          "usefulContent": 282,
+          "animationComplete": 409
+        },
+        {
+          "acknowledgment": 193,
+          "usefulContent": 193,
+          "animationComplete": 316
+        },
+        {
+          "acknowledgment": 265,
+          "usefulContent": 265,
+          "animationComplete": 385
+        },
+        {
+          "acknowledgment": 260,
+          "usefulContent": 260,
+          "animationComplete": 373
+        },
+        {
+          "acknowledgment": 290,
+          "usefulContent": 291,
+          "animationComplete": 408
+        },
+        {
+          "acknowledgment": 200,
+          "usefulContent": 200,
+          "animationComplete": 323
+        },
+        {
+          "acknowledgment": 300,
+          "usefulContent": 300,
+          "animationComplete": 437
+        },
+        {
+          "acknowledgment": 227,
+          "usefulContent": 227,
+          "animationComplete": 358
+        },
+        {
+          "acknowledgment": 257,
+          "usefulContent": 257,
+          "animationComplete": 378
+        },
+        {
+          "acknowledgment": 263,
+          "usefulContent": 263,
+          "animationComplete": 380
+        },
+        {
+          "acknowledgment": 214,
+          "usefulContent": 214,
+          "animationComplete": 338
+        },
+        {
+          "acknowledgment": 248,
+          "usefulContent": 248,
+          "animationComplete": 366
+        },
+        {
+          "acknowledgment": 299,
+          "usefulContent": 299,
+          "animationComplete": 419
+        },
+        {
+          "acknowledgment": 267,
+          "usefulContent": 267,
+          "animationComplete": 399
+        },
+        {
+          "acknowledgment": 245,
+          "usefulContent": 245,
+          "animationComplete": 373
+        },
+        {
+          "acknowledgment": 212,
+          "usefulContent": 212,
+          "animationComplete": 331
+        },
+        {
+          "acknowledgment": 256,
+          "usefulContent": 256,
+          "animationComplete": 371
+        },
+        {
+          "acknowledgment": 192,
+          "usefulContent": 192,
+          "animationComplete": 317
+        },
+        {
+          "acknowledgment": 320,
+          "usefulContent": 320,
+          "animationComplete": 444
+        },
+        {
+          "acknowledgment": 227,
+          "usefulContent": 227,
+          "animationComplete": 362
+        },
+        {
+          "acknowledgment": 272,
+          "usefulContent": 272,
+          "animationComplete": 392
+        },
+        {
+          "acknowledgment": 259,
+          "usefulContent": 259,
+          "animationComplete": 384
+        },
+        {
+          "acknowledgment": 264,
+          "usefulContent": 264,
+          "animationComplete": 387
+        }
+      ],
+      "p95": {
+        "acknowledgment": 320,
+        "usefulContent": 320,
+        "animationComplete": 444
+      }
+    }
+  ],
+  "final_without_recording": [
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "frameCalibration": [
+        8.099999994039536,
+        17.099999994039536,
+        17.900000005960464,
+        15.200000002980232,
+        18,
+        15.700000002980232,
+        16.399999991059303,
+        17.100000008940697,
+        17.19999998807907,
+        16,
+        16.900000005960464,
+        16.400000005960464,
+        16.099999994039536,
+        16.900000005960464,
+        16.599999994039536,
+        17.5,
+        17,
+        16.599999994039536,
+        15.800000011920929,
+        17.099999994039536
+      ],
+      "samples": [
+        {
+          "acknowledgment": 23.200000002980232,
+          "usefulContent": 23.200000002980232,
+          "animationComplete": 206.8999999910593
+        },
+        {
+          "acknowledgment": 20.30000001192093,
+          "usefulContent": 20.400000005960464,
+          "animationComplete": 237.40000000596046
+        },
+        {
+          "acknowledgment": 36.599999994039536,
+          "usefulContent": 36.599999994039536,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 21.5,
+          "usefulContent": 21.5,
+          "animationComplete": 221.70000000298023
+        },
+        {
+          "acknowledgment": 24.799999997019768,
+          "usefulContent": 24.799999997019768,
+          "animationComplete": 209.29999999701977
+        },
+        {
+          "acknowledgment": 36.1000000089407,
+          "usefulContent": 36.1000000089407,
+          "animationComplete": 219.1000000089407
+        },
+        {
+          "acknowledgment": 21.5,
+          "usefulContent": 21.5,
+          "animationComplete": 220.19999998807907
+        },
+        {
+          "acknowledgment": 35.29999999701977,
+          "usefulContent": 35.29999999701977,
+          "animationComplete": 218.8999999910593
+        },
+        {
+          "acknowledgment": 24.5,
+          "usefulContent": 24.599999994039536,
+          "animationComplete": 224.20000000298023
+        },
+        {
+          "acknowledgment": 36.099999994039536,
+          "usefulContent": 36.19999998807907,
+          "animationComplete": 251
+        },
+        {
+          "acknowledgment": 48.20000000298023,
+          "usefulContent": 48.29999999701977,
+          "animationComplete": 262.6000000089407
+        },
+        {
+          "acknowledgment": 57.099999994039536,
+          "usefulContent": 57.20000000298023,
+          "animationComplete": 258.20000000298023
+        },
+        {
+          "acknowledgment": 58.1000000089407,
+          "usefulContent": 58.20000000298023,
+          "animationComplete": 275.6000000089407
+        },
+        {
+          "acknowledgment": 45.5,
+          "usefulContent": 45.599999994039536,
+          "animationComplete": 261.29999999701977
+        },
+        {
+          "acknowledgment": 45.79999999701977,
+          "usefulContent": 45.79999999701977,
+          "animationComplete": 262.70000000298023
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33.1000000089407,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 36,
+          "usefulContent": 36,
+          "animationComplete": 236.20000000298023
+        },
+        {
+          "acknowledgment": 41.70000000298023,
+          "usefulContent": 41.70000000298023,
+          "animationComplete": 258.20000000298023
+        },
+        {
+          "acknowledgment": 34.900000005960464,
+          "usefulContent": 34.900000005960464,
+          "animationComplete": 253.1000000089407
+        },
+        {
+          "acknowledgment": 30.299999997019768,
+          "usefulContent": 30.299999997019768,
+          "animationComplete": 230.70000000298023
+        },
+        {
+          "acknowledgment": 31.5,
+          "usefulContent": 31.599999994039536,
+          "animationComplete": 247.29999999701977
+        },
+        {
+          "acknowledgment": 30.099999994039536,
+          "usefulContent": 30.099999994039536,
+          "animationComplete": 239.90000000596046
+        },
+        {
+          "acknowledgment": 37.20000000298023,
+          "usefulContent": 37.20000000298023,
+          "animationComplete": 253.5
+        },
+        {
+          "acknowledgment": 38.29999999701977,
+          "usefulContent": 38.3999999910593,
+          "animationComplete": 238.3999999910593
+        },
+        {
+          "acknowledgment": 31.400000005960464,
+          "usefulContent": 31.400000005960464,
+          "animationComplete": 248.90000000596046
+        },
+        {
+          "acknowledgment": 60.900000005960464,
+          "usefulContent": 60.900000005960464,
+          "animationComplete": 260.30000001192093
+        },
+        {
+          "acknowledgment": 38.400000005960464,
+          "usefulContent": 38.400000005960464,
+          "animationComplete": 238.20000000298023
+        },
+        {
+          "acknowledgment": 25.30000001192093,
+          "usefulContent": 25.400000005960464,
+          "animationComplete": 225.5
+        },
+        {
+          "acknowledgment": 29.400000005960464,
+          "usefulContent": 29.400000005960464,
+          "animationComplete": 246.40000000596046
+        },
+        {
+          "acknowledgment": 32.1000000089407,
+          "usefulContent": 32.1000000089407,
+          "animationComplete": 232.1000000089407
+        }
+      ],
+      "p95": {
+        "acknowledgment": 58.1000000089407,
+        "usefulContent": 58.20000000298023,
+        "animationComplete": 262.70000000298023
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        12.300000011920929,
+        15.899999991059303,
+        17,
+        17.100000008940697,
+        16,
+        15.799999997019768,
+        18.099999994039536,
+        15.799999997019768,
+        17.200000002980232,
+        16,
+        17.100000008940697,
+        16.5,
+        16.5,
+        16.899999991059303,
+        16.100000008940697,
+        18.299999997019768,
+        15,
+        17,
+        17.899999991059303,
+        16
+      ],
+      "samples": [
+        {
+          "acknowledgment": 38.20000000298023,
+          "usefulContent": 38.20000000298023,
+          "animationComplete": 238.70000000298023
+        },
+        {
+          "acknowledgment": 34.900000005960464,
+          "usefulContent": 34.900000005960464,
+          "animationComplete": 235.40000000596046
+        },
+        {
+          "acknowledgment": 35.5,
+          "usefulContent": 35.5,
+          "animationComplete": 219.09999999403954
+        },
+        {
+          "acknowledgment": 25.599999994039536,
+          "usefulContent": 25.700000002980232,
+          "animationComplete": 224.8999999910593
+        },
+        {
+          "acknowledgment": 34.3999999910593,
+          "usefulContent": 34.3999999910593,
+          "animationComplete": 234.59999999403954
+        },
+        {
+          "acknowledgment": 24.299999997019768,
+          "usefulContent": 24.399999991059303,
+          "animationComplete": 241.3999999910593
+        },
+        {
+          "acknowledgment": 36.3999999910593,
+          "usefulContent": 36.3999999910593,
+          "animationComplete": 219
+        },
+        {
+          "acknowledgment": 31.100000008940697,
+          "usefulContent": 31.100000008940697,
+          "animationComplete": 211.70000000298023
+        },
+        {
+          "acknowledgment": 20.599999994039536,
+          "usefulContent": 20.69999998807907,
+          "animationComplete": 220.29999999701977
+        },
+        {
+          "acknowledgment": 35.79999999701977,
+          "usefulContent": 35.79999999701977,
+          "animationComplete": 235.70000000298023
+        },
+        {
+          "acknowledgment": 34.8999999910593,
+          "usefulContent": 34.8999999910593,
+          "animationComplete": 252.09999999403954
+        },
+        {
+          "acknowledgment": 35.5,
+          "usefulContent": 35.5,
+          "animationComplete": 233.40000000596046
+        },
+        {
+          "acknowledgment": 32.29999999701977,
+          "usefulContent": 32.29999999701977,
+          "animationComplete": 231.20000000298023
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46.099999994039536,
+          "animationComplete": 262.3999999910593
+        },
+        {
+          "acknowledgment": 29.799999997019768,
+          "usefulContent": 29.799999997019768,
+          "animationComplete": 231.09999999403954
+        },
+        {
+          "acknowledgment": 32.79999999701977,
+          "usefulContent": 32.79999999701977,
+          "animationComplete": 232.29999999701977
+        },
+        {
+          "acknowledgment": 37.5,
+          "usefulContent": 37.599999994039536,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 59.29999999701977,
+          "usefulContent": 59.29999999701977,
+          "animationComplete": 276.70000000298023
+        },
+        {
+          "acknowledgment": 32.099999994039536,
+          "usefulContent": 32.099999994039536,
+          "animationComplete": 248.59999999403954
+        },
+        {
+          "acknowledgment": 30.900000005960464,
+          "usefulContent": 30.900000005960464,
+          "animationComplete": 246.6000000089407
+        },
+        {
+          "acknowledgment": 35.3999999910593,
+          "usefulContent": 35.70000000298023,
+          "animationComplete": 231.70000000298023
+        },
+        {
+          "acknowledgment": 33.70000000298023,
+          "usefulContent": 33.79999999701977,
+          "animationComplete": 250.6000000089407
+        },
+        {
+          "acknowledgment": 33.70000000298023,
+          "usefulContent": 33.80000001192093,
+          "animationComplete": 233.70000000298023
+        },
+        {
+          "acknowledgment": 34.20000000298023,
+          "usefulContent": 34.20000000298023,
+          "animationComplete": 249.40000000596046
+        },
+        {
+          "acknowledgment": 36.80000001192093,
+          "usefulContent": 36.80000001192093,
+          "animationComplete": 238.20000000298023
+        },
+        {
+          "acknowledgment": 23.200000002980232,
+          "usefulContent": 23.200000002980232,
+          "animationComplete": 239.1000000089407
+        },
+        {
+          "acknowledgment": 36.29999999701977,
+          "usefulContent": 36.3999999910593,
+          "animationComplete": 232.29999999701977
+        },
+        {
+          "acknowledgment": 33.5,
+          "usefulContent": 33.5,
+          "animationComplete": 251.59999999403954
+        },
+        {
+          "acknowledgment": 39.1000000089407,
+          "usefulContent": 39.20000000298023,
+          "animationComplete": 254.70000000298023
+        },
+        {
+          "acknowledgment": 32.400000005960464,
+          "usefulContent": 32.400000005960464,
+          "animationComplete": 248
+        }
+      ],
+      "p95": {
+        "acknowledgment": 46,
+        "usefulContent": 46.099999994039536,
+        "animationComplete": 262.3999999910593
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        11.400000005960464,
+        18,
+        15,
+        17.69999998807907,
+        16.400000005960464,
+        15.799999997019768,
+        17.200000002980232,
+        16.900000005960464,
+        16,
+        16.899999991059303,
+        18,
+        16,
+        16,
+        17.200000002980232,
+        16.299999997019768,
+        16.5,
+        16.799999997019768,
+        17.100000008940697,
+        17.099999994039536,
+        16.400000005960464
+      ],
+      "samples": [
+        {
+          "acknowledgment": 26.200000002980232,
+          "usefulContent": 26.200000002980232,
+          "animationComplete": 209.40000000596046
+        },
+        {
+          "acknowledgment": 36.599999994039536,
+          "usefulContent": 36.599999994039536,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 33.599999994039536,
+          "usefulContent": 33.599999994039536,
+          "animationComplete": 233.19999998807907
+        },
+        {
+          "acknowledgment": 36.79999999701977,
+          "usefulContent": 36.79999999701977,
+          "animationComplete": 236.19999998807907
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 225.79999999701977
+        },
+        {
+          "acknowledgment": 27.700000002980232,
+          "usefulContent": 27.799999997019768,
+          "animationComplete": 210.40000000596046
+        },
+        {
+          "acknowledgment": 23.100000008940697,
+          "usefulContent": 23.30000001192093,
+          "animationComplete": 219.30000001192093
+        },
+        {
+          "acknowledgment": 24.799999997019768,
+          "usefulContent": 24.799999997019768,
+          "animationComplete": 208.09999999403954
+        },
+        {
+          "acknowledgment": 23.400000005960464,
+          "usefulContent": 23.400000005960464,
+          "animationComplete": 203.30000001192093
+        },
+        {
+          "acknowledgment": 21.200000002980232,
+          "usefulContent": 21.200000002980232,
+          "animationComplete": 221.09999999403954
+        },
+        {
+          "acknowledgment": 44.19999998807907,
+          "usefulContent": 44.19999998807907,
+          "animationComplete": 259.59999999403954
+        },
+        {
+          "acknowledgment": 24.100000008940697,
+          "usefulContent": 24.100000008940697,
+          "animationComplete": 223.20000000298023
+        },
+        {
+          "acknowledgment": 45.80000001192093,
+          "usefulContent": 45.80000001192093,
+          "animationComplete": 261.6000000089407
+        },
+        {
+          "acknowledgment": 31.700000002980232,
+          "usefulContent": 31.700000002980232,
+          "animationComplete": 247.70000000298023
+        },
+        {
+          "acknowledgment": 34.29999999701977,
+          "usefulContent": 34.29999999701977,
+          "animationComplete": 235.69999998807907
+        },
+        {
+          "acknowledgment": 30.799999997019768,
+          "usefulContent": 30.799999997019768,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 239.40000000596046
+        },
+        {
+          "acknowledgment": 44.5,
+          "usefulContent": 44.5,
+          "animationComplete": 261.30000001192093
+        },
+        {
+          "acknowledgment": 41.099999994039536,
+          "usefulContent": 41.20000000298023,
+          "animationComplete": 258.20000000298023
+        },
+        {
+          "acknowledgment": 30.099999994039536,
+          "usefulContent": 30.200000002980232,
+          "animationComplete": 247.09999999403954
+        },
+        {
+          "acknowledgment": 39.29999999701977,
+          "usefulContent": 39.29999999701977,
+          "animationComplete": 235.40000000596046
+        },
+        {
+          "acknowledgment": 39.1000000089407,
+          "usefulContent": 39.20000000298023,
+          "animationComplete": 256.6000000089407
+        },
+        {
+          "acknowledgment": 32.20000000298023,
+          "usefulContent": 32.29999999701977,
+          "animationComplete": 232.3999999910593
+        },
+        {
+          "acknowledgment": 37.20000000298023,
+          "usefulContent": 37.29999999701977,
+          "animationComplete": 255
+        },
+        {
+          "acknowledgment": 38.79999999701977,
+          "usefulContent": 38.79999999701977,
+          "animationComplete": 256.29999999701977
+        },
+        {
+          "acknowledgment": 33.1000000089407,
+          "usefulContent": 33.20000000298023,
+          "animationComplete": 251.1000000089407
+        },
+        {
+          "acknowledgment": 36.099999994039536,
+          "usefulContent": 36.099999994039536,
+          "animationComplete": 245
+        },
+        {
+          "acknowledgment": 28.69999998807907,
+          "usefulContent": 28.69999998807907,
+          "animationComplete": 245.79999999701977
+        },
+        {
+          "acknowledgment": 29.30000001192093,
+          "usefulContent": 29.30000001192093,
+          "animationComplete": 246.30000001192093
+        },
+        {
+          "acknowledgment": 30.899999991059303,
+          "usefulContent": 30.899999991059303,
+          "animationComplete": 230.79999999701977
+        }
+      ],
+      "p95": {
+        "acknowledgment": 44.5,
+        "usefulContent": 44.5,
+        "animationComplete": 261.30000001192093
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "frameCalibration": [
+        13,
+        5,
+        5,
+        8,
+        4,
+        5,
+        3,
+        5,
+        4,
+        4,
+        5,
+        3,
+        4,
+        5,
+        4,
+        4,
+        4,
+        4,
+        5,
+        4
+      ],
+      "samples": [
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 248
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 75,
+          "usefulContent": 75,
+          "animationComplete": 243
+        },
+        {
+          "acknowledgment": 37,
+          "usefulContent": 37,
+          "animationComplete": 225
+        },
+        {
+          "acknowledgment": 27,
+          "usefulContent": 27,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 23,
+          "usefulContent": 23,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 29,
+          "usefulContent": 29,
+          "animationComplete": 227
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 241
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 218
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 225
+        },
+        {
+          "acknowledgment": 53,
+          "usefulContent": 53,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 55,
+          "usefulContent": 55,
+          "animationComplete": 242
+        },
+        {
+          "acknowledgment": 34,
+          "usefulContent": 34,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 59,
+          "usefulContent": 60,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 44,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 244
+        },
+        {
+          "acknowledgment": 63,
+          "usefulContent": 63,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 26,
+          "usefulContent": 26,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 26,
+          "usefulContent": 26,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 31,
+          "usefulContent": 31,
+          "animationComplete": 227
+        },
+        {
+          "acknowledgment": 31,
+          "usefulContent": 31,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 235
+        }
+      ],
+      "p95": {
+        "acknowledgment": 63,
+        "usefulContent": 63,
+        "animationComplete": 244
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        35,
+        6,
+        0,
+        26,
+        3,
+        5,
+        4,
+        7,
+        1,
+        5,
+        3,
+        5,
+        4,
+        4,
+        5,
+        3,
+        4,
+        5,
+        4,
+        4
+      ],
+      "samples": [
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 234
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 37,
+          "usefulContent": 37,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 238
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 56,
+          "usefulContent": 56,
+          "animationComplete": 244
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 38,
+          "usefulContent": 38,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 26,
+          "usefulContent": 26,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 27,
+          "usefulContent": 27,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 27,
+          "usefulContent": 27,
+          "animationComplete": 221
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 230
+        },
+        {
+          "acknowledgment": 37,
+          "usefulContent": 37,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 41,
+          "usefulContent": 41,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 220
+        },
+        {
+          "acknowledgment": 22,
+          "usefulContent": 22,
+          "animationComplete": 215
+        },
+        {
+          "acknowledgment": 30,
+          "usefulContent": 30,
+          "animationComplete": 228
+        },
+        {
+          "acknowledgment": 46,
+          "usefulContent": 46,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 38,
+          "usefulContent": 38,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 220
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 23,
+          "usefulContent": 23,
+          "animationComplete": 220
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 23,
+          "usefulContent": 23,
+          "animationComplete": 220
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 217
+        },
+        {
+          "acknowledgment": 24,
+          "usefulContent": 24,
+          "animationComplete": 223
+        },
+        {
+          "acknowledgment": 26,
+          "usefulContent": 26,
+          "animationComplete": 222
+        }
+      ],
+      "p95": {
+        "acknowledgment": 46,
+        "usefulContent": 46,
+        "animationComplete": 238
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "firefox",
+      "browserVersion": "155.0",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        16,
+        5,
+        4,
+        9,
+        3,
+        5,
+        3,
+        5,
+        4,
+        4,
+        4,
+        4,
+        4,
+        5,
+        4,
+        4,
+        4,
+        4,
+        5,
+        3
+      ],
+      "samples": [
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 235
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 228
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 39,
+          "usefulContent": 39,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 50,
+          "usefulContent": 50,
+          "animationComplete": 239
+        },
+        {
+          "acknowledgment": 62,
+          "usefulContent": 62,
+          "animationComplete": 244
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 228
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 32,
+          "usefulContent": 32,
+          "animationComplete": 226
+        },
+        {
+          "acknowledgment": 60,
+          "usefulContent": 60,
+          "animationComplete": 231
+        },
+        {
+          "acknowledgment": 43,
+          "usefulContent": 43,
+          "animationComplete": 227
+        },
+        {
+          "acknowledgment": 25,
+          "usefulContent": 25,
+          "animationComplete": 222
+        },
+        {
+          "acknowledgment": 23,
+          "usefulContent": 23,
+          "animationComplete": 221
+        },
+        {
+          "acknowledgment": 40,
+          "usefulContent": 40,
+          "animationComplete": 227
+        },
+        {
+          "acknowledgment": 33,
+          "usefulContent": 33,
+          "animationComplete": 229
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 44,
+          "usefulContent": 44,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 52,
+          "usefulContent": 52,
+          "animationComplete": 236
+        },
+        {
+          "acknowledgment": 38,
+          "usefulContent": 38,
+          "animationComplete": 227
+        },
+        {
+          "acknowledgment": 37,
+          "usefulContent": 37,
+          "animationComplete": 225
+        },
+        {
+          "acknowledgment": 36,
+          "usefulContent": 36,
+          "animationComplete": 224
+        },
+        {
+          "acknowledgment": 47,
+          "usefulContent": 47,
+          "animationComplete": 237
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 232
+        },
+        {
+          "acknowledgment": 45,
+          "usefulContent": 45,
+          "animationComplete": 233
+        },
+        {
+          "acknowledgment": 42,
+          "usefulContent": 42,
+          "animationComplete": 236
+        }
+      ],
+      "p95": {
+        "acknowledgment": 60,
+        "usefulContent": 60,
+        "animationComplete": 239
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 100,
+      "renderedRows": 20,
+      "frameCalibration": [
+        34,
+        40,
+        37,
+        38,
+        41,
+        40,
+        16,
+        30,
+        15,
+        15,
+        15,
+        16,
+        16,
+        15,
+        14,
+        15,
+        15,
+        15,
+        15,
+        31
+      ],
+      "samples": [
+        {
+          "acknowledgment": 181,
+          "usefulContent": 181,
+          "animationComplete": 323
+        },
+        {
+          "acknowledgment": 138,
+          "usefulContent": 138,
+          "animationComplete": 324
+        },
+        {
+          "acknowledgment": 136,
+          "usefulContent": 136,
+          "animationComplete": 271
+        },
+        {
+          "acknowledgment": 243,
+          "usefulContent": 243,
+          "animationComplete": 363
+        },
+        {
+          "acknowledgment": 268,
+          "usefulContent": 268,
+          "animationComplete": 389
+        },
+        {
+          "acknowledgment": 271,
+          "usefulContent": 271,
+          "animationComplete": 420
+        },
+        {
+          "acknowledgment": 194,
+          "usefulContent": 194,
+          "animationComplete": 323
+        },
+        {
+          "acknowledgment": 216,
+          "usefulContent": 217,
+          "animationComplete": 337
+        },
+        {
+          "acknowledgment": 255,
+          "usefulContent": 255,
+          "animationComplete": 376
+        },
+        {
+          "acknowledgment": 201,
+          "usefulContent": 201,
+          "animationComplete": 327
+        },
+        {
+          "acknowledgment": 262,
+          "usefulContent": 262,
+          "animationComplete": 391
+        },
+        {
+          "acknowledgment": 208,
+          "usefulContent": 208,
+          "animationComplete": 343
+        },
+        {
+          "acknowledgment": 205,
+          "usefulContent": 205,
+          "animationComplete": 336
+        },
+        {
+          "acknowledgment": 221,
+          "usefulContent": 221,
+          "animationComplete": 351
+        },
+        {
+          "acknowledgment": 250,
+          "usefulContent": 250,
+          "animationComplete": 381
+        },
+        {
+          "acknowledgment": 275,
+          "usefulContent": 275,
+          "animationComplete": 431
+        },
+        {
+          "acknowledgment": 258,
+          "usefulContent": 258,
+          "animationComplete": 414
+        },
+        {
+          "acknowledgment": 300,
+          "usefulContent": 300,
+          "animationComplete": 451
+        },
+        {
+          "acknowledgment": 361,
+          "usefulContent": 361,
+          "animationComplete": 485
+        },
+        {
+          "acknowledgment": 307,
+          "usefulContent": 307,
+          "animationComplete": 479
+        },
+        {
+          "acknowledgment": 259,
+          "usefulContent": 259,
+          "animationComplete": 383
+        },
+        {
+          "acknowledgment": 219,
+          "usefulContent": 219,
+          "animationComplete": 343
+        },
+        {
+          "acknowledgment": 196,
+          "usefulContent": 196,
+          "animationComplete": 330
+        },
+        {
+          "acknowledgment": 289,
+          "usefulContent": 289,
+          "animationComplete": 404
+        },
+        {
+          "acknowledgment": 332,
+          "usefulContent": 333,
+          "animationComplete": 333
+        },
+        {
+          "acknowledgment": 230,
+          "usefulContent": 230,
+          "animationComplete": 385
+        },
+        {
+          "acknowledgment": 255,
+          "usefulContent": 256,
+          "animationComplete": 398
+        },
+        {
+          "acknowledgment": 209,
+          "usefulContent": 209,
+          "animationComplete": 335
+        },
+        {
+          "acknowledgment": 256,
+          "usefulContent": 256,
+          "animationComplete": 390
+        },
+        {
+          "acknowledgment": 294,
+          "usefulContent": 295,
+          "animationComplete": 295
+        }
+      ],
+      "p95": {
+        "acknowledgment": 332,
+        "usefulContent": 333,
+        "animationComplete": 479
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 1000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        67,
+        93,
+        93,
+        105,
+        25,
+        15,
+        15,
+        15,
+        16,
+        16,
+        23,
+        19,
+        21,
+        19,
+        18,
+        25,
+        14,
+        27,
+        16,
+        17
+      ],
+      "samples": [
+        {
+          "acknowledgment": 334,
+          "usefulContent": 334,
+          "animationComplete": 334
+        },
+        {
+          "acknowledgment": 235,
+          "usefulContent": 235,
+          "animationComplete": 412
+        },
+        {
+          "acknowledgment": 223,
+          "usefulContent": 223,
+          "animationComplete": 347
+        },
+        {
+          "acknowledgment": 270,
+          "usefulContent": 270,
+          "animationComplete": 406
+        },
+        {
+          "acknowledgment": 233,
+          "usefulContent": 233,
+          "animationComplete": 376
+        },
+        {
+          "acknowledgment": 194,
+          "usefulContent": 195,
+          "animationComplete": 311
+        },
+        {
+          "acknowledgment": 305,
+          "usefulContent": 305,
+          "animationComplete": 428
+        },
+        {
+          "acknowledgment": 219,
+          "usefulContent": 219,
+          "animationComplete": 341
+        },
+        {
+          "acknowledgment": 192,
+          "usefulContent": 192,
+          "animationComplete": 318
+        },
+        {
+          "acknowledgment": 318,
+          "usefulContent": 318,
+          "animationComplete": 469
+        },
+        {
+          "acknowledgment": 219,
+          "usefulContent": 219,
+          "animationComplete": 353
+        },
+        {
+          "acknowledgment": 229,
+          "usefulContent": 229,
+          "animationComplete": 345
+        },
+        {
+          "acknowledgment": 369,
+          "usefulContent": 369,
+          "animationComplete": 370
+        },
+        {
+          "acknowledgment": 332,
+          "usefulContent": 332,
+          "animationComplete": 333
+        },
+        {
+          "acknowledgment": 293,
+          "usefulContent": 293,
+          "animationComplete": 424
+        },
+        {
+          "acknowledgment": 271,
+          "usefulContent": 271,
+          "animationComplete": 402
+        },
+        {
+          "acknowledgment": 222,
+          "usefulContent": 222,
+          "animationComplete": 347
+        },
+        {
+          "acknowledgment": 191,
+          "usefulContent": 192,
+          "animationComplete": 327
+        },
+        {
+          "acknowledgment": 277,
+          "usefulContent": 277,
+          "animationComplete": 407
+        },
+        {
+          "acknowledgment": 269,
+          "usefulContent": 270,
+          "animationComplete": 384
+        },
+        {
+          "acknowledgment": 323,
+          "usefulContent": 323,
+          "animationComplete": 463
+        },
+        {
+          "acknowledgment": 260,
+          "usefulContent": 260,
+          "animationComplete": 389
+        },
+        {
+          "acknowledgment": 324,
+          "usefulContent": 324,
+          "animationComplete": 467
+        },
+        {
+          "acknowledgment": 287,
+          "usefulContent": 287,
+          "animationComplete": 435
+        },
+        {
+          "acknowledgment": 194,
+          "usefulContent": 194,
+          "animationComplete": 310
+        },
+        {
+          "acknowledgment": 325,
+          "usefulContent": 325,
+          "animationComplete": 461
+        },
+        {
+          "acknowledgment": 285,
+          "usefulContent": 285,
+          "animationComplete": 419
+        },
+        {
+          "acknowledgment": 176,
+          "usefulContent": 176,
+          "animationComplete": 304
+        },
+        {
+          "acknowledgment": 294,
+          "usefulContent": 294,
+          "animationComplete": 424
+        },
+        {
+          "acknowledgment": 251,
+          "usefulContent": 251,
+          "animationComplete": 379
+        }
+      ],
+      "p95": {
+        "acknowledgment": 334,
+        "usefulContent": 334,
+        "animationComplete": 467
+      }
+    },
+    {
+      "method": "Production fixture build with tracing disabled during timing. DOM activation to next frame with open inspector, cached heading, then CSS animation completion. Separate representative trace after timing. Excludes hardware input latency and server save durability; not field INP.",
+      "browser": "webkit",
+      "browserVersion": "26.6",
+      "os": "win32 10.0.26200",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "memoryBytes": 34038341632,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "availableSources": 10000,
+      "renderedRows": 20,
+      "frameCalibration": [
+        105,
+        91,
+        90,
+        75,
+        18,
+        19,
+        30,
+        15,
+        15,
+        23,
+        22,
+        14,
+        24,
+        17,
+        17,
+        23,
+        16,
+        15,
+        23,
+        15
+      ],
+      "samples": [
+        {
+          "acknowledgment": 273,
+          "usefulContent": 273,
+          "animationComplete": 386
+        },
+        {
+          "acknowledgment": 179,
+          "usefulContent": 179,
+          "animationComplete": 317
+        },
+        {
+          "acknowledgment": 224,
+          "usefulContent": 224,
+          "animationComplete": 351
+        },
+        {
+          "acknowledgment": 262,
+          "usefulContent": 262,
+          "animationComplete": 399
+        },
+        {
+          "acknowledgment": 252,
+          "usefulContent": 252,
+          "animationComplete": 377
+        },
+        {
+          "acknowledgment": 298,
+          "usefulContent": 298,
+          "animationComplete": 436
+        },
+        {
+          "acknowledgment": 295,
+          "usefulContent": 295,
+          "animationComplete": 419
+        },
+        {
+          "acknowledgment": 305,
+          "usefulContent": 305,
+          "animationComplete": 426
+        },
+        {
+          "acknowledgment": 221,
+          "usefulContent": 221,
+          "animationComplete": 344
+        },
+        {
+          "acknowledgment": 201,
+          "usefulContent": 201,
+          "animationComplete": 349
+        },
+        {
+          "acknowledgment": 223,
+          "usefulContent": 223,
+          "animationComplete": 358
+        },
+        {
+          "acknowledgment": 189,
+          "usefulContent": 189,
+          "animationComplete": 315
+        },
+        {
+          "acknowledgment": 220,
+          "usefulContent": 220,
+          "animationComplete": 353
+        },
+        {
+          "acknowledgment": 203,
+          "usefulContent": 204,
+          "animationComplete": 318
+        },
+        {
+          "acknowledgment": 233,
+          "usefulContent": 233,
+          "animationComplete": 348
+        },
+        {
+          "acknowledgment": 277,
+          "usefulContent": 277,
+          "animationComplete": 413
+        },
+        {
+          "acknowledgment": 284,
+          "usefulContent": 284,
+          "animationComplete": 403
+        },
+        {
+          "acknowledgment": 190,
+          "usefulContent": 190,
+          "animationComplete": 314
+        },
+        {
+          "acknowledgment": 204,
+          "usefulContent": 204,
+          "animationComplete": 331
+        },
+        {
+          "acknowledgment": 202,
+          "usefulContent": 202,
+          "animationComplete": 334
+        },
+        {
+          "acknowledgment": 255,
+          "usefulContent": 255,
+          "animationComplete": 371
+        },
+        {
+          "acknowledgment": 220,
+          "usefulContent": 220,
+          "animationComplete": 345
+        },
+        {
+          "acknowledgment": 290,
+          "usefulContent": 290,
+          "animationComplete": 419
+        },
+        {
+          "acknowledgment": 297,
+          "usefulContent": 297,
+          "animationComplete": 442
+        },
+        {
+          "acknowledgment": 205,
+          "usefulContent": 205,
+          "animationComplete": 329
+        },
+        {
+          "acknowledgment": 201,
+          "usefulContent": 201,
+          "animationComplete": 318
+        },
+        {
+          "acknowledgment": 246,
+          "usefulContent": 246,
+          "animationComplete": 368
+        },
+        {
+          "acknowledgment": 317,
+          "usefulContent": 317,
+          "animationComplete": 318
+        },
+        {
+          "acknowledgment": 283,
+          "usefulContent": 283,
+          "animationComplete": 439
+        },
+        {
+          "acknowledgment": 274,
+          "usefulContent": 274,
+          "animationComplete": 459
+        }
+      ],
+      "p95": {
+        "acknowledgment": 305,
+        "usefulContent": 305,
+        "animationComplete": 442
+      }
+    }
+  ]
+}

@@ -105,7 +105,8 @@ test("supporting workspaces and all source tabs retain readable geometry", async
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
       if (width === 1440) {
         // Content must clear the fixed navigation, not merely avoid overflow.
-        expect(await page.locator("main").evaluate(element => element.getBoundingClientRect().left)).toBeGreaterThanOrEqual(256);
+        const sidebarRight = await page.locator(".portal-sidebar").evaluate(element => element.getBoundingClientRect().right);
+        expect(await page.locator("main").evaluate(element => element.getBoundingClientRect().left)).toBeGreaterThanOrEqual(sidebarRight);
       }
     }
     const tabs = page.getByRole("tab");
@@ -141,7 +142,7 @@ test("navigation disclosure, mobile keyboard return and enlarged text remain usa
   const settings = page.locator(".portal-workspace-group").nth(2);
   await settings.locator("summary").first().click();
   await expect(settings).toHaveAttribute("open", "");
-  await page.getByRole("link", { name: "Warning letter library", exact: true }).click();
+  await page.getByRole("link", { name: "Sources", exact: true }).click();
   await expect(page.locator(".letter-row")).toHaveCount(20);
   await expect(settings).toHaveAttribute("open", "");
   await page.setViewportSize({ width: 390, height: 844 });

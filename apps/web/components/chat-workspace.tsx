@@ -1,5 +1,7 @@
 "use client";
 
+import { useWorkspaceAction } from "./workspace/commands";
+
 import "@/app/chat-workspace.css";
 import Link from "next/link";
 import { applyStreamEvent } from "@/lib/chat-turn-state";
@@ -622,6 +624,12 @@ export function ChatWorkspace({
   const [threadPinnedAt, setThreadPinnedAt] = useState(initialThread?.pinnedAt);
   const [threadArchivedAt, setThreadArchivedAt] = useState(initialThread?.archivedAt);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const libraryTrigger = useRef<HTMLButtonElement>(null);
+  const openConversations = useCallback(() => {
+    libraryTrigger.current?.focus({ preventScroll: true });
+    setLibraryOpen(true);
+  }, []);
+  useWorkspaceAction({ id: "chat.conversations", label: text("Search conversations", "대화 검색"), enabled: true, execute: openConversations });
   const [evidenceTurnId, setEvidenceTurnId] = useState<string>();
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
   const [sourceSearch, setSourceSearch] = useState("");
@@ -714,16 +722,6 @@ export function ChatWorkspace({
       composer.style.height = `${Math.min(composer.scrollHeight, 200)}px`;
     }
   }, [question, draftKey, draftLoaded]);
-
-  useEffect(() => {
-    const shortcut = (event: globalThis.KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault(); setLibraryOpen((value) => !value);
-      }
-    };
-    window.addEventListener("keydown", shortcut);
-    return () => window.removeEventListener("keydown", shortcut);
-  }, []);
 
   useEffect(() => {
     setHistoryActiveThreadId(activeThreadId);
@@ -1363,7 +1361,7 @@ export function ChatWorkspace({
         <header className="chat-workbench__header">
           <div className="chat-workbench__heading"><FileSearch size={21} aria-hidden="true" /><h1>{text("FDA assistant", "FDA 어시스턴트")}</h1><small>FDA · Drugs</small></div>
           <div className="chat-workbench__header-actions">
-            <button type="button" className="chat-tool-button" onClick={(event) => { event.currentTarget.focus(); setLibraryOpen(true); }} title={text("Search conversations · Ctrl/⌘ K", "대화 검색 · Ctrl/⌘ K")}><Search size={17} />{text("Conversations", "대화 목록")}</button>
+            <button ref={libraryTrigger} type="button" className="chat-tool-button" onClick={openConversations} title={text("Search conversations", "대화 검색")}><Search size={17} />{text("Conversations", "대화 목록")}</button>
             <button className="chat-new-button" type="button" disabled={actionsDisabled} onClick={clearConversation}><Plus size={17} />{text("New chat", "새 대화")}</button>
           </div>
         </header>

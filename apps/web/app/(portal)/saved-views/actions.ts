@@ -99,14 +99,11 @@ export async function setLetterBookmarkAction(letterId: string, shouldSave: bool
     throw new Error("A valid warning-letter identifier is required.");
   }
 
-  const currentViews = await getSavedViews();
+  const currentViews = await getSavedViews(normalizedId);
   const existing = currentViews.data.find((view) => bookmarkLetterId(view) === normalizedId);
 
   if (!shouldSave) {
     if (existing) await deleteSavedView(existing.id);
-    revalidatePath("/saved-views");
-    revalidatePath("/drug-letters");
-    revalidatePath(`/drug-letters/${normalizedId}`);
     return { saved: false as const };
   }
 
@@ -123,8 +120,5 @@ export async function setLetterBookmarkAction(letterId: string, shouldSave: bool
     },
     cadence: "Off",
   });
-  revalidatePath("/saved-views");
-  revalidatePath("/drug-letters");
-  revalidatePath(`/drug-letters/${normalizedId}`);
   return { saved: true as const, savedViewId: savedView.id };
 }

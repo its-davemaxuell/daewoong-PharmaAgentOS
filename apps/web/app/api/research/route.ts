@@ -4,10 +4,10 @@ import { researchApi, researchError, researchHeaders, researchId, validMutation,
 
 export const maxDuration = 300;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await getPortalIdentity();
-    return Response.json(await researchApi(), { headers: researchHeaders });
+    return Response.json(await researchApi(new URL(request.url).search), { headers: researchHeaders });
   } catch (error) { return researchError(error); }
 }
 

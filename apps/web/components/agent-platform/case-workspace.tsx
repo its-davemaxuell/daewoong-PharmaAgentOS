@@ -2,7 +2,6 @@ import { SelectionGroup, SelectionIndicator } from "@/components/motion/selectio
 import Link from "next/link";
 import { ArrowLeft } from "@/components/icons/ArrowLeft";
 import { ArrowUpRight } from "@/components/icons/ArrowUpRight";
-import { Activity } from "@/components/icons/Activity";
 import { CheckCircle2 } from "@/components/icons/CheckCircle2";
 import { CircleAlert } from "@/components/icons/CircleAlert";
 import { FileText } from "@/components/icons/FileText";
@@ -20,12 +19,9 @@ import {
   IntegrationDraftForm,
   IntegrationDraftReviewForm,
   PlanDecisionForm,
-  RunControlForm,
-  RunStartForm,
-  RunStepDecisionForm,
   VerificationControlForm,
 } from "@/components/agent-platform/case-forms";
-import { RunLiveRefresh } from "@/components/agent-platform/run-live-refresh";
+import { ExecutionPanel } from "./execution-panel";
 import {
   caseStatusTone,
   formatCaseStatus,
@@ -157,160 +153,6 @@ function OverviewPanel({ agentCase, plan }: { agentCase: AgentCase; plan?: CaseP
           <Link prefetch={false} href={`/cases/${agentCase.id}?view=plan`}>Inspect plan</Link>
         </div>
       </section>
-    </div>
-  );
-}
-
-function runEventText(event: RunEvent): string {
-  const step = typeof event.payload.step_key === "string"
-    ? event.payload.step_key.replaceAll("_", " ")
-    : undefined;
-  if (event.eventType === "RUN_STARTED") return "Run accepted and queued for durable execution.";
-  if (event.eventType === "AGENT_STARTED") return `${step ?? "Specialist"} started.`;
-  if (event.eventType === "AGENT_COMPLETED") return `${step ?? "Specialist"} completed.`;
-  if (event.eventType === "APPROVAL_REQUESTED") return `${step ?? "Step"} awaits independent approval.`;
-  if (event.eventType === "APPROVAL_DECIDED") {
-    return `${step ?? "Step"} ${event.payload.decision === "approve" ? "approved" : "rejected"}.`;
-  }
-  if (event.eventType === "LIMIT_EXCEEDED") return "Runtime stopped work at a hard limit.";
-  return event.eventType.replaceAll("_", " ").toLocaleLowerCase();
-}
-
-function ExecutionPanel({
-  agentCase,
-  plan,
-  run,
-  runEvents,
-  runLoadError,
-  runIntentId,
-  stepDecisionIntentId,
-  canControlRun,
-  canDecideStep,
-}: {
-  agentCase: AgentCase;
-  plan?: CasePlan;
-  run?: CaseRun;
-  runEvents: RunEvent[];
-  runLoadError?: string;
-  runIntentId: string;
-  stepDecisionIntentId: string;
-  canControlRun: boolean;
-  canDecideStep: boolean;
-}) {
-  if (runLoadError) {
-    return (
-      <section className={styles.panelError} role="alert">
-        <CircleAlert size={22} aria-hidden="true" />
-        <div><strong>Run state could not be loaded.</strong><p>{runLoadError}</p></div>
-      </section>
-    );
-  }
-  if (!run) {
-    const ready = agentCase.status === "READY"
-      && plan?.approval.status === "APPROVED"
-      && isPlanBindingCurrent(plan, agentCase);
-    return (
-      <div className={styles.workspacePanel}>
-        <section className={styles.noPlan}>
-          <p className={styles.sectionIndex}>Execution / not started</p>
-          <h2>Start only from an exact approved binding.</h2>
-          <p>The durable runtime revalidates the plan, source state, workflow release, agent versions, tool permissions, and budgets before dispatch.</p>
-        </section>
-        {ready && canControlRun && plan ? (
-          <RunStartForm caseId={agentCase.id} plan={plan} intentId={runIntentId} />
-        ) : (
-          <section className={styles.readOnlyNotice}>
-            <LockKeyhole size={18} aria-hidden="true" />
-            <div>
-              <strong>{ready ? "Awaiting the case owner." : "Run start is locked."}</strong>
-              <p>{ready
-                ? "A Regulatory Analyst or System Owner can start this approved plan."
-                : "Create and independently approve a current plan before execution."}</p>
-            </div>
-          </section>
-        )}
-      </div>
-    );
-  }
-  const terminal = ["COMPLETED", "BLOCKED", "FAILED", "CANCELLED"].includes(run.status);
-  return (
-    <div className={styles.workspacePanel}>
-      <RunLiveRefresh status={run.status} />
-      <section className={styles.runHeader}>
-        <div>
-          <p className={styles.sectionIndex}>Run / {run.id.slice(0, 8).toLocaleUpperCase()}</p>
-          <h2>{formatCaseStatus(run.status)}</h2>
-          <p>
-            Workflow {run.checkpoint.workflowTemplate.workflowKey} · v{run.checkpoint.workflowTemplate.version}
-            {run.checkpoint.stepKey ? ` · ${run.checkpoint.stepKey.replaceAll("_", " ")}` : ""}
-          </p>
-        </div>
-        <div className={styles.runCheckpoint}>
-          <span>Checkpoint</span>
-          <strong>v{run.checkpoint.checkpointVersion}</strong>
-          <small>{run.activeInvocation ? `Attempt ${run.activeInvocation.attempt}` : "No active invocation"}</small>
-        </div>
-      </section>
-
-      {canControlRun && !terminal ? (
-        <RunControlForm caseId={agentCase.id} run={run} intentId={runIntentId} />
-      ) : null}
-      {canDecideStep && run.status === "WAITING_FOR_APPROVAL" ? (
-        <RunStepDecisionForm
-          caseId={agentCase.id}
-          run={run}
-          intentId={stepDecisionIntentId}
-        />
-      ) : null}
-
-      <section className={styles.runSteps}>
-        <div className={styles.sectionHeading}>
-          <div><p className={styles.sectionIndex}>Persisted graph</p><h2>Plan-step state</h2></div>
-          <Activity size={21} aria-hidden="true" />
-        </div>
-        <ol>
-          {plan?.steps.map((step) => {
-            const state = run.checkpoint.steps[step.stepKey];
-            return (
-              <li key={step.id} data-status={state?.status.toLocaleLowerCase()}>
-                <span>{String(step.position).padStart(2, "0")}</span>
-                <div><strong>{step.title}</strong><small>{state ? formatCaseStatus(state.status) : "Unavailable"}</small></div>
-                <code>{state?.outputSha256 ? shortHash(state.outputSha256, 6) : state?.attempt ? `attempt ${state.attempt}` : "pending"}</code>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-
-      <section className={styles.runBudget}>
-        <div><span>Turns</span><strong>{run.checkpoint.budget.turns}</strong></div>
-        <div><span>Tool calls</span><strong>{run.checkpoint.budget.toolCalls}</strong></div>
-        <div><span>Tokens</span><strong>{run.checkpoint.budget.inputTokens + run.checkpoint.budget.outputTokens}</strong></div>
-        <div><span>Runtime</span><strong>{run.checkpoint.budget.runtimeSeconds.toFixed(1)}s</strong></div>
-        <div><span>Cost</span><strong>${run.checkpoint.budget.costUsd.toFixed(2)}</strong></div>
-      </section>
-
-      <section className={styles.runTimeline}>
-        <div className={styles.sectionHeading}>
-          <div><p className={styles.sectionIndex}>Live timeline</p><h2>{runEvents.length} run events</h2></div>
-          <small>{terminal ? "Final" : "Refreshes every 2 seconds"}</small>
-        </div>
-        <ol>
-          {runEvents.map((event) => (
-            <li key={event.id}>
-              <span>{String(event.sequence).padStart(3, "0")}</span>
-              <div><strong>{runEventText(event)}</strong><small>{event.actorId} · {formatDate(event.occurredAt)}</small></div>
-              <code title={event.eventHash}>{shortHash(event.eventHash, 6)}</code>
-            </li>
-          ))}
-        </ol>
-      </section>
-      {run.errorCode ? (
-        <section className={styles.panelError} role="alert">
-          <CircleAlert size={22} aria-hidden="true" />
-          <div><strong>Run stopped.</strong><p>{run.errorCode.replaceAll("_", " ")}</p></div>
-        </section>
-      ) : null}
     </div>
   );
 }
