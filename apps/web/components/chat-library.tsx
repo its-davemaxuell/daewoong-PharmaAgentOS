@@ -7,8 +7,10 @@ import { browseChatConversations, manageChatConversation } from "@/app/(portal)/
 import { useChatHistory } from "@/components/chat-history-context";
 import { useI18n } from "@/lib/i18n";
 import type { ChatThreadPage, ChatThreadSummary } from "@/lib/types";
+import { SelectionGroup, SelectionIndicator } from "./motion/selection";
+import { SkeletonRows } from "./controls";
 
-export function ChatLibrary({ onClose, onUpdated }: { onClose: () => void; onUpdated: (thread: ChatThreadSummary) => void }) {
+export function ChatLibrary({ open, onClose, onUpdated }: { open: boolean; onClose: () => void; onUpdated: (thread: ChatThreadSummary) => void }) {
   const { text, locale } = useI18n();
   const { upsertThread, removeThread } = useChatHistory();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -22,8 +24,12 @@ export function ChatLibrary({ onClose, onUpdated }: { onClose: () => void; onUpd
   const [busy, setBusy] = useState<string>();
   const [error, setError] = useState(false);
 
-  useEffect(() => { dialog.current?.showModal(); searchInput.current?.focus(); }, []);
   useEffect(() => {
+    if (open) { dialog.current?.showModal(); searchInput.current?.focus(); }
+    else dialog.current?.close();
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
     let active = true;
     const timer = window.setTimeout(() => {
       setLoading(true);
@@ -34,7 +40,7 @@ export function ChatLibrary({ onClose, onUpdated }: { onClose: () => void; onUpd
         .finally(() => { if (active) setLoading(false); });
     }, 250);
     return () => { active = false; clearTimeout(timer); };
-  }, [query, page, archived, revision]);
+  }, [open, query, page, archived, revision]);
 
   const manage = async (thread: ChatThreadSummary, values: { pinned?: boolean; archived?: boolean }) => {
     setBusy(thread.id);
@@ -50,7 +56,7 @@ export function ChatLibrary({ onClose, onUpdated }: { onClose: () => void; onUpd
   };
 
   return (
-    <dialog ref={dialog} className="chat-library" aria-labelledby="chat-library-title" onClose={onClose}
+    <dialog ref={dialog} className="chat-library" inert={!open || undefined} aria-labelledby="chat-library-title" onCancel={(event) => { event.preventDefault(); onClose(); }} onClose={() => { if (!dialog.current?.open) onClose(); }}
       onKeyDown={(event) => {
         if (event.key !== "Tab") return;
         const controls = [...event.currentTarget.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled]), a[href]")].filter((element) => element.getClientRects().length);
@@ -58,30 +64,31 @@ export function ChatLibrary({ onClose, onUpdated }: { onClose: () => void; onUpd
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }}
-      onClick={(event) => { if (event.target === event.currentTarget) dialog.current?.close(); }}>
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="chat-library__inner">
         <header>
           <div><h2 id="chat-library-title">{text("Your conversations", "내 대화")}</h2>
             <p>{text("Saved for this browser session", "이 브라우저 세션에 저장된 대화")}</p></div>
-          <button type="button" className="chat-icon-button" onClick={() => dialog.current?.close()} aria-label={text("Close conversations", "대화 목록 닫기")}><X size={20} /></button>
+          <button type="button" className="chat-icon-button" onClick={onClose} aria-label={text("Close conversations", "대화 목록 닫기")}><X size={20} /></button>
         </header>
         <label className="chat-library__search"><Search size={19} aria-hidden="true" />
           <input ref={searchInput} type="search" maxLength={200} value={query} aria-label={text("Search conversation titles and messages", "대화 제목 및 메시지 검색")}
             placeholder={text("Search titles and messages…", "제목과 메시지 검색…")}
             onChange={(event) => { setQuery(event.target.value); setPage(1); setLoading(true); }} />
         </label>
-        <div className="chat-library__tabs" role="group" aria-label={text("Conversation view", "대화 보기")}>
-          {[false, true].map((value) => <button key={String(value)} type="button" aria-pressed={archived === value}
+        <SelectionGroup><div className="chat-library__tabs" role="group" aria-label={text("Conversation view", "대화 보기")}>
+          {[false, true].map((value) => <button key={String(value)} className="ui-selection-control" type="button" aria-pressed={archived === value}
             onClick={() => { setArchived(value); setPage(1); setLoading(true); }}>
+            {archived === value && <SelectionIndicator />}
             {value ? <Archive size={16} /> : <MessageSquare size={16} />}
             {value ? text("Archived", "보관됨") : text("Recent & pinned", "최근·고정 대화")}
           </button>)}
-        </div>
+        </div></SelectionGroup>
         <div className="chat-library__results" aria-busy={loading}>
           {error ? <div className="chat-library__empty" role="alert"><p>{text("Could not load or update conversations.", "대화를 불러오거나 변경하지 못했어요.")}</p><button type="button" onClick={() => setRevision((value) => value + 1)}>{text("Try again", "다시 시도")}</button></div>
-            : loading ? <p className="chat-library__empty" role="status">{text("Loading conversations…", "대화를 불러오는 중…")}</p>
+            : loading ? <SkeletonRows rows={3} label={text("Loading conversations…", "대화를 불러오는 중…")} />
             : result?.items.length ? <ul>{result.items.map((thread) => <li key={thread.id}>
-              <Link href={`/chat/${thread.id}`} prefetch={false} onClick={() => dialog.current?.close()}>
+              <Link href={`/chat/${thread.id}`} prefetch={false} onClick={onClose}>
                 {thread.pinnedAt ? <Pin size={17} aria-label={text("Pinned", "고정됨")} /> : <MessageSquare size={17} aria-hidden="true" />}
                 <span><strong>{thread.title}</strong><small>{new Date(thread.lastMessageAt || thread.createdAt).toLocaleDateString(locale === "ko" ? "ko-KR" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</small></span>
               </Link>

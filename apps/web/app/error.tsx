@@ -1,10 +1,13 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
+import { useTransition } from "react";
+import { Button } from "@/components/controls";
 import { useI18n } from "@/lib/i18n";
 
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const { text } = useI18n();
+  const [pending, startTransition] = useTransition();
 
   return (
     <main id="main-content" className="state-page" role="alert" tabIndex={-1}>
@@ -16,9 +19,9 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
           "원본 데이터는 변경되지 않았습니다. 다시 시도하고 문제가 계속되면 서비스 담당자에게 문의하세요.",
         )}
       </p>
-      <button className="button button--primary" type="button" onClick={reset}>
+      <Button variant="primary" pending={pending} pendingLabel={text("Retrying…", "다시 불러오는 중…")} onClick={() => startTransition(reset)}>
         <RotateCcw size={16} aria-hidden="true" /> {text("Retry", "다시 시도")}
-      </button>
+      </Button>
     </main>
   );
 }

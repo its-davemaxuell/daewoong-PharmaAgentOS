@@ -1,0 +1,13 @@
+"use client";
+
+import { LazyMotion, MotionConfig } from "motion/react";
+import type { ReactNode } from "react";
+
+const features = () => import("./features").then((module) => module.default);
+
+/** Receives server-rendered children without making the route tree client-owned. */
+export function MotionProvider({ children }: { children: ReactNode }) {
+  return <MotionConfig reducedMotion="user" transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
+    <LazyMotion features={features} strict>{children}</LazyMotion>
+  </MotionConfig>;
+}

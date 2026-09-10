@@ -1,6 +1,7 @@
 "use client";
 
 import { Languages } from "lucide-react";
+import { SelectionGroup, SelectionIndicator } from "./motion/selection";
 import { useI18n, type Locale } from "@/lib/i18n";
 
 const languageOptions: Array<{ locale: Locale; label: string; name: string }> = [
@@ -12,7 +13,7 @@ export function LanguageToggle() {
   const { locale, setLocale, text } = useI18n();
 
   return (
-    <div
+    <SelectionGroup><div
       className="language-toggle"
       role="group"
       aria-label={text("Interface language", "인터페이스 언어")}
@@ -21,7 +22,7 @@ export function LanguageToggle() {
       {languageOptions.map((option) => (
         <button
           key={option.locale}
-          className={`language-toggle__option${locale === option.locale ? " language-toggle__option--active" : ""}`}
+          className={`language-toggle__option ui-selection-control${locale === option.locale ? " language-toggle__option--active" : ""}`}
           type="button"
           aria-pressed={locale === option.locale}
           aria-label={text(
@@ -30,9 +31,9 @@ export function LanguageToggle() {
           )}
           onClick={() => setLocale(option.locale)}
         >
-          {option.label}
+          {locale === option.locale && <SelectionIndicator />}{option.label}
         </button>
       ))}
-    </div>
+    </div></SelectionGroup>
   );
 }

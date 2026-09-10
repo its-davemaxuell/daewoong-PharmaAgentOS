@@ -52,7 +52,7 @@
 }
 
 .guideLink:hover {
-  background: #e8edf5;
+  background: var(--os-primary-soft);
 }
 
 .guideLink:focus-visible {

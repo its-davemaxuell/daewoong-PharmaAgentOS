@@ -32,6 +32,7 @@ import {
   type ReviewRequest,
 } from "@/lib/review-requests";
 import { formatCaseStatus, type AgentCase } from "@/lib/case-types";
+import { SelectionGroup, SelectionIndicator } from "../motion/selection";
 import styles from "./agent-home.module.css";
 
 const choices = [
@@ -353,14 +354,15 @@ export function AgentHome({
                 <span>1</span>
                 {text("Choose your task", "하고 싶은 일을 선택하세요")}
               </legend>
-              <div className={styles.taskOptions}>
+              <SelectionGroup><div className={styles.taskOptions}>
                 {choices.map((choice) => (
                   <label
                     key={choice.id}
                     className={
-                      template === choice.id ? styles.selectedTask : undefined
+                      `ui-selection-control ${template === choice.id ? styles.selectedTask : ""}`
                     }
                   >
+                    {template === choice.id ? <SelectionIndicator tone="tinted" /> : null}
                     <input
                       type="radio"
                       name="review-type"
@@ -376,7 +378,7 @@ export function AgentHome({
                     </span>
                   </label>
                 ))}
-              </div>
+              </div></SelectionGroup>
               <p className={styles.taskDescription}>{pick(chosen.detail)}</p>
             </fieldset>
             <div className={styles.questionHeading}>

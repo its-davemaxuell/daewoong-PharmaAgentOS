@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ArrowRight, GitBranch, Search, ShieldCheck } from "lucide-react";
 import { agentDefinitions } from "@/lib/agent-workspace";
 import { useI18n } from "@/lib/i18n";
+import { SelectionGroup, SelectionIndicator } from "../motion/selection";
 import styles from "./agent-team.module.css";
 
 export function AgentTeam() {
@@ -60,22 +61,24 @@ export function AgentTeam() {
         </span>
       </div>
       <div className={styles.workspace}>
-        <nav
+        <SelectionGroup><nav
           aria-label={text("Agent definitions", "에이전트 정의")}
           className={styles.roster}
         >
           {agents.map((agent, index) => (
             <button
+              className="ui-selection-control"
               key={agent.key}
               type="button"
               aria-pressed={active?.key === agent.key}
               aria-controls="agent-detail"
               onClick={() => setSelected(agent.key)}
             >
+              {active?.key === agent.key ? <SelectionIndicator /> : null}
               <span className={styles.avatar}>
                 <GitBranch size={19} />
               </span>
-              <span>
+              <span className={styles.identity}>
                 <strong>{pick(agent.name)}</strong>
                 <small>
                   v{agent.version} · {text("Definition", "정의")}
@@ -93,7 +96,7 @@ export function AgentTeam() {
               )}
             </p>
           ) : null}
-        </nav>
+        </nav></SelectionGroup>
         {active ? (
           <section
             id="agent-detail"
@@ -130,7 +133,7 @@ export function AgentTeam() {
                 )}
               </p>
             </div>
-            <Link href="/dashboard">
+            <Link href="/requests">
               {text("Prepare a review request", "검토 요청 작성하기")}
               <ArrowRight size={16} />
             </Link>

@@ -98,7 +98,7 @@
   border-color: #c4d0f3;
   background: var(--os-primary-soft);
 }
-.roster button > span:nth-child(2) {
+.roster .identity {
   flex: 1;
 }
 .roster strong {

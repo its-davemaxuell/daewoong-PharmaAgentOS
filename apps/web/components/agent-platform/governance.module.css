@@ -11,9 +11,13 @@
 .form input, .form select, .releaseForm input, .releaseForm select { min-height: var(--control-height); border: 1px solid var(--control-border); padding: 9px 11px; background: var(--os-surface); color: inherit; }
 .form button, .releaseForm button { min-height: var(--control-height); border: 0; padding: 10px 15px; background: var(--os-primary); color: var(--os-surface); font-weight: 700; cursor: pointer; }
 .form button:disabled, .releaseForm button:disabled { opacity: .45; cursor: not-allowed; }
-.success { color: var(--os-primary); margin: 0; }.error { color: #a73333; margin: 0; }
+.success, .error { margin: 0; padding: 12px; border-radius: var(--radius-inset); font-size: .875rem; line-height: 1.6; }
+.success { color: var(--status-success-ink); background: var(--status-success-surface); }
+.error { color: var(--status-error-ink); background: var(--status-error-surface); }
 .section { margin-top: 36px; }.sectionHeading { display: flex; justify-content: space-between; margin-bottom: 14px; }.sectionHeading h2 { margin: 5px 0 0; font-size: 1.75rem; }
 .card { padding: 20px; }.card h3 { margin: 9px 0 4px; }.card p { color: var(--os-muted); }.card code, .run code { font-size: 0.8125rem; color: var(--os-muted); }
+.empty { padding: 24px; border: 1px solid var(--os-rule); border-radius: var(--radius-panel); background: var(--os-surface); box-shadow: var(--os-shadow-panel); color: var(--os-muted); line-height: 1.7; font-size: .9375rem; }
+.empty strong { display: block; color: var(--os-ink); font-size: 1.125rem; margin-bottom: 6px; }
 .runList { display: grid; gap: 12px; }.run { padding: 20px; display: grid; grid-template-columns: minmax(220px, 1fr) auto auto; align-items: start; gap: 20px; border-left: 1px solid #a73333; }.run[data-status="passed"] { border-left-color: #1d875c; }.run h3 { margin: 6px 0; }.run p { margin: 0; color: var(--os-muted); }.run dl { margin: 0; display: flex; gap: 18px; }.run dt { font-size: 0.8125rem; color: var(--os-muted); }.run dd { margin: 3px 0; font-weight: 800; }
 .releaseForm { grid-column: 1 / -1; display: grid; grid-template-columns: 140px minmax(240px, 1fr) auto; gap: 8px; }
 .metricGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }.metricGroup { padding: 20px; }.metricGroup dl { margin: 15px 0 0; }.metricGroup dl div { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-top: 1px solid var(--os-rule); }.metricGroup dt { color: var(--os-muted); text-transform: capitalize; }.metricGroup dd { margin: 0; font-weight: 800; }
@@ -45,6 +49,8 @@
 .sectionHeading h2 { font-size: 1.375rem; }
 .formGrid, .metricGrid, .cardGrid, .controlGrid { gap: 20px; }
 .form button, .releaseForm button, .controlForm button { box-shadow: var(--os-shadow-primary); }
+.page button:not(:disabled):active { transform: translateY(1px) scale(.99); }
+.page :is(input, select):focus-visible { background: var(--os-inset); }
 .filters { width: fit-content; padding: 5px; gap: 4px; background: #e7e9f1; border-radius: 12px; margin-bottom: 20px; }
 .filters a { min-height: 38px; border: 0; background: transparent; font-weight: 600; }
 .filters a[data-active="true"] { background: white; color: var(--os-primary-deep); box-shadow: var(--os-shadow-control); }

@@ -24,6 +24,7 @@ import {
   type ImpactHypothesis,
   type IntegrationDraft,
 } from "@/lib/case-types";
+import { BilingualText as T } from "@/lib/i18n";
 import styles from "./case-workbench.module.css";
 
 function ActionMessage({ state }: { state: typeof EMPTY_CASE_ACTION_STATE }) {
@@ -33,7 +34,7 @@ function ActionMessage({ state }: { state: typeof EMPTY_CASE_ACTION_STATE }) {
       className={state.status === "error" ? styles.formError : styles.formSuccess}
       role={state.status === "error" ? "alert" : "status"}
     >
-      <strong>{state.status === "error" ? "Operation not completed" : "Case record updated"}</strong>
+      <strong>{state.status === "error" ? <T en="Operation not completed" ko="작업이 완료되지 않았습니다" /> : <T en="Case record updated" ko="검토 기록이 업데이트되었습니다" />}</strong>
       <span>{state.message}</span>
       {state.requestId ? <small>Request ID · {state.requestId}</small> : null}
     </div>
@@ -57,7 +58,7 @@ export function CreateCaseForm({ intentId }: { intentId: string }) {
         </p>
       </div>
 
-      <fieldset className={styles.formFields} disabled={pending}>
+      <fieldset className={styles.formFields} disabled={pending} aria-busy={pending || undefined}>
         <label className={styles.field} htmlFor="case-title">
           <span>Case title</span>
           <input
@@ -141,7 +142,7 @@ export function PlanComposer({ caseId, intentId }: { caseId: string; intentId: s
       </summary>
       <form action={formAction}>
         <input name="intent_id" type="hidden" value={intentId} />
-        <fieldset className={styles.formFields} disabled={pending}>
+        <fieldset className={styles.formFields} disabled={pending} aria-busy={pending || undefined}>
           <label className={styles.field} htmlFor="domain-lens">
             <span>Domain lens</span>
             <input
@@ -212,7 +213,7 @@ export function PlanDecisionForm({
           <small className={styles.expiryNote}>The API reconciles the displayed approval expiry when this decision is submitted.</small>
         ) : null}
       </div>
-      <fieldset className={styles.formFields} disabled={pending}>
+      <fieldset className={styles.formFields} disabled={pending} aria-busy={pending || undefined}>
         <label className={styles.field} htmlFor={`decision-reason-${plan.id}`}>
           <span>Decision rationale</span>
           <textarea
@@ -264,7 +265,7 @@ export function RunStartForm({
         <strong>Start plan v{plan.version}</strong>
         <small>The run will use the displayed plan, state, workflow, agents, tools, and limits.</small>
       </div>
-      <button className={styles.primaryButton} type="submit" disabled={pending}>
+      <button className={styles.primaryButton} type="submit" disabled={pending} aria-busy={pending || undefined}>
         {pending ? "Starting durable run…" : "Start approved run"}
       </button>
       <ActionMessage state={state} />
@@ -305,7 +306,7 @@ export function RunControlForm({
             required
           />
         </label>
-        <button className={styles.primaryButton} type="submit" disabled={pending}>
+        <button className={styles.primaryButton} type="submit" disabled={pending} aria-busy={pending || undefined}>
           {pending ? "Recording…" : operation === "pause" ? "Pause run" : "Resume run"}
         </button>
         <ActionMessage state={state} />
@@ -350,7 +351,7 @@ export function RunStepDecisionForm({
         <h3>Authorize {stepKey.replaceAll("_", " ")}?</h3>
         <p>This decision applies only to invocation attempt {step.attempt} in run {run.id.slice(0, 8)}.</p>
       </div>
-      <fieldset className={styles.formFields} disabled={pending}>
+      <fieldset className={styles.formFields} disabled={pending} aria-busy={pending || undefined}>
         <label className={styles.field} htmlFor={`step-reason-${run.id}`}>
           <span>Decision rationale</span>
           <textarea
@@ -403,7 +404,7 @@ export function ImpactGenerateForm({
           placeholder="Data integrity, aseptic processing, validation…"
         />
       </label>
-      <button className={styles.primaryButton} type="submit" disabled={pending}>
+      <button className={styles.primaryButton} type="submit" disabled={pending} aria-busy={pending || undefined}>
         {pending ? "Comparing evidence…" : "Generate review candidates"}
       </button>
       <ActionMessage state={state} />
@@ -443,10 +444,10 @@ export function ImpactDecisionForm({
         />
       </label>
       <div className={styles.decisionActions}>
-        <button className={styles.rejectButton} name="decision" value="reject" type="submit" disabled={pending}>
+        <button className={styles.rejectButton} name="decision" value="reject" type="submit" disabled={pending} aria-busy={pending || undefined}>
           Reject
         </button>
-        <button className={styles.approveButton} name="decision" value="accept" type="submit" disabled={pending}>
+        <button className={styles.approveButton} name="decision" value="accept" type="submit" disabled={pending} aria-busy={pending || undefined}>
           Accept hypothesis
         </button>
       </div>
@@ -466,7 +467,7 @@ export function VerificationControlForm({ caseId, intentId }: { caseId: string; 
         <strong>Run verification</strong>
         <small>Resolve exact anchors, test semantic support, and enforce the two-correction ceiling.</small>
       </div>
-      <button className={styles.primaryButton} type="submit" disabled={pending}>
+      <button className={styles.primaryButton} type="submit" disabled={pending} aria-busy={pending || undefined}>
         {pending ? "Verifying…" : "Verify accepted records"}
       </button>
       <ActionMessage state={state} />
@@ -488,7 +489,7 @@ export function ArtifactComposeForm({ caseId, intentId }: { caseId: string; inte
         <span>Assigned reviewer subject (optional)</span>
         <input id={`artifact-reviewer-${caseId}`} name="assigned_reviewer_id" maxLength={255} placeholder="qa.reviewer@example.test" />
       </label>
-      <button className={styles.primaryButton} type="submit" disabled={pending}>
+      <button className={styles.primaryButton} type="submit" disabled={pending} aria-busy={pending || undefined}>
         {pending ? "Composing…" : "Compose from verified records"}
       </button>
       <ActionMessage state={state} />
@@ -521,9 +522,9 @@ export function ArtifactDecisionForm({
         <textarea id={`artifact-reason-${artifact.id}`} name="reason" rows={3} minLength={8} maxLength={2_000} required />
       </label>
       <div className={styles.decisionActions}>
-        <button className={styles.rejectButton} name="decision" value="reject" type="submit" disabled={pending}>Reject</button>
-        <button className={styles.rejectButton} name="decision" value="request_revision" type="submit" disabled={pending}>Request revision</button>
-        <button className={styles.approveButton} name="decision" value="approve" type="submit" disabled={pending}>Approve and lock</button>
+        <button className={styles.rejectButton} name="decision" value="reject" type="submit" disabled={pending} aria-busy={pending || undefined}>Reject</button>
+        <button className={styles.rejectButton} name="decision" value="request_revision" type="submit" disabled={pending} aria-busy={pending || undefined}>Request revision</button>
+        <button className={styles.approveButton} name="decision" value="approve" type="submit" disabled={pending} aria-busy={pending || undefined}>Approve and lock</button>
       </div>
       <ActionMessage state={state} />
     </form>
@@ -575,7 +576,7 @@ export function IntegrationDraftForm({
         <span>Draft body · decision support only</span>
         <textarea name="body" rows={7} minLength={8} maxLength={10_000} required />
       </label>
-      <button className={styles.primaryButton} type="submit" disabled={pending}>
+      <button className={styles.primaryButton} type="submit" disabled={pending} aria-busy={pending || undefined}>
         {pending ? "Recording…" : "Record draft without delivery"}
       </button>
       <ActionMessage state={state} />
@@ -607,8 +608,8 @@ export function IntegrationDraftReviewForm({
         <textarea name="reason" rows={3} minLength={8} maxLength={2_000} required />
       </label>
       <div className={styles.decisionActions}>
-        <button className={styles.rejectButton} name="decision" value="cancel" type="submit" disabled={pending}>Cancel draft</button>
-        <button className={styles.approveButton} name="decision" value="review_for_manual_use" type="submit" disabled={pending}>Review for manual use</button>
+        <button className={styles.rejectButton} name="decision" value="cancel" type="submit" disabled={pending} aria-busy={pending || undefined}>Cancel draft</button>
+        <button className={styles.approveButton} name="decision" value="review_for_manual_use" type="submit" disabled={pending} aria-busy={pending || undefined}>Review for manual use</button>
       </div>
       <ActionMessage state={state} />
     </form>

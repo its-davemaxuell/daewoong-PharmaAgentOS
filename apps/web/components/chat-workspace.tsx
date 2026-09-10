@@ -56,6 +56,8 @@ import {
 } from "@/app/(portal)/ask/actions";
 import { ChatLibrary } from "@/components/chat-library";
 import { ChatThreadTools } from "@/components/chat-thread-tools";
+import { Presence, PresenceSurface } from "./motion/presence";
+import { MotionProvider } from "./motion/provider";
 import { ChatEvidencePanel } from "@/components/chat-evidence-panel";
 import { useChatHistory } from "@/components/chat-history-context";
 import { beginnerPrompts } from "@/lib/beginner-prompts";
@@ -670,6 +672,7 @@ export function ChatWorkspace({
   const [turns, setTurns] = useState<ChatTurn[]>(() => (
     turnsFromPersistedThread(initialThread, initialRequiredLetterScope)
   ));
+  const [introducedTurns, setIntroducedTurns] = useState<Set<string>>(() => new Set());
   const [selectedCitation, setSelectedCitation] = useState<Record<string, number | undefined>>({});
   const [copiedTurn, setCopiedTurn] = useState<string>();
   const [activeLandingSeed, setActiveLandingSeed] = useState(landingSeed);
@@ -1007,6 +1010,7 @@ export function ChatWorkspace({
       persistedContext: Boolean(activeThreadId),
     };
     followConversationRef.current = true;
+    if (!retry) setIntroducedTurns(current => new Set([...current, turnId]));
     setTurns((current) => retry
       ? current.map((item) => (item.id === retry.turnId ? turn : item))
       : [...current, turn]);
@@ -1308,7 +1312,7 @@ export function ChatWorkspace({
     focus: documentFocus, createdAt: initialThread?.createdAt ?? "",
     updatedAt: initialThread?.updatedAt ?? "", lastMessageAt: initialThread?.lastMessageAt ?? "",
   } : undefined;
-  const actionsDisabled = pending || actionBusy || focusPending || preferencesPending || turns.some((turn) => turn.persistedPending);
+  const actionsDisabled = !draftLoaded || pending || actionBusy || focusPending || preferencesPending || turns.some((turn) => turn.persistedPending);
   const branchFrom = async (turn: ChatTurn, edit = false) => {
     if (!activeThreadId || actionsDisabled || actionBusyRef.current) return;
     const messageId = edit ? turn.answer?.userMessageId ?? turn.id : turn.answer?.assistantMessageId;
@@ -1353,15 +1357,15 @@ export function ChatWorkspace({
   };
 
   return (
-    <div className={`chat-page chat-workbench${turns.length ? " chat-page--active" : ""}${evidenceTurn?.answer ? " chat-page--evidence" : ""}`}>
-      {libraryOpen && <ChatLibrary onClose={() => setLibraryOpen(false)} onUpdated={(thread) => {
+    <MotionProvider><div className={`chat-page chat-workbench${turns.length ? " chat-page--active" : ""}${evidenceTurn?.answer ? " chat-page--evidence" : ""}`}>
+      <ChatLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onUpdated={(thread) => {
         if (thread.id === activeThreadId) { setThreadPinnedAt(thread.pinnedAt); setThreadArchivedAt(thread.archivedAt); setThreadTitle(thread.title); }
-      }} />}
+      }} />
       <div className="chat-page__surface">
         <header className="chat-workbench__header">
           <div className="chat-workbench__heading"><FileSearch size={21} aria-hidden="true" /><h1>{text("FDA assistant", "FDA 어시스턴트")}</h1><small>FDA · Drugs</small></div>
           <div className="chat-workbench__header-actions">
-            <button type="button" className="chat-tool-button" onClick={() => setLibraryOpen(true)} title={text("Search conversations · Ctrl/⌘ K", "대화 검색 · Ctrl/⌘ K")}><Search size={17} />{text("Conversations", "대화 목록")}</button>
+            <button type="button" className="chat-tool-button" onClick={(event) => { event.currentTarget.focus(); setLibraryOpen(true); }} title={text("Search conversations · Ctrl/⌘ K", "대화 검색 · Ctrl/⌘ K")}><Search size={17} />{text("Conversations", "대화 목록")}</button>
             <button className="chat-new-button" type="button" disabled={actionsDisabled} onClick={clearConversation}><Plus size={17} />{text("New chat", "새 대화")}</button>
           </div>
         </header>
@@ -1431,7 +1435,7 @@ export function ChatWorkspace({
         {turns.map((turn, turnIndex) => {
           const turnFilters = activeFilterEntries(turn.filters);
           return (
-            <section className="chat-turn" key={turn.id}>
+            <section className="chat-turn" key={turn.id} data-introduced={introducedTurns.has(turn.id) || undefined}>
               <div className="chat-user-message">
                 <p>{turn.question}</p>
                 {turn.answer && <button type="button" className="chat-user-message__edit" disabled={actionsDisabled || !!threadArchivedAt} onClick={() => void branchFrom(turn, true)}><Pencil size={14} />{text("Edit question", "질문 수정")}</button>}
@@ -1689,8 +1693,8 @@ export function ChatWorkspace({
 
       <div className="chat-composer-wrap">
         {showJump && <button className="chat-jump" type="button" onClick={() => { conversationRef.current?.scrollTo({ top: conversationRef.current.scrollHeight }); followConversationRef.current = true; setShowJump(false); }}><ArrowDown size={16} />{text("Latest answer", "최근 답변")}</button>}
-        {sourcePickerOpen && <section className="chat-source-picker" aria-label={text("Choose FDA letters", "FDA 경고서한 선택")}>
-          <header><div><strong>{text("Add FDA letters", "FDA 경고서한 추가")}</strong><small>{text("Choose up to 10 letters to focus or compare", "집중 분석하거나 비교할 서한을 최대 10개 선택하세요")}</small></div><button type="button" className="chat-icon-button" onClick={() => setSourcePickerOpen(false)} aria-label={text("Close letter picker", "서한 선택 닫기")}><X size={18} /></button></header>
+        <Presence initial={false}>{sourcePickerOpen && <PresenceSurface className="chat-source-picker" onKeyDown={(event) => { if (event.key === "Escape") { event.stopPropagation(); setSourcePickerOpen(false); composerRef.current?.focus(); } }} aria-label={text("Choose FDA letters", "FDA 경고서한 선택")}>
+          <header><div><strong>{text("Add FDA letters", "FDA 경고서한 추가")}</strong><small>{text("Choose up to 10 letters to focus or compare", "집중 분석하거나 비교할 서한을 최대 10개 선택하세요")}</small></div><button type="button" className="chat-icon-button" onClick={() => { setSourcePickerOpen(false); composerRef.current?.focus(); }} aria-label={text("Close letter picker", "서한 선택 닫기")}><X size={18} /></button></header>
           <input autoFocus type="search" value={sourceSearch} onChange={(event) => { setSourceSearch(event.target.value); setSourcePage(1); }} placeholder={text("Search companies…", "기업 검색…")} aria-label={text("Search FDA letters", "FDA 경고서한 검색")} />
           <p role="status">{sourcePending ? text("Searching…", "검색 중…") : sourceFailed ? text("Source search unavailable. Keep your selection and try again.", "원문을 검색할 수 없습니다. 선택은 유지됩니다. 다시 시도하세요.") : text(`${sourceTotal} sources`, `원문 ${sourceTotal}건`)}</p>
           <div><button type="button" disabled={sourcePage === 1 || sourcePending} onClick={() => setSourcePage(value => value - 1)}>{text("Previous", "이전")}</button><button type="button" disabled={sourcePage * 20 >= sourceTotal || sourcePending} onClick={() => setSourcePage(value => value + 1)}>{text("Next", "다음")}</button></div>
@@ -1699,15 +1703,15 @@ export function ChatWorkspace({
             <span><strong>{letter.company}</strong><small>{formatDate(letter.issueDate, undefined, locale)}</small></span>
           </label>)}{!sourceResults.length && !sourcePending && !sourceFailed && <p>{text("No matching letters.", "일치하는 서한이 없어요.")}</p>}</div>
           <footer><span>{text(`${selectedLetters.length} selected`, `${selectedLetters.length}개 선택`)}</span><button type="button" disabled={actionBusy} onClick={() => setSelectedLetters([])}>{text("Clear", "선택 해제")}</button><button className="chat-send-button" type="button" disabled={actionsDisabled} onClick={() => void applySelectedLetters()}>{text("Use letters", "선택 적용")}</button></footer>
-        </section>}
-        {filtersOpen ? (
-          <section className="chat-filter-panel" aria-label={text("Evidence search filters", "증거 검색 필터")}>
+        </PresenceSurface>}</Presence>
+        <Presence initial={false}>{filtersOpen ? (
+          <PresenceSurface className="chat-filter-panel" onKeyDown={(event) => { if (event.key === "Escape") { event.stopPropagation(); setFiltersOpen(false); composerRef.current?.focus(); } }} aria-label={text("Evidence search filters", "증거 검색 필터")}>
             <header>
               <div>
                 <span><Filter size={15} />{text("Search filters", "검색 필터")}</span>
                 <small>{text("Filters apply to your next question", "다음 질문에 필터가 적용됩니다")}</small>
               </div>
-              <button type="button" onClick={() => setFiltersOpen(false)} aria-label={text("Close filters", "필터 닫기")}>
+              <button type="button" onClick={() => { setFiltersOpen(false); composerRef.current?.focus(); }} aria-label={text("Close filters", "필터 닫기")}>
                 <X size={17} />
               </button>
             </header>
@@ -1751,8 +1755,8 @@ export function ChatWorkspace({
                   : text("Clear all filters", "모든 필터 지우기")}
               </button>
             ) : null}
-          </section>
-        ) : null}
+          </PresenceSurface>
+        ) : null}</Presence>
 
         {primaryLetterId && !letterScopeSuspended ? (
           <div className="chat-document-focus" role="status">
@@ -1808,7 +1812,7 @@ export function ChatWorkspace({
           </div>
         ) : null}
 
-        <div className="chat-composer" aria-busy={pending}>
+        <div className="chat-composer" aria-busy={!draftLoaded || pending}>
           {activeLetterIds.length > 0 && <div className="chat-selected-letters" aria-label={text("Selected FDA letters", "선택한 FDA 경고서한")}>
             {activeLetterIds.map((id) => {
               const label = letters.find((letter) => letter.id === id)?.company ?? text("Selected letter", "선택한 서한");
@@ -1825,8 +1829,8 @@ export function ChatWorkspace({
             value={question}
             rows={2}
             maxLength={2000}
-            disabled={!!threadArchivedAt}
-            placeholder={text("e.g. Explain FDA findings about cleaning validation in simple terms.", "예: 세척 밸리데이션 관련 FDA 지적 사항을 쉽게 설명해주세요.")}
+            disabled={!draftLoaded || !!threadArchivedAt}
+            placeholder={!draftLoaded ? text("Restoring your draft…", "작성 중인 질문을 불러오는 중…") : text("e.g. Explain FDA findings about cleaning validation in simple terms.", "예: 세척 밸리데이션 관련 FDA 지적 사항을 쉽게 설명해주세요.")}
             onChange={(event) => setQuestion(event.target.value)}
             onKeyDown={handleComposerKeyDown}
           />
@@ -1882,7 +1886,8 @@ export function ChatWorkspace({
                 className="chat-send-button"
                 type="button"
                 disabled={
-                  pending
+                  !draftLoaded
+                  || pending
                   || focusPending
                   || preferencesPending
                   || actionBusy
@@ -1906,9 +1911,9 @@ export function ChatWorkspace({
         </p>
       </div>
       </div>
-      {evidenceTurn?.answer && <ChatEvidencePanel citations={evidenceTurn.answer.citations} selected={selectedCitation[evidenceTurn.id] ?? 0}
+      <Presence initial={false}>{evidenceTurn?.answer && <ChatEvidencePanel key={evidenceTurn.id} citations={evidenceTurn.answer.citations} selected={selectedCitation[evidenceTurn.id] ?? 0}
         onSelect={(index) => setSelectedCitation((current) => ({ ...current, [evidenceTurn.id]: index }))} onClose={closeEvidence}
-        onFocus={(citation) => setCitationAsChatFocus(evidenceTurn, citation)} disabled={actionsDisabled || !!threadArchivedAt || !evidenceTurn.answer.assistantMessageId} focusedLetterId={documentFocus?.warningLetterId} />}
-    </div>
+        onFocus={(citation) => setCitationAsChatFocus(evidenceTurn, citation)} disabled={actionsDisabled || !!threadArchivedAt || !evidenceTurn.answer.assistantMessageId} focusedLetterId={documentFocus?.warningLetterId} />}</Presence>
+    </div></MotionProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { BilingualText as T } from "@/lib/i18n";
 import { ServiceState } from "@/components/agent-platform/service-state";
 import type { Metadata } from "next";
 import { RuntimeControlForm } from "@/components/agent-platform/runtime-control-form";
@@ -53,8 +54,8 @@ export default async function ControlTowerPage() {
   return (
       <div className={styles.page}>
         <header>
-          <span>Agent Control Tower / governed operations</span>
-          <h1>One ledger for health, quality, security, cost, and value.</h1>
+          <span><T en="Governed operations" ko="운영 관리" /></span>
+          <h1><T en="Service operations" ko="서비스 운영 현황" /></h1>
           <p>Generated {new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "medium" }).format(new Date(tower.generatedAt))}. Metrics are operational records, not regulatory conclusions.</p>
         </header>
         <div className={styles.metricGrid}>
@@ -81,7 +82,7 @@ export default async function ControlTowerPage() {
           </section>
         ) : null}
         <section className={styles.section}>
-          <div className={styles.sectionHeading}><div><span>Immutable inventory</span><h2>{inventory.length} released or releasable versions</h2></div></div>
+          <div className={styles.sectionHeading}><div><span>Immutable inventory</span><h2>{inventory.length} <T en="registered versions" ko="개의 등록된 버전" /></h2></div></div>
           <div className={styles.inventoryTable}>{inventory.map((item) => <article key={item.id}><span>{item.kind.replaceAll("_", " ")}</span><strong>{item.key}@{item.version}</strong><code title={item.sha256}>{item.sha256.slice(0, 9)}…{item.sha256.slice(-9)}</code><em>{item.releaseStatus}</em></article>)}</div>
         </section>
       </div>

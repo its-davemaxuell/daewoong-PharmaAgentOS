@@ -1,6 +1,6 @@
 .indexPage,
 .workspacePage {
-  --case-orange: var(--os-primary, var(--os-primary));
+  --case-orange: var(--os-primary);
   --case-orange-soft: var(--os-primary-soft);
   --case-ink: var(--os-ink);
   --case-muted: var(--os-muted);
@@ -302,7 +302,7 @@
 .caseSummary > small {
   display: -webkit-box;
   overflow: hidden;
-  color: #6c6763;
+  color: var(--os-muted);
   font-size: 0.875rem;
   line-height: 1.48;
   -webkit-box-orient: vertical;
@@ -313,13 +313,13 @@
   display: grid;
   justify-items: end;
   gap: 5px;
-  color: #7e7974;
+  color: var(--os-muted);
   font-size: 0.8125rem;
   text-align: right;
 }
 
 .caseMeta code {
-  color: #504b47;
+  color: var(--os-ink);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.8125rem;
 }
@@ -2044,7 +2044,7 @@
   }
 
   .workspaceTabs {
-    grid-template-columns: repeat(8, minmax(76px, 1fr));
+    grid-template-columns: repeat(8, minmax(120px, 1fr));
     overflow-x: auto;
   }
 
@@ -2217,7 +2217,10 @@
 .workspaceTabs a[aria-current="page"], .workspaceTabs a[data-active="true"] { background: white; color: var(--os-primary-deep); box-shadow: var(--os-shadow-control); }
 .workspaceGrid { gap: 20px; }
 .indexPage :is(input, select, textarea), .workspacePage :is(input, select, textarea) { border-radius: var(--control-radius); border-color: var(--control-border); background: var(--os-surface); }
-.indexPage button, .workspacePage button { border-radius: var(--control-radius); }
+.indexPage button, .workspacePage button { border-radius: var(--control-radius); min-height: 44px; }
+.indexPage button[aria-busy="true"], .workspacePage button[aria-busy="true"] { cursor: progress; }
+.indexPage button:active:not(:disabled), .workspacePage button:active:not(:disabled) { transform: translateY(1px); }
+.workspacePage details[open] > summary { color: var(--os-primary-deep); }
 @media (max-width: 700px) { .caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .workspaceHeader, .planPreview, .accessState { padding: 18px; } .indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: 1.75rem; } }
 
 .workspacePanel { gap: 20px; }

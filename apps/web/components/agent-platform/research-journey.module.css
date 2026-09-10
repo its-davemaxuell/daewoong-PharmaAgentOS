@@ -1,7 +1,7 @@
 .journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 26px 0; padding: 24px 0; border-block: 1px solid var(--os-rule); gap: 36px; }
 .journey li { display: flex; align-items: center; position: relative; gap: 14px; min-width: 0; }
 .icon { display: grid; place-items: center; width: 50px; height: 50px; flex-shrink: 0; color: var(--os-primary); }
-.journey li:nth-child(2) .icon { border-radius: 12px; background: #e5ecfc; }
+.journey li:nth-child(2) .icon { border-radius: 12px; background: var(--os-primary-soft); }
 .owner { display: block; color: var(--os-muted); font-size: .8125rem; margin-bottom: 5px; }
 .journey strong { display: block; font-size: 1.125rem; line-height: 1.5; color: var(--os-ink); }
 .journey small { display: block; color: var(--os-muted); font-size: .875rem; line-height: 1.6; margin-top: 4px; }

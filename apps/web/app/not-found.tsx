@@ -10,14 +10,14 @@ export default function NotFound() {
       </p>
       <h1>
         <BilingualText
-          en="This Drug letter is not in the active corpus."
-          ko="이 의약품 경고서한은 활성 코퍼스에 없습니다."
+          en="This page or record could not be found."
+          ko="페이지 또는 기록을 찾을 수 없습니다."
         />
       </h1>
       <p>
         <BilingualText
-          en="It may be out of scope, unavailable, or awaiting deterministic Product verification."
-          ko="범위 밖이거나, 사용할 수 없거나, 결정론적 Product 검증을 기다리는 중일 수 있습니다."
+          en="Check the address or return to the source library to continue."
+          ko="주소를 확인하거나 원문 자료실로 돌아가서 계속하세요."
         />
       </p>
       <Link className="button button--primary" href="/drug-letters">

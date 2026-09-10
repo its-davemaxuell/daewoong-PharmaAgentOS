@@ -27,6 +27,8 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
+import { SelectionGroup, SelectionIndicator } from "./motion/selection";
+import { useMediaQuery } from "@/lib/ui-media";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -89,6 +91,7 @@ export function PortalShell({
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const mobileViewport = useMediaQuery("(max-width: 980px)");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showNewLetterNotification, setShowNewLetterNotification] = useState(false);
   const [historySectionOpen, setHistorySectionOpen] = useState(false);
@@ -288,7 +291,7 @@ export function PortalShell({
 
   return (
     <div className={`portal-shell${sidebarCollapsed ? " portal-shell--sidebar-collapsed" : ""}`}>
-      <header className="topbar portal-header">
+      <header className="topbar portal-header" inert={menuOpen || undefined}>
         <button
           ref={sidebarExpandButtonRef}
           className="icon-button portal-header__sidebar-expand"
@@ -367,6 +370,7 @@ export function PortalShell({
 
       <aside
         ref={sidebarRef}
+        inert={(mobileViewport ? !menuOpen : sidebarCollapsed) || undefined}
         id="primary-navigation"
         className={`sidebar portal-sidebar${menuOpen ? " sidebar--open portal-sidebar--open" : ""}`}
         aria-label={text("Primary navigation", "주요 탐색")}
@@ -408,7 +412,7 @@ export function PortalShell({
 
         <hr className="sidebar__rule portal-sidebar__divider" />
 
-        <div className="portal-sidebar__sections">
+        <SelectionGroup><div className="portal-sidebar__sections">
           {navSections.map((section) => {
             const SectionIcon = section.icon;
             const sectionActive = activeSection?.id === section.id;
@@ -436,12 +440,13 @@ export function PortalShell({
                       return (
                         <li className="portal-nav__item" key={item.href}>
                           <Link
-                            className={`nav-link portal-nav__link${active ? " nav-link--active portal-nav__link--active" : ""}`}
+                            className={`nav-link portal-nav__link ui-selection-control${active ? " nav-link--active portal-nav__link--active" : ""}`}
                             href={item.href}
                             prefetch={false}
                             aria-current={active ? "page" : undefined}
                             onClick={() => closeMenu()}
                           >
+                            {active && <SelectionIndicator tone="tinted" />}
                             <Icon className="portal-nav__icon" size={17} strokeWidth={1.8} aria-hidden="true" />
                             <span className="portal-nav__label">{text(item.en, item.ko)}</span>
                           </Link>
@@ -592,7 +597,7 @@ export function PortalShell({
               </details>
             );
           })}
-        </div>
+        </div></SelectionGroup>
 
         <footer className="sidebar__footer portal-sidebar__footer">
           <Image className="os-organization" src="/brand/daewoong-bio-logo.jpg" alt="Daewoong Bio" width={140} height={34} unoptimized />
@@ -621,7 +626,7 @@ export function PortalShell({
         />
       ) : null}
 
-      <main id="main-content" className="main-content portal-main" tabIndex={-1}>
+      <main id="main-content" className="main-content portal-main" tabIndex={-1} inert={menuOpen || undefined}>
         {children}
       </main>
     </div>

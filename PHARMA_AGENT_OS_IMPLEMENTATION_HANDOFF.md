@@ -10,6 +10,23 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-10 visual and motion refinement:**
+Preserved Layered desk / composition A and consolidated its tokens. Selected controls
+now track within a shared recessed surface; chat panels have interruptible presence
+and inaccessible exits, with a native conversation dialog. New messages/research
+events enter once, while restored history and evidence stay still. Stable pending
+controls and persistent copy/save errors replace ambiguous feedback. All rendered
+route families and eight case views were reviewed; privileged mutations remain
+source-reviewed under the existing viewer boundary. No backend, font, authorization
+or infrastructure changes. Added motion 13.2.0 with lazy domAnimation; native selected
+indicators avoid the heavier layout bundle. Next graph CSS chunking limits unrelated
+feature delivery. See [the implementation ledger](VISUAL_MOTION_UPGRADE.md) and
+[verification record](docs/assurance/visual-motion-upgrade-20260910.md) for exact
+coverage, resource measurements, screenshots and outstanding qualification limits.
+Publication uses the existing GitHub-to-Vercel integration. The commit status and
+production alias identify the hosted revision; local screenshots are separate
+verification evidence. No backend behavior or infrastructure is changed by this release.
+
 **2026-09-10 approved visual redesign A (deployed):** Replaced the navy navigation with a
 bright white/indigo workspace, floating navigation and utility bar, layered
 objective trays, raised controls and consistent reading/review compartments.

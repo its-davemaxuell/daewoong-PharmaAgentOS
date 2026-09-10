@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { ArrowLeft, RotateCcw } from "lucide-react";
+import { useTransition } from "react";
+import { Button } from "@/components/controls";
 import { useI18n } from "@/lib/i18n";
 
 export default function PortalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const { text } = useI18n();
+  const [pending, startTransition] = useTransition();
 
   return (
     <section className="portal-error" role="alert">
@@ -18,9 +21,9 @@ export default function PortalError({ reset }: { error: Error & { digest?: strin
         )}
       </p>
       <div>
-        <button className="button button--primary" type="button" onClick={reset}>
+        <Button variant="primary" pending={pending} pendingLabel={text("Retrying…", "다시 불러오는 중…")} onClick={() => startTransition(reset)}>
           <RotateCcw size={16} aria-hidden="true" /> {text("Try again", "다시 시도")}
-        </button>
+        </Button>
         <Link className="button button--secondary" href="/dashboard">
           <ArrowLeft size={16} aria-hidden="true" /> {text("Prepare a request", "검토 요청 작성하기")}
         </Link>

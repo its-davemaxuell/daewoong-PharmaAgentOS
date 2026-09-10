@@ -1,3 +1,4 @@
+import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -174,21 +175,23 @@ export default async function TrendsPage({
         <div className="trend-brief__controls">
           <ScopeBadge compact />
           <ModeBadge mode={mode} />
-          <nav className="trend-period-selector" aria-label="분석 기간 / Analytics period">
+          <SelectionGroup><nav className="trend-period-selector" aria-label="분석 기간 / Analytics period">
             <CalendarRange size={16} aria-hidden="true" />
             {[30, 90, 365].map((days) => (
               <Link
+                className="ui-selection-control"
                 key={days}
                 aria-current={days === periodDays ? "page" : undefined}
                 href={`/trends?days=${days}`}
               >
+                {days === periodDays ? <SelectionIndicator /> : null}
                 <BilingualText
                   en={days === 365 ? "1 year" : `${days} days`}
                   ko={days === 365 ? "1년" : `${days}일`}
                 />
               </Link>
             ))}
-          </nav>
+          </nav></SelectionGroup>
         </div>
       </header>
 

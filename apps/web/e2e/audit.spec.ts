@@ -49,6 +49,8 @@ test("approval locale, empty, restricted and malformed response states", async (
   await page.goto("/approvals");
   await expect(page.getByRole("heading", { name: "Review requests", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open review", exact: true })).toBeVisible();
+  // Complete the initial preference write before the fixture replaces cookie/storage.
+  await expect(page.locator("html")).toHaveAttribute("data-locale", "en");
   await context.addCookies([{ name: "dli_locale", value: "ko", url: "http://127.0.0.1:3100" }]);
   await page.evaluate(() => localStorage.setItem("daewoong-fda-locale", "ko"));
   await page.reload();

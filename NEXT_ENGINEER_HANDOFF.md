@@ -4,6 +4,14 @@ Prepared: **2026-09-09**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest frontend implementation (2026-09-10):** The approved Layered desk A has
+received the complete visual/state and motion pass. Start with
+[the current implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md),
+[the surface ledger](VISUAL_MOTION_UPGRADE.md), and
+[verification evidence](docs/assurance/visual-motion-upgrade-20260910.md).
+These newer records supersede the historical frontend status notes below.
+Source/version trust, browser-session ownership and staff authorization are retained.
+
 **Railway backend preparation (2026-09-09):** The user will deploy from GitHub.
 Use [RAILWAY_SETUP.md](RAILWAY_SETUP.md) for two service settings and credential
 templates, then the Vercel website cutover. Durable scheduled FDA ingestion,

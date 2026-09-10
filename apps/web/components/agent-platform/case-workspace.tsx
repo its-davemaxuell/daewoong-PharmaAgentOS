@@ -1,3 +1,4 @@
+import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -872,21 +873,23 @@ export function CaseWorkspace({
         </div>
       </header>
 
-      <nav className={styles.workspaceTabs} aria-label="Case workspace sections">
+      <SelectionGroup><nav data-selection-track="" className={styles.workspaceTabs} aria-label="Case workspace sections">
         {WORKSPACE_VIEWS.map((view, index) => (
           <Link
             key={view.id}
+            className="ui-selection-control"
             prefetch={false}
             href={`/cases/${agentCase.id}?view=${view.id}`}
             aria-current={activeView === view.id ? "page" : undefined}
             data-active={activeView === view.id}
           >
+            {activeView === view.id && <SelectionIndicator />}
             <span>{String(index + 1).padStart(2, "0")}</span>
             <strong>{view.label}</strong>
             <small>{view.note}</small>
           </Link>
         ))}
-      </nav>
+      </nav></SelectionGroup>
 
       <div className={styles.workspaceGrid}>
         <main className={styles.workspaceMain}>

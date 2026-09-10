@@ -32,9 +32,9 @@ export function PageGuide({
 
   return (
     <div className={classes}>
-      {includePageHeading ? <h1 className="page-guide__title">{text(title.en, title.ko)}</h1> : null}
+      {includePageHeading ? <h1 className="page-guide__title" tabIndex={-1}>{text(title.en, title.ko)}</h1> : null}
       {actions ? <div className="page-guide__actions">{actions}</div> : null}
-      <details className="page-guide__disclosure">
+      <details className="page-guide__disclosure" onKeyDown={(event) => { if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary")?.focus(); } }}>
         <summary
           className="page-guide__summary"
           aria-label={`${text("About this page", "페이지 안내")}: ${text(title.en, title.ko)}`}

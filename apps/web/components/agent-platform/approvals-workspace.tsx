@@ -1,4 +1,5 @@
 "use client";
+import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
 import Link from "next/link";
 import type { ApprovalCenterItem } from "@/lib/governance-api-client";
 import { useI18n } from "@/lib/i18n";
@@ -20,9 +21,9 @@ export function ApprovalsWorkspace({ items, status }: { items: ApprovalCenterIte
   };
   return <div className={styles.page}>
     <header><h1>{text("Review requests", "검토 요청")}</h1><p>{text("Open a request to inspect its sources and the exact version before recording a decision. Authorized reviewers complete decisions in the case workspace.", "판단을 기록하기 전에 요청을 열어 근거와 정확한 버전을 확인하세요. 권한이 있는 검토자가 검토 기록 화면에서 판단을 완료합니다.")}</p></header>
-    <nav className={styles.filters} aria-label={text("Review filters", "검토 필터")}>
-      {[undefined, "PENDING", "APPROVED", "REJECTED", "CANCELLED", "EXPIRED"].map(value => <Link prefetch={false} key={value ?? "all"} href={value ? `/approvals?status=${value}` : "/approvals"} data-active={status === value} aria-current={status === value ? "page" : undefined}>{value ? label(value) : text("All requests", "모든 요청")}</Link>)}
-    </nav>
+    <SelectionGroup><nav className={styles.filters} aria-label={text("Review filters", "검토 필터")}>
+      {[undefined, "PENDING", "APPROVED", "REJECTED", "CANCELLED", "EXPIRED"].map(value => <Link className="ui-selection-control" prefetch={false} key={value ?? "all"} href={value ? `/approvals?status=${value}` : "/approvals"} data-active={status === value} aria-current={status === value ? "page" : undefined}>{status === value && <SelectionIndicator />}{value ? label(value) : text("All requests", "모든 요청")}</Link>)}
+    </nav></SelectionGroup>
     <section className={styles.section} aria-labelledby="review-count"><h2 id="review-count">{text(`${items.length} review requests`, `검토 요청 ${items.length}건`)}</h2>
       {!items.length ? <div className={styles.card}><h3>{status ? text("No requests match this filter", "이 조건에 맞는 요청이 없습니다") : text("No review requests yet", "아직 검토 요청이 없습니다")}</h3><p>{text("Saved personal drafts do not enter this queue until an authorized team review is created.", "저장한 개인 초안은 권한이 있는 팀 검토가 생성되기 전까지 이 목록에 표시되지 않습니다.")}</p><Link prefetch={false} className="button button--secondary" href={status ? "/approvals" : "/requests"}>{status ? text("View all requests", "모든 요청 보기") : text("Prepare a review draft", "검토 초안 작성")}</Link></div> :
       <div className={styles.approvalList}>{items.map(item => <article key={item.id} className={styles.approvalCard} data-status={(item.expired ? "EXPIRED" : item.status).toLowerCase()}>

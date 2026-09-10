@@ -7,6 +7,9 @@ const scriptPolicy = production
   : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
 
 const nextConfig: NextConfig = {
+  // Shared UI primitives otherwise merge unrelated feature modules into root CSS.
+  // Next 16 graph chunking balances route bytes and requests (measured in e2e).
+  experimental: { cssChunking: "graph" },
   // Local development uses 127.0.0.1 in .env.local. Next.js protects dev-only
   // chunks and HMR endpoints by origin, so this host must be explicit or the
   // client shell never hydrates and interactive controls remain inert.

@@ -1,5 +1,7 @@
 "use client";
 
+import { SelectionGroup, SelectionIndicator } from "./motion/selection";
+
 import Image from "next/image";
 import Link from "next/link";
 import { SourceLink } from "@/components/source-link";
@@ -21,7 +23,7 @@ import {
   TimerReset,
   WandSparkles,
 } from "lucide-react";
-import { type KeyboardEvent, type ReactNode, useMemo, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { PageGuide } from "@/components/page-guide";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";
 import { formatDate, StatusPill } from "@/components/ui";
@@ -352,6 +354,8 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const router = useRouter();
   const [tab, setTab] = useState<ContentTab>("Original");
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
+  const [sourceAnchor, setSourceAnchor] = useState<{ id: string }>();
   const [artifacts, setArtifacts] = useState(letter.aiArtifacts);
   const pendingRef = useRef(new Set<GenerationKey>());
   const [pendingGenerations, setPendingGenerations] = useState(new Set<GenerationKey>());
@@ -391,16 +395,34 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const translatedSections = translation?.content.sections ?? [];
   const sourceSections = showTranslation && translatedSections.length ? translatedSections : letter.originalSections;
 
+  useEffect(() => {
+    if (!sourceAnchor || tab !== "Original" || showTranslation) return;
+    const target = document.getElementById(sourceAnchor.id);
+    if (!target) return;
+    target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
+    target.dataset.sourceLocated = "true";
+    const previousTabIndex = target.getAttribute("tabindex");
+    target.tabIndex = -1;
+    target.focus({ preventScroll: true });
+    const timer = window.setTimeout(() => delete target.dataset.sourceLocated, 900);
+    return () => {
+      clearTimeout(timer); delete target.dataset.sourceLocated;
+      if (previousTabIndex === null) target.removeAttribute("tabindex"); else target.setAttribute("tabindex", previousTabIndex);
+    };
+  }, [sourceAnchor, tab, showTranslation]);
+
   const openAnchor = (anchor: string) => {
     setShowTranslation(false);
     setTab("Original");
-    window.setTimeout(() => document.getElementById(anchor)?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" }), 80);
+    setSourceAnchor({ id: anchor });
   };
 
   const copyReference = async () => {
-    await navigator.clipboard?.writeText(`${letter.company} — FDA Warning Letter ${letter.marcsCms} (${formatDate(letter.issueDate, undefined, "en")})`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+    try {
+      setCopyFailed(false);
+      await navigator.clipboard.writeText(`${letter.company} — FDA Warning Letter ${letter.marcsCms} (${formatDate(letter.issueDate, undefined, "en")})`);
+      setCopied(true);
+    } catch { setCopied(false); setCopyFailed(true); }
   };
 
   const generateArtifact = async (
@@ -460,7 +482,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const activateTab = (nextTab: ContentTab, moveFocus = false) => {
     setTab(nextTab);
     if (moveFocus) {
-      window.requestAnimationFrame(() => document.getElementById(`letter-tab-${nextTab.toLowerCase()}`)?.focus());
+      document.getElementById(`letter-tab-${nextTab.toLowerCase()}`)?.focus();
     }
   };
 
@@ -551,7 +573,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
       </header>
 
       <nav className="record-tabs dossier-reveal dossier-reveal--delay-1" aria-label={text("Letter sections", "경고서한 섹션")}>
-        <div className="record-tab-list" role="tablist">
+        <SelectionGroup><div className="record-tab-list" role="tablist" aria-label={text("Letter views", "서한 보기")}>
           {contentTabs.map((item, index) => (
             <button
               key={item}
@@ -561,10 +583,11 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
               aria-controls={`letter-panel-${item.toLowerCase()}`}
               aria-selected={tab === item}
               tabIndex={tab === item ? 0 : -1}
-              className={tab === item ? "record-tab--active" : ""}
+              className={`ui-selection-control${tab === item ? " record-tab--active" : ""}`}
               onClick={() => activateTab(item)}
               onKeyDown={(event) => handleTabKeyDown(event, index)}
             >
+              {tab === item && <SelectionIndicator />}
               <span className="record-tab__index">0{index + 1}</span>
               {text(tabLabels[item].en, tabLabels[item].ko)}
               {item === "Findings" && Array.from(pendingGenerations).some((key) => key.startsWith("findings:"))
@@ -575,7 +598,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
                 : null}
             </button>
           ))}
-        </div>
+        </div></SelectionGroup>
         <button
           type="button"
           className="record-tab-link"
@@ -588,6 +611,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
       </nav>
 
       <GenerationStatus pending={pendingGenerations} />
+      {copyFailed && <p className="inline-copy-error" role="alert">{text("Could not copy. Select the reference text and copy it manually.", "복사하지 못했습니다. 참조 텍스트를 선택해 직접 복사해 주세요.")}</p>}
 
       <div
         className="record-tab-content dossier-reveal dossier-reveal--delay-2"

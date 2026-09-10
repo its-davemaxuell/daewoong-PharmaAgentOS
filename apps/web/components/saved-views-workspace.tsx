@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";
+import { SessionNotice } from "./session-notice";
 import { PageGuide } from "@/components/page-guide";
 import { formatDate, ModeBadge } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
@@ -22,10 +23,12 @@ export function SavedLettersWorkspace({
   mode: DataMode;
 }) {
   const { locale, text } = useI18n();
+  const [removed, setRemoved] = useState(false);
   const [entries, setEntries] = useState(initialEntries);
 
   return (
     <div className="page-stack saved-letters-page">
+      <SessionNotice />
       <PageGuide
         className="saved-letters-page__guide"
         title={{ ko: "저장된 경고서한", en: "Saved Drug Letters" }}
@@ -40,6 +43,7 @@ export function SavedLettersWorkspace({
         actions={<ModeBadge mode={mode} />}
       />
 
+      <p className="saved-source-feedback" role="status">{removed ? text("Source removed from your saved list.", "저장 목록에서 원문을 제거했습니다.") : ""}</p>
       {entries.length ? (
         <section className="saved-letter-collection dossier-reveal dossier-reveal--delay-1">
           <header>
@@ -83,7 +87,12 @@ export function SavedLettersWorkspace({
                     initiallySaved
                     compact
                     onChange={(saved) => {
-                      if (!saved) setEntries((current) => current.filter((entry) => entry.letter.id !== letter.id));
+                      if (!saved) {
+                        const next = entries.find(entry => entry.letter.id !== letter.id);
+                        const destination = next ? document.querySelector<HTMLElement>(`.saved-letter__identity a[href="/drug-letters/${next.letter.id}"]`) : document.querySelector<HTMLElement>(".saved-letters-page h1");
+                        destination?.focus(); setRemoved(true);
+                        setEntries((current) => current.filter((entry) => entry.letter.id !== letter.id));
+                      }
                     }}
                   />
                   <Link

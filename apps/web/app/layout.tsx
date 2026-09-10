@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { BilingualText, I18nProvider, type Locale } from "@/lib/i18n";
 import "./globals.css";
+import "./tokens.css";
 import "./agent-theme.css";
 
 

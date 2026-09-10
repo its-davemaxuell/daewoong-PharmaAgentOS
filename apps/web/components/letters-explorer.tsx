@@ -299,6 +299,8 @@ export function LettersExplorer({
         id="letter-filter-panel"
         aria-label={text("Expanded letter filters", "펼쳐진 경고서한 필터")}
         aria-hidden={!filtersOpen}
+        inert={!filtersOpen || undefined}
+        onKeyDown={(event) => { if (event.key === "Escape") { setFiltersOpen(false); document.querySelector<HTMLButtonElement>(".filter-toggle")?.focus(); } }}
       >
         {filtersOpen ? (
           <>
@@ -314,6 +316,9 @@ export function LettersExplorer({
         ) : null}
       </section>
 
+      {activeFilterCount ? <div className="archive-filter-chips" aria-label={text("Applied filters", "적용된 필터")}>
+        {(Object.entries(filters) as Array<[keyof Filters, string]>).filter(([, value]) => value).map(([key, value]) => <button key={key} type="button" onClick={() => { setFilter(key, ""); document.querySelector<HTMLInputElement>(".archive-search input")?.focus(); }} aria-label={text(`Remove filter: ${value}`, `필터 해제: ${value}`)}>{key === "document" ? formatOption(value) : value}<X size={14} aria-hidden="true" /></button>)}
+      </div> : null}
       <p role="status" aria-live="polite">{busy ? text("Updating results…", "검색 결과 갱신 중…") : failed ? text("Could not load the library. Your filters and last results are preserved.", "자료를 불러오지 못했습니다. 검색 조건과 마지막 결과는 유지됩니다.") : text(`${total} results`, `검색 결과 ${total}건`)}</p>
       {failed ? <button type="button" className="button button--secondary" disabled={busy} onClick={() => setRetry(value => value + 1)}>{text("Retry", "다시 시도")}</button> : null}
       <div ref={resultsRef} className="archive-meta dossier-reveal dossier-reveal--delay-2" >

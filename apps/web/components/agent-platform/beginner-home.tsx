@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { Button, SkeletonRows } from "@/components/controls";
 import { ArrowRight, ArrowUpRight, BookOpen, FileSearch, FolderOpen, MessageSquareText, Network, Search, ShieldCheck } from "lucide-react";
 import { ContinueWork } from "./continue-work";
 import { ResearchJourney } from "./research-journey";
@@ -20,6 +21,7 @@ export function BeginnerHome() {
   const [objective, setObjective] = useState("");
   const [handoffFailed, setHandoffFailed] = useState(false);
   const [ready, setReady] = useState(false);
+  const [preparing, startPreparation] = useTransition();
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 0);
     if (window.location.hash === "#saved-requests") router.replace("/requests#saved-requests");
@@ -28,10 +30,11 @@ export function BeginnerHome() {
 
   function prepareResearch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (preparing || objective.trim().length < 8) return;
     try {
       sessionStorage.setItem(RESEARCH_DRAFT_KEY, objective.trim());
       setHandoffFailed(false);
-      router.push("/research");
+      startPreparation(() => router.push("/research"));
     } catch { setHandoffFailed(true); }
   }
 
@@ -50,7 +53,7 @@ export function BeginnerHome() {
             <label htmlFor="home-objective">{text("Your research question", "조사할 질문")}</label>
             <div className={styles.inputTray}>
               <textarea id="home-objective" disabled={!ready} value={objective} onChange={event => setObjective(event.target.value)} rows={4} minLength={8} maxLength={1000} required placeholder={text("e.g. Compare cleaning-validation findings in FDA warning letters and prepare questions for our quality team.", "예: FDA 경고서한의 세척 밸리데이션 지적 사항을 비교하고, 품질팀의 검토 질문을 정리해 주세요.")} aria-describedby="home-objective-hint" />
-              <div className={styles.composerFoot}><span id="home-objective-hint">{text("Korean or English", "한국어 또는 영어")}<span aria-hidden="true"> · </span>{objective.length}/1,000</span><button type="submit" className="button button--primary" disabled={objective.trim().length < 8}>{text("Prepare research", "리서치 준비")}<ArrowRight size={17} /></button></div>
+              <div className={styles.composerFoot}><span id="home-objective-hint">{text("Korean or English", "한국어 또는 영어")}<span aria-hidden="true"> · </span>{objective.length}/1,000</span><Button type="submit" variant="primary" pending={preparing} pendingLabel={text("Preparing…", "준비 중…")} disabled={objective.trim().length < 8}>{text("Prepare research", "리서치 준비")}<ArrowRight size={17} /></Button></div>
             </div>
           </form>
           <div className={styles.objectiveFoot}><span><ShieldCheck size={14} />{text("Source evidence first", "원문 근거부터 확인")}</span><Link href="/research" prefetch={false}>{text("Open research workspace", "리서치 워크스페이스 열기")}<ArrowUpRight size={14} /></Link></div>
@@ -105,7 +108,7 @@ function SourcePreview() {
     <p className={styles.panelIntro}>{preview ? text("Isolated preview records", "격리된 미리보기 레코드") : text("Recently posted letters in the retained collection.", "저장된 자료 중 최근 게시된 경고서한입니다.")}</p>
     <form className={styles.sourceSearch} action="/drug-letters" method="get"><Search size={16} /><label className="sr-only" htmlFor="home-source-search">{text("Search source library", "원문 자료실 검색")}</label><input id="home-source-search" name="q" placeholder={text("Search by company or topic", "회사명이나 주제로 검색")} /><button type="submit" aria-label={text("Search sources", "원문 검색")}><ArrowRight size={17} /></button></form>
     <div className={styles.sourceHead} aria-hidden="true"><span>{text("Company / topic", "회사 / 주제")}</span><span>{text("Posted", "게시일")}</span><span /></div>
-    {sources?.length ? <ul className={styles.sourceList}>{sources.map(letter => <li key={letter.id}><Link href={`/drug-letters/${encodeURIComponent(letter.id)}`} prefetch={false}><span className={styles.documentMark}><FileSearch size={18} /></span><span className={styles.sourceIdentity}><strong lang="en">{letter.company}</strong><small lang="en">{letter.subject}</small></span><time dateTime={letter.postedDate || letter.issueDate}>{formatDate(letter.postedDate || letter.issueDate, { month: "short", day: "numeric" }, locale)}</time><ArrowUpRight size={15} /></Link></li>)}</ul> : <div className={styles.sourceState} role="status"><FileSearch size={24} /><p>{failed ? text("The source preview is unavailable. Open the library to try again.", "원문 미리보기를 불러오지 못했습니다. 자료실에서 다시 시도해 주세요.") : sources ? text("No source records yet.", "아직 원문 자료가 없습니다.") : text("Loading retained sources…", "저장된 원문을 불러오는 중…")}</p></div>}
+    {!sources && !failed ? <SkeletonRows rows={5} label={text("Loading retained sources…", "저장된 원문을 불러오는 중…")} /> : sources?.length ? <ul className={styles.sourceList}>{sources.map(letter => <li key={letter.id}><Link href={`/drug-letters/${encodeURIComponent(letter.id)}`} prefetch={false}><span className={styles.documentMark}><FileSearch size={18} /></span><span className={styles.sourceIdentity}><strong lang="en">{letter.company}</strong><small lang="en">{letter.subject}</small></span><time dateTime={letter.postedDate || letter.issueDate}>{formatDate(letter.postedDate || letter.issueDate, { month: "short", day: "numeric" }, locale)}</time><ArrowUpRight size={15} /></Link></li>)}</ul> : <div className={styles.sourceState} role="status"><FileSearch size={24} /><p>{failed ? text("The source preview is unavailable. Open the library to try again.", "원문 미리보기를 불러오지 못했습니다. 자료실에서 다시 시도해 주세요.") : sources ? text("No source records yet.", "아직 원문 자료가 없습니다.") : text("Loading retained sources…", "저장된 원문을 불러오는 중…")}</p></div>}
     <div className={styles.sourceFooter}><span><BookOpen size={14} />{text("Official source text stays in English", "공식 원문은 영문으로 표시됩니다")}</span><Link prefetch={false} href="/saved-views">{text("Saved sources", "저장한 자료")}<ArrowRight size={14} /></Link></div>
   </section>;
 }

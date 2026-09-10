@@ -2,6 +2,7 @@
 import { createServer } from "node:http";
 import { generateKeyPairSync } from "node:crypto";
 import { spawn } from "node:child_process";
+import { longThreadFixture, longThreadId, researchFixture, researchId } from "./motion-fixtures.mjs";
 
 const stamp = "2026-09-01T00:00:00Z";
 const id = "11111111-1111-4111-8111-111111111111";
@@ -37,7 +38,10 @@ const api = createServer((req, res) => {
   else if (url.pathname === "/api/v1/eval-suites") data = { items: [{ id, suite_key: "fictional-evidence-checks", version: "1.0.0", name: "Fictional evidence review", target_kind: "AGENT_VERSION", suite_sha256: "a".repeat(64), cases: [{ id }] }] };
   else if (url.pathname.startsWith("/api/v1/letters/")) {
     data = { ...source, current_version: { id: "version-1", version_number: 1, canonical_hash: "a".repeat(64), anchors: [] }, normalized_markdown: "Fictional source passage for testing.\n\nNo real regulatory finding is represented.", documents: [] };
-  } else if (url.pathname === `/api/v1/chat/threads/${id}`) data = thread;
+  } else if (url.pathname === `/api/v1/research/runs/${researchId}`) data = researchFixture;
+  else if (url.pathname === "/api/v1/research/runs") data = { items: [researchFixture] };
+  else if (url.pathname === `/api/v1/chat/threads/${longThreadId}`) data = longThreadFixture(thread);
+  else if (url.pathname === `/api/v1/chat/threads/${id}`) data = thread;
   else if (url.pathname === "/api/v1/chat/threads") data = { items: [thread], total: 1, page: 1, limit: 100, has_more: false };
   else if (url.pathname === "/api/v1/approvals") {
     const status = url.searchParams.get("status");
