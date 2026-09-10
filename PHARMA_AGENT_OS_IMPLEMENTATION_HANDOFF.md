@@ -10,6 +10,29 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-10 UI audit implementation (API live, frontend release in progress):** Applied the supplied
+UI/UX audit to the newer checkout. Live/restored evidence metadata remains unknown
+when absent; source scope/URL/hash/version fallbacks no longer invent provenance,
+and machine checks are distinct from human decisions. Letter artifacts must match
+the displayed version/hash. The explorer and chat source picker use a new bounded,
+authorized SQL search endpoint with aggregate facets; filtering, browser history,
+recovery and source focus are covered by browser tests. Approvals is bilingual with
+specific service/permission/empty states and safe diagnostic IDs. Home offers actual
+recent work; browser-session limits and export guidance are explicit. Shared control
+tokens, route-owned chat CSS, an extracted NDJSON transport/reducer and report-only
+nonce CSP are included. The earlier three-section navigation preference is retained.
+The additive API was deployed first as `f85939b`; no migration was required.
+Live PostgreSQL checks passed for the 766-record catalog: bounded pages, aggregate
+facets, text/date/sort queries and rejected invalid/unauthenticated requests. All
+nine quality-and-security jobs passed for that API release. Frontend publication
+and hosted browser verification are in progress.
+Frontend 71 unit tests and the 82-test focused backend suite pass. Lint, TypeScript,
+production build and changed-backend Ruff checks pass. All 15 Chromium/Firefox/
+WebKit tests pass, including 105 route/width combinations, mobile source focus
+return, navigation disclosure and 200% text scaling. Browser verification and
+remaining production/accessibility/performance qualifications are detailed in
+[the audit implementation record](docs/assurance/ui-audit-20260910.md).
+
 **2026-09-10 chatbot workspace upgrade (deployed and verified):** Researched official
 Gemini, Perplexity and Claude interfaces and implemented a focused chat workspace
 with a desktop evidence reader, mobile source view, conversation library with

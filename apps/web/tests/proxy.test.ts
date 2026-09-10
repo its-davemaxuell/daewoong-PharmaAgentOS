@@ -6,6 +6,14 @@ import { readVisitorSession, visitorCookieName } from "@/lib/visitor-session";
 afterEach(() => vi.unstubAllEnvs());
 
 describe("account-free browsing", () => {
+  it("uses a fresh render nonce and stages script policy in report-only mode", async () => {
+    const first = await proxy(new NextRequest("http://localhost:3000/dashboard"));
+    const second = await proxy(new NextRequest("http://localhost:3000/dashboard"));
+    const policy = first.headers.get("Content-Security-Policy-Report-Only");
+    expect(policy).toContain("'strict-dynamic'");
+    expect(policy).not.toBe(second.headers.get("Content-Security-Policy-Report-Only"));
+    expect(first.headers.get("x-middleware-request-content-security-policy")).toBe(policy);
+  });
   it("opens the dashboard and forwards a browser session on the first request", async () => {
     const response = await proxy(new NextRequest("http://localhost:3000/dashboard"));
     expect(response.status).toBe(200);

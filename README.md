@@ -1,10 +1,10 @@
 # PharmaAgent OS
 
-An agent workspace for regulatory review: prepare an objective, inspect specialist
-responsibilities and evidence, and follow governed case work through human review.
-The interface now leads with agents and workflows; FDA search and research chat
-remain supporting tools. Public browsing requires no account. Live data and
-specialist execution still depend on the pending backend setup and qualification.
+An evidence-first research and review workspace. Home starts with an employee's
+objective; the FDA Research Agent produces a cited brief, while Ask AI supports
+quick questions. Saved conversations, research tasks and personal drafts can be
+resumed from Home. Public browsing requires no account. Formal team decisions
+remain version-bound and require authorized reviewers.
 
 An evidence-first internal service for monitoring U.S. FDA warning letters whose
 canonical FDA metadata contains the exact product class `Drugs`. The platform
@@ -43,8 +43,8 @@ Passing local tests does not constitute production release approval.
 - Automatic, idempotent NEW/UPDATED email outbox delivery with an admin-editable
   target. SMTP is disabled locally until an approved provider is explicitly
   configured, so tests and fixture ingestion cannot send real mail.
-- Next.js portal with a source-grounded warning-letter chat as the main dashboard,
-  plus a paginated Drug Letter Explorer, evidence detail, trends, saved views,
+- Next.js portal with a research-first Home, source-grounded chat, a server-paginated
+  Drug Letter Explorer, evidence detail, trends, saved views,
   review, and operations administration. Each detail view can persist a validated
   Korean full-letter translation, structured findings, and a practical summary
   against the exact retained FDA source version, then open a letter-constrained
@@ -62,7 +62,7 @@ Passing local tests does not constitute production release approval.
 - Versioned chunk embeddings suitable for managed PostgreSQL + pgvector, with
   lexical fallback and a resumable existing-corpus embedding backfill.
 - Daewoong Pharmaceutical visual identity using the current official logo,
-  orange/gray palette, and locally hosted Pretendard variable font. The font
+  navy/cobalt palette with a restrained orange brand accent, and locally hosted Pretendard variable font. The font
   license is retained beside the asset in `apps/web/app/fonts`.
 - PostgreSQL/pgvector reference schema, strict AI summary JSON Schema, versioned
   pharmaceutical taxonomy, and OpenAPI 3.1 contract.
@@ -223,3 +223,30 @@ objects use the local filesystem during development and the implemented private
 S3-compatible immutable adapter in cloud environments. Production rollout still
 requires controlled database migrations/bootstrap, managed bucket provisioning,
 plus an exercised data migration and restore procedure.
+
+## UI audit implementation (10 September 2026)
+
+See [the implementation and qualification record](docs/assurance/ui-audit-20260910.md)
+for the audit-to-code mapping, checks, deployment order and remaining manual checks.
+The authoritative source plan is `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`; current
+implementation status is `PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md`.
+
+Conversations, research tasks and bookmarks belong to a non-renewing, 30-day
+anonymous browser session. Clearing cookies or expiry may remove access without
+deleting stored records. Export important work before expiry. Personal review
+drafts use local browser storage; they are not submitted team review records.
+The interface explains these differences on the relevant save surfaces.
+
+Run the deterministic Chromium/Firefox/WebKit suite after building the web app:
+
+```powershell
+cd apps/web
+npm ci
+npx playwright install chromium firefox webkit
+npm run build
+npm run test:browser
+```
+
+Browser tests start an isolated loopback fixture API and use fictional records.
+They do not call production, generate model answers or send messages. CI attaches
+traces, screenshots and route network measurements to the tested commit.

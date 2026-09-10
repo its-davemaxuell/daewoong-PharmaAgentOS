@@ -62,7 +62,7 @@ export function ScopeBadge({ compact = false }: { compact?: boolean }) {
 
 const statusLabels: Record<string, { en: string; ko: string }> = {
   pending: { en: "Pending", ko: "검토 대기" },
-  auto_approved: { en: "Auto approved", ko: "자동 승인" },
+  auto_approved: { en: "Machine checked", ko: "자동 확인" },
   approved: { en: "Approved", ko: "승인됨" },
   needs_revision: { en: "Needs revision", ko: "수정 필요" },
   rejected: { en: "Rejected", ko: "거부됨" },
@@ -83,9 +83,8 @@ const statusLabels: Record<string, { en: string; ko: string }> = {
 
 export function StatusPill({ state }: { state: ReviewState | string }) {
   const key = state.toLowerCase().replaceAll("-", "_").replaceAll(" ", "_");
-  const normalized = key.replaceAll("_", "-");
-  const fallback = state.replaceAll("_", " ");
-  const label = statusLabels[key] ?? { en: fallback, ko: fallback };
+  const normalized = statusLabels[key] ? key.replaceAll("_", "-") : "unknown";
+  const label = statusLabels[key] ?? { en: "Status unavailable", ko: "상태 정보 없음" };
 
   return (
     <span className={`status-pill status-pill--${normalized}`}>

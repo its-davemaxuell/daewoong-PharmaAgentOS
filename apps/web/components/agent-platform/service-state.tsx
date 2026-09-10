@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, RefreshCw, Unplug } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { useTransition } from "react";
+import { ReviewButton } from "@/components/review-button";
+import type { ProblemKind } from "@/lib/api-problem";
 
 const surfaces = {
   cases: [
@@ -36,13 +39,21 @@ export function ServiceState({
   surface,
   restricted = false,
   requestId,
+  kind,
 }: {
   surface: keyof typeof surfaces;
   restricted?: boolean;
   requestId?: string;
+  kind?: ProblemKind;
 }) {
   const { text } = useI18n();
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  restricted = restricted || kind === "restricted";
+  const problemCopy = kind === "not-found" ? ["This review resource was not found. Return to the review list or prepare a draft.", "검토 자료를 찾을 수 없습니다. 검토 목록으로 돌아가거나 초안을 작성하세요."]
+    : kind === "rate-limited" ? ["Too many requests. Wait briefly, then check again. Your work is retained.", "요청이 많습니다. 잠시 후 다시 확인하세요. 작업은 유지됩니다."]
+    : kind === "invalid-response" ? ["The service returned incomplete review data. Check again or share the request ID with support.", "서비스가 불완전한 검토 데이터를 반환했습니다. 다시 확인하거나 요청 ID를 담당자에게 전달하세요."]
+    : kind === "not-configured" ? ["This review service is not configured. You can prepare a personal draft while setup is completed.", "검토 서비스가 설정되지 않았습니다. 설정이 완료될 때까지 개인 초안을 작성할 수 있습니다."] : undefined;
   const content = surfaces[surface];
   return (
     <section className="os-service-state">
@@ -69,7 +80,7 @@ export function ServiceState({
                 "You can prepare a request without signing in. Approval and review actions are reserved for authorized staff.",
                 "로그인 없이 검토 요청을 준비할 수 있습니다. 승인과 정식 검토는 권한이 있는 담당자가 진행합니다.",
               )
-            : text(
+            : problemCopy ? text(problemCopy[0], problemCopy[1]) : text(
                 "The review service is currently unavailable. You can still write, save, and download a review draft.",
                 "현재 검토 기록 서비스에 연결할 수 없습니다. 검토 초안은 작성하고 저장하거나 다운로드할 수 있습니다.",
               )}
@@ -79,14 +90,14 @@ export function ServiceState({
             {text("Prepare a request", "검토 요청 작성하기")}
             <ArrowRight size={16} />
           </Link>
-          <button
-            type="button"
-            className="button button--secondary"
-            onClick={() => router.refresh()}
+          <ReviewButton
+            pending={pending}
+            pendingLabel={text("Checking…", "확인 중…")}
+            onClick={() => startTransition(() => router.refresh())}
           >
             <RefreshCw size={15} />
             {text("Check again", "다시 확인")}
-          </button>
+          </ReviewButton>
         </div>
         <p><Link href="/help#availability">{text("See available features and next steps", "이용 가능한 기능과 다음 단계 보기")}</Link></p>
         {requestId ? <details><summary>{text("Support details", "문의 시 참고 정보")}</summary><small>Request ID: {requestId}</small></details> : null}

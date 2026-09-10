@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { SourceLink } from "@/components/source-link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -35,7 +36,7 @@ import type {
   TranslatedLetterSection,
 } from "@/lib/types";
 
-const contentTabs = ["Original", "Findings", "Summary"] as const;
+const contentTabs = ["Original", "Findings", "InternalComparison"] as const;
 type ContentTab = (typeof contentTabs)[number];
 type AnalysisArtifactType = Exclude<LetterAiArtifactType, "translation">;
 type GenerationKey = "translation" | `${AnalysisArtifactType}:${LetterAiArtifactLanguage}`;
@@ -59,7 +60,7 @@ class ArtifactRequestError extends Error {
 const tabLabels: Record<ContentTab, { en: string; ko: string }> = {
   Original: { en: "Original", ko: "원문" },
   Findings: { en: "Findings", ko: "지적사항" },
-  Summary: { en: "Internal Comparison", ko: "내부 비교" },
+  InternalComparison: { en: "Internal Comparison", ko: "내부 비교" },
 };
 
 function RichParagraph({ children, lang }: { children: string; lang: "en" | "ko" }) {
@@ -82,7 +83,7 @@ function ArtifactNotice({ artifact }: { artifact: LetterAiArtifact }) {
     <div className="ai-artifact-notice">
       <span className="ai-artifact-notice__state">
         <CheckCircle2 size={15} aria-hidden="true" />
-        {text("Validated and saved", "검증 및 저장 완료")}
+        {text("Source links checked · AI draft saved", "원문 연결 확인 · AI 초안 저장")}
       </span>
       <span className="ai-artifact-notice__language">{languageLabel}</span>
       <span>
@@ -332,9 +333,9 @@ function SectionIndex({
           <span>{String(index + 1).padStart(2, "0")}</span>{section.heading}
         </a>
       )) : <p>{text("No normalized section index is available.", "정규화된 원문 색인이 없습니다.")}</p>}
-      <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+      <SourceLink href={sourceUrl} target="_blank" rel="noopener noreferrer">
         <ExternalLink size={13} /> {text("Canonical FDA page", "FDA 정식 페이지")}
-      </a>
+      </SourceLink>
     </aside>
   );
 }
@@ -351,8 +352,8 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const [showTranslation, setShowTranslation] = useState(false);
 
   const artifactByType = useMemo(
-    () => new Map(artifacts.map((artifact) => [artifactKey(artifact.artifactType, artifact.language), artifact])),
-    [artifacts],
+    () => new Map(artifacts.filter(artifact => Boolean(letter.documentVersionId && artifact.documentVersionId === letter.documentVersionId && artifact.sourceHash === letter.sourceHash)).map((artifact) => [artifactKey(artifact.artifactType, artifact.language), artifact])),
+    [artifacts, letter.documentVersionId, letter.sourceHash],
   );
   const translation = artifactByType.get(artifactKey("translation", "ko"));
   const initialArtifactLanguage = (type: AnalysisArtifactType): LetterAiArtifactLanguage => {
@@ -386,7 +387,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const openAnchor = (anchor: string) => {
     setShowTranslation(false);
     setTab("Original");
-    window.setTimeout(() => document.getElementById(anchor)?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    window.setTimeout(() => document.getElementById(anchor)?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" }), 80);
   };
 
   const copyReference = async () => {
@@ -418,6 +419,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
         throw new ArtifactRequestError(payload.requestId);
       }
       const artifact = payload as LetterAiArtifact;
+      if (!letter.documentVersionId || artifact.documentVersionId !== letter.documentVersionId || artifact.sourceHash !== letter.sourceHash) throw new ArtifactRequestError(payload.requestId);
       setArtifacts((current) => [
         artifact,
         ...current.filter((item) => !(
@@ -519,14 +521,15 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
           </div>
           <h1 lang="en">{letter.company}</h1>
           <p className="record-subject" lang="en">{letter.subject}</p>
+          {letter.metadataIssues?.length ? <p role="status">{text("Source metadata incomplete. Classification or provenance is unavailable; verify the original before use.", "원문 메타데이터가 불완전합니다. 분류 또는 출처 정보가 없으므로 사용 전에 원문을 확인하세요.")}</p> : null}
         </div>
         <div className="record-summary-card__actions">
           <LetterBookmarkButton letterId={letter.id} initiallySaved={initiallySaved} />
-          <a className="button button--fda" href={letter.sourceUrl} target="_blank" rel="noopener noreferrer">
+          <SourceLink className="button button--fda" href={letter.sourceUrl} target="_blank" rel="noopener noreferrer">
             <Image src="/brand/fda-logo-icon.svg" alt="" aria-hidden="true" width={18} height={22} />
             {text("Open FDA source", "FDA 원문 열기")}
             <ExternalLink size={15} aria-hidden="true" />
-          </a>
+          </SourceLink>
           <button className="button button--secondary" type="button" onClick={copyReference}>
             {copied ? <CheckCircle2 size={16} /> : <Copy size={16} />}
             {copied ? text("Copied", "복사됨") : text("Copy reference", "참조 복사")}
@@ -560,7 +563,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
               {item === "Findings" && Array.from(pendingGenerations).some((key) => key.startsWith("findings:"))
                 ? <LoaderCircle className="spin record-tab__spinner" size={13} aria-label={text("Generating", "생성 중")} />
                 : null}
-              {item === "Summary" && Array.from(pendingGenerations).some((key) => key.startsWith("summary:"))
+              {item === "InternalComparison" && Array.from(pendingGenerations).some((key) => key.startsWith("summary:"))
                 ? <LoaderCircle className="spin record-tab__spinner" size={13} aria-label={text("Generating", "생성 중")} />
                 : null}
             </button>
@@ -633,7 +636,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
               <>
                 <header className="ai-result-heading">
                   <div>
-                    <p className="eyebrow">{text("Validated AI analysis", "검증된 AI 분석")}</p>
+                    <p className="eyebrow">{text("AI findings · Human review required", "AI 분석 · 담당자 검토 필요")}</p>
                     <h2>{text("Clean findings from the full letter", "경고서한 전체에서 추출한 핵심 지적사항")}</h2>
                     <p className="ai-result-heading__description">{text(
                       "A structured register of the FDA's observations, requested actions, and linked source evidence.",
@@ -687,17 +690,17 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
           </section>
         ) : null}
 
-        {tab === "Summary" ? (
+        {tab === "InternalComparison" ? (
           <section className="ai-result-page">
             {summary?.content.executiveSummary ? (
               <>
                 <header className="ai-result-heading">
                   <div>
-                    <p className="eyebrow">{text("Validated practical brief", "검증된 실무 브리프")}</p>
+                    <p className="eyebrow">{text("Questions for internal review", "내부 검토용 질문")}</p>
                     <h2>{text("Internal comparison brief", "내부 비교 브리프")}</h2>
                     <p className="ai-result-heading__description">{text(
-                      "An executive reading of the letter with source-linked attention points and neutral prompts for internal review.",
-                      "경고서한의 핵심 내용과 원문 연계 주의사항, 중립적인 내부 검토 질문을 한 흐름으로 정리했습니다.",
+                      "Questions for internal review, not a completed assessment. No internal documents were supplied for comparison.",
+                      "완료된 평가가 아닌 내부 검토용 질문입니다. 비교를 위한 내부 문서는 제공되지 않았습니다.",
                     )}</p>
                   </div>
                   <div className="ai-result-heading__tools">

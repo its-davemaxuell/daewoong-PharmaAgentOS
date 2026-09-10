@@ -1,3 +1,4 @@
+import { safeRequestId, problemKind, type ProblemKind } from "@/lib/api-problem";
 import "server-only";
 import { backendOrigin } from "@/lib/backend-origin";
 
@@ -83,7 +84,7 @@ export type ApprovalCenterItem = {
 };
 
 export class GovernanceApiError extends Error {
-  constructor(readonly status: number, message: string) {
+  constructor(readonly status: number, message: string, readonly requestId?: string, readonly kind: ProblemKind = problemKind(status)) {
     super(message);
     this.name = "GovernanceApiError";
   }
@@ -108,8 +109,8 @@ function numberValue(value: unknown, label: string): number {
   return value;
 }
 
-async function request(path: string, init: RequestInit = {}): Promise<unknown> {
-  if (!API_BASE_URL) throw new GovernanceApiError(0, "API_BASE_URL is not configured.");
+async function request(path: string, init: RequestInit = {}, onRequestId?: (value: string | undefined) => void): Promise<unknown> {
+  if (!API_BASE_URL) throw new GovernanceApiError(0, "API_BASE_URL is not configured.", undefined, "not-configured");
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
   headers.set("Authorization", `Bearer ${await getBackendBearerAssertion()}`);
@@ -125,17 +126,21 @@ async function request(path: string, init: RequestInit = {}): Promise<unknown> {
   } catch {
     throw new GovernanceApiError(0, "The governance service could not be reached.");
   }
+  const responseId = safeRequestId(response.headers.get("x-request-id"));
+  onRequestId?.(responseId);
   if (!response.ok) {
+    let requestId = responseId;
     let detail = "The governance operation was rejected.";
     try {
       const problem = record(await response.json(), "problem");
       if (typeof problem.detail === "string") detail = problem.detail;
+      requestId ??= safeRequestId(problem.request_id);
     } catch {
       // Keep the bounded fallback message.
     }
-    throw new GovernanceApiError(response.status, detail);
+    throw new GovernanceApiError(response.status, detail, requestId);
   }
-  return response.json() as Promise<unknown>;
+  try { return await response.json() as unknown; } catch { throw new GovernanceApiError(502, "Invalid governance JSON.", safeRequestId(response.headers.get("x-request-id"))); }
 }
 
 function parseSuite(value: unknown): EvaluationSuite {
@@ -264,6 +269,7 @@ export async function updateRuntimeControl(
 function parseApproval(value: unknown): ApprovalCenterItem {
   const item = record(value, "approval center item");
   const optionalString = (candidate: unknown) => typeof candidate === "string" ? candidate : undefined;
+  if (!["PLAN_APPROVAL", "STEP_APPROVAL", "ARTIFACT_APPROVAL"].includes(String(item.approval_type)) || !["PENDING", "APPROVED", "REJECTED", "CANCELLED", "EXPIRED"].includes(String(item.status)) || typeof item.expired !== "boolean") throw new GovernanceApiError(502, "Invalid approval state.");
   return {
     id: stringValue(item.id, "approval id"),
     caseId: stringValue(item.case_id, "approval case id"),
@@ -291,6 +297,14 @@ export async function listApprovals(
   status?: ApprovalCenterItem["status"],
 ): Promise<ApprovalCenterItem[]> {
   const query = status ? `?status=${encodeURIComponent(status)}` : "";
-  const page = record(await request(`/api/v1/approvals${query}`), "approval center");
-  return (Array.isArray(page.items) ? page.items : []).map(parseApproval);
+  let requestId: string | undefined;
+  const payload = await request(`/api/v1/approvals${query}`, {}, value => { requestId = value; });
+  try {
+    const page = record(payload, "approval center");
+    if (!Array.isArray(page.items)) throw new GovernanceApiError(502, "Invalid approval list.");
+    return page.items.map(parseApproval);
+  } catch (error) {
+    if (error instanceof GovernanceApiError) throw new GovernanceApiError(error.status, error.message, requestId, error.kind);
+    throw error;
+  }
 }

@@ -45,3 +45,7 @@ it("does not claim sources were found when there are none", () => {
   expect(html).not.toContain("We found sources");
   expect(html).toContain("No matching sources");
 });
+
+it("restores cited answers without inventing an evidence assessment", () => {
+  expect(renderAnswer(true)).toContain("Evidence coverage: Not assessed");
+});

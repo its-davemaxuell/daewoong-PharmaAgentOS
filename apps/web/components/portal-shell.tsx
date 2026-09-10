@@ -118,6 +118,7 @@ export function PortalShell({
   const visibleNav = navItems.filter((item) => !item.requiredRole || roles.includes(item.requiredRole));
   const activeItem = visibleNav.find((item) => isActive(pathname, item.href));
   const activeSection = navSections.find((section) => section.id === activeItem?.section);
+  const [disclosures, setDisclosures] = useState<Record<string, boolean>>({});
   const normalizedHistoryQuery = historyQuery.trim().toLocaleLowerCase();
   const localHistoryMatches = useMemo(() => (
     normalizedHistoryQuery
@@ -334,7 +335,7 @@ export function PortalShell({
         <div className="portal-header__actions">
           <Link
             className="topbar__search portal-header__search"
-            href="/drug-letters"
+            prefetch={false} href="/drug-letters"
             aria-label={text("Search FDA Drug warning letters", "FDA 의약품 경고서한 검색")}
           >
             <Search size={16} aria-hidden="true" />
@@ -342,7 +343,7 @@ export function PortalShell({
           </Link>
           <Link
             className={`portal-header__notification${showNewLetterNotification ? " has-new" : ""}`}
-            href="/drug-letters?sort=posted-desc"
+            prefetch={false} href="/drug-letters?sort=posted-desc"
             aria-label={showNewLetterNotification
               ? text(
                   "New FDA warning letters are available. Open newest letters.",
@@ -412,12 +413,16 @@ export function PortalShell({
             const sectionActive = activeSection?.id === section.id;
             return (
               <details
-                key={`${pathname}:${section.id}`}
+                key={section.id}
                 className="portal-workspace-group"
                 data-active={sectionActive}
-                open={sectionActive || (!activeSection && section.id === "chatbot")}
+                open={disclosures[section.id] ?? (sectionActive || (!activeSection && section.id === "chatbot"))}
               >
-                <summary>
+                <summary onClick={(event) => {
+                  event.preventDefault();
+                  const open = !(event.currentTarget.parentElement as HTMLDetailsElement).open;
+                  setDisclosures(current => ({ ...current, [section.id]: open }));
+                }}>
                   <SectionIcon size={20} aria-hidden="true" />
                   <span>{text(section.en, section.ko)}</span>
                   <ChevronDown className="portal-workspace-group__chevron" size={16} aria-hidden="true" />

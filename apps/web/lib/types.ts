@@ -121,12 +121,14 @@ export type Letter = {
   hasCloseout: boolean;
   reviewState: LetterAnalysisState;
   lifecycleState: LifecycleState;
-  scopeStatus: "IN_SCOPE_DRUGS";
+  scopeStatus: "IN_SCOPE_DRUGS" | "unknown";
+  metadataIssues?: string[];
   executiveSummary: string;
   sourceUrl: string;
   retrievedAt: string;
   sourceHash: string;
   sourceVersion: string;
+  documentVersionId?: string;
   facilityType: string;
   findings: Finding[];
   lifecycle: LifecycleEvent[];
@@ -232,7 +234,7 @@ export type RagAnswer = {
   interpretationLabel: "source_facts" | "ai_synthesis" | "internal_comparison";
   scopeLabel: "FDA Product: Drugs";
   filtersApplied: RagFilter;
-  evidenceSufficiency: "sufficient" | "partial" | "insufficient";
+  evidenceSufficiency: import("./evidence-state").EvidenceCoverage;
   citations: RagCitation[];
   generatedAt: string;
   requestId: string;

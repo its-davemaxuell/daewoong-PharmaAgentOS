@@ -1,5 +1,6 @@
 /* Shared review-workbench system. Loaded after legacy feature styles. */
 :root {
+  --os-surface: #ffffff;
   --os-ink: #192438;
   --os-muted: #596779;
   --os-primary: #3159c9;
@@ -627,3 +628,25 @@ body {
     margin: 0;
   }
 }
+
+/* Shared interaction geometry: governance and new primitives consume these tokens. */
+:root { --control-height: 2.875rem; --control-radius: 8px; --control-border: #7b899c; --focus-ring: #3159c9; }
+.session-notice { padding: 8px 16px; color: var(--os-muted); font-size: .875rem; }
+.session-notice summary { cursor: pointer; padding-block: 8px; }
+.session-notice p { max-width: 75ch; line-height: 1.65; }
+@media (forced-colors: active) {
+  .button, select, input, textarea { border: 1px solid ButtonText; }
+  [aria-current="page"], [aria-pressed="true"] { outline: 2px solid Highlight; }
+}
+
+.continue-work { margin-block: 16px 32px; }
+.continue-work ul { list-style: none; padding: 0; }
+.continue-work li { border-bottom: 1px solid var(--os-rule); }
+.continue-work a { display: grid; gap: 4px; padding: 16px 0; color: var(--os-ink); overflow-wrap: anywhere; }
+.continue-work span { font-size: .875rem; color: var(--os-muted); }
+
+/* Firefox honors native input min-content widths in implicit grid tracks. */
+.explorer-page { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.explorer-page > *, .archive-search, .archive-meta__context { min-width: 0; }
+.archive-search input { min-width: 0; width: 100%; }
+.chat-review-state { font-size: .875rem; color: var(--os-muted); line-height: 1.6; }

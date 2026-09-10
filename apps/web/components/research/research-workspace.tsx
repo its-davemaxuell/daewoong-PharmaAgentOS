@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { trustedFdaUrl } from "@/lib/evidence-state";
+import { SessionNotice } from "@/components/session-notice";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, Check, ChevronRight, Circle, CircleAlert, Clock3, CloudCheck, Copy, Download, ExternalLink, FileCheck2, FileText, LoaderCircle, Network, Play, Plus, RotateCcw, Search, ShieldCheck, Square, Target } from "lucide-react";
@@ -78,12 +80,7 @@ function isRun(value: unknown): value is ResearchRun {
   return typeof run.id === "string" && Object.hasOwn(labels, run.status) && Number.isInteger(run.revision)
     && Array.isArray(run.events) && Array.isArray(run.sources) && Array.isArray(run.plan);
 }
-function sourceUrl(source: ResearchSource) {
-  try {
-    const url = new URL(source.source_url);
-    return url.protocol === "https:" && (url.hostname === "fda.gov" || url.hostname.endsWith(".fda.gov")) ? url.href : undefined;
-  } catch { return undefined; }
-}
+function sourceUrl(source: ResearchSource) { return trustedFdaUrl(source.source_url); }
 
 export function ResearchWorkspace() {
   const searchParams = useSearchParams();
@@ -100,6 +97,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   const [savedFailed, setSavedFailed] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<number>();
+  const [copyFailed, setCopyFailed] = useState(false);
   const [connectionLost, setConnectionLost] = useState(false);
   const [retry, setRetry] = useState(0);
   const [openSource, setOpenSource] = useState<string>();
@@ -221,6 +219,8 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   const formatTime = (date: string) => new Date(date).toLocaleTimeString(locale === "ko" ? "ko-KR" : "en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
   const brief = run?.result;
   return <div className={styles.workspace}>
+      <SessionNotice />
+    {copyFailed ? <p role="alert">{text("Could not copy. Download the brief or select the text instead.", "복사하지 못했습니다. 브리핑을 다운로드하거나 텍스트를 선택하세요.")}</p> : null}
     <header className={styles.header}>
       <div><h1>{text("FDA Research Agent", "FDA 리서치 에이전트")}</h1></div>
       {runId ? <Link className="button button--secondary" href="/research"><Plus size={18} />{text("New task", "새 작업")}</Link> : <Link className={styles.quickChat} href="/ask">{text("Quick AI chat", "간단한 AI 질문")} <ArrowRight size={17} /></Link>}
@@ -278,7 +278,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       </div>
 
       {run.status === "completed" && brief?.findings ? <section id="research-brief" tabIndex={-1} className={styles.brief} aria-labelledby="research-brief-title">
-        <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setError(502); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
+        <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { setCopyFailed(false); await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setCopyFailed(true); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
         <h2 id="research-brief-title">{brief.title}</h2><h3>{text("Findings from the FDA sources", "FDA 원문에서 확인한 내용")}</h3>
         <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={() => setOpenSource(id)}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
         <h3 className={styles.briefHeading}><Target size={21} aria-hidden="true" />{text("Questions for your team", "우리 팀의 검토 질문")}</h3><ul>{brief.review_questions?.map((question) => <li key={question}>{question}</li>)}</ul>

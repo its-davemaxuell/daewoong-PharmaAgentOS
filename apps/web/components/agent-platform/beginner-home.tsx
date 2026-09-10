@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ContinueWork } from "./continue-work";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ArrowRight, FileSearch, GitCompareArrows, ListChecks, MessageSquareText, Network } from "lucide-react";
@@ -29,6 +30,7 @@ export function BeginnerHome() {
       </div>
     </header>
 
+    <ContinueWork />
     <section aria-labelledby="examples-heading">
       <div className={styles.sectionHeading}><h2 id="examples-heading">{text("Quick questions", "간단한 질문")}</h2><Link href="/ask"><MessageSquareText size={17} aria-hidden="true" />{text("Open AI chat", "AI 대화 열기")}</Link></div>
       <div className={styles.tasks}>{beginnerPrompts.map((task, index) => {
@@ -37,7 +39,7 @@ export function BeginnerHome() {
       })}</div>
     </section>
 
-    <Link className={styles.library} href="/drug-letters"><FileSearch size={25} aria-hidden="true" /><span><strong>{text("Find an FDA letter", "FDA 경고서한 찾기")}</strong><small>{text("Search by company or topic", "회사명이나 주제로 검색")}</small></span><ArrowRight size={20} aria-hidden="true" /></Link>
+    <Link className={styles.library} prefetch={false} href="/drug-letters"><FileSearch size={25} aria-hidden="true" /><span><strong>{text("Find an FDA letter", "FDA 경고서한 찾기")}</strong><small>{text("Search by company or topic", "회사명이나 주제로 검색")}</small></span><ArrowRight size={20} aria-hidden="true" /></Link>
     <ServiceScope />
     <footer className={styles.footer}><Link href="/help">{text("Quick guide", "이용 방법")}</Link><Link href="/requests#saved-requests">{text("My review drafts", "내 검토 초안")}</Link></footer>
   </div>;

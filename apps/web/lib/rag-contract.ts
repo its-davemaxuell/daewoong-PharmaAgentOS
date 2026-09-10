@@ -1,3 +1,4 @@
+import { readEvidenceCoverage, trustedFdaUrl } from "@/lib/evidence-state";
 import type {
   ChatModelProfile,
   ChatRetrievalStrategy,
@@ -66,7 +67,7 @@ function normalizeCitation(value: unknown, index: number): RagCitation | undefin
     documentType: asString(first(record, "document_type", "documentType"), "Warning letter"),
     anchor: asString(first(record, "source_anchor", "anchor"), "source"),
     excerpt,
-    sourceUrl: asString(first(record, "source_url", "sourceUrl"), "https://www.fda.gov/"),
+    sourceUrl: trustedFdaUrl(first(record, "source_url", "sourceUrl")) ?? "",
     score: asNumber(record.score),
     documentVersionId: asString(
       first(record, "document_version_id", "documentVersionId"),
@@ -130,13 +131,7 @@ export function normalizeRagAnswer(
   const interpretationLabel = ["source_facts", "ai_synthesis", "internal_comparison"].includes(
     interpretationValue,
   ) ? interpretationValue as RagAnswer["interpretationLabel"] : "source_facts";
-  const evidenceValue = asString(
-    first(record, "evidence_sufficiency", "evidenceSufficiency"),
-    citations.length ? "sufficient" : "insufficient",
-  );
-  const evidenceSufficiency = ["sufficient", "partial", "insufficient"].includes(evidenceValue)
-    ? evidenceValue as RagAnswer["evidenceSufficiency"]
-    : citations.length ? "sufficient" : "insufficient";
+  const evidenceSufficiency = readEvidenceCoverage(first(record, "evidence_sufficiency", "evidenceSufficiency"));
 
   return {
     answer: answerText,

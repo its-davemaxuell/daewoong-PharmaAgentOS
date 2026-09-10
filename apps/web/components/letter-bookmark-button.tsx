@@ -20,7 +20,7 @@ export function LetterBookmarkButton({
   const [saved, setSaved] = useState(initiallySaved);
   const [error, setError] = useState(false);
   const [pending, startTransition] = useTransition();
-  const label = saved ? text("Saved", "저장됨") : text("Save", "저장");
+  const label = saved ? text("Source saved", "원문 저장됨") : text("Save source", "원문 저장");
 
   const toggle = () => {
     if (pending) return;

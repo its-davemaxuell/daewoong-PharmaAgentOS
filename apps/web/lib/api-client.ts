@@ -1,3 +1,5 @@
+import { previewLetterPage, letterQueryString, readLetterQuery, type LetterPage, type LetterQuery } from "@/lib/letter-query";
+import { trustedFdaUrl } from "@/lib/evidence-state";
 import "server-only";
 import { backendOrigin } from "@/lib/backend-origin";
 
@@ -184,7 +186,7 @@ function normalizeRagCitation(value: unknown, index: number): RagCitation | unde
     documentType: asString(first(citation, "document_type", "documentType"), "Warning letter"),
     anchor: asString(first(citation, "source_anchor", "anchor"), "source"),
     excerpt,
-    sourceUrl: asString(first(citation, "source_url", "sourceUrl"), "https://www.fda.gov/"),
+    sourceUrl: trustedFdaUrl(first(citation, "source_url", "sourceUrl")) ?? "",
     score: asNumber(citation.score),
     documentVersionId: asString(
       first(citation, "document_version_id", "documentVersionId"),
@@ -532,7 +534,14 @@ function normalizeLetter(value: unknown): Letter | undefined {
     hasResponse,
     hasCloseout,
   );
-  const sourceUrl = asString(first(record, "source_url", "canonical_url", "sourceUrl"), "https://www.fda.gov/");
+  const sourceUrl = trustedFdaUrl(first(record, "source_url", "canonical_url", "sourceUrl")) ?? "";
+  const rawHash = asString(first(record, "source_hash", "content_hash", "sourceHash") ?? currentHash);
+  const sourceHash = /^[a-f0-9]{64}$/i.test(rawHash) ? rawHash : "";
+  const versionLabel = asString(first(record, "source_version", "sourceVersion", "current_version_id"));
+  const sourceVersion = typeof currentVersionNumber === "number" && Number.isSafeInteger(currentVersionNumber) && currentVersionNumber > 0
+    ? `v${currentVersionNumber}` : versionLabel && versionLabel !== "current" ? versionLabel : asString(currentVersion?.id);
+  const scoped = first(record, "scope_status", "scopeStatus") === "IN_SCOPE_DRUGS" && productClasses.includes("Drugs");
+  const metadataIssues = [!productClasses.length && "classification", !sourceUrl && "source-link", !sourceVersion && "version", !sourceHash && "hash", !scoped && "scope"].filter((value): value is string => Boolean(value));
   const marcsCms =
     asString(first(record, "marcs_cms", "marcs_cms_number", "marcsCms")) ||
     marcsCmsFromFdaUrl(sourceUrl);
@@ -547,7 +556,7 @@ function normalizeLetter(value: unknown): Letter | undefined {
     postedDate: asString(first(record, "posted_date", "postedDate")),
     issuingOffice:
       issuingOffices.join(" · ") || asString(first(record, "issuing_office", "issuingOffice"), "U.S. FDA"),
-    productClasses: productClasses.length ? productClasses : ["Drugs"],
+    productClasses,
     drugSubtypes: asStrings(first(record, "drug_subtypes", "drugSubtypes")),
     categories: asStrings(record.categories),
     regulations: [...new Set([...regulations, ...findingRegulations])],
@@ -557,7 +566,8 @@ function normalizeLetter(value: unknown): Letter | undefined {
       first(record, "review_state", "reviewState", "review_status") ?? summaryReviewState,
     ),
     lifecycleState,
-    scopeStatus: "IN_SCOPE_DRUGS",
+    scopeStatus: scoped ? "IN_SCOPE_DRUGS" : "unknown",
+    metadataIssues,
     executiveSummary:
       asString(first(record, "executive_summary", "executiveSummary")) ||
       asString(first(summary ?? {}, "executive_summary", "executiveSummary")),
@@ -565,11 +575,10 @@ function normalizeLetter(value: unknown): Letter | undefined {
     retrievedAt:
       asString(first(record, "retrieved_at", "retrievedAt")) ||
       asString(first(currentVersion ?? {}, "retrieved_at", "retrievedAt")),
-    sourceHash: asString(first(record, "source_hash", "content_hash", "sourceHash") ?? currentHash, "Not supplied"),
-    sourceVersion: currentVersionNumber !== undefined
-      ? `v${asString(currentVersionNumber, String(currentVersionNumber))}`
-      : asString(first(record, "source_version", "sourceVersion"), "current"),
-    facilityType: asString(first(record, "facility_type", "facilityType"), "Drug facility"),
+    sourceHash,
+    sourceVersion,
+    documentVersionId: asString(first(currentVersion ?? {}, "id") ?? first(record, "current_version_id", "documentVersionId")) || undefined,
+    facilityType: asString(first(record, "facility_type", "facilityType"), ""),
     findings,
     lifecycle,
     originalSections,
@@ -630,6 +639,22 @@ async function liveAllLetters(): Promise<Letter[]> {
   throw new Error("API letter pagination exceeded the 10,000-record safety limit");
 }
 
+export async function getLetterPage(query: LetterQuery): Promise<ApiResult<LetterPage>> {
+  if (!API_BASE_URL) return { data: previewLetterPage(seedLetters, query), mode: "seeded" };
+  const payload = asRecord(await requestApi(`/api/v1/letters/search?${letterQueryString(query, true)}`));
+  if (!payload || !Array.isArray(payload.items) || !Number.isSafeInteger(payload.total) || Number(payload.total) < 0 ||
+      !Number.isSafeInteger(payload.collectionTotal) || !Number.isSafeInteger(payload.page) || Number(payload.page) < 1 ||
+      payload.pageSize !== query.pageSize || payload.items.length > query.pageSize || !asRecord(payload.facets)) throw new Error("Invalid letter page response");
+  const items = payload.items.map(normalizeLetter);
+  if (items.some(item => !item)) throw new Error("Invalid letter record in page");
+  const incomplete = items.filter(item => item?.metadataIssues?.length);
+  if (incomplete.length) console.warn("Letter page has incomplete metadata", { count: incomplete.length, fields: [...new Set(incomplete.flatMap(item => item?.metadataIssues ?? []))] });
+  for (const entries of Object.values(payload.facets as object)) {
+    if (!Array.isArray(entries) || entries.some(entry => !asRecord(entry) || typeof entry.value !== "string" || !Number.isSafeInteger(entry.count) || entry.count < 0)) throw new Error("Invalid letter facets");
+  }
+  return { data: { ...payload, items } as LetterPage, mode: "live" };
+}
+
 export async function getLetters(query?: string): Promise<ApiResult<Letter[]>> {
   if (!API_BASE_URL) {
     return {
@@ -646,18 +671,12 @@ export async function getLetters(query?: string): Promise<ApiResult<Letter[]>> {
  * Facets shown beside the grounded chat must never fall back to synthetic records.
  * The conversation can still render without facets and the RAG request itself fails closed.
  */
-export async function getChatLetters(query?: string): Promise<ApiResult<Letter[]>> {
+export async function getChatCatalog(): Promise<ApiResult<LetterPage>> {
   try {
-    return {
-      data: query === undefined ? await liveAllLetters() : await liveLetters(query),
-      mode: "live",
-    };
-  } catch (error) {
-    return {
-      data: [],
-      mode: "seeded",
-      detail: error instanceof Error ? error.message : "API unavailable",
-    };
+    if (!API_BASE_URL) throw new Error("Source service not configured");
+    return await getLetterPage(readLetterQuery(new URLSearchParams()));
+  } catch {
+    return { data: { items: [], total: 0, collectionTotal: 0, page: 1, pageSize: 20, facets: {} }, mode: "seeded", detail: "Source suggestions unavailable" };
   }
 }
 

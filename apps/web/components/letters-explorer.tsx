@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { SessionNotice } from "@/components/session-notice";
+import { SourceLink } from "@/components/source-link";
+import { letterQueryString, readLetterQuery, type LetterPage } from "@/lib/letter-query";
 import {
   ArrowRight,
   CalendarDays,
@@ -11,10 +14,10 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";
 import { PageGuide } from "@/components/page-guide";
-import type { DataMode, Letter } from "@/lib/types";
+import type { DataMode } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
 import { formatDate, ModeBadge, ScopeBadge, StatusPill } from "@/components/ui";
 
@@ -56,10 +59,6 @@ const emptyFilters: Filters = {
   postedTo: "",
 };
 
-function unique(values: string[]) {
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b));
-}
-
 function hasMeaningfulReference(reference: string) {
   const normalized = reference.trim();
   return Boolean(normalized && !["-", "–", "—"].includes(normalized));
@@ -99,7 +98,7 @@ const optionLabels: Record<string, { en: string; ko: string }> = {
   CLOSEOUT_ADDED: { en: "Closeout added", ko: "종결서 추가" },
   RESTORED: { en: "Restored", ko: "복원됨" },
   pending: { en: "Pending", ko: "대기" },
-  auto_approved: { en: "Auto approved", ko: "자동 승인" },
+  auto_approved: { en: "Machine checked", ko: "자동 확인" },
   approved: { en: "Approved", ko: "승인" },
   needs_revision: { en: "Needs revision", ko: "수정 필요" },
   rejected: { en: "Rejected", ko: "반려" },
@@ -108,7 +107,7 @@ const optionLabels: Record<string, { en: string; ko: string }> = {
   open: { en: "Open lifecycle", ko: "미종결" },
 };
 
-function SelectFilter({
+export function SelectFilter({
   label,
   value,
   values,
@@ -125,13 +124,15 @@ function SelectFilter({
   unavailableLabel: string;
   formatOption?: (option: string) => string;
 }) {
-  const hasOptions = values.length > 1;
+  const hasOptions = values.length > 0;
+  const stale = Boolean(value && !values.includes(value));
   return (
     <label className={`filter-field${hasOptions ? "" : " filter-field--unavailable"}`}>
       <span>{label}</span>
       <div>
-        <select value={value} onChange={(event) => onChange(event.target.value)} disabled={!hasOptions}>
+        <select value={value} onChange={(event) => onChange(event.target.value)} disabled={!hasOptions && !stale}>
           <option value="">{hasOptions ? allLabel : unavailableLabel}</option>
+          {stale ? <option value={value}>{formatOption(value)} — {unavailableLabel}</option> : null}
           {values.map((option) => (
             <option value={option} key={option}>
               {formatOption(option)}
@@ -145,12 +146,12 @@ function SelectFilter({
 }
 
 export function LettersExplorer({
-  initialLetters,
+  initialPage,
   initialSavedLetterIds,
   mode,
   initialState = {},
 }: {
-  initialLetters: Letter[];
+  initialPage: LetterPage;
   initialSavedLetterIds: string[];
   mode: DataMode;
   initialState?: LetterExplorerInitialState;
@@ -167,125 +168,86 @@ export function LettersExplorer({
   const [requestedPage, setRequestedPage] = useState(Math.max(1, initialState.page ?? 1));
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialState.sort ?? "posted-desc");
 
-  const options = useMemo(
-    () => ({
-      subtype: unique(initialLetters.flatMap((letter) => letter.drugSubtypes)),
-      category: unique(initialLetters.flatMap((letter) => letter.categories)),
-      country: unique(initialLetters.map((letter) => letter.country)),
-      lifecycle: unique(initialLetters.map((letter) => letter.lifecycleState)).filter(
-        (state) => state !== "ACTIVE",
-      ),
-      review: unique(initialLetters.map((letter) => letter.reviewState)).filter(
-        (state) => !["pending", "not_generated"].includes(state),
-      ),
-    }),
-    [initialLetters],
-  );
-
-  const letters = useMemo(() => {
-    const query = filters.query.trim().toLocaleLowerCase();
-    const filtered = initialLetters.filter((letter) => {
-      const haystack = [
-        letter.company,
-        letter.marcsCms,
-        letter.subject,
-        letter.issuingOffice,
-        ...letter.categories,
-        ...letter.regulations,
-      ]
-        .join(" ")
-        .toLocaleLowerCase();
-      if (query && !haystack.includes(query)) return false;
-      if (filters.subtype && !letter.drugSubtypes.includes(filters.subtype)) return false;
-      if (filters.category && !letter.categories.includes(filters.category)) return false;
-      if (filters.country && letter.country !== filters.country) return false;
-      if (filters.lifecycle && letter.lifecycleState !== filters.lifecycle) return false;
-      if (filters.review && letter.reviewState !== filters.review) return false;
-      if (filters.document === "response" && !letter.hasResponse) return false;
-      if (filters.document === "closeout" && !letter.hasCloseout) return false;
-      if (filters.document === "open" && letter.hasCloseout) return false;
-      const postedDate = letter.postedDate || letter.issueDate;
-      if (filters.postedFrom && postedDate < filters.postedFrom) return false;
-      if (filters.postedTo && postedDate > filters.postedTo) return false;
-      return true;
-    });
-    return filtered.sort((left, right) => {
-      if (sortOrder === "posted-asc") {
-        return (left.postedDate || left.issueDate).localeCompare(right.postedDate || right.issueDate);
-      }
-      if (sortOrder === "issued-desc") return right.issueDate.localeCompare(left.issueDate);
-      if (sortOrder === "company-asc") return left.company.localeCompare(right.company);
-      return (right.postedDate || right.issueDate).localeCompare(left.postedDate || left.issueDate);
-    });
-  }, [filters, initialLetters, sortOrder]);
-
-  const documentOptions = useMemo(() => {
-    const values: string[] = [];
-    if (initialLetters.some((letter) => letter.hasResponse)) values.push("response");
-    if (initialLetters.some((letter) => letter.hasCloseout)) values.push("closeout", "open");
-    return values;
-  }, [initialLetters]);
-
+  const [result, setResult] = useState(initialPage);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const historyMode = useRef<"replace" | "push" | "pop">("replace");
+  const firstRequest = useRef(true);
+  const options = Object.fromEntries(["subtype", "category", "country", "lifecycle", "review"].map(key => [key, (result.facets[key] ?? []).map(item => item.value)]));
+  const documentOptions = (result.facets.document ?? []).map(item => item.value);
+  const letters = result.items;
+  const total = result.total;
+  const collectionTotal = result.collectionTotal;
   const activeFilterCount = Object.entries(filters).filter(([key, value]) => key !== "query" && value).length;
-  const totalPages = Math.max(1, Math.ceil(letters.length / pageSize));
-  const currentPage = Math.min(requestedPage, totalPages);
-  const pageStart = letters.length ? (currentPage - 1) * pageSize + 1 : 0;
-  const pageEnd = Math.min(currentPage * pageSize, letters.length);
-  const paginatedLetters = letters.slice(pageStart ? pageStart - 1 : 0, pageEnd);
+  const totalPages = Math.max(1, Math.ceil(total / result.pageSize));
+  const currentPage = result.page;
+  const pageStart = total ? (currentPage - 1) * result.pageSize + 1 : 0;
+  const pageEnd = Math.min(currentPage * result.pageSize, total);
+  const paginatedLetters = letters;
   const paginationItems = getPaginationItems(currentPage, totalPages);
   const resetFilters = () => {
+    historyMode.current = "push";
     setFilters(emptyFilters);
     setRequestedPage(1);
   };
   const setFilter = (key: keyof Filters, value: string) => {
+    historyMode.current = key === "query" ? "replace" : "push";
     setFilters((current) => ({ ...current, [key]: value }));
     setRequestedPage(1);
   };
   const formatOption = (value: string) => {
     const label = optionLabels[value];
     const normalized = value.replaceAll("_", " ");
-    return label ? text(label.en, label.ko) : text(normalized, `미분류 값 (${normalized})`);
+    return label ? text(label.en, label.ko) : normalized;
   };
 
+  const queryString = letterQueryString({ filters, page: requestedPage, pageSize, sort: sortOrder });
   useEffect(() => {
-    const params = new URLSearchParams();
-    const filterParams: Array<[keyof Filters, string]> = [
-      ["query", "q"],
-      ["subtype", "subtype"],
-      ["category", "category"],
-      ["country", "country"],
-      ["lifecycle", "lifecycle"],
-      ["review", "review"],
-      ["document", "document"],
-      ["postedFrom", "postedFrom"],
-      ["postedTo", "postedTo"],
-    ];
-    filterParams.forEach(([key, parameter]) => {
-      if (filters[key]) params.set(parameter, filters[key]);
-    });
-    if (sortOrder !== "posted-desc") params.set("sort", sortOrder);
-    if (pageSize !== 20) params.set("pageSize", String(pageSize));
-    if (currentPage > 1) params.set("page", String(currentPage));
-    const query = params.toString();
-    const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}`;
-    if (`${window.location.pathname}${window.location.search}` !== nextUrl) {
-      window.history.replaceState(window.history.state, "", nextUrl);
-    }
-  }, [currentPage, filters, pageSize, sortOrder]);
+    const restore = () => {
+      const query = readLetterQuery(new URLSearchParams(window.location.search));
+      historyMode.current = "pop";
+      setFilters(query.filters); setRequestedPage(query.page); setPageSize(query.pageSize as 20 | 50 | 100); setSortOrder(query.sort);
+    };
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, []);
+  useEffect(() => {
+    if (firstRequest.current) { firstRequest.current = false; return; }
+    const controller = new AbortController();
+    const method = historyMode.current;
+    historyMode.current = "replace";
+    const timer = window.setTimeout(async () => {
+      if (method !== "pop") window.history[method === "push" ? "pushState" : "replaceState"](window.history.state, "", `${window.location.pathname}?${queryString}`);
+      setBusy(true); setFailed(false);
+      try {
+        const response = await fetch(`/api/drug-letters?${queryString}`, { signal: controller.signal, cache: "no-store" });
+        if (!response.ok) throw new Error("Library unavailable");
+        const payload = await response.json();
+        if (!payload.data || !Array.isArray(payload.data.items) || !Number.isSafeInteger(payload.data.total) || !payload.data.facets) throw new Error("Invalid library response");
+        if (!controller.signal.aborted) setResult(payload.data);
+      } catch {
+        if (!controller.signal.aborted) setFailed(true);
+      } finally { if (!controller.signal.aborted) setBusy(false); }
+    }, method === "replace" ? 250 : 0);
+    return () => { window.clearTimeout(timer); controller.abort(); };
+  }, [queryString, retry]);
 
   const selectPage = (page: number) => {
+    historyMode.current = "push";
     setRequestedPage(page);
-    window.requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    window.requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" }));
   };
 
   return (
     <div className="page-stack explorer-page">
+      <SessionNotice />
       <PageGuide
         className="explorer-page__guide"
         title={{ ko: "의약품 경고서한 탐색기", en: "Drug Letter Explorer" }}
         context={{
-          ko: `통제된 원문 아카이브 · 현재 기록 ${initialLetters.length}건`,
-          en: `Controlled source archive · ${initialLetters.length} current records`,
+          ko: `통제된 원문 아카이브 · 현재 기록 ${collectionTotal}건`,
+          en: `Controlled source archive · ${collectionTotal} current records`,
         }}
         description={{
           ko: "FDA 정식 의약품 경고서한, 승인된 검토 결과, 정확한 인용 및 수명주기 문서를 검색하는 화면입니다. FDA 공식 원문 필드는 영문으로 표시됩니다.",
@@ -340,23 +302,25 @@ export function LettersExplorer({
       >
         {filtersOpen ? (
           <>
-            <SelectFilter label={text("Drug subtype", "의약품 하위 유형")} value={filters.subtype} values={options.subtype} onChange={(value) => setFilter("subtype", value)} allLabel={text("All", "전체")} unavailableLabel={text("No alternatives", "비교 항목 없음")} />
-            <SelectFilter label={text("Category", "범주")} value={filters.category} values={options.category} onChange={(value) => setFilter("category", value)} allLabel={text("All", "전체")} unavailableLabel={text("No alternatives", "비교 항목 없음")} />
-            <SelectFilter label={text("Country", "국가")} value={filters.country} values={options.country} onChange={(value) => setFilter("country", value)} allLabel={text("All", "전체")} unavailableLabel={text("No alternatives", "비교 항목 없음")} />
-            <SelectFilter label={text("Lifecycle", "수명주기")} value={filters.lifecycle} values={options.lifecycle} onChange={(value) => setFilter("lifecycle", value)} allLabel={text("All", "전체")} unavailableLabel={text("No alternatives", "비교 항목 없음")} formatOption={formatOption} />
-            <SelectFilter label={text("Review state", "검토 상태")} value={filters.review} values={options.review} onChange={(value) => setFilter("review", value)} allLabel={text("All", "전체")} unavailableLabel={text("No alternatives", "비교 항목 없음")} formatOption={formatOption} />
-            <SelectFilter label={text("Linked documents", "연결된 문서")} value={filters.document} values={documentOptions} onChange={(value) => setFilter("document", value)} allLabel={text("All", "전체")} unavailableLabel={text("No alternatives", "비교 항목 없음")} formatOption={formatOption} />
+            <SelectFilter label={text("Drug subtype", "의약품 하위 유형")} value={filters.subtype} values={options.subtype} onChange={(value) => setFilter("subtype", value)} allLabel={text("All", "전체")} unavailableLabel={text("No values available", "선택 가능한 값 없음")} />
+            <SelectFilter label={text("Category", "범주")} value={filters.category} values={options.category} onChange={(value) => setFilter("category", value)} allLabel={text("All", "전체")} unavailableLabel={text("No values available", "선택 가능한 값 없음")} />
+            <SelectFilter label={text("Country", "국가")} value={filters.country} values={options.country} onChange={(value) => setFilter("country", value)} allLabel={text("All", "전체")} unavailableLabel={text("No values available", "선택 가능한 값 없음")} />
+            <SelectFilter label={text("Lifecycle", "수명주기")} value={filters.lifecycle} values={options.lifecycle} onChange={(value) => setFilter("lifecycle", value)} allLabel={text("All", "전체")} unavailableLabel={text("No values available", "선택 가능한 값 없음")} formatOption={formatOption} />
+            <SelectFilter label={text("Review state", "검토 상태")} value={filters.review} values={options.review} onChange={(value) => setFilter("review", value)} allLabel={text("All", "전체")} unavailableLabel={text("No values available", "선택 가능한 값 없음")} formatOption={formatOption} />
+            <SelectFilter label={text("Linked documents", "연결된 문서")} value={filters.document} values={documentOptions} onChange={(value) => setFilter("document", value)} allLabel={text("All", "전체")} unavailableLabel={text("No values available", "선택 가능한 값 없음")} formatOption={formatOption} />
             <label className="filter-field filter-field--date"><span>{text("Posted from", "게시 시작일")}</span><div><input type="date" value={filters.postedFrom} max={filters.postedTo || undefined} onChange={(event) => setFilter("postedFrom", event.target.value)} /></div></label>
             <label className="filter-field filter-field--date"><span>{text("Posted to", "게시 종료일")}</span><div><input type="date" value={filters.postedTo} min={filters.postedFrom || undefined} onChange={(event) => setFilter("postedTo", event.target.value)} /></div></label>
           </>
         ) : null}
       </section>
 
-      <div ref={resultsRef} className="archive-meta dossier-reveal dossier-reveal--delay-2" role="status" aria-live="polite">
+      <p role="status" aria-live="polite">{busy ? text("Updating results…", "검색 결과 갱신 중…") : failed ? text("Could not load the library. Your filters and last results are preserved.", "자료를 불러오지 못했습니다. 검색 조건과 마지막 결과는 유지됩니다.") : text(`${total} results`, `검색 결과 ${total}건`)}</p>
+      {failed ? <button type="button" className="button button--secondary" disabled={busy} onClick={() => setRetry(value => value + 1)}>{text("Retry", "다시 시도")}</button> : null}
+      <div ref={resultsRef} className="archive-meta dossier-reveal dossier-reveal--delay-2" >
         <div className="archive-meta__count">
           <span>{text("Search results", "검색 결과")}</span>
-          <strong>{letters.length}</strong>
-          <small>{text(`of ${initialLetters.length} Drug letters`, `전체 ${initialLetters.length}건 중`)}</small>
+          <strong>{total}</strong>
+          <small>{text(`of ${collectionTotal} Drug letters`, `전체 ${collectionTotal}건 중`)}</small>
         </div>
         <div className="archive-meta__context">
           <label className="archive-page-size">
@@ -364,6 +328,7 @@ export function LettersExplorer({
             <select
               value={pageSize}
               onChange={(event) => {
+                historyMode.current = "push";
                 setPageSize(Number(event.target.value) as (typeof pageSizeOptions)[number]);
                 setRequestedPage(1);
               }}
@@ -374,8 +339,8 @@ export function LettersExplorer({
           </label>
           <span className="archive-page-range">
             {text(
-              `Showing ${pageStart}–${pageEnd} of ${letters.length}`,
-              `${letters.length}건 중 ${pageStart}–${pageEnd}건 표시`,
+              `Showing ${pageStart}–${pageEnd} of ${total}`,
+              `${total}건 중 ${pageStart}–${pageEnd}건 표시`,
             )}
           </span>
           {activeFilterCount ? (
@@ -383,13 +348,13 @@ export function LettersExplorer({
           ) : (
             <span>{text("No additional filters", "추가 필터 없음")}</span>
           )}
-          <label className="archive-sort"><CalendarDays size={15} aria-hidden="true" /><span className="sr-only">{text("Sort letters", "경고서한 정렬")}</span><select value={sortOrder} onChange={(event) => { setSortOrder(event.target.value as SortOrder); setRequestedPage(1); }}><option value="posted-desc">{text("Posted · newest", "게시일 · 최신순")}</option><option value="posted-asc">{text("Posted · oldest", "게시일 · 오래된순")}</option><option value="issued-desc">{text("Issued · newest", "발행일 · 최신순")}</option><option value="company-asc">{text("Company · A–Z", "회사명 · 가나다/A–Z")}</option></select></label>
+          <label className="archive-sort"><CalendarDays size={15} aria-hidden="true" /><span className="sr-only">{text("Sort letters", "경고서한 정렬")}</span><select value={sortOrder} onChange={(event) => { historyMode.current = "push"; setSortOrder(event.target.value as SortOrder); setRequestedPage(1); }}><option value="posted-desc">{text("Posted · newest", "게시일 · 최신순")}</option><option value="posted-asc">{text("Posted · oldest", "게시일 · 오래된순")}</option><option value="issued-desc">{text("Issued · newest", "발행일 · 최신순")}</option><option value="company-asc">{text("Company · A–Z", "회사명 · 가나다/A–Z")}</option></select></label>
         </div>
       </div>
 
       {letters.length ? (
         <>
-          <section className="archive-ledger dossier-reveal dossier-reveal--delay-2" aria-label={text("Drug warning letters", "의약품 경고서한")}>
+          <section aria-busy={busy} className="archive-ledger dossier-reveal dossier-reveal--delay-2" aria-label={text("Drug warning letters", "의약품 경고서한")}>
             <div className="archive-ledger__head" aria-hidden="true">
               <span>{text("Posted / reference", "게시일 / 참조")}</span>
               <span>{text("Warning letter and drug classification", "경고서한 및 의약품 분류")}</span>
@@ -425,7 +390,7 @@ export function LettersExplorer({
                   <p
                     className="letter-field-hint letter-field-hint--subject"
                     lang="en"
-                    tabIndex={0}
+
                     title={text("Warning Letter Subject", "경고서한 주제")}
                     aria-label={`${text("Warning Letter Subject", "경고서한 주제")}: ${letter.subject}`}
                     data-field-label={text("Warning Letter Subject", "경고서한 주제")}
@@ -435,7 +400,7 @@ export function LettersExplorer({
                   <small className="letter-row__provenance" lang="en">
                     <span
                       className="letter-field-hint letter-field-hint--office"
-                      tabIndex={0}
+
                       title={text("Issuing Office", "발행 부서")}
                       aria-label={`${text("Issuing Office", "발행 부서")}: ${letter.issuingOffice}`}
                       data-field-label={text("Issuing Office", "발행 부서")}
@@ -445,7 +410,7 @@ export function LettersExplorer({
                     <span aria-hidden="true"> · </span>
                     <span
                       className="letter-field-hint letter-field-hint--country"
-                      tabIndex={0}
+
                       title={text("Recipient Country", "수신자 국가")}
                       aria-label={`${text("Recipient Country", "수신자 국가")}: ${letter.country}`}
                       data-field-label={text("Recipient Country", "수신자 국가")}
@@ -467,6 +432,7 @@ export function LettersExplorer({
                   ) : null}
                 </div>
                 <div className="letter-row__state">
+                  {letter.metadataIssues?.length ? <span>{text("Metadata incomplete", "메타데이터 불완전")}</span> : null}
                   {!["pending", "not_generated"].includes(letter.reviewState)
                     ? <StatusPill state={letter.reviewState} />
                     : null}
@@ -482,7 +448,7 @@ export function LettersExplorer({
                     initiallySaved={initialSavedLetterIds.includes(letter.id)}
                     compact
                   />
-                  <a
+                  <SourceLink
                     className="letter-row__open"
                     href={letter.sourceUrl}
                     target="_blank"
@@ -491,7 +457,7 @@ export function LettersExplorer({
                     title={text("Open the original FDA warning letter", "FDA 경고서한 원문 열기")}
                   >
                     <ArrowRight size={18} aria-hidden="true" />
-                  </a>
+                  </SourceLink>
                 </div>
               </li>
                 );
@@ -535,12 +501,12 @@ export function LettersExplorer({
             </button>
           </nav>
         </>
-      ) : (
+      ) : failed || busy ? null : (
         <section className="empty-state">
           <Search size={24} aria-hidden="true" />
-          <h2>{text("No admitted Drug letters match.", "일치하는 등록 의약품 경고서한이 없습니다.")}</h2>
-          <p>{text("Broaden the filters. The Product scope remains fixed to canonical FDA Drugs records.", "필터 범위를 넓혀 보세요. Product 범위는 FDA 정식 Drugs 기록으로 고정됩니다.")}</p>
-          <button className="button button--secondary" type="button" onClick={resetFilters}>{text("Clear filters", "필터 지우기")}</button>
+          <h2>{collectionTotal ? text("No records match these filters", "이 조건에 맞는 기록이 없습니다") : text("No source records yet", "아직 원문 기록이 없습니다")}</h2>
+          <p>{collectionTotal ? text("Clear or broaden your filters to find sources.", "조건을 해제하거나 검색 범위를 넓혀 보세요.") : text("The service has no admitted source records. See the service guide for available features and setup status.", "서비스에 등록된 원문 기록이 없습니다. 이용 안내에서 가능한 기능과 설정 상태를 확인하세요.")}</p>
+          {collectionTotal ? <button className="button button--secondary" type="button" onClick={resetFilters}>{text("Clear filters", "필터 지우기")}</button> : <Link className="button button--secondary" href="/help#availability">{text("Service guide", "이용 안내")}</Link>}
         </section>
       )}
 

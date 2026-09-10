@@ -111,3 +111,24 @@ Keyboard focus is visible. Reduced motion removes optional transitions.
 Preserve existing research, case, review, and governance capabilities and guards.
 No account controls. No invented run counts or fabricated successful agent work.
 Keep the review objective, evidence provenance, and next action visible.
+
+## September 2026 audit refinements
+
+Home offers continuation only for actual saved conversations, research tasks and
+personal drafts. Navigation retains the three requested sections and preserves
+manual disclosure choices during route changes. The source explorer loads one
+server-filtered page and aggregate facets; it keeps the last result during a
+refresh, announces the concise result state and restores committed filters with
+browser Back/Forward. Static source metadata is readable without Tab stops.
+
+Unknown evidence coverage is “Not assessed”. Source-link checks and machine
+checks never mean human approval. Incomplete source metadata stays explicit;
+missing original links are unavailable, and displayed artifacts must match the
+source version and hash. Approvals uses decision-oriented Korean/English copy,
+with exact identifiers under a disclosure. Common control geometry and focus
+boundaries are defined by shared tokens. Chat owns its workspace CSS.
+
+A visible 30-day browser-access notice appears on the relevant saved-work surfaces.
+The policy is non-renewing and does not provide cross-device recovery; exports
+remain the portable path. Font coverage remains complete while its large first
+transfer is recorded for a separate measured optimization.

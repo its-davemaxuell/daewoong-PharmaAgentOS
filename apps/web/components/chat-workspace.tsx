@@ -1,6 +1,11 @@
 "use client";
 
+import "@/app/chat-workspace.css";
 import Link from "next/link";
+import { applyStreamEvent } from "@/lib/chat-turn-state";
+import { ChatStreamFailure, consumeChatStream } from "@/lib/chat-stream";
+import { SessionNotice } from "@/components/session-notice";
+import { readEvidenceCoverage } from "@/lib/evidence-state";
 import { useRouter } from "next/navigation";
 import {
   ArrowUp,
@@ -33,7 +38,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
   useTransition,
@@ -57,8 +61,6 @@ import { useChatHistory } from "@/components/chat-history-context";
 import { beginnerPrompts } from "@/lib/beginner-prompts";
 import { useI18n } from "@/lib/i18n";
 import {
-  normalizeRagStreamEvent,
-  type RagStreamEvent,
   type RagStreamPhase,
 } from "@/lib/rag-contract";
 import type {
@@ -100,111 +102,16 @@ type ChatTurn = {
   feedbackRating?: "helpful" | "unhelpful";
 };
 
-class ChatStreamFailure extends Error {
-  constructor(
-    message: string,
-    readonly kind: "server" | "protocol" | "incomplete",
-    readonly code?: string,
-  ) {
-    super(message);
-    this.name = "ChatStreamFailure";
-  }
-}
-
-async function consumeChatStream(
-  response: Response,
-  filters: RagFilter,
-  options: {
-    threadId?: string;
-    clientMessageId?: string;
-    retrievalMode: ChatRetrievalMode;
-    modelProfile: ChatModelProfile;
-  },
-  onEvent: (event: RagStreamEvent) => void,
-): Promise<RagAnswer> {
-  if (!response.body) {
-    throw new ChatStreamFailure("The response did not include a readable stream.", "protocol");
-  }
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder("utf-8");
-  let buffer = "";
-  const processLine = (rawLine: string) => {
-    const line = rawLine.endsWith("\r") ? rawLine.slice(0, -1) : rawLine;
-    if (!line.trim()) return undefined;
-    let payload: unknown;
-    try {
-      payload = JSON.parse(line);
-    } catch {
-      throw new ChatStreamFailure("The service returned malformed NDJSON.", "protocol");
-    }
-    const event = normalizeRagStreamEvent(payload, filters, options);
-    if (!event) {
-      throw new ChatStreamFailure("The service returned an unknown stream event.", "protocol");
-    }
-    onEvent(event);
-    if (event.type === "error") {
-      throw new ChatStreamFailure(event.message, "server", event.code);
-    }
-    return event.type === "complete" ? event.data : undefined;
-  };
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      let newlineIndex = buffer.indexOf("\n");
-      while (newlineIndex >= 0) {
-        const completed = processLine(buffer.slice(0, newlineIndex));
-        buffer = buffer.slice(newlineIndex + 1);
-        if (completed) {
-          await reader.cancel();
-          return completed;
-        }
-        newlineIndex = buffer.indexOf("\n");
-      }
-      if (buffer.length > 4_000_000) {
-        throw new ChatStreamFailure("The service returned an oversized stream event.", "protocol");
-      }
-    }
-    buffer += decoder.decode();
-    const completed = processLine(buffer);
-    if (completed) return completed;
-    throw new ChatStreamFailure(
-      "The connection ended before a verified answer was received.",
-      "incomplete",
-    );
-  } finally {
-    reader.releaseLock();
-  }
-}
-
 function preserveChatOptionFocus(triggerId: string) {
-  const focusIfLost = () => {
-    if (document.activeElement === document.body) {
-      document.getElementById(triggerId)?.focus();
-    }
-  };
-  const observer = new MutationObserver(() => window.requestAnimationFrame(focusIfLost));
-  observer.observe(document.body, { childList: true, subtree: true });
-  window.setTimeout(() => {
-    observer.disconnect();
-    focusIfLost();
-  }, 2_500);
+  window.requestAnimationFrame(() => {
+    if (document.activeElement === document.body) document.getElementById(triggerId)?.focus();
+  });
 }
 
 type FilterOption = {
   value: string;
   count: number;
 };
-
-function uniqueOptions(values: string[]): FilterOption[] {
-  const counts = new Map<string, number>();
-  values.filter(Boolean).forEach((value) => counts.set(value, (counts.get(value) ?? 0) + 1));
-  return [...counts.entries()]
-    .map(([value, count]) => ({ value, count }))
-    .sort((left, right) => left.value.localeCompare(right.value));
-}
 
 function formatDateTime(value: string, locale: "en" | "ko") {
   return formatDate(value, {
@@ -233,8 +140,7 @@ function answerFromPersistedMessage(
     interpretationLabel: message.interpretationLabel ?? "ai_synthesis",
     scopeLabel: "FDA Product: Drugs",
     filtersApplied: message.filtersApplied ?? fallbackFilters,
-    evidenceSufficiency: message.evidenceSufficiency
-      ?? (message.citations.length ? "sufficient" : "partial"),
+    evidenceSufficiency: readEvidenceCoverage(message.evidenceSufficiency),
     citations: message.citations,
     generatedAt: message.createdAt,
     requestId: message.ragQueryId ?? message.id,
@@ -306,7 +212,7 @@ function MarkdownInline({
 }: {
   text: string;
   citations: RagCitation[];
-  onSelect: (index: number) => void;
+  onSelect: (index: number, trigger: HTMLElement) => void;
 }) {
   const { text: localize } = useI18n();
   return text.split(INLINE_MARKDOWN).filter(Boolean).map((part, partIndex) => {
@@ -330,7 +236,7 @@ function MarkdownInline({
                   `Open citation ${citationIndex + 1}: ${citation.company}`,
                   `${citation.company}의 ${citationIndex + 1}번 인용 열기`,
                 )}
-                onClick={() => onSelect(citationIndex)}
+                onClick={(event) => onSelect(citationIndex, event.currentTarget)}
               >
                 {citationIndex + 1}
               </button>
@@ -356,7 +262,7 @@ export function MarkdownCitationText({
 }: {
   text: string;
   citations: RagCitation[];
-  onSelect: (index: number) => void;
+  onSelect: (index: number, trigger: HTMLElement) => void;
 }) {
   const lines = text.replaceAll("\r\n", "\n").split("\n");
   const blocks: ReactNode[] = [];
@@ -660,7 +566,8 @@ function ChatOptionMenu<Value extends string>({
 }
 
 export function ChatWorkspace({
-  letters,
+  letters: initialLetters,
+  facets = {},
   dataMode = "live",
   initialLetterId = "",
   initialCompany = "",
@@ -669,6 +576,7 @@ export function ChatWorkspace({
   landingSeed = "default",
 }: {
   letters: Letter[];
+  facets?: Record<string, FilterOption[]>;
   dataMode?: DataMode;
   initialLetterId?: string;
   initialCompany?: string;
@@ -676,6 +584,12 @@ export function ChatWorkspace({
   initialThread?: ChatThread;
   landingSeed?: string;
 }) {
+  const [letters, setLetters] = useState(initialLetters);
+  const [sourceResults, setSourceResults] = useState(initialLetters);
+  const [sourcePage, setSourcePage] = useState(1);
+  const [sourceTotal, setSourceTotal] = useState(0);
+  const [sourcePending, setSourcePending] = useState(false);
+  const [sourceFailed, setSourceFailed] = useState(false);
   const router = useRouter();
   const { locale, text } = useI18n();
   const {
@@ -711,6 +625,26 @@ export function ChatWorkspace({
   const [evidenceTurnId, setEvidenceTurnId] = useState<string>();
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
   const [sourceSearch, setSourceSearch] = useState("");
+  useEffect(() => {
+    if (!sourcePickerOpen) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      setSourcePending(true); setSourceFailed(false);
+      try {
+        const params = new URLSearchParams({ q: sourceSearch, page: String(sourcePage) });
+        const response = await fetch(`/api/drug-letters?${params}`, { signal: controller.signal, cache: "no-store" });
+        if (!response.ok) throw new Error("Source search unavailable");
+        const payload = await response.json();
+        if (payload.mode !== "live" || !Array.isArray(payload.data?.items)) throw new Error("Source search unavailable");
+        if (!controller.signal.aborted) {
+          setSourceResults(payload.data.items); setSourceTotal(payload.data.total);
+          setLetters(current => [...new Map([...current, ...payload.data.items].map(item => [item.id, item])).values()]);
+        }
+      } catch { if (!controller.signal.aborted) setSourceFailed(true); }
+      finally { if (!controller.signal.aborted) setSourcePending(false); }
+    }, 250);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [sourcePickerOpen, sourceSearch, sourcePage]);
   const [selectedLetters, setSelectedLetters] = useState<string[]>(initialThread?.activeLetterIds ?? (initialLetterId ? [initialLetterId] : []));
   const [actionError, setActionError] = useState<string>();
   const [actionBusy, setActionBusy] = useState(false);
@@ -814,11 +748,8 @@ export function ChatWorkspace({
     return () => window.clearInterval(intervalId);
   }, [router, turns]);
 
-  const companies = useMemo(() => uniqueOptions(letters.map((letter) => letter.company)), [letters]);
-  const offices = useMemo(() => uniqueOptions(letters.map((letter) => letter.issuingOffice)), [letters]);
-  const categories = useMemo(() => uniqueOptions(letters.flatMap((letter) => letter.categories)), [letters]);
-  const regulations = useMemo(() => uniqueOptions(letters.flatMap((letter) => letter.regulations)), [letters]);
-  const subtypes = useMemo(() => uniqueOptions(letters.flatMap((letter) => letter.drugSubtypes)), [letters]);
+  const categories = facets.category ?? [];
+  const subtypes = facets.subtype ?? [];
   const primaryLetterId = documentFocus?.warningLetterId
     ?? (activeLetterIds.length === 1 ? activeLetterIds[0] : "");
   const primaryLetter = letters.find((letter) => letter.id === primaryLetterId);
@@ -965,7 +896,7 @@ export function ChatWorkspace({
     setModelProfile(nextProfile);
     if (!activeThreadId) return;
     preferenceMutationRef.current = true;
-    preserveChatOptionFocus("chat-model-selector");
+
     startHistoryTransition(async () => {
       try {
         const updated = await updateChatPreferences(activeThreadId, {
@@ -976,6 +907,7 @@ export function ChatWorkspace({
         setModelProfile(previous);
       } finally {
         preferenceMutationRef.current = false;
+        preserveChatOptionFocus("chat-model-selector");
       }
     });
   };
@@ -987,7 +919,7 @@ export function ChatWorkspace({
     setRetrievalMode(nextMode);
     if (!activeThreadId) return;
     preferenceMutationRef.current = true;
-    preserveChatOptionFocus("chat-scope-selector");
+
     startHistoryTransition(async () => {
       try {
         const updated = await updateChatPreferences(activeThreadId, {
@@ -1000,6 +932,7 @@ export function ChatWorkspace({
         setRetrievalMode(previous);
       } finally {
         preferenceMutationRef.current = false;
+        preserveChatOptionFocus("chat-scope-selector");
       }
     });
   };
@@ -1148,39 +1081,13 @@ export function ChatWorkspace({
           effectiveFilters,
           streamOptions,
           (event) => {
-            if (event.type === "phase") {
-              setTurns((current) => current.map((item) => item.id === turnId
-                ? { ...item, streamPhase: event.phase }
-                : item));
-              return;
-            }
-            if (event.type === "draft_delta") {
-              setTurns((current) => current.map((item) => {
-                if (item.id !== turnId) return item;
-                const sameAttempt = item.streamAttempt === event.attempt;
-                return {
-                  ...item,
-                  provisionalDraft: sameAttempt
-                    ? `${item.provisionalDraft ?? ""}${event.text}`
-                    : event.text,
-                  streamAttempt: event.attempt,
-                  streamPhase: "generating",
-                };
-              }));
-              return;
-            }
-            if (event.type === "draft_reset") {
-              setTurns((current) => current.map((item) => item.id === turnId
-                ? {
-                    ...item,
-                    provisionalDraft: undefined,
-                    streamAttempt: event.attempt,
-                    streamPhase: "generating",
-                  }
-                : item));
+            if (requestController.signal.aborted) return;
+            if (event.type === "phase" || event.type === "draft_delta" || event.type === "draft_reset") {
+              setTurns(current => current.map(item => item.id === turnId ? applyStreamEvent(item, event) : item));
             }
           },
         );
+        if (requestController.signal.aborted) return;
         setTurns((current) => current.map((item) => (
           item.id === turnId
             ? {
@@ -1324,8 +1231,8 @@ export function ChatWorkspace({
     setFilters((current) => ({ ...current, [key]: undefined }));
   };
 
-  const selectCitation = (turnId: string, index: number) => {
-    evidenceTrigger.current = document.activeElement as HTMLElement;
+  const selectCitation = (turnId: string, index: number, trigger: HTMLElement) => {
+    evidenceTrigger.current = trigger;
     setSelectedCitation((current) => ({ ...current, [turnId]: index }));
     setEvidenceTurnId(turnId);
   };
@@ -1458,6 +1365,7 @@ export function ChatWorkspace({
             <button className="chat-new-button" type="button" disabled={actionsDisabled} onClick={clearConversation}><Plus size={17} />{text("New chat", "새 대화")}</button>
           </div>
         </header>
+      <SessionNotice />
         {currentSummary && <ChatThreadTools thread={currentSummary} disabled={actionsDisabled} onChange={(thread) => {
           setThreadTitle(thread.title); setThreadPinnedAt(thread.pinnedAt); setThreadArchivedAt(thread.archivedAt);
         }} />}
@@ -1676,20 +1584,20 @@ export function ChatWorkspace({
                       <p>{text("Retry the answer or open a source below.", "답변을 다시 요청하거나 아래 원문을 확인하세요.")}</p>
                       <details>
                         <summary>{text("Read the original source excerpts", "원문 발췌 읽기")}</summary>
-                        <MarkdownCitationText text={turn.answer.answer} citations={turn.answer.citations} onSelect={(index) => selectCitation(turn.id, index)} />
+                        <MarkdownCitationText text={turn.answer.answer} citations={turn.answer.citations} onSelect={(index, trigger) => selectCitation(turn.id, index, trigger)} />
                       </details>
                     </div>
                   ) : <MarkdownCitationText
                     text={turn.answer.answer}
                     citations={turn.answer.citations}
-                    onSelect={(index) => selectCitation(turn.id, index)}
+                    onSelect={(index, trigger) => selectCitation(turn.id, index, trigger)}
                   />}
 
-                  {turn.answer.retrievalStrategy !== "none"
-                  && turn.answer.evidenceSufficiency !== "sufficient" ? (
+                  <p className="chat-review-state">{text("Human review: No decision recorded for this answer", "담당자 검토: 이 답변에 대한 판단 기록 없음")}</p>
+                  {turn.answer.evidenceSufficiency !== "sufficient" ? (
                     <div className="chat-evidence-warning">
                       <CircleAlert size={16} />
-                      {turn.answer.evidenceSufficiency === "partial"
+                      {turn.answer.evidenceSufficiency === "unknown" ? text("Evidence coverage: Not assessed. Citation links alone do not establish complete support. Human review has not been recorded for this answer.", "근거 충족도: 미평가. 인용 링크만으로 충분한 근거가 확인되지는 않습니다. 이 답변에 대한 담당자 검토 기록이 없습니다.") : turn.answer.evidenceSufficiency === "partial"
                         ? text(
                             "The retrieved evidence is limited. Treat the answer as a lead and verify the cited passage before use.",
                             "검색된 근거가 제한적입니다. 답변을 참고 단서로만 사용하고 활용 전에 인용 원문을 확인하세요.",
@@ -1703,11 +1611,11 @@ export function ChatWorkspace({
 
                   {turn.answer.citations.length ? (
                     <div className="chat-source-strip" id={`sources-${turn.id}`}>
-                      <button type="button" className="chat-source-strip__open" onClick={() => selectCitation(turn.id, 0)} aria-expanded={evidenceTurnId === turn.id}>
+                      <button type="button" className="chat-source-strip__open" onClick={(event) => selectCitation(turn.id, 0, event.currentTarget)} aria-expanded={evidenceTurnId === turn.id}>
                         <FileText size={16} />{text(`Sources (${turn.answer.citations.length})`, `출처 (${turn.answer.citations.length})`)}
                       </button>
                       <div>{turn.answer.citations.slice(0, 3).map((citation, index) => (
-                        <button key={citation.id} type="button" onClick={() => selectCitation(turn.id, index)}><span>{index + 1}</span>{citation.company}</button>
+                        <button key={citation.id} type="button" onClick={(event) => selectCitation(turn.id, index, event.currentTarget)}><span>{index + 1}</span>{citation.company}</button>
                       ))}</div>
                     </div>
                   ) : null}
@@ -1783,11 +1691,13 @@ export function ChatWorkspace({
         {showJump && <button className="chat-jump" type="button" onClick={() => { conversationRef.current?.scrollTo({ top: conversationRef.current.scrollHeight }); followConversationRef.current = true; setShowJump(false); }}><ArrowDown size={16} />{text("Latest answer", "최근 답변")}</button>}
         {sourcePickerOpen && <section className="chat-source-picker" aria-label={text("Choose FDA letters", "FDA 경고서한 선택")}>
           <header><div><strong>{text("Add FDA letters", "FDA 경고서한 추가")}</strong><small>{text("Choose up to 10 letters to focus or compare", "집중 분석하거나 비교할 서한을 최대 10개 선택하세요")}</small></div><button type="button" className="chat-icon-button" onClick={() => setSourcePickerOpen(false)} aria-label={text("Close letter picker", "서한 선택 닫기")}><X size={18} /></button></header>
-          <input autoFocus type="search" value={sourceSearch} onChange={(event) => setSourceSearch(event.target.value)} placeholder={text("Search companies…", "기업 검색…")} aria-label={text("Search FDA letters", "FDA 경고서한 검색")} />
-          <div className="chat-source-picker__list">{letters.filter((letter) => letter.company.toLocaleLowerCase().includes(sourceSearch.toLocaleLowerCase())).slice(0, 60).map((letter) => <label key={letter.id}>
+          <input autoFocus type="search" value={sourceSearch} onChange={(event) => { setSourceSearch(event.target.value); setSourcePage(1); }} placeholder={text("Search companies…", "기업 검색…")} aria-label={text("Search FDA letters", "FDA 경고서한 검색")} />
+          <p role="status">{sourcePending ? text("Searching…", "검색 중…") : sourceFailed ? text("Source search unavailable. Keep your selection and try again.", "원문을 검색할 수 없습니다. 선택은 유지됩니다. 다시 시도하세요.") : text(`${sourceTotal} sources`, `원문 ${sourceTotal}건`)}</p>
+          <div><button type="button" disabled={sourcePage === 1 || sourcePending} onClick={() => setSourcePage(value => value - 1)}>{text("Previous", "이전")}</button><button type="button" disabled={sourcePage * 20 >= sourceTotal || sourcePending} onClick={() => setSourcePage(value => value + 1)}>{text("Next", "다음")}</button></div>
+          <div className="chat-source-picker__list" aria-busy={sourcePending}>{sourceResults.map((letter) => <label key={letter.id}>
             <input type="checkbox" checked={selectedLetters.includes(letter.id)} disabled={!selectedLetters.includes(letter.id) && selectedLetters.length >= 10} onChange={(event) => setSelectedLetters((current) => event.target.checked ? [...current, letter.id] : current.filter((id) => id !== letter.id))} />
             <span><strong>{letter.company}</strong><small>{formatDate(letter.issueDate, undefined, locale)}</small></span>
-          </label>)}{!letters.some((letter) => letter.company.toLocaleLowerCase().includes(sourceSearch.toLocaleLowerCase())) && <p>{text("No matching letters.", "일치하는 서한이 없어요.")}</p>}</div>
+          </label>)}{!sourceResults.length && !sourcePending && !sourceFailed && <p>{text("No matching letters.", "일치하는 서한이 없어요.")}</p>}</div>
           <footer><span>{text(`${selectedLetters.length} selected`, `${selectedLetters.length}개 선택`)}</span><button type="button" disabled={actionBusy} onClick={() => setSelectedLetters([])}>{text("Clear", "선택 해제")}</button><button className="chat-send-button" type="button" disabled={actionsDisabled} onClick={() => void applySelectedLetters()}>{text("Use letters", "선택 적용")}</button></footer>
         </section>}
         {filtersOpen ? (
@@ -1802,36 +1712,27 @@ export function ChatWorkspace({
               </button>
             </header>
             <div className="chat-filter-panel__grid">
-              <FilterSelect
-                label={text("Company", "기업")}
-                value={primaryLetterId && !letterScopeSuspended
-                  ? primaryCompany
-                  : filters.company ?? ""}
-                placeholder={text("Available companies", "사용 가능한 기업")}
-                options={companies}
-                onChange={(value) => setFilter("company", value)}
-                disabled={Boolean(primaryLetterId && !letterScopeSuspended)}
-              />
+              <label className="chat-filter-field"><span>{text("Company", "기업")}</span><input value={filters.company ?? ""} onChange={event => setFilter("company", event.target.value)} maxLength={300} disabled={Boolean(primaryLetterId && !letterScopeSuspended)} /></label>
               <FilterSelect label={text("Finding category", "지적 유형")} value={filters.category ?? ""} placeholder={text("Available findings", "사용 가능한 지적 유형")} options={categories} onChange={(value) => setFilter("category", value)} />
-              <FilterSelect label={text("Regulatory citation", "규정 인용")} value={filters.regulation ?? ""} placeholder={text("Available citations", "사용 가능한 규정 인용")} options={regulations} onChange={(value) => setFilter("regulation", value)} />
+              <label className="chat-filter-field"><span>{text("Regulatory citation", "규정 인용")}</span><input value={filters.regulation ?? ""} onChange={event => setFilter("regulation", event.target.value)} maxLength={200} /></label>
               <FilterSelect label={text("Drug subtype", "의약품 유형")} value={filters.subtype ?? ""} placeholder={text("Available drug types", "사용 가능한 의약품 유형")} options={subtypes} onChange={(value) => setFilter("subtype", value)} />
-              <FilterSelect label={text("Issuing office", "발행 부서")} value={filters.issuingOffice ?? ""} placeholder={text("Available FDA offices", "사용 가능한 FDA 부서")} options={offices} onChange={(value) => setFilter("issuingOffice", value)} />
+              <label className="chat-filter-field"><span>{text("Issuing office", "발행 부서")}</span><input value={filters.issuingOffice ?? ""} onChange={event => setFilter("issuingOffice", event.target.value)} maxLength={300} /></label>
               <div className="chat-filter-field chat-filter-field--date">
                 <span>{text("Issue date", "발행일")}</span>
                 <div className="chat-date-range">
                   <CalendarDays size={15} aria-hidden="true" />
-                  <input aria-label={text("Issue date from", "발행 시작일")} type="date" value={filters.dateFrom ?? ""} onChange={(event) => setFilter("dateFrom", event.target.value)} />
+                  <input aria-label={text("Issue date from", "발행 시작일")} type="date" max={filters.dateTo || undefined} value={filters.dateFrom ?? ""} onChange={(event) => setFilter("dateFrom", event.target.value)} />
                   <span>–</span>
-                  <input aria-label={text("Issue date to", "발행 종료일")} type="date" value={filters.dateTo ?? ""} onChange={(event) => setFilter("dateTo", event.target.value)} />
+                  <input aria-label={text("Issue date to", "발행 종료일")} type="date" min={filters.dateFrom || undefined} value={filters.dateTo ?? ""} onChange={(event) => setFilter("dateTo", event.target.value)} />
                 </div>
               </div>
               <div className="chat-filter-field chat-filter-field--date">
                 <span>{text("FDA posted date", "FDA 게시일")}</span>
                 <div className="chat-date-range">
                   <CalendarDays size={15} aria-hidden="true" />
-                  <input aria-label={text("Posted date from", "게시 시작일")} type="date" value={filters.postedFrom ?? ""} onChange={(event) => setFilter("postedFrom", event.target.value)} />
+                  <input aria-label={text("Posted date from", "게시 시작일")} type="date" max={filters.postedTo || undefined} value={filters.postedFrom ?? ""} onChange={(event) => setFilter("postedFrom", event.target.value)} />
                   <span>–</span>
-                  <input aria-label={text("Posted date to", "게시 종료일")} type="date" value={filters.postedTo ?? ""} onChange={(event) => setFilter("postedTo", event.target.value)} />
+                  <input aria-label={text("Posted date to", "게시 종료일")} type="date" min={filters.postedFrom || undefined} value={filters.postedTo ?? ""} onChange={(event) => setFilter("postedTo", event.target.value)} />
                 </div>
               </div>
               <div className="chat-filter-field chat-filter-field--sources">

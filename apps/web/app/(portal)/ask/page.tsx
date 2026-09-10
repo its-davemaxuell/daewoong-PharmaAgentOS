@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
 import { ChatWorkspace } from "@/components/chat-workspace";
-import { getChatLetter, getChatLetters } from "@/lib/api-client";
+import { getChatLetter, getChatCatalog } from "@/lib/api-client";
 
 type SearchParams = {
   letter?: string | string[];
@@ -35,10 +35,10 @@ export default async function AskPage({
   }
 
   const [letterResult, constrainedLetterResult] = await Promise.all([
-    getChatLetters(),
+    getChatCatalog(),
     initialLetterId ? getChatLetter(initialLetterId) : Promise.resolve(undefined),
   ]);
-  const letters = [...letterResult.data];
+  const letters = [...letterResult.data.items];
   const constrainedLetter = constrainedLetterResult?.data;
   if (constrainedLetter && !letters.some((letter) => letter.id === constrainedLetter.id)) {
     letters.push(constrainedLetter);
@@ -48,6 +48,7 @@ export default async function AskPage({
     <ChatWorkspace
       key={landingSeed}
       letters={letters}
+      facets={letterResult.data.facets}
       dataMode={letterResult.mode}
       initialLetterId={initialLetterId}
       initialCompany={initialCompany}
