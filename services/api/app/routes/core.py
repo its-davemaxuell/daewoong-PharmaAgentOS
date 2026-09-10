@@ -32,6 +32,7 @@ from app.schemas import (
     DashboardResponse,
     HealthResponse,
     LetterDetail,
+    LetterSearchPage,
     VersionPage,
 )
 from app.security.auth import Principal, view_principal
@@ -182,6 +183,103 @@ async def letter_catalog(
         has_more=has_more,
         next_cursor=encode_cursor(offset + limit) if has_more else None,
     )
+
+
+@router.get("/letters/search", response_model=LetterSearchPage, tags=["Letters"])
+async def search_letters(
+    page: int = Query(default=1, ge=1, le=1_000_000),
+    page_size: int = Query(default=20, ge=1, le=100),
+    sort: str = Query(
+        default="posted-desc", pattern="^(posted-desc|posted-asc|issued-desc|company-asc)$"
+    ),
+    q: str = Query(default="", max_length=500),
+    subtype: str = Query(default="", max_length=200),
+    category: str = Query(default="", max_length=300),
+    country: str = Query(default="", max_length=120),
+    lifecycle: str = Query(default="", max_length=40),
+    review: str = Query(default="", max_length=40),
+    document: str = Query(default="", pattern="^(response|closeout|open)?$"),
+    posted_from: date | None = None,
+    posted_to: date | None = None,
+    _principal: Principal = Depends(view_principal),
+    session: AsyncSession = Depends(session_dependency),
+):
+    from .letter_search import catalog_facets, catalog_scope, search_query
+
+    if posted_from and posted_to and posted_from > posted_to:
+        raise HTTPException(status_code=422, detail="Posted date range is reversed")
+    query = search_query(
+        session,
+        q=q.strip(),
+        subtype=subtype,
+        category=category,
+        country=country,
+        lifecycle=lifecycle,
+        review=review,
+        document=document,
+        posted_from=posted_from,
+        posted_to=posted_to,
+    )
+    total = await session.scalar(select(func.count()).select_from(query.subquery())) or 0
+    collection_total = (
+        await session.scalar(
+            select(func.count()).select_from(WarningLetter).where(*catalog_scope())
+        )
+        or 0
+    )
+    page = min(page, max(1, (total + page_size - 1) // page_size))
+    posted = func.coalesce(WarningLetter.posted_date, WarningLetter.issue_date)
+    ordering = {
+        "posted-desc": posted.desc(),
+        "posted-asc": posted.asc(),
+        "issued-desc": WarningLetter.issue_date.desc(),
+        "company-asc": func.lower(WarningLetter.company_name),
+    }
+    letters = list(
+        (
+            await session.scalars(
+                query.order_by(ordering[sort].nulls_last(), WarningLetter.id)
+                .offset((page - 1) * page_size)
+                .limit(page_size)
+            )
+        ).all()
+    )
+    docs, summaries, findings = await _letter_context(session, letters)
+    versions = {
+        version.id: version
+        for version in (
+            await session.scalars(
+                select(DocumentVersion).where(
+                    DocumentVersion.id.in_(
+                        [item.current_version_id for item in letters if item.current_version_id]
+                    )
+                )
+            )
+        ).all()
+    }
+    items = []
+    for letter in letters:
+        item = letter_item(
+            letter,
+            documents=docs.get(letter.id, []),
+            summary=summaries.get(letter.current_version_id or ""),
+            findings=findings.get(letter.current_version_id or "", []),
+        ).model_dump(mode="json")
+        version = versions.get(letter.current_version_id)
+        item.update(
+            current_version_id=letter.current_version_id,
+            source_version=f"v{version.version_number}" if version else None,
+            source_hash=version.canonical_hash if version else None,
+        )
+        items.append(item)
+    return {
+        "items": items,
+        "total": total,
+        "collectionTotal": collection_total,
+        "page": page,
+        "pageSize": page_size,
+        "facets": await catalog_facets(session),
+    }
 
 
 @router.get("/letters", response_model=CursorPage, tags=["Letters"])

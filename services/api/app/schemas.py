@@ -52,6 +52,27 @@ class CursorPage(StrictModel):
     enforced_scope: Literal["FDA Product: Drugs"] = "FDA Product: Drugs"
 
 
+class LetterSearchItem(LetterListItem):
+    normalized_product_classes: list[str]
+    current_version_id: UUID | None
+    source_version: str | None
+    source_hash: str | None
+
+
+class LetterFacet(StrictModel):
+    value: str
+    count: int = Field(ge=0)
+
+
+class LetterSearchPage(StrictModel):
+    items: list[LetterSearchItem]
+    total: int = Field(ge=0)
+    collectionTotal: int = Field(ge=0)
+    page: int = Field(ge=1)
+    pageSize: int = Field(ge=1, le=100)
+    facets: dict[str, list[LetterFacet]]
+
+
 class VersionResponse(StrictModel):
     id: UUID
     document_id: UUID
