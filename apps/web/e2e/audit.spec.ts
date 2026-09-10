@@ -95,7 +95,14 @@ test("route matrix has no overflow, hydration failures or missing assets", async
   for (const width of [320, 390, 768, 980, 981, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of ["/dashboard", "/drug-letters", "/ask", "/research", "/approvals"]) {
-      await page.goto(route); await page.waitForLoadState("networkidle");
+      await page.goto(route);
+      if (route === "/ask") {
+        // This route redirects after the streamed shell. Network idle alone can
+        // precede its client redirect, especially in WebKit on hosted runners.
+        await expect(page).toHaveURL(/\/ask\?new=/);
+        await expect(page.locator("#ai-question")).toBeVisible();
+      }
+      await page.waitForLoadState("networkidle");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
       metrics.push({ width, route, navigation: await page.evaluate(() => performance.getEntriesByType("navigation").map(item => item.toJSON())), resources: await page.evaluate(() => performance.getEntriesByType("resource").map(item => ({ name: item.name.split("/").pop(), bytes: (item as PerformanceResourceTiming).transferSize }))) });
     }

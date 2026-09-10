@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-10 UI audit implementation (deployed; final verification in progress):** Applied the supplied
+**2026-09-10 UI audit implementation (deployed and live-browser verified):** Applied the supplied
 UI/UX audit to the newer checkout. Live/restored evidence metadata remains unknown
 when absent; source scope/URL/hash/version fallbacks no longer invent provenance,
 and machine checks are distinct from human decisions. Letter artifacts must match
@@ -24,13 +24,18 @@ nonce CSP are included. The earlier three-section navigation preference is retai
 The additive API was deployed first as `f85939b`; no migration was required.
 Live PostgreSQL checks passed for the 766-record catalog: bounded pages, aggregate
 facets, text/date/sort queries and rejected invalid/unauthenticated requests. All
-nine quality-and-security jobs passed for that API release. Frontend `c98a370`
-is deployed on Vercel; Railway API/worker deployments also succeeded. Hosted
-source paging, Back, filters, empty recovery, source detail and English responsive
-routes pass. The first hosted browser CI run passed 14/15 tests: WebKit reported
-cancelled dashboard/case prefetches. The follow-up disables those unnecessary
-requests, passes lint/types/build and the targeted WebKit route matrix; full hosted
-CI and final Korean/saved-work verification are in progress.
+nine quality-and-security jobs passed for that API release. The frontend was
+published as `c98a370`, followed by prefetch correction `aa9ad63`; Vercel and both
+Railway services report success. Final live checks at 02:09 UTC pass source paging,
+Back, filters, empty recovery, source detail, Korean/English routes at 320/390/981/
+1440px, existing archived conversation access, evidence focus return and persisted
+JSON export. No JavaScript/console errors were observed; no model runs were created.
+Hosted backend/package suites pass **584 tests, 9 skipped**; PostgreSQL upgrade,
+restoration, contract, security and frontend checks pass. Browser CI exposed two
+hosted WebKit issues: unused cancelled prefetches and a test leaving Ask before its
+streamed redirect completed. Prefetches are disabled where unnecessary, and the
+matrix now awaits both the Ask destination and composer before navigating onward.
+The full 15-case browser gate and its evidence run against each release commit.
 Frontend 71 unit tests and the 82-test focused backend suite pass. Lint, TypeScript,
 production build and changed-backend Ruff checks pass. All 15 Chromium/Firefox/
 WebKit tests pass, including 105 route/width combinations, mobile source focus
