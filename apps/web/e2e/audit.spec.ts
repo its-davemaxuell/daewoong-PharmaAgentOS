@@ -163,34 +163,28 @@ test("navigation disclosure, mobile keyboard return and enlarged text remain usa
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 });
 
-test("route matrix has no overflow, hydration failures or missing assets", async ({ page }, testInfo) => {
-  test.setTimeout(240_000);
-  const errors: string[] = [];
-  page.on("pageerror", error => errors.push(error.message));
-  page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
-  const metrics = [];
-  for (const width of [320, 390, 768, 980, 981, 1024, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const route of ["/dashboard", "/drug-letters", "/ask", "/research", "/approvals"]) {
-      // Wait for the hydrated shell's actual request before navigating away.
-      // WebKit reports an interrupted request during document unload as an
-      // access-control console error even for this same-origin endpoint.
+for (const width of [320, 390, 768, 980, 981, 1024, 1440]) {
+  for (const route of ["/dashboard", "/drug-letters", "/ask", "/research", "/approvals"]) {
+    test(`route matrix ${route} at ${width} has no overflow, hydration failures or missing assets`, async ({ page }, testInfo) => {
+      // Each case owns a fresh page. Late Link prefetches from a previous
+      // document must not be aborted by the next route's navigation or resize.
+      const errors: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
+      await page.setViewportSize({ width, height: 900 });
       await Promise.all([
         page.waitForResponse(response => new URL(response.url()).pathname === "/api/portal/sidebar" && response.ok()),
         page.goto(route),
       ]);
       if (route === "/ask") {
-        // This route redirects after the streamed shell. Network idle alone can
-        // precede its client redirect, especially in WebKit on hosted runners.
         await expect(page).toHaveURL(/\/ask\?new=/);
-        // Next can retain the previous streamed tree hidden during the swap.
         await expect(page.locator("#ai-question").filter({ visible: true })).toHaveCount(1);
       }
       await page.waitForLoadState("networkidle");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
-      metrics.push({ width, route, navigation: await page.evaluate(() => performance.getEntriesByType("navigation").map(item => item.toJSON())), resources: await page.evaluate(() => performance.getEntriesByType("resource").map(item => ({ name: item.name.split("/").pop(), bytes: (item as PerformanceResourceTiming).transferSize }))) });
-    }
+      const metrics = { width, route, navigation: await page.evaluate(() => performance.getEntriesByType("navigation").map(item => item.toJSON())), resources: await page.evaluate(() => performance.getEntriesByType("resource").map(item => ({ name: item.name.split("/").pop(), bytes: (item as PerformanceResourceTiming).transferSize }))) };
+      expect(errors).toEqual([]);
+      await testInfo.attach("route-network-measurements", { body: JSON.stringify(metrics, null, 2), contentType: "application/json" });
+    });
   }
-  expect(errors).toEqual([]);
-  await testInfo.attach("route-network-measurements", { body: JSON.stringify(metrics, null, 2), contentType: "application/json" });
-});
+}
