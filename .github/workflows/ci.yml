@@ -262,7 +262,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: azure/setup-kubectl@v4
+      - uses: azure/setup-kubectl@v5
         with:
           version: v1.34.1
       - run: kubectl kustomize infra/deployment/kubernetes/base > /dev/null
