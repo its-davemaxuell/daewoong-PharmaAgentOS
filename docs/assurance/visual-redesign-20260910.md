@@ -51,6 +51,14 @@ production build passed; all 21 Playwright tests passed across Chromium, Firefox
 and WebKit (3.7 minutes)**. The browser suite includes the corrected hydration
 case and native mobile source disclosure.
 
+The first hosted run passed 20 of 21 browser checks. Its trace showed the supporting
+route matrix unloading a streamed case page before the sidebar effect had started;
+WebKit reported an access-control failure from that departing document. The matrix
+now awaits and checks the actual sidebar response before inspecting or leaving each
+workspace. Error assertions remain intact; no failure is suppressed or retried.
+The corrected test passed locally in all three browser engines; lint and types
+passed again. The complete hosted suite runs against the correction commit.
+
 These are frontend interaction checks, not a claim of comprehensive accessibility,
 real-device keyboard qualification, security certification or an award.
 
@@ -63,3 +71,9 @@ and mobile geometry, expected visual tokens, page errors and screenshots in
 .artifacts/redesign-20260910/production-report.json and production-*.png.
 It observes the existing service without creating a model run, research job,
 review record or approval.
+
+The visual implementation was published as `6d08a73b8cd0db25b0e26e8e2bbf76e75572320f`.
+Vercel and both Railway services reported success. The live check passed **26
+route/locale/viewport combinations** in Korean and English at desktop and mobile
+widths, with the expected new theme, no document overflow and no page errors.
+The hosted browser synchronization correction changes tests and documentation only.

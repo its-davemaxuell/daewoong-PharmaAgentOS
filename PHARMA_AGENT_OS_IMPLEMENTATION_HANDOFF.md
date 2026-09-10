@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-10 approved visual redesign A:** Replaced the navy navigation with a
+**2026-09-10 approved visual redesign A (deployed):** Replaced the navy navigation with a
 bright white/indigo workspace, floating navigation and utility bar, layered
 objective trays, raised controls and consistent reading/review compartments.
 Home now contains an editable research objective, bounded live source preview,
@@ -23,6 +23,11 @@ uses two columns and its index is a native disclosure. Case register content
 precedes restricted intake on mobile. Existing authorization, provenance,
 no-login access and backend behavior remain intact. DESIGN.md and surface briefs
 record the new authority; the earlier navy guidance is superseded.
+Published as `6d08a73`; Vercel and both Railway services report success. Live checks
+passed 26 Korean/English route and viewport combinations. Local checks passed 71
+frontend tests, lint, types, build and 21 browser tests. The first hosted browser
+run found one streamed-page test synchronization issue; the matrix now waits for
+the real sidebar response before leaving each page, with error assertions intact.
 See [the redesign verification record](docs/assurance/visual-redesign-20260910.md)
 for browser coverage, independent review, checks and publication state.
 

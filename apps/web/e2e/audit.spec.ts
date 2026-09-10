@@ -79,11 +79,22 @@ test("supporting workspaces and all source tabs retain readable geometry", async
   test.setTimeout(180_000);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
+  const openWorkspace = async (route: string) => {
+    // Streamed case headings can appear before the shell hydrates. Network idle
+    // alone can therefore precede its sidebar request on hosted WebKit. Wait for
+    // that real request before inspecting or unloading the current workspace.
+    const [sidebar] = await Promise.all([
+      page.waitForResponse(response => new URL(response.url()).pathname === "/api/portal/sidebar"),
+      page.goto(route),
+    ]);
+    expect(sidebar.ok(), `sidebar on ${route}`).toBe(true);
+    await sidebar.finished();
+    await page.waitForLoadState("networkidle");
+  };
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of ["/saved-views", "/requests", "/agents", "/cases", "/evaluations", "/control-tower", "/settings", "/help", "/trends", `/drug-letters/${threadId}`]) {
-      await page.goto(route);
-      await page.waitForLoadState("networkidle");
+      await openWorkspace(route);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
       if (width === 1440) {
         // Content must clear the fixed navigation, not merely avoid overflow.
@@ -105,9 +116,8 @@ test("supporting workspaces and all source tabs retain readable geometry", async
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
     }
     for (const view of ["overview", "plan", "execution", "impact", "review", "integrations", "evidence", "history"]) {
-      await page.goto(`/cases/${threadId}?view=${view}`);
+      await openWorkspace(`/cases/${threadId}?view=${view}`);
       await expect(page.getByRole("heading", { name: "Fictional cleaning-validation review", exact: true }).filter({ visible: true })).toBeVisible();
-      await page.waitForLoadState("networkidle");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `case ${view} at ${width}`).toBe(true);
     }
   }
