@@ -155,7 +155,7 @@ function OverviewPanel({ agentCase, plan }: { agentCase: AgentCase; plan?: CaseP
               ? "The approved plan can start only against its exact workflow and state binding."
               : "Create a typed plan before any specialist workflow can be considered ready."}</p>
           </div>
-          <Link href={`/cases/${agentCase.id}?view=plan`}>Inspect plan</Link>
+          <Link prefetch={false} href={`/cases/${agentCase.id}?view=plan`}>Inspect plan</Link>
         </div>
       </section>
     </div>
@@ -859,7 +859,7 @@ export function CaseWorkspace({
   const source = agentCase.sources[0];
   return (
     <div className={styles.workspacePage}>
-      <Link className={styles.backLink} href="/cases"><ArrowLeft size={15} aria-hidden="true" /> Case register</Link>
+      <Link prefetch={false} className={styles.backLink} href="/cases"><ArrowLeft size={15} aria-hidden="true" /> Case register</Link>
       <header className={styles.workspaceHeader}>
         <div className={styles.caseIdentity}>
           <span>CASE / {agentCase.id.slice(0, 8).toLocaleUpperCase()}</span>
@@ -876,6 +876,7 @@ export function CaseWorkspace({
         {WORKSPACE_VIEWS.map((view, index) => (
           <Link
             key={view.id}
+            prefetch={false}
             href={`/cases/${agentCase.id}?view=${view.id}`}
             aria-current={activeView === view.id ? "page" : undefined}
             data-active={activeView === view.id}

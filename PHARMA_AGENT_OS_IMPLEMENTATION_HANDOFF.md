@@ -28,6 +28,8 @@ passed 26 Korean/English route and viewport combinations. Local checks passed 71
 frontend tests, lint, types, build and 21 browser tests. The first hosted browser
 run found one streamed-page test synchronization issue; the matrix now waits for
 the real sidebar response before leaving each page, with error assertions intact.
+The next trace exposed case-tab prefetch cancellation in WebKit; these links now
+load on activation, with browser checks for both absent prefetch and working clicks.
 See [the redesign verification record](docs/assurance/visual-redesign-20260910.md)
 for browser coverage, independent review, checks and publication state.
 

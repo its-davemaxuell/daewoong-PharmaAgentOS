@@ -78,7 +78,12 @@ test("Home prepares a research objective without starting a job", async ({ page 
 test("supporting workspaces and all source tabs retain readable geometry", async ({ page }) => {
   test.setTimeout(180_000);
   const errors: string[] = [];
+  const casePrefetches: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
+  page.on("request", request => {
+    if (page.url().includes(`/cases/${threadId}`) && request.url().includes(`/cases/${threadId}`)
+      && request.headers()["next-router-prefetch"] === "1") casePrefetches.push(request.url());
+  });
   const openWorkspace = async (route: string) => {
     // Streamed case headings can appear before the shell hydrates. Network idle
     // alone can therefore precede its sidebar request on hosted WebKit. Wait for
@@ -120,7 +125,12 @@ test("supporting workspaces and all source tabs retain readable geometry", async
       await expect(page.getByRole("heading", { name: "Fictional cleaning-validation review", exact: true }).filter({ visible: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `case ${view} at ${width}`).toBe(true);
     }
+    const impactTab = page.getByRole("navigation", { name: "Case workspace sections" }).getByRole("link", { name: /Impact/ });
+    await impactTab.click();
+    await expect(impactTab).toHaveAttribute("aria-current", "page");
+    await expect(page).toHaveURL(/view=impact$/);
   }
+  expect(casePrefetches).toEqual([]);
   expect(errors).toEqual([]);
 });
 

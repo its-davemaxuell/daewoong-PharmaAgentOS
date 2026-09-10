@@ -58,6 +58,10 @@ now awaits and checks the actual sidebar response before inspecting or leaving e
 workspace. Error assertions remain intact; no failure is suppressed or retried.
 The corrected test passed locally in all three browser engines; lint and types
 passed again. The complete hosted suite runs against the correction commit.
+The next hosted trace confirmed sidebar readiness and exposed separate automatic
+case-tab prefetches being cancelled during navigation in WebKit. Case workspace
+links now load their destination on activation. The suite checks that case tabs
+do not prefetch adjacent views and still navigate successfully when clicked.
 
 These are frontend interaction checks, not a claim of comprehensive accessibility,
 real-device keyboard qualification, security certification or an award.
@@ -76,4 +80,5 @@ The visual implementation was published as `6d08a73b8cd0db25b0e26e8e2bbf76e75572
 Vercel and both Railway services reported success. The live check passed **26
 route/locale/viewport combinations** in Korean and English at desktop and mobile
 widths, with the expected new theme, no document overflow and no page errors.
-The hosted browser synchronization correction changes tests and documentation only.
+The first synchronization correction changed tests and documentation only; the
+subsequent case-tab correction also removes unnecessary background prefetches.
