@@ -1,10 +1,10 @@
 .indexPage,
 .workspacePage {
-  --case-orange: var(--os-primary, #3159c9);
-  --case-orange-soft: #eef2fd;
-  --case-ink: #192438;
-  --case-muted: #596779;
-  --case-rule: #dce2ec;
+  --case-orange: var(--os-primary, var(--os-primary));
+  --case-orange-soft: var(--os-primary-soft);
+  --case-ink: var(--os-ink);
+  --case-muted: var(--os-muted);
+  --case-rule: var(--os-rule);
   --case-paper: #ffffff;
   width: min(1480px, 100%);
   margin: 0 auto;
@@ -19,7 +19,7 @@
 .eyebrow,
 .sectionIndex {
   margin: 0 0 10px;
-  color: #4f6486;
+  color: var(--os-muted);
   font-size: 0.875rem;
   font-weight: 650;
   letter-spacing: 0.02em;
@@ -32,7 +32,7 @@
   align-items: end;
   gap: 44px;
   padding: 10px 0 30px;
-  border-bottom: 1px solid #c8d2e0;
+  border-bottom: 1px solid var(--os-rule);
 }
 
 .indexHeader > div:first-child {
@@ -52,7 +52,7 @@
 .lede {
   max-width: 720px;
   margin: 18px 0 0;
-  color: #5e5955;
+  color: var(--os-muted);
   font-size: 1.25rem;
   line-height: 1.6;
 }
@@ -142,7 +142,7 @@
 .decisionRecord > span {
   display: block;
   margin-bottom: 6px;
-  color: #8a8580;
+  color: var(--os-muted);
   font-size: 0.8125rem;
   font-weight: 740;
   letter-spacing: 0.13em;
@@ -167,7 +167,7 @@
 .registerHeading svg,
 .sectionHeading svg,
 .historyIntro > svg {
-  color: #9b591d;
+  color: var(--os-primary);
 }
 
 .filters {
@@ -181,7 +181,7 @@
 .filters a {
   flex: 0 0 auto;
   padding: 8px 10px;
-  color: #6f6a66;
+  color: var(--os-muted);
   border-bottom: 2px solid transparent;
   font-size: 0.8125rem;
   font-weight: 650;
@@ -214,17 +214,15 @@
   align-items: center;
   gap: 16px;
   padding: 23px 8px 23px 0;
-  transition: background-color 150ms ease, padding 150ms ease;
+  transition: background-color 150ms ease;
 }
 
 .caseRow:hover {
-  padding-right: 12px;
-  padding-left: 8px;
-  background: #fff;
+  background: var(--os-inset);
 }
 
 .caseRow > svg {
-  color: #aaa39c;
+  color: var(--os-muted);
   transition: color 150ms ease, transform 150ms ease;
 }
 
@@ -464,7 +462,7 @@
 
 .field > small {
   margin-top: 6px;
-  color: #89837e;
+  color: var(--os-muted);
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -582,7 +580,7 @@
 
 .readOnlyIntake {
   padding: 25px;
-  border-top: 4px solid #aaa39c;
+  border-top: 4px solid var(--os-muted);
   background: #fff;
   box-shadow: 0 15px 45px rgba(34, 29, 25, 0.05);
 }
@@ -595,7 +593,7 @@
 .readOnlyIntake > span {
   display: block;
   margin-bottom: 7px;
-  color: #8a8580;
+  color: var(--os-muted);
   font-size: 0.8125rem;
   font-weight: 740;
   letter-spacing: 0.13em;
@@ -663,7 +661,7 @@
 
 .accessState > small {
   margin-top: 12px;
-  color: #89837e;
+  color: var(--os-muted);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.8125rem;
 }
@@ -696,13 +694,13 @@
   align-items: end;
   gap: 40px;
   padding-bottom: 28px;
-  border-bottom: 1px solid #c8d2e0;
+  border-bottom: 1px solid var(--os-rule);
 }
 
 .caseIdentity > span {
   display: block;
   margin-bottom: 13px;
-  color: #4f6486;
+  color: var(--os-muted);
   font-size: 0.875rem;
   font-weight: 650;
   letter-spacing: 0.15em;
@@ -737,7 +735,7 @@
 }
 
 .caseState > small {
-  color: #89837e;
+  color: var(--os-muted);
   font-size: 0.8125rem;
 }
 
@@ -754,7 +752,7 @@
   grid-template-rows: auto auto;
   column-gap: 8px;
   padding: 17px 14px 15px;
-  color: #77716c;
+  color: var(--os-muted);
   border-bottom: 3px solid transparent;
 }
 
@@ -789,7 +787,7 @@
 }
 
 .workspaceTabs small {
-  color: #99938d;
+  color: var(--os-muted);
   font-size: 0.8125rem;
 }
 
@@ -1299,7 +1297,7 @@
 
 .decisionRecord {
   padding: 19px 20px;
-  border-left: 3px solid #53655c;
+  border-left: 1px solid #53655c;
   background: #fff;
 }
 
@@ -1320,7 +1318,7 @@
 .decisionRecord blockquote {
   margin: 14px 0 0;
   padding: 12px 0 0;
-  color: #5e5955;
+  color: var(--os-muted);
   border-top: 1px solid var(--case-rule);
   font-size: 0.8125rem;
   line-height: 1.55;
@@ -1395,7 +1393,7 @@
   gap: 12px;
   padding: 18px;
   color: #7b342e;
-  border-left: 3px solid #a34238;
+  border-left: 1px solid #a34238;
   background: #fff5f3;
 }
 
@@ -1421,7 +1419,7 @@
   gap: 11px;
   padding: 17px 18px;
   color: #5f5a55;
-  border-left: 3px solid #aaa39c;
+  border-left: 1px solid var(--os-muted);
   background: #fff;
 }
 
@@ -1520,7 +1518,7 @@
   align-items: end;
   gap: 12px;
   padding: 20px;
-  border-left: 3px solid var(--case-orange);
+  border-left: 1px solid var(--case-orange);
   background: #fff;
 }
 
@@ -1577,10 +1575,10 @@
   font-size: 0.8125rem;
 }
 
-.runSteps li[data-status="running"] { border-left: 3px solid #567564; padding-left: 10px; }
-.runSteps li[data-status="waiting_for_approval"] { border-left: 3px solid #be792b; padding-left: 10px; }
+.runSteps li[data-status="running"] { border-left: 1px solid #567564; padding-left: 10px; }
+.runSteps li[data-status="waiting_for_approval"] { border-left: 1px solid #be792b; padding-left: 10px; }
 .runSteps li[data-status="blocked"],
-.runSteps li[data-status="failed"] { border-left: 3px solid #a74438; padding-left: 10px; }
+.runSteps li[data-status="failed"] { border-left: 1px solid #a74438; padding-left: 10px; }
 
 .runBudget {
   display: grid;
@@ -1633,7 +1631,7 @@
   align-items: end;
   gap: 16px;
   padding: 20px;
-  border-left: 3px solid #567564;
+  border-left: 1px solid #567564;
   background: #fff;
   box-shadow: 0 12px 34px rgba(34, 29, 25, 0.05);
 }
@@ -2198,3 +2196,37 @@
     transition: none;
   }
 }
+
+/* Layered desk: feature geometry and surface hierarchy. */
+.indexPage, .workspacePage { --case-orange: var(--os-primary); --case-orange-soft: var(--os-primary-soft); --case-ink: var(--os-ink); --case-muted: var(--os-muted); --case-rule: var(--os-rule); --case-paper: var(--os-surface); }
+.indexHeader { padding: 0 0 24px; border: 0; gap: 24px; }
+.indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: 2rem; letter-spacing: -.035em; }
+.lede { font-size: 1rem; margin-top: 12px; color: var(--os-muted); }
+.indexGrid { gap: 20px; padding-top: 0; }
+.caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .planPreview, .accessState { border: 1px solid var(--os-rule); padding: 24px; border-radius: 16px; background: white; box-shadow: var(--os-shadow-panel); min-width: 0; }
+.registerHeading h2, .sectionHeading h2, .objectiveSheet h2, .scopeSheet h2, .planHeader h2, .noPlan h2, .evidenceIntro h2, .historyIntro h2 { font-size: 1.375rem; line-height: 1.4; }
+.eyebrow, .sectionIndex, .registerHeading > div > span, .formHeading > span, .roleNote > span, .decisionHeading > span, .ledgerHeading span, .decisionRecord > span { letter-spacing: .02em; text-transform: none; font-weight: 600; }
+.caseList { border-top-color: var(--os-rule); }
+.caseRow { padding-block: 18px; }
+.filters { background: var(--os-inset); border-radius: 10px; padding: 4px; margin-block: 18px; }
+.filters a { border: 0; border-radius: 7px; min-height: 36px; }
+.filters a[data-active="true"] { color: var(--os-primary-deep); background: white; box-shadow: var(--os-shadow-control); }
+.workspaceHeader { background: white; border: 1px solid var(--os-rule); border-radius: 16px; box-shadow: var(--os-shadow-panel); padding: 24px; }
+.workspaceTabs { background: var(--os-inset); padding: 5px; border: 1px solid var(--os-rule); border-radius: 12px; margin-block: 20px; }
+.workspaceTabs a { border: 0; border-radius: 8px; }
+.workspaceTabs a[aria-current="page"], .workspaceTabs a[data-active="true"] { background: white; color: var(--os-primary-deep); box-shadow: var(--os-shadow-control); }
+.workspaceGrid { gap: 20px; }
+.indexPage :is(input, select, textarea), .workspacePage :is(input, select, textarea) { border-radius: var(--control-radius); border-color: var(--control-border); background: var(--os-surface); }
+.indexPage button, .workspacePage button { border-radius: var(--control-radius); }
+@media (max-width: 700px) { .caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .workspaceHeader, .planPreview, .accessState { padding: 18px; } .indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: 1.75rem; } }
+
+.workspacePanel { gap: 20px; }
+.workspacePanel > .objectiveSheet, .workspacePanel > .scopeSheet { padding: 0 0 20px; border: 0; border-bottom: 1px solid var(--os-rule); border-radius: 0; box-shadow: none; background: transparent; }
+.objectiveCopy { font-size: 1.1875rem; line-height: 1.7; margin-block: 12px 18px; }
+.ledgerHeading svg, .ledgerBoundary svg { color: var(--os-primary); }
+.hashField > span, .definitionGrid dt, .ledgerMeta dt { color: var(--os-muted); text-transform: none; letter-spacing: .02em; font-weight: 500; }
+@media (max-width: 1050px) { .intakeRail { grid-row: auto; order: 0; } }
+
+.workspaceTabs a, .workspaceTabs small, .caseState > small { color: var(--os-muted); }
+.workspaceTabs a > span { color: var(--os-muted); }
+.sourceSummaryList > li > span { color: var(--os-primary-deep); background: var(--os-primary-soft); border-radius: 6px; }

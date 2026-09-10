@@ -325,17 +325,24 @@ function SectionIndex({
   sourceUrl: string;
 }) {
   const { text } = useI18n();
+  const title = translated ? text("Korean section index", "한국어 번역 색인") : text("Official source index", "공식 원문 색인");
+  const links = <>
+    {sections.length ? sections.map((section, index) => (
+      <a href={`#${section.anchor}`} key={section.anchor} lang={translated ? "ko" : "en"}>
+        <span>{String(index + 1).padStart(2, "0")}</span>{section.heading}
+      </a>
+    )) : <p>{text("No normalized section index is available.", "정규화된 원문 색인이 없습니다.")}</p>}
+    <SourceLink href={sourceUrl} target="_blank" rel="noopener noreferrer">
+      <ExternalLink size={13} /> {text("Canonical FDA page", "FDA 정식 페이지")}
+    </SourceLink>
+  </>;
   return (
     <aside className="original-index">
-      <p className="micro-label">{translated ? text("Korean section index", "한국어 번역 색인") : text("Official source index", "공식 원문 색인")}</p>
-      {sections.length ? sections.map((section, index) => (
-        <a href={`#${section.anchor}`} key={section.anchor} lang={translated ? "ko" : "en"}>
-          <span>{String(index + 1).padStart(2, "0")}</span>{section.heading}
-        </a>
-      )) : <p>{text("No normalized section index is available.", "정규화된 원문 색인이 없습니다.")}</p>}
-      <SourceLink href={sourceUrl} target="_blank" rel="noopener noreferrer">
-        <ExternalLink size={13} /> {text("Canonical FDA page", "FDA 정식 페이지")}
-      </SourceLink>
+      <div className="original-index__desktop"><p className="micro-label">{title}</p>{links}</div>
+      <details className="original-index__mobile">
+        <summary>{title}<span>{text(`${sections.length} sections`, `${sections.length}개 섹션`)}</span></summary>
+        {links}
+      </details>
     </aside>
   );
 }

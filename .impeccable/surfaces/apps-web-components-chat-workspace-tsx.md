@@ -15,8 +15,8 @@ Save, find, pin, rename, archive, restore and export conversations. Branch from
 an answer or edit a question without overwriting the earlier transcript.
 
 ## Direction
-Extend the established navy/cobalt identity with a bounded conversation column,
-persistent composer and a separate evidence reader. The reading pane is the
+Use the approved bright white/indigo desk from DESIGN.md: a floating conversation
+compartment, raised persistent composer, inset source passage, and a separate reader. The reading pane is the
 central interaction: open a numbered citation without losing the conversation.
 The narrow-screen reader temporarily occupies the workspace and restores focus
 when closed. Model options remain secondary to the question and source selection.
@@ -28,5 +28,7 @@ source-only fallback, streamed drafts, stopped requests and saved answers honest
 Feedback is a product signal, not a formal regulatory approval. No scope changes
 to the research agent, internal controlled records, or specialist execution.
 
-## Outstanding
-Hosted migration and deployment verification follow local implementation tests.
+## Verification boundary
+Browser fixtures cover restored trust labels, evidence focus return, locale,
+mobile navigation and route geometry. Provider-side agent behavior is separate
+from this frontend design; retain all existing authorization and provenance checks.

@@ -71,7 +71,7 @@
   min-height: 520px;
 }
 .roster {
-  background: #f9fbff;
+  background: var(--os-inset);
   padding: 18px;
   border-right: 1px solid var(--os-rule);
 }
@@ -92,11 +92,11 @@
   cursor: pointer;
 }
 .roster button:hover {
-  background: #edf2fa;
+  background: var(--os-inset);
 }
 .roster button[aria-pressed="true"] {
   border-color: #c4d0f3;
-  background: #eef2fd;
+  background: var(--os-primary-soft);
 }
 .roster button > span:nth-child(2) {
   flex: 1;
@@ -235,3 +235,15 @@
     flex-direction: column;
   }
 }
+
+/* Layered desk: feature geometry and surface hierarchy. */
+.page { max-width: 1280px; }
+.page h1 { font-size: 2rem; }
+.page header p { font-size: .9375rem; line-height: 1.7; }
+.toolbar { margin-block: 24px 16px; }
+.toolbar label { border-color: var(--control-border); box-shadow: var(--os-shadow-control); }
+.workspace { border-radius: 16px; box-shadow: var(--os-shadow-panel); grid-template-columns: minmax(250px, .75fr) minmax(0, 1.5fr); }
+.roster { padding: 12px; }
+.roster button { padding: 14px 12px; margin-bottom: 4px; }
+.roster button[aria-pressed="true"] { background: white; border-color: #d5d1f3; box-shadow: var(--os-shadow-control); }
+@media (max-width: 760px) { .workspace { grid-template-columns: 1fr; } .roster { border-right: 0; border-bottom: 1px solid var(--os-rule); } }

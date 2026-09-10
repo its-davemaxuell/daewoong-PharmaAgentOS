@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
 import { trustedFdaUrl } from "@/lib/evidence-state";
 import { SessionNotice } from "@/components/session-notice";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -92,6 +93,16 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   const { text, locale } = useI18n();
   const router = useRouter();
   const [objective, setObjective] = useState("");
+  useEffect(() => {
+    if (runId) return;
+    const timer = setTimeout(() => {
+      try {
+        const draft = sessionStorage.getItem(RESEARCH_DRAFT_KEY);
+        if (draft) { setObjective(draft.slice(0, 1000)); sessionStorage.removeItem(RESEARCH_DRAFT_KEY); }
+      } catch { /* The research form remains usable when browser storage is unavailable. */ }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [runId]);
   const [run, setRun] = useState<ResearchRun>();
   const [saved, setSaved] = useState<ResearchSummary[]>([]);
   const [savedFailed, setSavedFailed] = useState(false);

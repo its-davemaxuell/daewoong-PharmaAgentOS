@@ -42,6 +42,11 @@ prepared objective is a draft, not an executed or server-saved case.
 PharmaAgent OS is the product name. Retain the existing Daewoong identity asset
 as organizational attribution. This preservation is inferred from the repository.
 
+The user approved composition A on 10 September 2026: a bright, compact,
+modern workspace with white compartments, subtle three-dimensional depth,
+indigo controls, and useful content in the first viewport. This replaces the
+previous navy navigation. Visual craft is a primary product requirement.
+
 ## Evidence on Hand
 
 PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md is the source plan;

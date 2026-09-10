@@ -10,6 +10,22 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-10 approved visual redesign A:** Replaced the navy navigation with a
+bright white/indigo workspace, floating navigation and utility bar, layered
+objective trays, raised controls and consistent reading/review compartments.
+Home now contains an editable research objective, bounded live source preview,
+compact workflow, quick questions and actual saved work. Preparing an objective
+hands it to Research without starting a server job. Early typing is protected
+until hydration completes. All shared page headings, source tabs, chat/evidence,
+research, personal drafts, specialists, case tabs, governance, trends, settings,
+help and service states inherit the new visual system. Mobile source metadata
+uses two columns and its index is a native disclosure. Case register content
+precedes restricted intake on mobile. Existing authorization, provenance,
+no-login access and backend behavior remain intact. DESIGN.md and surface briefs
+record the new authority; the earlier navy guidance is superseded.
+See [the redesign verification record](docs/assurance/visual-redesign-20260910.md)
+for browser coverage, independent review, checks and publication state.
+
 **2026-09-10 UI audit implementation (deployed and live-browser verified):** Applied the supplied
 UI/UX audit to the newer checkout. Live/restored evidence metadata remains unknown
 when absent; source scope/URL/hash/version fallbacks no longer invent provenance,

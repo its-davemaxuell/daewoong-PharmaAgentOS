@@ -3,7 +3,7 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: #f8f8f8;
+  background: var(--os-canvas, #eef0f6);
 }
 
 .contained {
@@ -17,7 +17,7 @@
   height: 36px;
   display: block;
   border: 2px solid #e4e4e4;
-  border-top-color: #f18a00;
+  border-top-color: var(--os-primary, #5856d6);
   border-radius: 50%;
   animation: loader-spin 780ms linear infinite;
 }
@@ -26,7 +26,7 @@
   position: absolute;
   inset: 7px;
   border: 1px solid transparent;
-  border-bottom-color: #53575a;
+  border-bottom-color: var(--os-muted, #626779);
   border-radius: inherit;
   content: "";
   animation: loader-spin 620ms linear infinite reverse;
@@ -47,6 +47,6 @@
 @media (prefers-reduced-motion: reduce) {
   .spinner,
   .spinner::after {
-    animation-duration: 1.8s;
+    animation: none;
   }
 }

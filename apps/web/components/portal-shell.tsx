@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Archive,
-  GitBranch,
   Network,
   Bell,
   Bookmark,
@@ -322,8 +321,8 @@ export function PortalShell({
           aria-label={text("PharmaAgent OS workspace", "PharmaAgent OS 워크스페이스")}
           onClick={() => closeMenu()}
         >
-          <span className="os-brand-mark"><GitBranch size={22} aria-hidden="true" /></span>
-          <span className="os-brand-name">PharmaAgent<span>OS</span></span>
+          <span className="os-brand-mark" aria-hidden="true">P</span>
+          <span className="os-brand-lockup"><span className="os-brand-name">PharmaAgent<span>OS</span></span><small>{text("Evidence workspace", "근거 중심 리서치 워크스페이스")}</small></span>
         </Link>
 
         <div className="portal-header__product" aria-label={text("Current service", "현재 서비스")}>
@@ -383,8 +382,8 @@ export function PortalShell({
               aria-label={text("PharmaAgent OS workspace", "PharmaAgent OS 워크스페이스")}
               onClick={() => closeMenu()}
             >
-              <span className="os-brand-mark"><GitBranch size={22} aria-hidden="true" /></span>
-          <span className="os-brand-name">PharmaAgent<span>OS</span></span>
+              <span className="os-brand-mark" aria-hidden="true">P</span>
+              <span className="os-brand-lockup"><span className="os-brand-name">PharmaAgent<span>OS</span></span><small>{text("Evidence workspace", "근거 중심 리서치 워크스페이스")}</small></span>
             </Link>
             <button
               ref={sidebarCollapseButtonRef}

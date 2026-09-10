@@ -8,7 +8,7 @@ import type { ResearchSummary } from "@/lib/research-types";
 import { readRequests, REQUESTS_KEY, type ReviewRequest } from "@/lib/review-requests";
 
 const researchStates: Record<string, [string, string]> = { queued: ["Queued", "대기 중"], running: ["Running", "진행 중"], completed: ["Brief ready", "브리핑 완료"], stopped: ["Stopped", "중지됨"], failed: ["Failed", "실패"], limit_reached: ["Limit reached", "한도 도달"], insufficient_evidence: ["Insufficient evidence", "근거 부족"] };
-export function ContinueWork() {
+export function ContinueWork({ compact = false }: { compact?: boolean }) {
   const { threads, historyLoadState } = useChatHistory();
   const { text, locale } = useI18n();
   const [research, setResearch] = useState<ResearchSummary[]>([]);
@@ -27,7 +27,7 @@ export function ContinueWork() {
   }, []);
   const chats = historyLoadState === "ready" ? threads.filter(item => !item.archivedAt).slice(0, 2) : [];
   if (!chats.length && !research.length && !drafts.length) return null;
-  return <section className="continue-work" aria-labelledby="continue-heading"><h2 id="continue-heading">{text("Continue working", "이어서 작업하기")}</h2><ul>
+  return <section className="continue-work" aria-labelledby="continue-heading"><h2 id="continue-heading" className={compact ? "sr-only" : undefined}>{text("Continue working", "이어서 작업하기")}</h2><ul>
     {research.map(item => <li key={item.id}><Link href={`/research?run=${encodeURIComponent(item.id)}`}><strong>{item.objective}</strong><span>{text("Research task", "리서치 작업")} · {text(...researchStates[item.status])} · {formatDate(item.updated_at, undefined, locale)}</span></Link></li>)}
     {chats.map(item => <li key={item.id}><Link href={`/chat/${encodeURIComponent(item.id)}`}><strong>{item.title}</strong><span>{text("Conversation", "대화")} · {text("Saved", "저장됨")} · {formatDate(item.updatedAt, undefined, locale)}</span></Link></li>)}
     {drafts.map(item => <li key={item.id}><Link href="/requests#saved-requests"><strong>{item.objective}</strong><span>{text("Personal draft · Not submitted", "개인 초안 · 미제출")} · {formatDate(item.updatedAt, undefined, locale)}</span></Link></li>)}

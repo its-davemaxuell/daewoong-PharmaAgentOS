@@ -1,17 +1,32 @@
 ---
-name: PharmaAgent OS — Review workbench
+name: PharmaAgent OS — Layered desk
+description: A bright, precise research workspace with dimensional white compartments.
 colors:
-  primary: "#3159c9"
-  ink: "#192438"
-  muted: "#596779"
+  primary: "#5856d6"
+  primary-deep: "#4442b8"
+  primary-soft: "#eeedff"
+  ink: "#202332"
+  muted: "#626779"
   surface: "#ffffff"
-  canvas: "#f3f5f9"
-  navigation: "#172235"
-  rule: "#dce2ec"
+  canvas: "#eef0f6"
+  inset: "#f5f6fa"
+  rule: "#e1e4ee"
+  control-border: "#858b9d"
   brand: "#f18a00"
+typography:
+  body:
+    fontFamily: "Pretendard, system-ui, sans-serif"
+    fontSize: "1rem"
+    lineHeight: 1.6
+  display:
+    fontFamily: "Pretendard, system-ui, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: "-0.035em"
 rounded:
   control: "8px"
-  panel: "14px"
+  panel: "16px"
 spacing:
   small: "8px"
   medium: "16px"
@@ -20,115 +35,74 @@ spacing:
 
 ## Overview
 
-An employee-facing review assistant. The main path is giving the FDA Research Agent
-a goal, following its saved actions and reviewing a cited brief. Quick AI chat
-remains available for short questions. Editable examples help beginners
-start without model configuration. Keep the navy/light/cobalt
-identity and the enlarged, readable type scale.
+The user approved composition A: bright, minimal, neat, content-rich, and modern,
+with dimensional compartments. This replaces the former navy/cobalt workbench.
+PharmaAgent OS serves Korean and English-speaking employees working with retained
+FDA warning letters. Visual quality must extend to every route and state.
 
 ## Colors
 
-Restrained color: light work surfaces for long document review under office
-lighting; navy navigation separates persistent wayfinding from task content.
-Cobalt indicates selected steps and primary actions. Orange retains Daewoong
-attribution. Semantic amber means a dependency is unavailable, never active work.
+White navigation and work surfaces sit above a cool neutral canvas. Indigo marks
+primary actions and selected tabs, with pale lavender selection fields. Charcoal
+text supplies hierarchy; semantic green, amber and red retain their state meanings.
+Daewoong's orange is reserved for the existing organizational attribution asset.
 
 ## Typography
 
-Use the existing locally hosted Pretendard variable font for Korean and English.
-Primary body text 17–19px, supporting text 14–15px, small metadata at least 13px,
-and workspace page titles 33–40px. Use rem sizes to respect browser font settings.
-No global CSS zoom. Main controls are 44–50px tall; workflow rows start at 60px.
-Use monospace only for hashes, identifiers, and machine-readable values.
+Use local Pretendard with complete Korean coverage. UI body 16px, table/control
+text 14–15px, metadata 12?13px, panel headings 18–20px, page headings 28–32px. Use rems.
+Comfortable source reading is 16–17px with 1.75 line height. No global zoom.
+Compact does not mean tiny: data density comes from alignment and reduced chrome.
 
 ## Layout
 
-A 280px navigation rail, 76px contextual header, and a bounded content canvas.
-The home has one primary research entry, three quick-chat example rows and a short
-visual sequence: You set the goal → Research agent finds and checks → You review
-the brief. Use the shared journey on Home and Help, and its compact variant above
-the research goal field. Personal review drafts remain at
-`/requests`; legacy saved-request bookmarks redirect there. Navigation has three
-sections: FDA Warning Letter Chatbot (chat, letter library, saved sources, trends,
-source review and chat history), FDA AI Agent (research, drafts, specialist agents,
-team records, approvals and evaluations), and Settings (preferences, the guide,
-service operations and authorized administration). The current section opens
-automatically, including on deep links. Each section can be expanded with a
-keyboard or touch, and the navigation scrolls on short screens. The header names
-the section and current feature. Home is accessible through the product logo
-instead of a separate menu item. Preferences at `/settings` provide the shared
-language control and service guidance; the header keeps a language shortcut.
+At desktop a floating white 244px navigation compartment sits within a 256px rail.
+A 60px utility bar has a 12px top inset. Main content begins at 96px with 20px
+gutters. Maintain the three established navigation groups and their disclosure
+behavior. Brand opens Home; existing routes and capability guards remain.
+Home uses A's asymmetric desk: a layered objective tray and source collection on
+the left, workflow, quick questions and work shortcuts on the right. Task content
+occupies the first viewport; no decorative metrics or oversized empty hero.
+Chat and source reading use aligned working and evidence compartments. Tables,
+forms, review requests and operational tools share the same frame and controls.
+At 980px navigation becomes a keyboard-accessible drawer. At narrow widths panels
+stack, actions wrap, reading stays single-pane and controls remain reachable.
 
 ## Elevation & Depth
 
-Panels use a single subtle border. Reserve shadows for floating navigation and
-overlays; no glowing edges or decorative grids.
+Depth identifies working surfaces. Define three shared elevations: compact
+controls, workspace panels, floating overlays. Shadows have a small contact edge
+and a broad, low-opacity downward falloff. Primary objective trays expose offset
+backing sheets beneath a white front surface and an inset top highlight. The approved dimensional compartments
+justify panel framing; avoid piling shadows on every nested row or text block.
+Inset fields and segmented controls sit below raised buttons. No decorative glass,
+glowing text, rotating objects, or depth that interferes with reading.
 
 ## Shapes
 
-Eight-pixel controls and fourteen-pixel panels. Small status badges may be pills.
-Workflow connectors indicate actual step ordering, not animated execution.
+Panels have 16px corners, controls 8px, inset trays 10px. Use crisp one-pixel
+boundaries on fields, clear focus outlines and modest 44px interaction targets.
+The P monogram is a small indigo raised tile. No new organization identity asset.
 
 ## Components
 
-Research starts with a labeled goal and editable examples. Actual persisted events
-drive the stage indicator and activity feed; show no simulated progress or hidden
-reasoning. Source rows disclose the exact retained passages. Stop revokes ongoing
-work, Resume continues saved progress, and a prominent View brief action leads to
-the checked draft and copy/download controls. State clearly that tasks are saved
-on the service and accessed through the same browser session. Completed briefs
-remain drafts for human review. Keep the two-column activity/evidence view readable
-as a single column on narrow screens.
-
-Prefer short verb labels and labeled icons to repeated instructional paragraphs.
-Show the latest four recorded actions first, with an explicit full-history toggle.
-Plans, scope/storage details and review notes expand on demand with native keyboard
-controls. Keep source scope and human-review status visible. Never shorten the
-generated findings, source excerpts or exported brief to reduce interface copy.
-
-Chat has a labeled question field and a text send button. Model and retrieval
-controls expand on demand, with automatic defaults. Example IDs prefill questions
-without automatically sending them. Saved-source scope remains visible.
-The chatbot workspace keeps a bounded conversation column with a fixed composer.
-Numbered citations open a separate evidence reader beside the conversation on wide
-screens; on narrower screens the reader occupies the workspace until closed.
-The conversation library supports search, pins and archived items. A compact
-conversation menu contains rename and export. Edit and branch actions preserve
-the original conversation; feedback is separate from regulatory approval.
-The composer can select retained FDA letters and recover unsent text in the same
-browser tab. Supporting status and configuration remain secondary to the answer.
-Draft inputs use native radio controls, visible labels and an optional FDA link.
-An example fills only an empty question. Multiple local requests can be saved,
-reopened, updated, deleted with confirmation and downloaded as readable text;
-JSON is secondary. Previous single drafts migrate without losing their question.
-Every receipt identifies the request as unsubmitted and not analyzed. A compact
-availability notice and a getting-started guide explain the current limits.
-Missing data has plain-language recovery actions instead of technical errors.
-Keyboard focus is visible. Reduced motion removes optional transitions.
+Page headings are visible, compact and aligned with contextual controls. Surface
+headers and footers use fine separators. Table rows have consistent columns and
+subtle hover fills. Tabs sit in a recessed strip with a raised selected tab.
+Empty/restricted/error states use the same panel language and real next actions.
+One restrained entrance on the primary workspace establishes depth; content is
+visible by default. Respect reduced motion and forced colors.
+Home objective preparation carries the text to Research without starting a job.
+Source previews use real bounded API results, with explicit loading/unavailable
+states. Continue working uses actual saved work. Native inputs remain labelled.
+Evidence source checks, unknown metadata and human review remain separate states.
 
 ## Do's and Don'ts
 
-Preserve existing research, case, review, and governance capabilities and guards.
-No account controls. No invented run counts or fabricated successful agent work.
-Keep the review objective, evidence provenance, and next action visible.
-
-## September 2026 audit refinements
-
-Home offers continuation only for actual saved conversations, research tasks and
-personal drafts. Navigation retains the three requested sections and preserves
-manual disclosure choices during route changes. The source explorer loads one
-server-filtered page and aggregate facets; it keeps the last result during a
-refresh, announces the concise result state and restores committed filters with
-browser Back/Forward. Static source metadata is readable without Tab stops.
-
-Unknown evidence coverage is “Not assessed”. Source-link checks and machine
-checks never mean human approval. Incomplete source metadata stays explicit;
-missing original links are unavailable, and displayed artifacts must match the
-source version and hash. Approvals uses decision-oriented Korean/English copy,
-with exact identifiers under a disclosure. Common control geometry and focus
-boundaries are defined by shared tokens. Chat owns its workspace CSS.
-
-A visible 30-day browser-access notice appears on the relevant saved-work surfaces.
-The policy is non-renewing and does not provide cross-device recovery; exports
-remain the portable path. Font coverage remains complete while its large first
-transfer is recorded for a separate measured optimization.
+Preserve provenance, source scope, saved-work ownership, exports, stop/resume,
+streaming, keyboard focus and authorization. Keep bilingual UI and original FDA
+passages in their source language. All generated comps are layout references:
+never implement their fictional accounts, uploads, broader source claims, records,
+or metrics. Existing functionality is the product truth.
+References: [Linear's workspace alignment and density](https://linear.app/now/how-we-redesigned-the-linear-ui); [Craft's document hierarchy](https://www.craft.do/).
+The user's approved composition A is the visual authority for this redesign.

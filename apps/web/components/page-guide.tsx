@@ -16,9 +16,8 @@ type PageGuideProps = {
 /**
  * A compact, native disclosure for page-level guidance.
  *
- * The visible marketing-style title block stays out of the working surface,
- * while the screen-reader heading preserves a useful document outline and
- * route announcement fallback.
+ * A visible route heading establishes context; supporting guidance remains
+ * available in a native disclosure without competing with the working content.
  */
 export function PageGuide({
   title,
@@ -33,7 +32,7 @@ export function PageGuide({
 
   return (
     <div className={classes}>
-      {includePageHeading ? <h1 className="sr-only">{text(title.en, title.ko)}</h1> : null}
+      {includePageHeading ? <h1 className="page-guide__title">{text(title.en, title.ko)}</h1> : null}
       {actions ? <div className="page-guide__actions">{actions}</div> : null}
       <details className="page-guide__disclosure">
         <summary

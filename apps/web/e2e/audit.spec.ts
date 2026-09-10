@@ -33,7 +33,8 @@ test("bounded library, one-option filter, history, stale search and failure reco
 
 test("unknown evidence, unavailable provenance and reader focus restoration", async ({ page }) => {
   await page.goto(`/chat/${threadId}`);
-  await expect(page.getByText(/Evidence coverage: Not assessed/)).toBeVisible();
+  // Next may briefly retain an outgoing streamed tree hidden in the DOM.
+  await expect(page.getByText(/Evidence coverage: Not assessed/).filter({ visible: true })).toBeVisible();
   const trigger = page.getByRole("button", { name: "Sources (1)", exact: true });
   await trigger.click();
   await expect(page.getByRole("heading", { name: "Read the source" })).toBeFocused();
@@ -58,6 +59,59 @@ test("approval locale, empty, restricted and malformed response states", async (
   await expect(page.getByRole("heading", { name: "검토 담당자의 권한이 필요한 단계입니다" })).toBeVisible();
   await page.goto("/approvals?status=APPROVED");
   await expect(page.getByText(/서비스가 불완전한 검토 데이터를 반환했습니다/).filter({ visible: true })).toBeVisible();
+});
+
+test("Home prepares a research objective without starting a job", async ({ page }) => {
+  const created: string[] = [];
+  page.on("request", request => { if (request.method() === "POST" && request.url().endsWith("/api/research")) created.push(request.url()); });
+  await page.goto("/dashboard");
+  await expect(page.getByRole("button", { name: "Prepare research", exact: true })).toBeDisabled();
+  const objective = "Compare cleaning-validation findings and prepare questions for our quality team.";
+  await page.getByLabel("Your research question", { exact: true }).fill(objective);
+  await page.getByRole("button", { name: "Prepare research", exact: true }).click();
+  await expect(page).toHaveURL(/\/research$/);
+  await expect(page.locator("#research-goal")).toHaveValue(objective);
+  await expect(page.getByRole("button", { name: "Start research", exact: true })).toBeEnabled();
+  expect(created).toEqual([]);
+});
+
+test("supporting workspaces and all source tabs retain readable geometry", async ({ page }) => {
+  test.setTimeout(180_000);
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of ["/saved-views", "/requests", "/agents", "/cases", "/evaluations", "/control-tower", "/settings", "/help", "/trends", `/drug-letters/${threadId}`]) {
+      await page.goto(route);
+      await page.waitForLoadState("networkidle");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
+      if (width === 1440) {
+        // Content must clear the fixed navigation, not merely avoid overflow.
+        expect(await page.locator("main").evaluate(element => element.getBoundingClientRect().left)).toBeGreaterThanOrEqual(256);
+      }
+    }
+    const tabs = page.getByRole("tab");
+    await expect(tabs).toHaveCount(3);
+    if (width === 390) {
+      const sourceIndex = page.locator(".original-index__mobile");
+      await expect(sourceIndex).not.toHaveAttribute("open");
+      await sourceIndex.locator("summary").click();
+      await expect(sourceIndex.getByRole("link", { name: /Official FDA source/ })).toBeVisible();
+      await sourceIndex.locator("summary").click();
+    }
+    for (let index = 0; index < 3; index++) {
+      await tabs.nth(index).click();
+      await expect(tabs.nth(index)).toHaveAttribute("aria-selected", "true");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    }
+    for (const view of ["overview", "plan", "execution", "impact", "review", "integrations", "evidence", "history"]) {
+      await page.goto(`/cases/${threadId}?view=${view}`);
+      await expect(page.getByRole("heading", { name: "Fictional cleaning-validation review", exact: true }).filter({ visible: true })).toBeVisible();
+      await page.waitForLoadState("networkidle");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `case ${view} at ${width}`).toBe(true);
+    }
+  }
+  expect(errors).toEqual([]);
 });
 
 test("navigation disclosure, mobile keyboard return and enlarged text remain usable", async ({ page }) => {

@@ -172,7 +172,7 @@
   cursor: pointer;
 }
 .tasks label:hover {
-  background: #f7f9fd;
+  background: var(--os-inset);
 }
 .tasks label.selectedTask {
   border-color: #6688df;
@@ -570,7 +570,7 @@
 .iconButton {
   border: 0;
   border-radius: 8px;
-  color: #596779;
+  color: var(--os-muted);
   background: transparent;
   min-width: 44px;
   min-height: 44px;
@@ -761,3 +761,22 @@
     line-height: 1.6;
   }
 }
+
+/* Layered desk: feature geometry and surface hierarchy. */
+.heading { padding-bottom: 20px; }
+.heading h1 { font-size: 2rem; letter-spacing: -.035em; }
+.heading > div > p:last-child { font-size: .9375rem; max-width: 70ch; }
+.workspace { gap: 20px; }
+.editor, .guide, .savedSection { border: 1px solid var(--os-rule); background: var(--os-surface); padding: 24px; border-radius: 16px; box-shadow: var(--os-shadow-panel); }
+.editor { position: relative; isolation: isolate; }
+.editor::before { content: ''; position: absolute; inset: -6px 8px 10px; border-radius: inherit; background: #e8e6fb; border: 1px solid #dcdaf4; z-index: -1; }
+.guide h2 { font-size: 1.25rem; }
+.guideIcon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--os-primary-soft); box-shadow: var(--os-shadow-control); }
+.primaryButton { background: var(--os-primary); box-shadow: var(--os-shadow-primary); }
+.secondaryButton { box-shadow: var(--os-shadow-control); }
+.savedSection { margin-top: 20px; }
+.drafts > li { padding-block: 14px; }
+.availability { margin-block: 0 24px; padding: 14px 18px; border-radius: 12px; background: var(--os-primary-soft); border: 1px solid #dad8f3; }
+@media (max-width: 640px) { .heading h1 { font-size: 1.75rem; } .editor, .guide, .savedSection { padding: 18px; } }
+
+.editor::before { bottom: auto; height: 12px; }

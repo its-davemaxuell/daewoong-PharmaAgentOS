@@ -11,6 +11,7 @@ const thread = { id, title: "Fictional saved question", created_at: stamp, updat
   { id: "q1", role: "user", sequence: 1, status: "complete", content: "What does this fictional source establish?", created_at: stamp },
   { id: "a1", role: "assistant", sequence: 2, status: "complete", content: "Fictional answer [1]", created_at: stamp, generation_used: true, effective_model_id: "fixture", citations: [{ id: "source-1", letter_id: id, company: "Fictional Pharma", excerpt: "Fictional passage for interaction testing only.", anchor: "p1", source_url: "javascript:alert(1)" }] },
 ] };
+const reviewCase = { id, title: "Fictional cleaning-validation review", objective: "Inspect this fictional source and prepare questions for the quality team.", status: "DRAFT", owner_subject: "fixture-viewer", workflow_key: "regulatory-review", current_state_hash: "a".repeat(64), sources: [{ id, case_id: id, warning_letter_id: id, document_id: id, document_version_id: id, document_version_number: 1, source_role: "primary", source_sha256: "a".repeat(64), source_url: source.canonical_url, pinned_by: "Fixture reviewer", created_at: stamp, immutable: true }], created_at: stamp, updated_at: stamp };
 const api = createServer((req, res) => {
   const url = new URL(req.url, "http://127.0.0.1");
   res.setHeader("Content-Type", "application/json"); res.setHeader("x-request-id", "fixture-request");
@@ -22,7 +23,19 @@ const api = createServer((req, res) => {
     const pageSize = Number(url.searchParams.get("page_size") || 20);
     const page = Math.min(Number(url.searchParams.get("page") || 1), Math.max(1, Math.ceil(total / pageSize)));
     data = { total, collectionTotal: 10041, page, pageSize, facets, items: Array.from({ length: Math.min(pageSize, Math.max(0, total - (page - 1) * pageSize)) }, (_, index) => ({ ...source, id: index === 0 && page === 1 ? id : `${id.slice(0, 24)}${String((page - 1) * pageSize + index + 1).padStart(12, "0")}`, company_name: `${source.company_name} ${(page - 1) * pageSize + index + 1}`, has_response: page === 1 && index === 0 })) };
-  } else if (url.pathname.startsWith("/api/v1/letters/")) {
+  } else if (url.pathname === "/api/v1/letters" || url.pathname === "/api/v1/letters/catalog") {
+    data = { items: [{ ...source, categories: ["Validation"], regulations: ["21 CFR 211.67"] }], total: 1, has_more: false };
+  } else if (url.pathname === "/api/v1/dashboard") {
+    data = { counts: { new_letters: 1, updated_letters: 0, responses_added: 1, closeouts_added: 0, pending_reviews: 0, total_drug_letters: 1, scope_exceptions: 0 }, category_distribution: [{ category: "Validation", count: 1 }], last_successful_discovery: stamp };
+  } else if (url.pathname === "/api/v1/cases") {
+    data = { items: [reviewCase], next_cursor: null, has_more: false };
+  } else if (url.pathname === `/api/v1/cases/${id}`) data = reviewCase;
+  else if (url.pathname === `/api/v1/cases/${id}/events`) data = { items: [], next_cursor: null, has_more: false };
+  else if (url.pathname.startsWith(`/api/v1/cases/${id}/`)) { res.statusCode = 404; data = { detail: "No fixture artifact created" }; }
+  else if (url.pathname === "/api/v1/control-tower/summary") data = { inventory: { agents: 1 }, operational_health: { running: 0 }, quality: { evaluations: 0 }, security: { pending_reviews: 0 }, cost_performance: { total_cost_usd: 0 }, business_value: { completed_cases: 0 }, generated_at: stamp };
+  else if (url.pathname === "/api/v1/control-tower/inventory") data = { items: [{ id, kind: "AGENT_VERSION", key: "fictional-review-agent", version: "1.0.0", sha256: "a".repeat(64), release_status: "DRAFT" }] };
+  else if (url.pathname === "/api/v1/eval-suites") data = { items: [{ id, suite_key: "fictional-evidence-checks", version: "1.0.0", name: "Fictional evidence review", target_kind: "AGENT_VERSION", suite_sha256: "a".repeat(64), cases: [{ id }] }] };
+  else if (url.pathname.startsWith("/api/v1/letters/")) {
     data = { ...source, current_version: { id: "version-1", version_number: 1, canonical_hash: "a".repeat(64), anchors: [] }, normalized_markdown: "Fictional source passage for testing.\n\nNo real regulatory finding is represented.", documents: [] };
   } else if (url.pathname === `/api/v1/chat/threads/${id}`) data = thread;
   else if (url.pathname === "/api/v1/chat/threads") data = { items: [thread], total: 1, page: 1, limit: 100, has_more: false };
