@@ -21,6 +21,24 @@ measurement. Deployment is not needed to verify this pass locally.
 
 ## Route and component inventory
 
+### Follow-up: visible transition continuity
+
+User feedback on the deployed `a19d0c4` release identified imperceptible motion.
+Browser inspection confirmed that the tab background traveled but its individual
+stacking context could cover neighboring labels, while route changes had no local
+arrival transition. The follow-up moves stacking ownership to the selection track,
+uses a more readable 240ms selected-control trajectory, adds a 300ms/6px receiving
+workspace transition without remounts, and increases panel opening to 260ms with
+a quicker 200ms exit. Source tabs and specialist details retain full text opacity.
+Initial load, streaming, polling and restored state remain still. Reduced motion
+cancels active transitions immediately. No new dependency.
+
+Verification: six new focused browser cases passed across Chromium, Firefox and
+WebKit, including paused intermediate frames, rapid retargeting, persistent shell
+identity, local text opacity and reduced-motion cancellation. The rebuilt full
+suite passed all 54 cases across three browsers, including the mobile exit fix.
+Normal-motion profiling results are recorded in the follow-up assurance record.
+
 Status: **I** implemented; **V** reviewed route/interaction browser-verified; **R** reviewed and deliberately retained; **L** verification limitation. V refers to the documented fixtures, not every possible backend state or privileged branch.
 
 | Surface / route | Actual components | Baseline issue / implemented visual and interaction work | States and invariants | Status |

@@ -28,6 +28,7 @@ import {
   X,
 } from "lucide-react";
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
+import { useContextArrival } from "./motion/use-context-arrival";
 import { useMediaQuery } from "@/lib/ui-media";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -90,6 +91,7 @@ export function PortalShell({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const workspaceRef = useContextArrival<HTMLElement>(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
   const mobileViewport = useMediaQuery("(max-width: 980px)");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -617,16 +619,18 @@ export function PortalShell({
         </footer>
       </aside>
 
-      {menuOpen ? (
-        <button
+      <button
           className="sidebar-scrim portal-sidebar__scrim"
           type="button"
+          data-open={menuOpen}
+          inert={!menuOpen || undefined}
+          aria-hidden={!menuOpen || undefined}
+          tabIndex={-1}
           aria-label={text("Close navigation", "탐색 메뉴 닫기")}
           onClick={() => closeMenu({ restoreFocus: true })}
         />
-      ) : null}
 
-      <main id="main-content" className="main-content portal-main" tabIndex={-1} inert={menuOpen || undefined}>
+      <main ref={workspaceRef} id="main-content" className="main-content portal-main" tabIndex={-1} inert={menuOpen || undefined}>
         {children}
       </main>
     </div>

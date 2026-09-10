@@ -11,6 +11,12 @@ next steps. This file remains the authoritative implementation record.
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
 **2026-09-10 visual and motion refinement:**
+Follow-up to user feedback on `a19d0c4`: corrected selection-background stacking
+over neighboring labels, made travel visibly smoother, added a 300ms route-context
+arrival without remounting the shell, and refined source-panel opening/closing.
+Local source tabs retain full text opacity; reduced motion cancels active work.
+See `docs/assurance/motion-continuity-followup-20260910.md` for verification.
+
 Preserved Layered desk / composition A and consolidated its tokens. Selected controls
 now track within a shared recessed surface; chat panels have interruptible presence
 and inaccessible exits, with a native conversation dialog. New messages/research

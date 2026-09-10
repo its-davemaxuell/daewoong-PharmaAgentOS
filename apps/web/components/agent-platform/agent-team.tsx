@@ -6,6 +6,7 @@ import { ArrowRight, GitBranch, Search, ShieldCheck } from "lucide-react";
 import { agentDefinitions } from "@/lib/agent-workspace";
 import { useI18n } from "@/lib/i18n";
 import { SelectionGroup, SelectionIndicator } from "../motion/selection";
+import { useContextArrival } from "../motion/use-context-arrival";
 import styles from "./agent-team.module.css";
 
 export function AgentTeam() {
@@ -20,6 +21,7 @@ export function AgentTeam() {
       .includes(query.toLowerCase().trim()),
   );
   const active = agents.find((agent) => agent.key === selected) ?? agents[0];
+  const detailRef = useContextArrival<HTMLElement>(selected, true);
   return (
     <div className={styles.page}>
       <header>
@@ -100,6 +102,7 @@ export function AgentTeam() {
         {active ? (
           <section
             id="agent-detail"
+            ref={detailRef}
             className={styles.detail}
             aria-live="polite"
           >

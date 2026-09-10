@@ -2,12 +2,12 @@
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-const output = new URL("../../../.artifacts/motion-upgrade/interaction-review/", import.meta.url);
+const output = new URL(process.env.MOTION_FOLLOWUP ? "../../../.artifacts/motion-upgrade/followup-interactions/" : "../../../.artifacts/motion-upgrade/interaction-review/", import.meta.url);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE || "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe" });
 const base = "http://127.0.0.1:3100";
 const id = "11111111-1111-4111-8111-111111111111";
-const report = { cycles: [], selection: [], visuals: [] };
+const report = { cycles: [], selection: [], navigation: [], visuals: [] };
 for (const cpu of [1, 4]) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   await context.addCookies([{ name: "dli_locale", value: "en", url: base }]);
@@ -57,6 +57,26 @@ for (const cpu of [1, 4]) {
     return { x: rect.x, width: rect.width, background: getComputedStyle(node).backgroundColor };
   });
   report.selection.push({ cpu, samples: await page.evaluate(() => window.selectionSamples), settled });
+  if (process.env.MOTION_FOLLOWUP) {
+    await page.evaluate(() => {
+      window.navigationSamples = [];
+      window.navigationFinished = new Promise(resolve => {
+        let last = performance.now(), started;
+        const frame = now => {
+          const main = document.querySelector("main");
+          const moving = main.getAnimations().some(a => a.id === "context-arrival");
+          if (moving && !started) started = now;
+          if (started) window.navigationSamples.push({ ms: now - started, dt: now - last, opacity: getComputedStyle(main).opacity, transform: getComputedStyle(main).transform });
+          last = now;
+          if (started && now - started >= 400) resolve(); else requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      });
+    });
+    await page.locator('.portal-nav__link[href="/drug-letters"]').click();
+    await page.evaluate(() => window.navigationFinished);
+    report.navigation.push({ cpu, samples: await page.evaluate(() => window.navigationSamples) });
+  }
   await context.close();
 }
 for (const width of [390, 1920]) {

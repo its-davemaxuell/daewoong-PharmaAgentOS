@@ -1,6 +1,7 @@
 "use client";
 
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
+import { useContextArrival } from "./motion/use-context-arrival";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -353,6 +354,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const { locale, text } = useI18n();
   const router = useRouter();
   const [tab, setTab] = useState<ContentTab>("Original");
+  const viewRef = useContextArrival<HTMLDivElement>(tab, true);
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
   const [sourceAnchor, setSourceAnchor] = useState<{ id: string }>();
@@ -616,6 +618,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
       <div
         className="record-tab-content dossier-reveal dossier-reveal--delay-2"
         role="tabpanel"
+        ref={viewRef}
         id={`letter-panel-${tab.toLowerCase()}`}
         aria-labelledby={`letter-tab-${tab.toLowerCase()}`}
         tabIndex={0}

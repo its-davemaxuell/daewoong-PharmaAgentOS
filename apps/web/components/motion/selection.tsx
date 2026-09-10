@@ -1,13 +1,16 @@
 "use client";
 
-import { createContext, useContext, useLayoutEffect, useRef, type ReactNode, type RefObject } from "react";
+import { cloneElement, createContext, useContext, useLayoutEffect, useRef, type ReactElement, type RefObject } from "react";
 import { useMediaQuery } from "@/lib/ui-media";
 import styles from "./motion.module.css";
 
 const SelectionContext = createContext<RefObject<DOMRect | null> | null>(null);
-export function SelectionGroup({ children }: { children: ReactNode }) {
+export function SelectionGroup({ children }: { children: ReactElement<{ className?: string; "data-selection-track"?: string }> }) {
   const previous = useRef<DOMRect | null>(null);
-  return <SelectionContext value={previous}>{children}</SelectionContext>;
+  return <SelectionContext value={previous}>{cloneElement(children, {
+    className: [children.props.className, styles.track].filter(Boolean).join(" "),
+    "data-selection-track": "",
+  })}</SelectionContext>;
 }
 
 /** One bounded measurement per selection. Native controls retain semantics and state.
@@ -37,7 +40,8 @@ export function SelectionIndicator({ tone = "raised" }: { tone?: "raised" | "tin
       animation = node.animate([
         { transform: `translate(${origin.x - target.x}px, ${origin.y - target.y}px) scale(${origin.width / target.width}, ${origin.height / target.height})` },
         { transform: "translate(0, 0) scale(1, 1)" },
-      ], { duration: 200, easing: "cubic-bezier(.22, 1, .36, 1)" });
+      ], { duration: 240, easing: "cubic-bezier(.22, .8, .25, 1)" });
+      animation.id = "selection-travel";
     }
     return () => { previous.current = node.getBoundingClientRect(); animation?.cancel(); };
   }, [previous, reduced]);

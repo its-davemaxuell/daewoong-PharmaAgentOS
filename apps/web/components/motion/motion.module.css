@@ -1,3 +1,4 @@
+.track { position: relative; isolation: isolate; }
 .selection {
   position: absolute;
   transform-origin: top left;

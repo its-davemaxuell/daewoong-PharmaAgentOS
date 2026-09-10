@@ -111,14 +111,22 @@ The user's approved composition A is the visual authority for this redesign.
 
 `app/tokens.css` is authoritative for colors, elevation, geometry and motion;
 historical variable names remain compatibility aliases. Use 110ms press, 160ms
-hover/focus color, 200ms selection, 220ms panels and 280ms newly recorded activity,
-with `cubic-bezier(.22,1,.36,1)`. Translation is 4–8px for local presence; button
+hover/focus color, 240ms selection, 260ms panel opening (200ms exit) and 300ms context,
+with `cubic-bezier(.22,.8,.25,1)`. Translation is 4–8px for local presence; button
 press is at most 1px, with .98–.99 scale. No page-wide layout animation or card stagger.
 
 Native selection controls share a decorative, tracking indicator. Its bounded
 Web Animations transform measures only a changed selection and cancels/restarts
 from the interrupted position. Native button, link, radio and tab semantics own
-state. The selection engine does not load Motion layout/drag features.
+state. The whole track owns stacking so its moving background stays below every
+label; individual controls do not create isolated stacking contexts. The selection
+engine does not load Motion layout/drag features.
+
+After a deliberate route change, the receiving workspace settles 6px over 300ms.
+The persistent shell keeps its identity; initial loads, query refreshes, streamed
+tokens and polling do not replay this transition. Letter view and specialist
+selection use the same bounded movement with full text opacity. No exit wait,
+page remount, document crossfade, animated dimensions or delayed action.
 
 Motion's lazy `domAnimation` feature bundle and provider are local to ChatWorkspace;
 exiting surfaces become inert immediately. The native conversation dialog owns

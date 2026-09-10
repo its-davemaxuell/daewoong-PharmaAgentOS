@@ -18,7 +18,7 @@ export function PresenceSurface({ as = "section", direction = "up", children, ..
     initial={reduced ? false : { opacity: 0, x: direction === "side" ? offset : 0, y: direction === "up" ? offset : 0 }}
     animate={{ opacity: 1, x: 0, y: 0 }}
     exit={{ opacity: 0, x: direction === "side" ? offset : 0, y: 0 }}
-    transition={{ duration: reduced ? 0 : 0.18, ease: [0.22, 1, 0.36, 1] }}>
+    transition={{ duration: reduced ? 0 : present ? 0.26 : 0.2, ease: [0.22, 0.8, 0.25, 1] }}>
     {children}
   </Element>;
 }

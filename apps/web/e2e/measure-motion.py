@@ -2,8 +2,8 @@ import gzip, json, pathlib, statistics, sys, os
 from playwright.sync_api import sync_playwright
 
 phase = sys.argv[1]
-if phase not in ('before', 'after'):
-    raise SystemExit('Use before or after as the measurement phase.')
+if phase not in ('before', 'after', 'followup'):
+    raise SystemExit('Use before, after or followup as the measurement phase.')
 out = pathlib.Path('.artifacts/motion-upgrade') / phase
 out.mkdir(parents=True, exist_ok=True)
 base = 'http://127.0.0.1:3100'
