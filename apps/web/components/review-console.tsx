@@ -1,23 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import {
-  AlertTriangle,
-  Check,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  CircleAlert,
-  Clock3,
-  ExternalLink,
-  FileCheck2,
-  Fingerprint,
-  Layers3,
-  Quote,
-  RotateCcw,
-  ShieldCheck,
-  X,
-} from "lucide-react";
+import { AlertTriangle } from "@/components/icons/AlertTriangle";
+import { Check } from "@/components/icons/Check";
+import { CheckCircle2 } from "@/components/icons/CheckCircle2";
+import { ChevronLeft } from "@/components/icons/ChevronLeft";
+import { ChevronRight } from "@/components/icons/ChevronRight";
+import { CircleAlert } from "@/components/icons/CircleAlert";
+import { Clock3 } from "@/components/icons/Clock3";
+import { ExternalLink } from "@/components/icons/ExternalLink";
+import { FileCheck2 } from "@/components/icons/FileCheck2";
+import { Fingerprint } from "@/components/icons/Fingerprint";
+import { Layers3 } from "@/components/icons/Layers3";
+import { Quote } from "@/components/icons/Quote";
+import { RotateCcw } from "@/components/icons/RotateCcw";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { X } from "@/components/icons/X";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   refreshReviewQueue,

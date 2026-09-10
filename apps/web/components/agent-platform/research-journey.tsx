@@ -1,6 +1,9 @@
 "use client";
 
-import { ArrowRight, FileCheck2, Network, Target } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { FileCheck2 } from "@/components/icons/FileCheck2";
+import { Network } from "@/components/icons/Network";
+import { Target } from "@/components/icons/Target";
 import { useI18n } from "@/lib/i18n";
 import styles from "./research-journey.module.css";
 

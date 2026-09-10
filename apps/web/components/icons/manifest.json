@@ -1,0 +1,591 @@
+{
+  "Activity": {
+    "sourceName": "Graph Stats Circle",
+    "hash": "ico_lvxbME56sI5qYqSt",
+    "url": "https://www.streamlinehq.com/icons/download/graph-stats-circle--32804",
+    "file": "sources/ico_lvxbME56sI5qYqSt.svg"
+  },
+  "AlertTriangle": {
+    "sourceName": "Alert Octagon 1",
+    "hash": "ico_qeauP2JsajKq26lp",
+    "url": "https://www.streamlinehq.com/icons/download/alert-octagon-1--32804",
+    "file": "sources/ico_qeauP2JsajKq26lp.svg"
+  },
+  "Archive": {
+    "sourceName": "Office Drawer",
+    "hash": "ico_7i1CWbG1jnwy4RvA",
+    "url": "https://www.streamlinehq.com/icons/download/office-drawer--32779",
+    "file": "sources/ico_7i1CWbG1jnwy4RvA.svg"
+  },
+  "ArchiveRestore": {
+    "sourceName": "Office Drawer",
+    "hash": "ico_7i1CWbG1jnwy4RvA",
+    "url": "https://www.streamlinehq.com/icons/download/office-drawer--32779",
+    "file": "sources/ico_7i1CWbG1jnwy4RvA.svg"
+  },
+  "ArrowDown": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": 90
+  },
+  "ArrowDownRight": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": 45
+  },
+  "ArrowLeft": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": 180
+  },
+  "ArrowRight": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg"
+  },
+  "ArrowUp": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": -90
+  },
+  "ArrowUpRight": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": -45
+  },
+  "Bell": {
+    "sourceName": "Alert Bell Notification 2",
+    "hash": "ico_JjTelgVbVrFJLGet",
+    "url": "https://www.streamlinehq.com/icons/download/alert-bell-notification-2--32804",
+    "file": "sources/ico_JjTelgVbVrFJLGet.svg"
+  },
+  "BellRing": {
+    "sourceName": "Alarm Bell Ring",
+    "hash": "ico_EcWNjRZRZV33HmhN",
+    "url": "https://www.streamlinehq.com/icons/download/alarm-bell-ring--32804",
+    "file": "sources/ico_EcWNjRZRZV33HmhN.svg"
+  },
+  "BookOpen": {
+    "sourceName": "Book Open Bookmark",
+    "hash": "ico_l1nK2X8K5oKqo4Ax",
+    "url": "https://www.streamlinehq.com/icons/download/book-open-bookmark--32783",
+    "file": "sources/ico_l1nK2X8K5oKqo4Ax.svg"
+  },
+  "Bookmark": {
+    "sourceName": "Bookmarks Document",
+    "hash": "ico_faKqAfCLooU12Tpm",
+    "url": "https://www.streamlinehq.com/icons/download/bookmarks-document--32804",
+    "file": "sources/ico_faKqAfCLooU12Tpm.svg"
+  },
+  "BookmarkPlus": {
+    "sourceName": "Bookmarks Document",
+    "hash": "ico_faKqAfCLooU12Tpm",
+    "url": "https://www.streamlinehq.com/icons/download/bookmarks-document--32804",
+    "file": "sources/ico_faKqAfCLooU12Tpm.svg"
+  },
+  "Bot": {
+    "sourceName": "Computer Chip Core",
+    "hash": "ico_vYX6rmyH2QPlHj53",
+    "url": "https://www.streamlinehq.com/icons/download/computer-chip-core--32775",
+    "file": "sources/ico_vYX6rmyH2QPlHj53.svg"
+  },
+  "BriefcaseBusiness": {
+    "sourceName": "Small Office Briefcase",
+    "hash": "ico_bzOV6nho4S3AWYP6",
+    "url": "https://www.streamlinehq.com/icons/download/small-office-briefcase--32779",
+    "file": "sources/ico_bzOV6nho4S3AWYP6.svg"
+  },
+  "CalendarDays": {
+    "sourceName": "Calendar 3",
+    "hash": "ico_dcTd55my8mexs1Ga",
+    "url": "https://www.streamlinehq.com/icons/download/calendar-3--32804",
+    "file": "sources/ico_dcTd55my8mexs1Ga.svg"
+  },
+  "CalendarRange": {
+    "sourceName": "Calendar Edit 1",
+    "hash": "ico_MBJ7HAvXbqWj89PC",
+    "url": "https://www.streamlinehq.com/icons/download/calendar-edit-1--32804",
+    "file": "sources/ico_MBJ7HAvXbqWj89PC.svg"
+  },
+  "ChartNoAxesColumnIncreasing": {
+    "sourceName": "Analytics Bars 3d",
+    "hash": "ico_VwkVvdPG2ZoIKNXf",
+    "url": "https://www.streamlinehq.com/icons/download/analytics-bars-3d--32778",
+    "file": "sources/ico_VwkVvdPG2ZoIKNXf.svg"
+  },
+  "Check": {
+    "sourceName": "Check Badge",
+    "hash": "ico_gPWHceCnp9BT5KaT",
+    "url": "https://www.streamlinehq.com/icons/download/check-badge--32804",
+    "file": "sources/ico_gPWHceCnp9BT5KaT.svg",
+    "adaptation": "unframed-check"
+  },
+  "CheckCircle2": {
+    "sourceName": "Check Badge",
+    "hash": "ico_gPWHceCnp9BT5KaT",
+    "url": "https://www.streamlinehq.com/icons/download/check-badge--32804",
+    "file": "sources/ico_gPWHceCnp9BT5KaT.svg"
+  },
+  "ChevronDown": {
+    "sourceName": "Arrow Button Right 1",
+    "hash": "ico_MP0UgfA7Bx0gizMY",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-button-right-1--32803",
+    "file": "sources/ico_MP0UgfA7Bx0gizMY.svg",
+    "rotate": 90,
+    "adaptation": "single-chevron"
+  },
+  "ChevronLeft": {
+    "sourceName": "Arrow Button Right 1",
+    "hash": "ico_MP0UgfA7Bx0gizMY",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-button-right-1--32803",
+    "file": "sources/ico_MP0UgfA7Bx0gizMY.svg",
+    "rotate": 180,
+    "adaptation": "single-chevron"
+  },
+  "ChevronRight": {
+    "sourceName": "Arrow Button Right 1",
+    "hash": "ico_MP0UgfA7Bx0gizMY",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-button-right-1--32803",
+    "file": "sources/ico_MP0UgfA7Bx0gizMY.svg",
+    "adaptation": "single-chevron"
+  },
+  "Circle": {
+    "sourceName": "Search Circle",
+    "hash": "ico_GAoxLYKW9wqtHqOZ",
+    "url": "https://www.streamlinehq.com/icons/download/search-circle--32804",
+    "file": "sources/ico_GAoxLYKW9wqtHqOZ.svg",
+    "adaptation": "status-circle"
+  },
+  "CircleAlert": {
+    "sourceName": "Alert Octagon 1",
+    "hash": "ico_qeauP2JsajKq26lp",
+    "url": "https://www.streamlinehq.com/icons/download/alert-octagon-1--32804",
+    "file": "sources/ico_qeauP2JsajKq26lp.svg"
+  },
+  "CircleDot": {
+    "sourceName": "Search Circle",
+    "hash": "ico_GAoxLYKW9wqtHqOZ",
+    "url": "https://www.streamlinehq.com/icons/download/search-circle--32804",
+    "file": "sources/ico_GAoxLYKW9wqtHqOZ.svg",
+    "adaptation": "status-circle",
+    "centerDot": true
+  },
+  "CircleHelp": {
+    "sourceName": "Messages Bubble Square Question",
+    "hash": "ico_h7eQqQY4I29MQ4aR",
+    "url": "https://www.streamlinehq.com/icons/download/messages-bubble-square-question--32792",
+    "file": "sources/ico_h7eQqQY4I29MQ4aR.svg"
+  },
+  "ClipboardCheck": {
+    "sourceName": "Task List Approve",
+    "hash": "ico_uFb5PBzclKIFmIBo",
+    "url": "https://www.streamlinehq.com/icons/download/task-list-approve--32779",
+    "file": "sources/ico_uFb5PBzclKIFmIBo.svg"
+  },
+  "Clock3": {
+    "sourceName": "Time Clock Circle",
+    "hash": "ico_MRMCWBorsorlEAZg",
+    "url": "https://www.streamlinehq.com/icons/download/time-clock-circle--32804",
+    "file": "sources/ico_MRMCWBorsorlEAZg.svg"
+  },
+  "CloudCheck": {
+    "sourceName": "Cloud File",
+    "hash": "ico_Ckixl0tck2ParxKE",
+    "url": "https://www.streamlinehq.com/icons/download/cloud-file--32777",
+    "file": "sources/ico_Ckixl0tck2ParxKE.svg"
+  },
+  "Copy": {
+    "sourceName": "Duplicate",
+    "hash": "ico_rtSYSNl80kqHkSmB",
+    "url": "https://www.streamlinehq.com/icons/download/duplicate--32804",
+    "file": "sources/ico_rtSYSNl80kqHkSmB.svg"
+  },
+  "Database": {
+    "sourceName": "Database 1",
+    "hash": "ico_lKtqqZf8jpqZO17K",
+    "url": "https://www.streamlinehq.com/icons/download/database-1--32776",
+    "file": "sources/ico_lKtqqZf8jpqZO17K.svg"
+  },
+  "DatabaseZap": {
+    "sourceName": "Database 2",
+    "hash": "ico_SWvRbgFQiH40vqb8",
+    "url": "https://www.streamlinehq.com/icons/download/database-2--32776",
+    "file": "sources/ico_SWvRbgFQiH40vqb8.svg"
+  },
+  "Download": {
+    "sourceName": "Download Bottom",
+    "hash": "ico_e0ixTAHzeyR7uKY0",
+    "url": "https://www.streamlinehq.com/icons/download/download-bottom--32777",
+    "file": "sources/ico_e0ixTAHzeyR7uKY0.svg"
+  },
+  "ExternalLink": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": -45
+  },
+  "FileCheck2": {
+    "sourceName": "Task List Approve",
+    "hash": "ico_uFb5PBzclKIFmIBo",
+    "url": "https://www.streamlinehq.com/icons/download/task-list-approve--32779",
+    "file": "sources/ico_uFb5PBzclKIFmIBo.svg"
+  },
+  "FileSearch": {
+    "sourceName": "Data File Search",
+    "hash": "ico_soBe7wdiFKXXHqnO",
+    "url": "https://www.streamlinehq.com/icons/download/data-file-search--32778",
+    "file": "sources/ico_soBe7wdiFKXXHqnO.svg"
+  },
+  "FileText": {
+    "sourceName": "Office File Text",
+    "hash": "ico_5WiamKpWQDiw9VTq",
+    "url": "https://www.streamlinehq.com/icons/download/office-file-text--32788",
+    "file": "sources/ico_5WiamKpWQDiw9VTq.svg"
+  },
+  "FileWarning": {
+    "sourceName": "Alert Octagon 1",
+    "hash": "ico_qeauP2JsajKq26lp",
+    "url": "https://www.streamlinehq.com/icons/download/alert-octagon-1--32804",
+    "file": "sources/ico_qeauP2JsajKq26lp.svg"
+  },
+  "Filter": {
+    "sourceName": "Filter 1",
+    "hash": "ico_HRJ1IgB5l28rqaka",
+    "url": "https://www.streamlinehq.com/icons/download/filter-1--32804",
+    "file": "sources/ico_HRJ1IgB5l28rqaka.svg"
+  },
+  "FilterX": {
+    "sourceName": "Filter 1",
+    "hash": "ico_HRJ1IgB5l28rqaka",
+    "url": "https://www.streamlinehq.com/icons/download/filter-1--32804",
+    "file": "sources/ico_HRJ1IgB5l28rqaka.svg"
+  },
+  "Fingerprint": {
+    "sourceName": "Touch Id",
+    "hash": "ico_m9iWCNeSGmbDbqUu",
+    "url": "https://www.streamlinehq.com/icons/download/touch-id--32804",
+    "file": "sources/ico_m9iWCNeSGmbDbqUu.svg"
+  },
+  "FolderOpen": {
+    "sourceName": "Folder Hold",
+    "hash": "ico_4buG8XBa5Ex6uPrE",
+    "url": "https://www.streamlinehq.com/icons/download/folder-hold--32788",
+    "file": "sources/ico_4buG8XBa5Ex6uPrE.svg"
+  },
+  "GitBranch": {
+    "sourceName": "Branch Line 5",
+    "hash": "ico_sfGY8SxYXE9JXVIl",
+    "url": "https://www.streamlinehq.com/icons/download/branch-line-5--32804",
+    "file": "sources/ico_sfGY8SxYXE9JXVIl.svg"
+  },
+  "HelpCircle": {
+    "sourceName": "Messages Bubble Square Question",
+    "hash": "ico_h7eQqQY4I29MQ4aR",
+    "url": "https://www.streamlinehq.com/icons/download/messages-bubble-square-question--32792",
+    "file": "sources/ico_h7eQqQY4I29MQ4aR.svg"
+  },
+  "History": {
+    "sourceName": "Time Clock Hand 1",
+    "hash": "ico_31DXVbtRAbA3CsMD",
+    "url": "https://www.streamlinehq.com/icons/download/time-clock-hand-1--32804",
+    "file": "sources/ico_31DXVbtRAbA3CsMD.svg"
+  },
+  "Info": {
+    "sourceName": "Information Circle",
+    "hash": "ico_xFnQKIwnfFtKCG7P",
+    "url": "https://www.streamlinehq.com/icons/download/information-circle--32804",
+    "file": "sources/ico_xFnQKIwnfFtKCG7P.svg"
+  },
+  "Languages": {
+    "sourceName": "Coding Apps Website Network Globe",
+    "hash": "ico_TwZX9XuEkZnbcPQd",
+    "url": "https://www.streamlinehq.com/icons/download/coding-apps-website-network-globe--32776",
+    "file": "sources/ico_TwZX9XuEkZnbcPQd.svg"
+  },
+  "Layers3": {
+    "sourceName": "Common File Stack",
+    "hash": "ico_nSYjYHu82p7dbJaW",
+    "url": "https://www.streamlinehq.com/icons/download/common-file-stack--32788",
+    "file": "sources/ico_nSYjYHu82p7dbJaW.svg"
+  },
+  "Link2": {
+    "sourceName": "Attachment",
+    "hash": "ico_ITIPutVvJdZaWO8S",
+    "url": "https://www.streamlinehq.com/icons/download/attachment--32804",
+    "file": "sources/ico_ITIPutVvJdZaWO8S.svg"
+  },
+  "ListRestart": {
+    "sourceName": "Button Loop",
+    "hash": "ico_aYOCvagIOZw16f7i",
+    "url": "https://www.streamlinehq.com/icons/download/button-loop--32804",
+    "file": "sources/ico_aYOCvagIOZw16f7i.svg"
+  },
+  "LoaderCircle": {
+    "sourceName": "Loading Circle",
+    "hash": "ico_66qoIdrIyM4Oz3Ca",
+    "url": "https://www.streamlinehq.com/icons/download/loading-circle--32804",
+    "file": "sources/ico_66qoIdrIyM4Oz3Ca.svg"
+  },
+  "LockKeyhole": {
+    "sourceName": "Lock 5",
+    "hash": "ico_rem89a5pIfBqI7KL",
+    "url": "https://www.streamlinehq.com/icons/download/lock-5--32804",
+    "file": "sources/ico_rem89a5pIfBqI7KL.svg"
+  },
+  "Mail": {
+    "sourceName": "Envelope Letter",
+    "hash": "ico_6mJzEOVxwEGhS0rF",
+    "url": "https://www.streamlinehq.com/icons/download/envelope-letter--32790",
+    "file": "sources/ico_6mJzEOVxwEGhS0rF.svg"
+  },
+  "Menu": {
+    "sourceName": "Navigation Menu",
+    "hash": "ico_sEHyjGHUUCrR90kZ",
+    "url": "https://www.streamlinehq.com/icons/download/navigation-menu--32804",
+    "file": "sources/ico_sEHyjGHUUCrR90kZ.svg"
+  },
+  "MessageSquare": {
+    "sourceName": "Messages Bubble Square Typing",
+    "hash": "ico_ZJamFnxHTlWCeSZO",
+    "url": "https://www.streamlinehq.com/icons/download/messages-bubble-square-typing--32792",
+    "file": "sources/ico_ZJamFnxHTlWCeSZO.svg"
+  },
+  "MessageSquareQuote": {
+    "sourceName": "Messages Bubble Text",
+    "hash": "ico_k6ggEybmAxVovxhs",
+    "url": "https://www.streamlinehq.com/icons/download/messages-bubble-text--32792",
+    "file": "sources/ico_k6ggEybmAxVovxhs.svg",
+    "adaptation": "unframed-message"
+  },
+  "MessageSquareText": {
+    "sourceName": "Messages Bubble Text",
+    "hash": "ico_k6ggEybmAxVovxhs",
+    "url": "https://www.streamlinehq.com/icons/download/messages-bubble-text--32792",
+    "file": "sources/ico_k6ggEybmAxVovxhs.svg",
+    "adaptation": "unframed-message"
+  },
+  "Minus": {
+    "sourceName": "Subtract Circle",
+    "hash": "ico_ZZrPzlRjnxzsNJuF",
+    "url": "https://www.streamlinehq.com/icons/download/subtract-circle--32804",
+    "file": "sources/ico_ZZrPzlRjnxzsNJuF.svg",
+    "adaptation": "unframed-minus"
+  },
+  "MoreHorizontal": {
+    "sourceName": "Navigation Menu Horizontal 1",
+    "hash": "ico_R3EtWz4ZpspiaIqE",
+    "url": "https://www.streamlinehq.com/icons/download/navigation-menu-horizontal-1--32804",
+    "file": "sources/ico_R3EtWz4ZpspiaIqE.svg"
+  },
+  "Network": {
+    "sourceName": "Hierarchy 5 Organize",
+    "hash": "ico_kd4nYFzNSnRMqBky",
+    "url": "https://www.streamlinehq.com/icons/download/hierarchy-5-organize--32804",
+    "file": "sources/ico_kd4nYFzNSnRMqBky.svg"
+  },
+  "PackageCheck": {
+    "sourceName": "Zip File Check",
+    "hash": "ico_JJOPigw5gvi5Im5H",
+    "url": "https://www.streamlinehq.com/icons/download/zip-file-check--32788",
+    "file": "sources/ico_JJOPigw5gvi5Im5H.svg"
+  },
+  "PanelLeftClose": {
+    "sourceName": "Sidebar Line Left",
+    "hash": "ico_Ywo4PdFfazwnG8xN",
+    "url": "https://www.streamlinehq.com/icons/download/sidebar-line-left--32776",
+    "file": "sources/ico_Ywo4PdFfazwnG8xN.svg"
+  },
+  "PanelLeftOpen": {
+    "sourceName": "Sidebar Line Left",
+    "hash": "ico_Ywo4PdFfazwnG8xN",
+    "url": "https://www.streamlinehq.com/icons/download/sidebar-line-left--32776",
+    "file": "sources/ico_Ywo4PdFfazwnG8xN.svg"
+  },
+  "Paperclip": {
+    "sourceName": "Attachment",
+    "hash": "ico_ITIPutVvJdZaWO8S",
+    "url": "https://www.streamlinehq.com/icons/download/attachment--32804",
+    "file": "sources/ico_ITIPutVvJdZaWO8S.svg"
+  },
+  "Pencil": {
+    "sourceName": "Pencil 1",
+    "hash": "ico_nulM0ULIb3VEsAJG",
+    "url": "https://www.streamlinehq.com/icons/download/pencil-1--32804",
+    "file": "sources/ico_nulM0ULIb3VEsAJG.svg"
+  },
+  "Pin": {
+    "sourceName": "Pin 2",
+    "hash": "ico_gvmMtSNxYGvDle7k",
+    "url": "https://www.streamlinehq.com/icons/download/pin-2--32802",
+    "file": "sources/ico_gvmMtSNxYGvDle7k.svg"
+  },
+  "Play": {
+    "sourceName": "Button Play",
+    "hash": "ico_k6uq89MBuitWzEom",
+    "url": "https://www.streamlinehq.com/icons/download/button-play--32804",
+    "file": "sources/ico_k6uq89MBuitWzEom.svg"
+  },
+  "Plus": {
+    "sourceName": "Delete 2",
+    "hash": "ico_LdZgU15n4ZAJ9864",
+    "url": "https://www.streamlinehq.com/icons/download/delete-2--32804",
+    "file": "sources/ico_LdZgU15n4ZAJ9864.svg",
+    "adaptation": "unframed-close",
+    "rotate": 45
+  },
+  "Quote": {
+    "sourceName": "Messages Bubble Text",
+    "hash": "ico_k6ggEybmAxVovxhs",
+    "url": "https://www.streamlinehq.com/icons/download/messages-bubble-text--32792",
+    "file": "sources/ico_k6ggEybmAxVovxhs.svg",
+    "adaptation": "unframed-message"
+  },
+  "RefreshCcw": {
+    "sourceName": "Synchronize Refresh Arrow",
+    "hash": "ico_faqEjqmKK06pENvm",
+    "url": "https://www.streamlinehq.com/icons/download/synchronize-refresh-arrow--32804",
+    "file": "sources/ico_faqEjqmKK06pENvm.svg"
+  },
+  "RefreshCw": {
+    "sourceName": "Synchronize Refresh Arrow",
+    "hash": "ico_faqEjqmKK06pENvm",
+    "url": "https://www.streamlinehq.com/icons/download/synchronize-refresh-arrow--32804",
+    "file": "sources/ico_faqEjqmKK06pENvm.svg"
+  },
+  "RotateCcw": {
+    "sourceName": "Synchronize Refresh Arrow",
+    "hash": "ico_faqEjqmKK06pENvm",
+    "url": "https://www.streamlinehq.com/icons/download/synchronize-refresh-arrow--32804",
+    "file": "sources/ico_faqEjqmKK06pENvm.svg"
+  },
+  "Save": {
+    "sourceName": "Floppy Disk 1",
+    "hash": "ico_k8bEKqYh4xD6xQvt",
+    "url": "https://www.streamlinehq.com/icons/download/floppy-disk-1--32775",
+    "file": "sources/ico_k8bEKqYh4xD6xQvt.svg"
+  },
+  "Scale": {
+    "sourceName": "Checklist",
+    "hash": "ico_jl0YWWv4yE9G8dfV",
+    "url": "https://www.streamlinehq.com/icons/download/checklist--32804",
+    "file": "sources/ico_jl0YWWv4yE9G8dfV.svg"
+  },
+  "Search": {
+    "sourceName": "Search Circle",
+    "hash": "ico_GAoxLYKW9wqtHqOZ",
+    "url": "https://www.streamlinehq.com/icons/download/search-circle--32804",
+    "file": "sources/ico_GAoxLYKW9wqtHqOZ.svg",
+    "adaptation": "unframed-search"
+  },
+  "Send": {
+    "sourceName": "Arrow Right",
+    "hash": "ico_QMot6vzSOcusYTZ6",
+    "url": "https://www.streamlinehq.com/icons/download/arrow-right--32803",
+    "file": "sources/ico_QMot6vzSOcusYTZ6.svg",
+    "rotate": -45
+  },
+  "ServerCog": {
+    "sourceName": "Server Refresh 1",
+    "hash": "ico_j1RMqGlzrm7pLgAL",
+    "url": "https://www.streamlinehq.com/icons/download/server-refresh-1--32777",
+    "file": "sources/ico_j1RMqGlzrm7pLgAL.svg"
+  },
+  "Settings": {
+    "sourceName": "Cog",
+    "hash": "ico_9qKVGuU1fjlxZCLY",
+    "url": "https://www.streamlinehq.com/icons/download/cog--32804",
+    "file": "sources/ico_9qKVGuU1fjlxZCLY.svg"
+  },
+  "Settings2": {
+    "sourceName": "Settings Slider Desktop Horizontal",
+    "hash": "ico_egCbVThN53QAScLN",
+    "url": "https://www.streamlinehq.com/icons/download/settings-slider-desktop-horizontal--32804",
+    "file": "sources/ico_egCbVThN53QAScLN.svg"
+  },
+  "ShieldCheck": {
+    "sourceName": "Shield Check 1",
+    "hash": "ico_cVAGyrVTYW1YPfWa",
+    "url": "https://www.streamlinehq.com/icons/download/shield-check-1--32776",
+    "file": "sources/ico_cVAGyrVTYW1YPfWa.svg"
+  },
+  "SlidersHorizontal": {
+    "sourceName": "Settings Slider Desktop Horizontal",
+    "hash": "ico_egCbVThN53QAScLN",
+    "url": "https://www.streamlinehq.com/icons/download/settings-slider-desktop-horizontal--32804",
+    "file": "sources/ico_egCbVThN53QAScLN.svg"
+  },
+  "Sparkles": {
+    "sourceName": "Reward Stars 2",
+    "hash": "ico_N6Rl7AsIX3bxVeso",
+    "url": "https://www.streamlinehq.com/icons/download/reward-stars-2--32793",
+    "file": "sources/ico_N6Rl7AsIX3bxVeso.svg"
+  },
+  "Square": {
+    "sourceName": "Button Stop",
+    "hash": "ico_v2qDrCDUKBNUgP3h",
+    "url": "https://www.streamlinehq.com/icons/download/button-stop--32804",
+    "file": "sources/ico_v2qDrCDUKBNUgP3h.svg"
+  },
+  "Target": {
+    "sourceName": "Cursor Target 1",
+    "hash": "ico_cGO8f8LO4WNPQnEN",
+    "url": "https://www.streamlinehq.com/icons/download/cursor-target-1--32804",
+    "file": "sources/ico_cGO8f8LO4WNPQnEN.svg"
+  },
+  "ThumbsDown": {
+    "sourceName": "Like",
+    "hash": "ico_gxiacPpG4uCnXTYP",
+    "url": "https://www.streamlinehq.com/icons/download/like--32793",
+    "file": "sources/ico_gxiacPpG4uCnXTYP.svg",
+    "rotate": 180
+  },
+  "ThumbsUp": {
+    "sourceName": "Like",
+    "hash": "ico_gxiacPpG4uCnXTYP",
+    "url": "https://www.streamlinehq.com/icons/download/like--32793",
+    "file": "sources/ico_gxiacPpG4uCnXTYP.svg"
+  },
+  "TimerReset": {
+    "sourceName": "Stopwatch",
+    "hash": "ico_gbW3qAxWC29IuaTc",
+    "url": "https://www.streamlinehq.com/icons/download/stopwatch--32804",
+    "file": "sources/ico_gbW3qAxWC29IuaTc.svg"
+  },
+  "Trash2": {
+    "sourceName": "Bin 1",
+    "hash": "ico_3dOFIKLfXuSze9vs",
+    "url": "https://www.streamlinehq.com/icons/download/bin-1--32804",
+    "file": "sources/ico_3dOFIKLfXuSze9vs.svg"
+  },
+  "Unplug": {
+    "sourceName": "Power Plug Disconnected",
+    "hash": "ico_cp3ENbme7Y5WS4YR",
+    "url": "https://www.streamlinehq.com/icons/download/power-plug-disconnected--32775",
+    "file": "sources/ico_cp3ENbme7Y5WS4YR.svg"
+  },
+  "WandSparkles": {
+    "sourceName": "Design Tool Magic Wand 1",
+    "hash": "ico_LVdCiioiF0jPrPJi",
+    "url": "https://www.streamlinehq.com/icons/download/design-tool-magic-wand-1--32784",
+    "file": "sources/ico_LVdCiioiF0jPrPJi.svg"
+  },
+  "X": {
+    "sourceName": "Delete 2",
+    "hash": "ico_LdZgU15n4ZAJ9864",
+    "url": "https://www.streamlinehq.com/icons/download/delete-2--32804",
+    "file": "sources/ico_LdZgU15n4ZAJ9864.svg",
+    "adaptation": "unframed-close"
+  }
+}

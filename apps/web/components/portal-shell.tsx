@@ -3,30 +3,28 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Archive,
-  Network,
-  Bell,
-  Bookmark,
-  BriefcaseBusiness,
-  ChartNoAxesColumnIncreasing,
-  ChevronDown,
-  CircleHelp,
-  ClipboardCheck,
-  FileText,
-  History,
-  LockKeyhole,
-  LoaderCircle,
-  Menu,
-  MessageSquareText,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Plus,
-  Search,
-  Settings,
-  ShieldCheck,
-  X,
-} from "lucide-react";
+import { Archive } from "@/components/icons/Archive";
+import { Network } from "@/components/icons/Network";
+import { Bell } from "@/components/icons/Bell";
+import { Bookmark } from "@/components/icons/Bookmark";
+import { BriefcaseBusiness } from "@/components/icons/BriefcaseBusiness";
+import { ChartNoAxesColumnIncreasing } from "@/components/icons/ChartNoAxesColumnIncreasing";
+import { ChevronDown } from "@/components/icons/ChevronDown";
+import { CircleHelp } from "@/components/icons/CircleHelp";
+import { ClipboardCheck } from "@/components/icons/ClipboardCheck";
+import { FileText } from "@/components/icons/FileText";
+import { History } from "@/components/icons/History";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
+import { LoaderCircle } from "@/components/icons/LoaderCircle";
+import { Menu } from "@/components/icons/Menu";
+import { MessageSquareText } from "@/components/icons/MessageSquareText";
+import { PanelLeftClose } from "@/components/icons/PanelLeftClose";
+import { PanelLeftOpen } from "@/components/icons/PanelLeftOpen";
+import { Plus } from "@/components/icons/Plus";
+import { Search } from "@/components/icons/Search";
+import { Settings } from "@/components/icons/Settings";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { X } from "@/components/icons/X";
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
 import { useContextArrival } from "./motion/use-context-arrival";
 import { useMediaQuery } from "@/lib/ui-media";
@@ -449,7 +447,7 @@ export function PortalShell({
                             onClick={() => closeMenu()}
                           >
                             {active && <SelectionIndicator tone="tinted" />}
-                            <Icon className="portal-nav__icon" size={17} strokeWidth={1.8} aria-hidden="true" />
+                            <Icon className="portal-nav__icon" size={18} aria-hidden="true" />
                             <span className="portal-nav__label">{text(item.en, item.ko)}</span>
                           </Link>
                         </li>

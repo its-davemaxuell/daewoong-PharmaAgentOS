@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Archive, ArchiveRestore, MessageSquare, Pin, Search, X } from "lucide-react";
+import { Archive } from "@/components/icons/Archive";
+import { ArchiveRestore } from "@/components/icons/ArchiveRestore";
+import { MessageSquare } from "@/components/icons/MessageSquare";
+import { Pin } from "@/components/icons/Pin";
+import { Search } from "@/components/icons/Search";
+import { X } from "@/components/icons/X";
 import { useEffect, useRef, useState } from "react";
 import { browseChatConversations, manageChatConversation } from "@/app/(portal)/ask/actions";
 import { useChatHistory } from "@/components/chat-history-context";

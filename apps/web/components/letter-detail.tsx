@@ -7,23 +7,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { SourceLink } from "@/components/source-link";
 import { useRouter } from "next/navigation";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  ArrowUpRight,
-  CheckCircle2,
-  CircleDot,
-  Copy,
-  ExternalLink,
-  FileSearch,
-  Languages,
-  Link2,
-  LoaderCircle,
-  ShieldCheck,
-  Sparkles,
-  TimerReset,
-  WandSparkles,
-} from "lucide-react";
+import { AlertTriangle } from "@/components/icons/AlertTriangle";
+import { ArrowLeft } from "@/components/icons/ArrowLeft";
+import { ArrowUpRight } from "@/components/icons/ArrowUpRight";
+import { CheckCircle2 } from "@/components/icons/CheckCircle2";
+import { CircleDot } from "@/components/icons/CircleDot";
+import { Copy } from "@/components/icons/Copy";
+import { ExternalLink } from "@/components/icons/ExternalLink";
+import { FileSearch } from "@/components/icons/FileSearch";
+import { Languages } from "@/components/icons/Languages";
+import { Link2 } from "@/components/icons/Link2";
+import { LoaderCircle } from "@/components/icons/LoaderCircle";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { Sparkles } from "@/components/icons/Sparkles";
+import { TimerReset } from "@/components/icons/TimerReset";
+import { WandSparkles } from "@/components/icons/WandSparkles";
 import { type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { PageGuide } from "@/components/page-guide";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";

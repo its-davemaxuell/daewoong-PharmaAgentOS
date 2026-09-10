@@ -1,6 +1,7 @@
 "use client";
 
-import { Bookmark, LoaderCircle } from "lucide-react";
+import { Bookmark } from "@/components/icons/Bookmark";
+import { LoaderCircle } from "@/components/icons/LoaderCircle";
 import { useRef, useState, useTransition } from "react";
 import { setLetterBookmarkAction } from "@/app/(portal)/saved-views/actions";
 import { useI18n } from "@/lib/i18n";

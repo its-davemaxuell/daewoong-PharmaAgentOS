@@ -2,20 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import {
-  ArrowRight,
-  BookOpen,
-  Check,
-  ChevronDown,
-  Download,
-  FileText,
-  GitBranch,
-  HelpCircle,
-  Plus,
-  Save,
-  ShieldCheck,
-  Trash2,
-} from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { BookOpen } from "@/components/icons/BookOpen";
+import { Check } from "@/components/icons/Check";
+import { ChevronDown } from "@/components/icons/ChevronDown";
+import { Download } from "@/components/icons/Download";
+import { FileText } from "@/components/icons/FileText";
+import { GitBranch } from "@/components/icons/GitBranch";
+import { HelpCircle } from "@/components/icons/HelpCircle";
+import { Plus } from "@/components/icons/Plus";
+import { Save } from "@/components/icons/Save";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { Trash2 } from "@/components/icons/Trash2";
 import { useI18n } from "@/lib/i18n";
 import {
   agentDefinitions,

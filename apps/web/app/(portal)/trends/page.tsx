@@ -2,17 +2,15 @@ import { SelectionGroup, SelectionIndicator } from "@/components/motion/selectio
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  Activity,
-  ArrowDownRight,
-  ArrowRight,
-  ArrowUpRight,
-  CalendarRange,
-  FileWarning,
-  Info,
-  Minus,
-  Scale,
-} from "lucide-react";
+import { Activity } from "@/components/icons/Activity";
+import { ArrowDownRight } from "@/components/icons/ArrowDownRight";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { ArrowUpRight } from "@/components/icons/ArrowUpRight";
+import { CalendarRange } from "@/components/icons/CalendarRange";
+import { FileWarning } from "@/components/icons/FileWarning";
+import { Info } from "@/components/icons/Info";
+import { Minus } from "@/components/icons/Minus";
+import { Scale } from "@/components/icons/Scale";
 import { getDashboard, getLetters } from "@/lib/api-client";
 import { BilingualText } from "@/lib/i18n";
 import { ModeBadge, PaperPanel, ScopeBadge } from "@/components/ui";

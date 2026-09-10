@@ -1,0 +1,4 @@
+// Generated Streamline Ultimate Light — CC BY 4.0. See ATTRIBUTION.md.
+// Server Refresh 1; ico_j1RMqGlzrm7pLgAL
+import { createIcon } from "./create-icon";
+export const ServerCog = createIcon("ServerCog", <><path strokeLinecap="round" strokeLinejoin="round" d="M19 15.5h4.5V11" /><path strokeLinecap="round" strokeLinejoin="round" d="M23.158 15.5a6 6 0 1 0-.968 5.742M5.5 20.5h3m.001-5v5m3.999-10H3a2.5 2.5 0 0 0 0 5h6.5m8-7.5A2.5 2.5 0 0 0 15 5.5H3a2.5 2.5 0 1 0 0 5h9.5m5-7.5A2.5 2.5 0 0 0 15 .5H3a2.5 2.5 0 0 0 0 5h12A2.5 2.5 0 0 0 17.5 3" /><path d="M.75 20.5a.25.25 0 1 1 0-.5m0 .5a.25.25 0 1 0 0-.5m2.5.5a.25.25 0 1 1 0-.5m0 .5a.25.25 0 1 0 0-.5m1-16.75a.25.25 0 0 1 0-.5m0 .5a.25.25 0 0 0 0-.5m2.5.5a.25.25 0 0 1 0-.5m0 .5a.25.25 0 0 0 0-.5m-2.5 5.5a.25.25 0 0 1 0-.5m0 .5a.25.25 0 0 0 0-.5m0 5.5a.25.25 0 1 1 0-.5m0 .5a.25.25 0 1 0 0-.5m2.5-4.5a.25.25 0 0 1 0-.5m0 .5a.25.25 0 0 0 0-.5m0 5.5a.25.25 0 1 1 0-.5m0 .5a.25.25 0 1 0 0-.5" /></>);

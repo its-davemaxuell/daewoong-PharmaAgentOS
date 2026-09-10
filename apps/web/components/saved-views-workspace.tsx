@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Bookmark } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { Bookmark } from "@/components/icons/Bookmark";
 import { useState } from "react";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";
 import { SessionNotice } from "./session-notice";

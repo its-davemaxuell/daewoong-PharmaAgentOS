@@ -1,6 +1,12 @@
 "use client";
 
-import { Archive, ArchiveRestore, Check, Download, MoreHorizontal, Pencil, Pin } from "lucide-react";
+import { Archive } from "@/components/icons/Archive";
+import { ArchiveRestore } from "@/components/icons/ArchiveRestore";
+import { Check } from "@/components/icons/Check";
+import { Download } from "@/components/icons/Download";
+import { MoreHorizontal } from "@/components/icons/MoreHorizontal";
+import { Pencil } from "@/components/icons/Pencil";
+import { Pin } from "@/components/icons/Pin";
 import { useEffect, useRef, useState } from "react";
 import { downloadChatConversation, manageChatConversation } from "@/app/(portal)/ask/actions";
 import { useChatHistory } from "@/components/chat-history-context";

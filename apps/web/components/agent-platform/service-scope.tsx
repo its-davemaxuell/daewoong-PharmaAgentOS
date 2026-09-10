@@ -1,6 +1,9 @@
 "use client";
 
-import { ChevronDown, Database, Info, ShieldCheck } from "lucide-react";
+import { ChevronDown } from "@/components/icons/ChevronDown";
+import { Database } from "@/components/icons/Database";
+import { Info } from "@/components/icons/Info";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { useI18n } from "@/lib/i18n";
 import styles from "./service-scope.module.css";
 

@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, RefreshCw, Unplug } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { RefreshCw } from "@/components/icons/RefreshCw";
+import { Unplug } from "@/components/icons/Unplug";
 import { useI18n } from "@/lib/i18n";
 import { useTransition } from "react";
 import { ReviewButton } from "@/components/review-button";

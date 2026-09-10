@@ -217,3 +217,19 @@ customer mutation was introduced for screenshots.
 
 See docs/assurance/visual-motion-upgrade-20260910.md for the requested resource
 budget, exact artifacts, performance limitation and reproduction commands.
+
+## Streamline Light follow-up — 10 September 2026
+
+| Surface / components | Visual change | Interaction / states | Verification |
+| --- | --- | --- | --- |
+| Shell, language, guide, shared UI | Fine outline navigation, utility, status and directional symbols | Existing selected/focus/hover/disabled colors and motion inherited; accessible names retained | Desktop/mobile captures; browser regression suite |
+| Home, journey, scope, research | Objective, source, stage, saved-run and action icon family unified | Genuine run states, stop/resume and pending behavior retained | Home/research captures; persisted event and no-POST handoff tests |
+| Chat, history, tools, evidence | Cleaner message/search/send/archive glyphs, lighter source controls | Existing stream, feedback, source focus and interruptible transitions retained | English/Korean chat captures; stream/IME/focus/motion tests |
+| Library, bookmarks, letter detail, saved views | Consistent filter, source, tabs, export and save symbols | Real counts, pending/error feedback, native filters and tab semantics retained | Library captures; bounded-query and source-tab tests |
+| Drafts, cases, review, agents, admin, trends, settings | Shared Light roles throughout dense workspace controls | Existing permissions, eight case views and action behavior retained | Supporting route and geometry regression suite |
+| Help and exceptional states | Bilingual icon credits; shared error/recovery symbols | Source license links; decorative icons excluded from accessibility tree | New cross-browser local-icon/locale test; Help capture |
+
+No motion behavior changed in this follow-up. All previous transitions remain.
+Source geometry was reviewed at 14/20/28px, with compact adaptations recorded in
+the manifest. Per-icon imports removed unnecessary whole-collection delivery.
+Exact outcomes and limitations: `docs/assurance/streamline-icons-20260910.md`.

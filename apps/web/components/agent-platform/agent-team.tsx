@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, GitBranch, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { GitBranch } from "@/components/icons/GitBranch";
+import { Search } from "@/components/icons/Search";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { agentDefinitions } from "@/lib/agent-workspace";
 import { useI18n } from "@/lib/i18n";
 import { SelectionGroup, SelectionIndicator } from "../motion/selection";

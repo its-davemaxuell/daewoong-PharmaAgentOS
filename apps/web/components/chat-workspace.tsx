@@ -7,33 +7,31 @@ import { ChatStreamFailure, consumeChatStream } from "@/lib/chat-stream";
 import { SessionNotice } from "@/components/session-notice";
 import { readEvidenceCoverage } from "@/lib/evidence-state";
 import { useRouter } from "next/navigation";
-import {
-  ArrowUp,
-  ArrowDown,
-  Bot,
-  CalendarDays,
-  Check,
-  ChevronDown,
-  CircleAlert,
-  Copy,
-  FileSearch,
-  FileText,
-  Filter,
-  LockKeyhole,
-  GitBranch,
-  Pencil,
-  Paperclip,
-  Pin,
-  ThumbsUp,
-  ThumbsDown,
-  Plus,
-  RotateCcw,
-  Search,
-  SlidersHorizontal,
-  Sparkles,
-  Square,
-  X,
-} from "lucide-react";
+import { ArrowUp } from "@/components/icons/ArrowUp";
+import { ArrowDown } from "@/components/icons/ArrowDown";
+import { Bot } from "@/components/icons/Bot";
+import { CalendarDays } from "@/components/icons/CalendarDays";
+import { Check } from "@/components/icons/Check";
+import { ChevronDown } from "@/components/icons/ChevronDown";
+import { CircleAlert } from "@/components/icons/CircleAlert";
+import { Copy } from "@/components/icons/Copy";
+import { FileSearch } from "@/components/icons/FileSearch";
+import { FileText } from "@/components/icons/FileText";
+import { Filter } from "@/components/icons/Filter";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
+import { GitBranch } from "@/components/icons/GitBranch";
+import { Pencil } from "@/components/icons/Pencil";
+import { Paperclip } from "@/components/icons/Paperclip";
+import { Pin } from "@/components/icons/Pin";
+import { ThumbsUp } from "@/components/icons/ThumbsUp";
+import { ThumbsDown } from "@/components/icons/ThumbsDown";
+import { Plus } from "@/components/icons/Plus";
+import { RotateCcw } from "@/components/icons/RotateCcw";
+import { Search } from "@/components/icons/Search";
+import { SlidersHorizontal } from "@/components/icons/SlidersHorizontal";
+import { Sparkles } from "@/components/icons/Sparkles";
+import { Square } from "@/components/icons/Square";
+import { X } from "@/components/icons/X";
 import {
   useCallback,
   useEffect,
@@ -1896,7 +1894,7 @@ export function ChatWorkspace({
                 }
                 onClick={() => runQuery(question)}
               >
-                <ArrowUp size={17} strokeWidth={2.2} />
+                <ArrowUp size={17} />
                 <span>{text("Ask AI", "질문 보내기")}</span>
               </button>
             )}

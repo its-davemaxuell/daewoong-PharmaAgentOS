@@ -10,6 +10,13 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-10 Streamline Light icon upgrade:** All 30 former Lucide consumers now
+use local, individually imported Streamline Light modules: 94 roles from 66 reviewed
+CC BY 4.0 source SVGs. Removed lucide-react, added no dependency, and retained the
+existing motion, semantics, trust labels and business logic. Bilingual Help credits
+the source. See `docs/assurance/streamline-icons-20260910.md` for measurements,
+screenshots, validation and the generator/provenance record.
+
 **2026-09-10 visual and motion refinement:**
 Follow-up to user feedback on `a19d0c4`: corrected selection-background stacking
 over neighboring labels, made travel visibly smoother, added a 300ms route-context

@@ -1,0 +1,4 @@
+// Generated Streamline Ultimate Light — CC BY 4.0. See ATTRIBUTION.md.
+// Book Open Bookmark; ico_l1nK2X8K5oKqo4Ax
+import { createIcon } from "./create-icon";
+export const BookOpen = createIcon("BookOpen", <><path fill="none" strokeLinecap="round" strokeLinejoin="round" d="m12 6.164 0 16.375M9.5 8.164A23.4 23.4 0 0 0 3 6.924m6.5 5.5a23.4 23.4 0 0 0-6.5-1.24m6.5 5.48a23.4 23.4 0 0 0-6.5-1.24m11.5-3a23.4 23.4 0 0 1 6.5-1.24m-6.5 5.48a23.4 23.4 0 0 1 6.5-1.24M16 2.387a.5.5 0 0 1 .376-.485 23 23 0 0 1 3.065-.563.5.5 0 0 1 .558.5v7.325l-2-2-2 2Z" /><path fill="none" strokeLinecap="round" strokeLinejoin="round" d="M20 2.8c.638-.06 1.3-.1 1.967-.123a1 1 0 0 1 1.032 1v14.5a1 1 0 0 1-.97 1C16.591 19.34 12 20.838 12 22.664c0-1.826-4.591-3.324-10.03-3.486a1 1 0 0 1-.97-1V3.68a1 1 0 0 1 1.032-1C7.443 2.851 12 4.345 12 6.164c0-.711.7-1.372 1.867-1.924" /></>);

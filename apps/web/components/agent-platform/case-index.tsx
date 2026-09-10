@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ServiceState } from "./service-state";
-import { ArrowRight, BriefcaseBusiness, LockKeyhole } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { BriefcaseBusiness } from "@/components/icons/BriefcaseBusiness";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
 import { CreateCaseForm } from "@/components/agent-platform/case-forms";
 import {
   CASE_STATUSES,

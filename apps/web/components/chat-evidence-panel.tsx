@@ -3,7 +3,10 @@
 import { useIsPresent } from "motion/react";
 import Link from "next/link";
 import { SourceLink } from "@/components/source-link";
-import { ExternalLink, FileText, Pin, X } from "lucide-react";
+import { ExternalLink } from "@/components/icons/ExternalLink";
+import { FileText } from "@/components/icons/FileText";
+import { Pin } from "@/components/icons/Pin";
+import { X } from "@/components/icons/X";
 import { useEffect, useRef } from "react";
 import { useI18n } from "@/lib/i18n";
 import { IconButton } from "./controls";

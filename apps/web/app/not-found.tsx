@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "@/components/icons/ArrowLeft";
 import { BilingualText } from "@/lib/i18n";
 
 export default function NotFound() {

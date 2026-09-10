@@ -1,4 +1,5 @@
-import { DatabaseZap, LockKeyhole } from "lucide-react";
+import { DatabaseZap } from "@/components/icons/DatabaseZap";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
 import { formatPortalDate } from "@/lib/date-format";
 import { BilingualText, type Locale } from "@/lib/i18n";
 import type { DataMode, ReviewState } from "@/lib/types";

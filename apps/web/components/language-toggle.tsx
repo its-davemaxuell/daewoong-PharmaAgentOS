@@ -1,6 +1,6 @@
 "use client";
 
-import { Languages } from "lucide-react";
+import { Languages } from "@/components/icons/Languages";
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
 import { useI18n, type Locale } from "@/lib/i18n";
 

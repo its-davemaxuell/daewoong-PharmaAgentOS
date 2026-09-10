@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Download, MessageSquareText, Network, Play, Settings, ShieldCheck, Square } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { BookOpen } from "@/components/icons/BookOpen";
+import { Download } from "@/components/icons/Download";
+import { MessageSquareText } from "@/components/icons/MessageSquareText";
+import { Network } from "@/components/icons/Network";
+import { Play } from "@/components/icons/Play";
+import { Settings } from "@/components/icons/Settings";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { Square } from "@/components/icons/Square";
 import { useI18n } from "@/lib/i18n";
 import { ResearchJourney } from "./research-journey";
 import { ServiceScope } from "./service-scope";
@@ -33,6 +41,7 @@ export function EmployeeGuide() {
     <section aria-labelledby="guide-controls"><h2 id="guide-controls">{text("Controls at a glance", "주요 기능 한눈에 보기")}</h2><dl className={styles.controls}>{controls.map(({icon: Icon, title, detail}) => <div key={title}><dt><Icon size={21} aria-hidden="true" />{title}</dt><dd>{detail}</dd></div>)}</dl></section>
     <section id="availability"><h2>{text("Scope & storage", "이용 범위와 저장")}</h2><ServiceScope /></section>
     <section className={styles.faq}><h2>{text("Common questions", "자주 묻는 질문")}</h2>{questions.map(([en, ko, bodyEn, bodyKo]) => <details key={en}><summary>{text(en, ko)}</summary><p>{text(bodyEn, bodyKo)}</p></details>)}</section>
+    <section id="credits" aria-labelledby="guide-credits"><h2 id="guide-credits">{text("Icon credits", "아이콘 출처")}</h2><p>{text("Ultimate Light icons by ", "Ultimate Light 아이콘 제작: ")}<a href="https://www.streamlinehq.com/">Streamline</a>{text(". Used under ", ". 이용 라이선스: ")}<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>{text("; colors, weight and selected symbols adapted for this workspace.", ". 이 워크스페이스에 맞게 색상, 선 굵기와 일부 기호를 조정했습니다.")}</p></section>
     <footer><ShieldCheck size={20} aria-hidden="true" /><p>{text("AI drafts can be wrong. Check the FDA originals before use.", "AI 초안에는 오류가 있을 수 있습니다. 사용 전 FDA 원문을 확인하세요.")}</p></footer>
   </article>;
 }

@@ -1,26 +1,24 @@
 "use client";
 
-import {
-  Activity,
-  AlertTriangle,
-  ArchiveRestore,
-  BellRing,
-  CalendarRange,
-  Check,
-  CheckCircle2,
-  CircleAlert,
-  Database,
-  ListRestart,
-  LockKeyhole,
-  Mail,
-  PackageCheck,
-  RefreshCcw,
-  Save,
-  ServerCog,
-  Settings2,
-  ShieldCheck,
-  X,
-} from "lucide-react";
+import { Activity } from "@/components/icons/Activity";
+import { AlertTriangle } from "@/components/icons/AlertTriangle";
+import { ArchiveRestore } from "@/components/icons/ArchiveRestore";
+import { BellRing } from "@/components/icons/BellRing";
+import { CalendarRange } from "@/components/icons/CalendarRange";
+import { Check } from "@/components/icons/Check";
+import { CheckCircle2 } from "@/components/icons/CheckCircle2";
+import { CircleAlert } from "@/components/icons/CircleAlert";
+import { Database } from "@/components/icons/Database";
+import { ListRestart } from "@/components/icons/ListRestart";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
+import { Mail } from "@/components/icons/Mail";
+import { PackageCheck } from "@/components/icons/PackageCheck";
+import { RefreshCcw } from "@/components/icons/RefreshCcw";
+import { Save } from "@/components/icons/Save";
+import { ServerCog } from "@/components/icons/ServerCog";
+import { Settings2 } from "@/components/icons/Settings2";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { X } from "@/components/icons/X";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { saveNotificationSettings, startCorpusSync, submitReprocess } from "@/app/(portal)/admin/actions";
 import { PageGuide } from "@/components/page-guide";

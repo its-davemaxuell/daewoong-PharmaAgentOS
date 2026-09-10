@@ -1,25 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  BookOpen,
-  BookmarkPlus,
-  CheckCircle2,
-  ChevronDown,
-  CircleAlert,
-  Copy,
-  ExternalLink,
-  Filter,
-  LockKeyhole,
-  MessageSquareQuote,
-  Quote,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  ThumbsDown,
-  ThumbsUp,
-} from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { BookOpen } from "@/components/icons/BookOpen";
+import { BookmarkPlus } from "@/components/icons/BookmarkPlus";
+import { CheckCircle2 } from "@/components/icons/CheckCircle2";
+import { ChevronDown } from "@/components/icons/ChevronDown";
+import { CircleAlert } from "@/components/icons/CircleAlert";
+import { Copy } from "@/components/icons/Copy";
+import { ExternalLink } from "@/components/icons/ExternalLink";
+import { Filter } from "@/components/icons/Filter";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
+import { MessageSquareQuote } from "@/components/icons/MessageSquareQuote";
+import { Quote } from "@/components/icons/Quote";
+import { Search } from "@/components/icons/Search";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
+import { Sparkles } from "@/components/icons/Sparkles";
+import { ThumbsDown } from "@/components/icons/ThumbsDown";
+import { ThumbsUp } from "@/components/icons/ThumbsUp";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { askDrugCorpus } from "@/app/(portal)/ask/actions";
 import { useI18n } from "@/lib/i18n";

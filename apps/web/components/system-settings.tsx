@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { BookOpen } from "@/components/icons/BookOpen";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ServiceScope } from "@/components/agent-platform/service-scope";
 import { useI18n } from "@/lib/i18n";

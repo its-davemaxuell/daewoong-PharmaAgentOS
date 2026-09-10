@@ -155,3 +155,21 @@ Sources for implementation: [Motion feature loading](https://motion.dev/docs/rea
 [local transition panels](https://motion-primitives.com/docs/transition-panel), and
 [native dialog animation](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#animating_dialogs).
 These inform interaction principles; the approved Layered desk remains the visual authority.
+
+### Iconography — Streamline Light
+
+Use locally bundled SVGs from Streamline's CC BY 4.0 Ultimate Light free collection.
+The reviewed source selection, license and adaptations live in
+`apps/web/components/icons/`. Import an individual icon module so unrelated artwork
+does not enter a route's bundle; regenerate with `python scripts/generate-streamline-icons.py`
+from `apps/web` after editing the manifest. No external icon requests or icon font.
+
+Keep the fine, rounded outline family consistent: 1.25 stroke on a normalized
+24-unit grid, approximately 16–20px controls/navigation and 24px guidance symbols.
+Color inherits semantic state. Simplify enclosing shapes on compact search, close,
+check, message and directional controls; do not add decorative detail to tiny actions.
+Icons accompany existing labels and never imply live agent activity or approval.
+Decorative SVGs are hidden from assistive technology; action names remain on their
+buttons/links. Preserve Daewoong/FDA marks and the product monogram. Bilingual Help
+includes Streamline attribution and the CC BY 4.0 link. Existing motion conventions
+apply to the containing control; do not animate static evidence icons independently.

@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown, CircleHelp } from "lucide-react";
+import { ChevronDown } from "@/components/icons/ChevronDown";
+import { CircleHelp } from "@/components/icons/CircleHelp";
 import type { ReactNode } from "react";
 import { useI18n } from "@/lib/i18n";
 

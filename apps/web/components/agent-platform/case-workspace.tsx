@@ -1,18 +1,16 @@
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  Activity,
-  CheckCircle2,
-  CircleAlert,
-  FileText,
-  History,
-  GitBranch,
-  LockKeyhole,
-  Send,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft } from "@/components/icons/ArrowLeft";
+import { ArrowUpRight } from "@/components/icons/ArrowUpRight";
+import { Activity } from "@/components/icons/Activity";
+import { CheckCircle2 } from "@/components/icons/CheckCircle2";
+import { CircleAlert } from "@/components/icons/CircleAlert";
+import { FileText } from "@/components/icons/FileText";
+import { History } from "@/components/icons/History";
+import { GitBranch } from "@/components/icons/GitBranch";
+import { LockKeyhole } from "@/components/icons/LockKeyhole";
+import { Send } from "@/components/icons/Send";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import {
   ArtifactComposeForm,
   ArtifactDecisionForm,
