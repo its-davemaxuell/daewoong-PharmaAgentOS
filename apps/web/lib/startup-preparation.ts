@@ -17,6 +17,7 @@ export const menuModules: Record<string, () => Promise<unknown>> = {
   "/inbox": () => import("@/components/workspace/inbox-workspace"),
   "/ask": () => import("@/components/prepared/chat-entry"),
   "/agents": () => import("@/components/agent-platform/agent-team"),
+  "/usage": () => import("@/components/workspace/usage-workspace"),
   "/settings": () => import("@/components/system-settings"),
   "/help": () => import("@/components/agent-platform/employee-guide"),
   "/search": () => import("@/components/workspace/search-workspace"),
@@ -24,7 +25,7 @@ export const menuModules: Record<string, () => Promise<unknown>> = {
 const preparedModule = () => import("@/components/prepared/menu-workspace");
 
 export function preparationTasks(client: QueryClient, scope: string, roles: AppRole[], linear: boolean, destination: URL) {
-  const menus = [{ href: "/dashboard", en: "Home", ko: "홈" }, ...portalNavigation(linear).navItems.filter(item => !item.requiredRole || roles.includes(item.requiredRole)), { href: "/search", en: "Search", ko: "검색" }];
+  const menus = [{ href: "/dashboard", en: "Home", ko: "홈" }, ...portalNavigation(linear).navItems.filter(item => !item.requiredRole || roles.includes(item.requiredRole)), { href: "/search", en: "Search", ko: "검색" }].filter((menu, index, all) => all.findIndex(item => item.href === menu.href) === index);
   const tasks: PreparationTask[] = menus.map(menu => ({ id: menu.href, en: menu.en, ko: menu.ko, run: async () => {
     const params = destination.pathname === menu.href ? destination.searchParams : new URLSearchParams();
     await (menuModules[menu.href] ?? preparedModule)();
@@ -45,7 +46,7 @@ export function preparationTasks(client: QueryClient, scope: string, roles: AppR
         break;
       }
       case "/inbox": await client.fetchQuery(inboxOptions(scope, params.get("state") || "new", Number(params.get("page")) || 1, true)); break;
-      case "/settings": case "/agents": case "/help": case "/search": break;
+      case "/usage": case "/settings": case "/agents": case "/help": case "/search": break;
       default: await client.fetchQuery(menuQueryOptions(scope, (menu.href === "/requests" ? "cases" : menu.href.slice(1)) as MenuResource, menu.href === "/requests" ? new URLSearchParams() : params));
     }
   }}));

@@ -399,7 +399,7 @@ export function LettersExplorer({
                   ? text("Posted", "게시")
                   : text("Issued", "발행");
                 return (
-              <li className="letter-row" key={letter.id}>
+              <li className="letter-row" key={letter.id} data-selected={selected === letter.id}>
                 <div className="letter-row__date">
                   <span>{primaryDateLabel}</span>
                   <time dateTime={primaryDate}>{formatDate(primaryDate, { day: "2-digit", month: "short", year: "numeric" }, locale)}</time>

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unicodedata
 from copy import deepcopy
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -20,6 +20,8 @@ from app.models import (
     Document,
     DocumentChunk,
     DocumentVersion,
+    RagQuery,
+    ResearchRun,
     WarningLetter,
     utcnow,
 )
@@ -34,10 +36,49 @@ from app.schemas import (
     ChatThreadPage,
     ChatThreadPatch,
     ChatThreadSummary,
+    PersonalUsageResponse,
 )
 from app.security.auth import Principal, rag_principal
 
 router = APIRouter(prefix="/chat/threads", tags=["Chat"])
+
+
+@router.get("/usage", response_model=PersonalUsageResponse)
+async def personal_usage(
+    principal: Principal = Depends(rag_principal),
+    session: AsyncSession = Depends(session_dependency),
+) -> PersonalUsageResponse:
+    """Stored activity for the verified owner only; no caller-supplied scope."""
+    now = utcnow()
+    since = now - timedelta(days=30)
+    conversations = await session.scalar(
+        select(func.count(ChatThread.id)).where(
+            ChatThread.owner_subject == principal.subject, ChatThread.created_at >= since
+        )
+    )
+    requests = await session.scalar(
+        select(func.count(RagQuery.id)).where(
+            RagQuery.actor_id == principal.subject, RagQuery.created_at >= since
+        )
+    )
+    runs, calls, tokens = (
+        await session.execute(
+            select(
+                func.count(ResearchRun.id),
+                func.coalesce(func.sum(ResearchRun.model_calls), 0),
+                func.coalesce(func.sum(ResearchRun.total_tokens), 0),
+            ).where(ResearchRun.owner_id == principal.subject, ResearchRun.created_at >= since)
+        )
+    ).one()
+    return PersonalUsageResponse(
+        since=since,
+        as_of=now,
+        conversations=conversations or 0,
+        chat_requests=requests or 0,
+        research_runs=runs,
+        research_model_calls=calls,
+        research_tokens=tokens,
+    )
 
 
 def _as_utc(value: datetime | None) -> datetime | None:

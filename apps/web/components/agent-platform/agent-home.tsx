@@ -1,4 +1,5 @@
 "use client";
+import { LoadingIndicator } from "../controls";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -723,7 +724,7 @@ export function AgentHome({
           </span>
         </div>
         {!loaded ? (
-          <p>{text("Loading your drafts…", "저장한 초안을 불러오는 중…")}</p>
+          <p><LoadingIndicator label={text("Loading your drafts…", "저장한 초안을 불러오는 중…")} /></p>
         ) : storageError && !requests.length ? (
           <p>
             {text(

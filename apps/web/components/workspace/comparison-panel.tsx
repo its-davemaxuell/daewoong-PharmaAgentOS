@@ -1,4 +1,5 @@
 "use client";
+import { LoadingIndicator } from "../controls";
 import { useEffect, useRef, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useWorkspaceScope } from "./provider";
@@ -117,7 +118,7 @@ export function ComparisonPanel() {
               {ids.map((id, index) => (
                 <th key={id}>
                   {queries[index].data?.company ??
-                    (queries[index].isError ? text("Source unavailable", "원문을 불러오지 못함") : text("Loading…", "불러오는 중…"))}
+                    (queries[index].isError ? text("Source unavailable", "원문을 불러오지 못함") : <LoadingIndicator label={text("Loading…", "불러오는 중…")} />)}
                   <button
                     onClick={() => remove(id)}
                     aria-label={text("Remove record", "기록 제외")}

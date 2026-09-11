@@ -79,3 +79,17 @@ work; evidence browsing and governed team review form separate groups. Overview
 leads with starting and continuing real work. Shared page patterns, mobile question
 priority and visible distinctions between source evidence, AI findings and human
 review are the acceptance criteria. DESIGN.md records the updated visual system.
+
+## September 12 product priority
+
+The user identifies RAG Chatbot and Research Agent as the primary service. Both
+lead the left sidebar; Chat is the landing page. Supporting menus remain direct
+links. The chatbot should follow familiar commercial chat workflows, with
+conversation organization, evidence inspection, export, in-chat search and an
+explicit draft handoff to research. Smooth tab/selection feedback and animated
+loading are required, with reduced-motion support.
+
+The user declined identity-provider setup after asking for team capabilities.
+Keep anonymous browser sessions, existing access controls and manual export-based
+sharing. Personal usage reporting is in scope; named sharing, team membership and
+team-wide reporting require a separately authorized identity setup.

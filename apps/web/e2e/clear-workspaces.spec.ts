@@ -7,7 +7,7 @@ test.beforeEach(async ({ context }) => {
 test("daily navigation separates personal work and governed review", async ({ page }) => {
   await page.goto("/dashboard");
   const sidebar = page.locator(".continuity-sidebar");
-  for (const name of ["Research", "Inbox", "Saved work", "FDA sources"]) {
+  for (const name of ["Research Agent", "Inbox", "Saved work", "FDA sources"]) {
     await expect(sidebar.getByRole("link", { name, exact: true })).toBeVisible();
   }
   await expect(sidebar.getByRole("link", { name: "Source review", exact: true })).toHaveCount(0);
@@ -27,7 +27,7 @@ test("home examples prepare a question without starting research", async ({ page
   page.on("request", request => { if (request.method() === "POST" && request.url().includes("/api/research")) starts++; });
   await page.goto("/dashboard");
   await page.getByRole("link", { name: "What do FDA letters say about cleaning validation?", exact: true }).click();
-  await expect(page.locator("#research-goal")).toHaveValue("What do FDA letters say about cleaning validation?");
+  await expect(page.locator("#research-goal").filter({ visible: true })).toHaveValue("What do FDA letters say about cleaning validation?");
   expect(starts).toBe(0);
 });
 
@@ -47,8 +47,8 @@ test("home keeps active work visible while a source request fails", async ({ pag
 test("mobile research gives the question priority and keeps history accessible", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto("/research");
-  await expect(page.locator("#research-goal")).toBeEnabled();
-  expect((await page.locator("#research-goal").boundingBox())!.y).toBeLessThan(450);
+  await expect(page.locator("#research-goal").filter({ visible: true })).toBeEnabled();
+  expect((await page.locator("#research-goal").filter({ visible: true }).boundingBox())!.y).toBeLessThan(450);
   await expect(page.locator(".research-history-body")).toBeHidden();
   await page.getByRole("button", { name: "Show history", exact: true }).click();
   await expect(page.locator(".research-history-body")).toBeVisible();

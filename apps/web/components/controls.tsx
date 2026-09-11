@@ -22,3 +22,7 @@ export function SkeletonRows({ rows = 3, label }: { rows?: number; label: ReactN
 export function InlineFeedback({ kind = "info", children }: { kind?: "info" | "success" | "error"; children: ReactNode }) {
   return <p className={styles.feedback} data-kind={kind} role={kind === "error" ? "alert" : "status"}>{children}</p>;
 }
+
+export function LoadingIndicator({ label }: { label: ReactNode }) {
+  return <span className={styles.loadingIndicator} role="status"><span className={styles.spinner} aria-hidden="true" /><span className="sr-only">{label}</span></span>;
+}

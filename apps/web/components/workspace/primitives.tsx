@@ -1,4 +1,5 @@
 "use client";
+import { LoadingIndicator } from "../controls";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useI18n } from "@/lib/i18n";
 import { ActionButton } from "./commands";
@@ -11,7 +12,7 @@ export function WorkspaceErrorState({ retry }: { retry?: () => void }) {
   const { text } = useI18n();
   return <div className="workspace-feedback" role="alert">{text("Could not load this view. Your saved work is retained.", "화면을 불러오지 못했습니다. 저장된 작업은 유지됩니다.")} {retry && <button onClick={retry}>{text("Try again", "다시 시도")}</button>}</div>;
 }
-export function WorkspaceLoading() { const { text } = useI18n(); return <div className="workspace-loading" data-startup-pending="true" role="status">{text("Loading…", "불러오는 중…")}</div>; }
+export function WorkspaceLoading() { const { text } = useI18n(); return <div className="workspace-loading" data-startup-pending="true"><LoadingIndicator label={text("Loading…", "불러오는 중…")} /></div>; }
 export function Pagination({ page, hasMore, onChange }: { page: number; hasMore: boolean; onChange: (page: number) => void }) {
   const { text } = useI18n();
   return <nav className="workspace-pagination" aria-label={text("Pages", "페이지")}><button disabled={page === 1} onClick={() => onChange(page - 1)}>{text("Previous", "이전")}</button><span>{page}</span><button disabled={!hasMore} onClick={() => onChange(page + 1)}>{text("Next", "다음")}</button></nav>;

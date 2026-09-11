@@ -3137,3 +3137,22 @@ Implemented UI scope:
 - Approval requests and review drafts remain contextual links from Reviews; evaluation/agent administration links live in admin Settings.
 
 Follow-on backend/product scope is explicit: source-to-governed-case assignment and complete review within the FDA reader; named reviewer/approver identity integration; versioned cross-case comparison analyses and saved comparisons; qualified confidence and exact PDF page/highlight geometry; unified saved findings/reports; notification delivery; emerging-trend deltas; field analytics and production Web Vitals qualification. Preserve the existing permission and evidence validation boundaries when adding those capabilities. Do not substitute local UI state for formal approval or immutable review events.
+
+
+## 2026-09-12 Chat and Research product refinement
+
+Current user direction supersedes the prior navigation hierarchy: RAG Chat and
+Research Agent lead the left sidebar, with every authorized supporting menu linked
+directly. Chat is the default entry point. Add reduced-motion-aware route/tab and
+selection transitions and an accessible animated loading indicator.
+
+Refine the commercial chat workflow using existing persisted history, rename,
+pin/archive, exports, feedback, branches and evidence inspection. Add find-in-chat,
+copy with source references, and question-to-research draft handoff. Never start
+a research job from a navigation action. Add a verified-owner usage API and personal
+CSV reporting for recorded chats and research calls/tokens.
+
+The user explicitly declined company identity setup. Retain browser-session access,
+existing role/owner enforcement and manual conversation exports. Named shared chat,
+team permissions and team-wide usage aggregation are deferred with that setup;
+no enterprise readiness or organization-wide visibility is claimed.

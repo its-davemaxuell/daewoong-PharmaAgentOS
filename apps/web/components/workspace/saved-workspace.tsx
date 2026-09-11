@@ -1,4 +1,5 @@
 "use client";
+import { SelectionGroup, SelectionIndicator } from "../motion/selection";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -34,7 +35,7 @@ export function SavedWorkspace() {
   }
   const tabs = [["briefs", text("Briefs", "브리핑")], ["sources", text("Sources", "자료")], ["views", text("Saved views", "저장한 보기")], ["drafts", text("Local drafts", "기기 내 초안")]];
   return <section className="workspace-page"><WorkspaceHeading title={text("Saved work", "저장한 작업")} subtitle={text("Brief snapshots, sources, and reusable views in this browser session.", "이 브라우저 세션의 브리핑 스냅샷, 원문 및 저장한 보기입니다.")} />
-    <div className="workspace-viewbar">{tabs.map(([id, label]) => <button key={id} aria-pressed={tab === id} onClick={() => setWorkspaceParams({ tab: id, page: null, cursor: null, brief: null })}>{label}</button>)}</div>
+    <SelectionGroup><div className="workspace-viewbar">{tabs.map(([id, label]) => <button className="ui-selection-control" key={id} aria-pressed={tab === id} onClick={() => setWorkspaceParams({ tab: id, page: null, cursor: null, brief: null })}>{tab === id && <SelectionIndicator tone="tinted" />}{label}</button>)}</div></SelectionGroup>
     {error && <p className="workspace-feedback" role="alert">{text("Could not remove the saved item. Please try again.", "저장 항목을 제거하지 못했습니다. 다시 시도하세요.")}</p>}
     {tab === "drafts" ? <div className="workspace-empty"><p>{text("Review drafts remain stored on this device. They are separate from server-saved brief snapshots.", "검토 초안은 이 기기에 저장되며 서버의 브리핑 스냅샷과 별도입니다.")}</p><Link href="/requests">{text("Open local drafts", "기기 내 초안 열기")}</Link></div> : tab === "briefs" ? briefs.isPending ? <WorkspaceLoading /> : !briefs.data ? <WorkspaceErrorState retry={() => void briefs.refetch()} /> : <>{briefs.isError && <WorkspaceErrorState retry={() => void briefs.refetch()} />}
       {!briefs.data.items.length && <div className="workspace-empty">{text("Save a completed research brief to retain its exact evidence and content.", "완료된 리서치 브리핑을 저장하여 근거와 내용을 그대로 보존하세요.")} <Link href="/research">{text("Open Research", "리서치 열기")}</Link></div>}

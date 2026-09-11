@@ -1,4 +1,5 @@
 "use client";
+import { LoadingIndicator } from "../controls";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +10,7 @@ import { fetchSource } from "./source-inspector";
 import { X } from "../icons/X";
 const Chat = dynamic(
   () => import("../chat-workspace").then((module) => module.ChatWorkspace),
-  { loading: () => <p role="status">Loading assistant… / AI 불러오는 중…</p> },
+  { loading: () => <p><LoadingIndicator label="Loading assistant… / AI 불러오는 중…" /></p> },
 );
 export function openAssistant(sourceId?: string) {
   window.dispatchEvent(
@@ -33,9 +34,7 @@ function Conversation({
   return (
     <div hidden={!active} inert={!active || undefined}>
       {sourceId && query.isPending ? (
-        <p role="status">
-          {text("Loading case context…", "케이스 근거를 불러오는 중…")}
-        </p>
+        <p><LoadingIndicator label={text("Loading case context…", "케이스 근거를 불러오는 중…")} /></p>
       ) : sourceId && query.isError ? (
         <div role="alert">
           <p>

@@ -36,13 +36,12 @@ topic counts and compact collection/work counts. With no active research, exampl
 questions prepare a tab-local draft without starting a run. Unavailable counts use a dash.
 Topic counts are not trend deltas; counts from paginated results carry a plus.
 
-Primary navigation: Overview; My work (Research, Inbox, Saved work); Evidence
-(FDA sources, Trends); Team review (Cases, reviewer Source review and Approvals).
-Recent conversations are a collapsed disclosure. Settings and Help sit at the
-bottom. Operations is admin-only. Deep routes remain available through related
-case/operations links and permission-filtered command search. Keep route headings,
-commands, breadcrumbs and navigation labels consistent in English and Korean.
-Personal Inbox triage is separate from governed review and approval.
+Primary navigation begins with RAG Chat and Research Agent. RAG Chat is the default
+landing page. All supporting destinations have direct sidebar links grouped into
+My work, Evidence library, Team review, Agent management and Utilities. Existing
+role restrictions still apply. Recent conversations are expanded. Keep route
+headings, commands, breadcrumbs and navigation labels consistent in both languages.
+Personal Inbox triage remains separate from governed review and approval.
 
 Use shared workspace headings and list surfaces. Main headings are 22/28 with one
 short explanation and one dominant action. Toolbars sit directly above results;
@@ -60,7 +59,10 @@ retain the owner-scoped query cache and prefetch route/data on navigation intent
 Legacy animated startup is opt-in with PORTAL_LEGACY_STARTUP_ENABLED=true.
 Sidebar geometry changes over 200ms. Controls use 140ms color changes. Panels enter
 with an 8px offset and opacity over 200ms. Reduced motion removes movement.
-Do not animate all properties or introduce full-screen route fades.
+Route and URL-backed tab changes use a 200ms content-only opacity transition; the
+shell, drafts and streaming state remain mounted. Selection indicators travel over
+240ms; selected source rows change tint. Reduced motion disables animations.
+Loading text becomes a small blue spinner with a screen-reader label.
 
 The desktop inspector and its reserved content space share a 390px token.
 Case tabs reflect their view in the URL. Citation selection keeps the finding
@@ -81,3 +83,18 @@ redesign cannot qualify unfinished personal execution, specialist pipelines,
 PDF page coordinates, review assignments or regulatory confidence scoring.
 Verify desktop/mobile, both languages, keyboard, reduced motion, cached/error
 states and actual source passages. Screenshots use explicitly fictional fixtures.
+
+## RAG Chat refinement — September 12
+
+Use a full-width white workspace with a narrow, readable transcript and an anchored
+composer. Primary header controls expose conversation history, find-in-chat and
+new chat. Saved conversations expose Export beside their name. Keep model/scope
+settings optional; source selection is explicitly labeled. Search navigates the
+existing transcript without filtering or replaying it. Copy retains citations,
+source provenance and the AI review label. Research handoff copies the question
+into a draft and requires a separate Start research action.
+
+The user declined company sign-in setup. Preserve the 30-day browser-session
+model and owner authorization. Sharing uses existing exports; do not imply named
+team collaboration. Usage reports display actual personal activity and research
+usage with CSV export, never estimated chat costs or invented team statistics.

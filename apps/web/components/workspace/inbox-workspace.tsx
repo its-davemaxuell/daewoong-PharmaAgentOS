@@ -1,4 +1,5 @@
 "use client";
+import { SelectionGroup, SelectionIndicator } from "../motion/selection";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -46,7 +47,7 @@ export function InboxWorkspace() {
   }
   return <section className="workspace-page"><WorkspaceHeading title={text("Inbox", "받은 자료")} subtitle={text("Organize new source updates. Inbox actions do not approve evidence.", "새 원문 업데이트를 정리하세요. 받은 자료 분류는 근거 승인이 아닙니다.")} />
 
-    <div className="workspace-viewbar" aria-label={text("Inbox views", "수신함 보기")}>{Object.entries(labels).map(([id, label]) => <button key={id} aria-pressed={state === id} disabled={pending} onClick={() => { setSelection([]); setWorkspaceParams({ state: id, page: null }); }}>{label}{id !== "all" && result.data ? ` ${result.data.counts[id as TriageState] ?? 0}` : ""}</button>)}</div>
+    <SelectionGroup><div className="workspace-viewbar" aria-label={text("Inbox views", "수신함 보기")}>{Object.entries(labels).map(([id, label]) => <button className="ui-selection-control" key={id} aria-pressed={state === id} disabled={pending} onClick={() => { setSelection([]); setWorkspaceParams({ state: id, page: null }); }}>{state === id && <SelectionIndicator tone="tinted" />}{label}{id !== "all" && result.data ? ` ${result.data.counts[id as TriageState] ?? 0}` : ""}</button>)}</div></SelectionGroup>
     {selected.length > 0 && <div className="workspace-bulk"><span>{text(`${selected.length} selected on this page`, `현재 페이지에서 ${selected.length}건 선택`)}</span>{(["new", "later", "done", "dismissed"] as const).map(next => <ActionButton key={next} actionId={`inbox.${next}`} label={labels[next]} disabled={pending} onClick={() => void apply(next)}>{labels[next]}</ActionButton>)}{pending && <span role="status">{text("Saving…", "저장 중…")}</span>}{dismiss && <label>{text("Dismissal reason", "제외 사유")}<input value={reason} maxLength={1000} onChange={event => setReason(event.target.value)} /><button disabled={reason.trim().length < 3 || pending} onClick={() => void apply("dismissed")}>{text("Confirm dismissal", "제외 확인")}</button></label>}</div>}
     {feedback && <p className="workspace-feedback" role="status">{feedback}</p>}
     {result.isPending ? <WorkspaceLoading /> : !result.data ? <WorkspaceErrorState retry={() => void result.refetch()} /> : <>{result.isError && <WorkspaceErrorState retry={() => void result.refetch()} />}

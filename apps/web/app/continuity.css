@@ -1139,3 +1139,25 @@
 @media (max-width: 600px) {
   .continuity-shell .continuity-assistant :is(button, input, select) { min-height: 40px; }
 }
+
+/* Primary products lead; every supporting destination remains a direct link. */
+.continuity-navigation { display: flex; flex-direction: column; min-height: 100%; flex-shrink: 0; }
+.continuity-sidebar > .continuity-navigation { flex: 1; }
+.continuity-nav-group { margin-top: 16px; }
+.continuity-nav { position: relative; min-height: 34px; padding-block: 6px; }
+.continuity-nav.is-active, .continuity-nav.is-active:hover { background: transparent; }
+.continuity-nav-group:first-of-type .continuity-nav { min-height: 40px; font-weight: 600; }
+.continuity-nav-group:first-of-type { margin-top: 0; }
+.continuity-search { margin-block: 18px; }
+.continuity-sidebar-footer { padding-top: 16px; }
+.continuity-recents { padding-top: 12px; border-top: 1px solid var(--os-rule); }
+.continuity-shell .workspace-viewbar .ui-selection-control[aria-pressed="true"] { background: transparent; }
+.continuity-shell .workspace-selectable:has(input:checked) { background: var(--os-primary-soft); }
+.continuity-shell .workspace-selectable { transition: background-color var(--motion-select) var(--motion-ease); }
+.continuity-shell .continuity-table td { transition: background-color var(--motion-select) var(--motion-ease); }
+.continuity-shell :is(button[aria-pressed], button[aria-selected], .chat-source-strip button, .chat-suggestions button, .workspace-list button) {
+  transition: background-color var(--motion-select) var(--motion-ease), color var(--motion-hover) var(--motion-ease), border-color var(--motion-hover) var(--motion-ease);
+}
+
+.continuity-shell .letter-row { transition: background-color var(--motion-select) var(--motion-ease); }
+.continuity-shell .letter-row[data-selected="true"] { background: var(--os-primary-soft); }

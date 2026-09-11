@@ -1,2 +1,2 @@
-/** Tab-local handoff from Home; preparing an objective never starts a server job. */
+/** Tab-local handoff from Overview or RAG Chat; preparing an objective never starts a server job. */
 export const RESEARCH_DRAFT_KEY = "pharma-research-objective";

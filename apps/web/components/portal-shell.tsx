@@ -10,7 +10,9 @@ import { useChatHistory } from "./chat-history-context";
 import { LanguageToggle } from "./language-toggle";
 import { Search } from "./icons/Search";
 import { Bell } from "./icons/Bell";
-import { BriefcaseBusiness } from "./icons/BriefcaseBusiness";
+import { SelectionGroup, SelectionIndicator } from "./motion/selection";
+import { NavigationTransition } from "./motion/navigation-transition";
+import { Suspense } from "react";
 import { Menu } from "./icons/Menu";
 import { X } from "./icons/X";
 import { PanelLeftClose } from "./icons/PanelLeftClose";
@@ -70,10 +72,10 @@ export function PortalShell({
     trigger.current?.focus();
   }
   const navigation = (
-    <>
+    <SelectionGroup><div className="continuity-navigation">
       <Link
         className="continuity-brand"
-        href="/dashboard"
+        href="/ask"
         onClick={() => mobile && close()}
         aria-label="PharmaAgent OS"
       >
@@ -97,16 +99,6 @@ export function PortalShell({
         <span>{text("Search workspace", "워크스페이스 검색")}</span>
         <kbd>⌘ K</kbd>
       </button>
-      <Link
-        className={`continuity-nav ${path === "/dashboard" ? "is-active" : ""}`}
-        href="/dashboard"
-        aria-current={path === "/dashboard" ? "page" : undefined}
-        onClick={() => mobile && close()}
-        title={text("Overview", "개요")}
-      >
-        <BriefcaseBusiness size={16} />
-        <span>{text("Overview", "개요")}</span>
-      </Link>
       {navSections
         .filter((section) => section.id !== "settings" && visible.some(item => item.section === section.id))
         .map((section) => (
@@ -117,7 +109,7 @@ export function PortalShell({
                 .filter((item) => item.section === section.id)
                 .map((item) => {
                   const active =
-                    path === item.href || path.startsWith(item.href + "/");
+                    path === item.href || path.startsWith(item.href + "/") || (item.href === "/ask" && path.startsWith("/chat/"));
                   const Icon = item.icon;
                   return (
                     <Link
@@ -131,6 +123,7 @@ export function PortalShell({
                       onFocus={() => prepare(item.href)}
                       onClick={() => mobile && close()}
                     >
+                      {active && <SelectionIndicator tone="tinted" />}
                       <Icon size={16} />
                       <span>{text(item.en, item.ko)}</span>
                     </Link>
@@ -139,7 +132,7 @@ export function PortalShell({
             </nav>
           </section>
         ))}
-      <details className="continuity-recents">
+      <details className="continuity-recents" open>
         <summary>{text("Recent conversations", "최근 대화")}</summary>
         {threads.slice(0, 4).map((thread) => (
           <Link
@@ -176,6 +169,7 @@ export function PortalShell({
                 title={text(item.en, item.ko)}
                 onClick={() => mobile && close()}
               >
+                {path === item.href && <SelectionIndicator tone="tinted" />}
                 <Icon size={16} />
                 <span>{text(item.en, item.ko)}</span>
               </Link>
@@ -191,7 +185,7 @@ export function PortalShell({
           </div>
         </div>
       </footer>
-    </>
+    </div></SelectionGroup>
   );
   return (
     <div
@@ -284,6 +278,7 @@ export function PortalShell({
         className="main-content portal-main continuity-main"
         tabIndex={-1}
       >
+        <Suspense fallback={null}><NavigationTransition /></Suspense>
         {children}
       </main>
       <AssistantPanel />

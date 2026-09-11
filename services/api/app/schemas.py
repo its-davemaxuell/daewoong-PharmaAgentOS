@@ -13,6 +13,17 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
 
+class PersonalUsageResponse(StrictModel):
+    scope: Literal["personal"] = "personal"
+    since: datetime
+    as_of: datetime
+    conversations: int
+    chat_requests: int
+    research_runs: int
+    research_model_calls: int
+    research_tokens: int
+
+
 class HealthResponse(StrictModel):
     status: Literal["ok", "degraded"]
     service: str

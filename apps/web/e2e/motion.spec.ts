@@ -8,22 +8,32 @@ test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name: "dli_locale", value: "en", url: origin }]);
 });
 
-test("selection is immediate and workspace navigation retains the shell without arrival movement", async ({ page }) => {
+test("selection is immediate and workspace transitions retain the shell", async ({ page }) => {
   await page.goto(`/drug-letters/${threadId}`);
   const tabs = page.getByRole("tab");
   await tabs.nth(2).click();
   await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
   await tabs.nth(0).click();
   await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
-  await page.evaluate(() => document.querySelector("main")!.setAttribute("data-retained-shell", "true"));
+  await page.evaluate(() => {
+    const main = document.querySelector("main")!;
+    main.setAttribute("data-retained-shell", "true");
+    const animate = main.animate.bind(main);
+    main.animate = (...args: Parameters<HTMLElement["animate"]>) => {
+      main.dataset.transitionCount = String(Number(main.dataset.transitionCount || 0) + 1);
+      return animate(...args);
+    };
+  });
   await page.locator('.continuity-sidebar a[href="/drug-letters"]').click();
   await expect(page).toHaveURL(/\/drug-letters$/);
   await expect(page.locator("main")).toHaveAttribute("data-retained-shell", "true");
-  expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
+  await expect(page.locator("main")).toHaveAttribute("data-transition-count", "1");
+  // The transition never remounts the shell or blocks destination interaction.
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.locator('.continuity-sidebar a[href="/saved-work"]').click();
   await expect(page).toHaveURL(/\/saved-work$/);
   expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
+  await expect(page.locator("main")).toHaveAttribute("data-transition-count", "1");
 });
 
 test("rapid view selection preserves semantics and reduced motion stops movement", async ({ page }) => {

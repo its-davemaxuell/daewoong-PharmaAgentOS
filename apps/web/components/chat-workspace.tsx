@@ -54,6 +54,10 @@ import {
   submitChatFeedback,
   selectChatSources,
 } from "@/app/(portal)/ask/actions";
+import { ChatFind } from "./chat-find";
+import { answerWithSources } from "@/lib/chat-copy";
+import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
+import { Network } from "./icons/Network";
 import { ChatLibrary } from "@/components/chat-library";
 import { ChatThreadTools } from "@/components/chat-thread-tools";
 import { Presence, PresenceSurface } from "./motion/presence";
@@ -1362,8 +1366,9 @@ export function ChatWorkspace({
       }} />}
       <div className="chat-page__surface">
         <header className="chat-workbench__header">
-          <div className="chat-workbench__heading"><FileSearch size={21} aria-hidden="true" /><h1>{text("FDA assistant", "FDA 어시스턴트")}</h1><small>FDA · Drugs</small></div>
+          <div className="chat-workbench__heading"><FileSearch size={21} aria-hidden="true" /><h1>{text("RAG Chat", "RAG 챗봇")}</h1><small>{text("FDA evidence", "FDA 근거 기반")}</small></div>
           <div className="chat-workbench__header-actions">
+            {!embedded && turns.length > 0 && <ChatFind entries={turns.map(turn => ({ id: turn.id, text: `${turn.question} ${turn.answer?.answer ?? ""}` }))} />}
             <button ref={libraryTrigger} type="button" className="chat-tool-button" onClick={openConversations} title={text("Search conversations", "대화 검색")}><Search size={17} />{text("Conversations", "대화 목록")}</button>
             <button className="chat-new-button" type="button" disabled={actionsDisabled} onClick={clearConversation}><Plus size={17} />{text("New chat", "새 대화")}</button>
           </div>
@@ -1410,8 +1415,8 @@ export function ChatWorkspace({
               initialLetterId ? "이 경고서한을 함께 살펴볼까요?" : "어떤 내용이 궁금하신가요?",
             )}</h2>
             <p>{text(
-              initialLetterId ? "Edit the prepared question, then send." : "Write a question or choose an example.",
-              initialLetterId ? "준비된 질문을 확인하고 보내세요." : "질문을 적거나 예시를 선택하세요.",
+              initialLetterId ? "Edit the prepared question, then send." : "Ask about FDA findings. Read the answer alongside its sources, or use Research Agent for a deeper investigation.",
+              initialLetterId ? "준비된 질문을 확인하고 보내세요." : "FDA 지적사항을 질문하고 답변의 근거를 확인하세요. 심층 조사는 리서치 에이전트로 이어갈 수 있습니다.",
             )}</p>
             <div className="chat-suggestions">
               {!initialLetterId && beginnerPrompts.map((prompt) => (
@@ -1434,7 +1439,7 @@ export function ChatWorkspace({
         {turns.map((turn, turnIndex) => {
           const turnFilters = activeFilterEntries(turn.filters);
           return (
-            <section className="chat-turn" key={turn.id} data-introduced={introducedTurns.has(turn.id) || undefined}>
+            <section className="chat-turn" id={embedded ? `${embeddedId}-turn-${turn.id}` : `chat-turn-${turn.id}`} key={turn.id} data-introduced={introducedTurns.has(turn.id) || undefined}>
               <div className="chat-user-message">
                 <p>{turn.question}</p>
                 {turn.answer && !embedded && <button type="button" className="chat-user-message__edit" disabled={actionsDisabled || !!threadArchivedAt} onClick={() => void branchFrom(turn, true)}><Pencil size={14} />{text("Edit question", "질문 수정")}</button>}
@@ -1655,14 +1660,18 @@ export function ChatWorkspace({
                           onClick={async () => {
                             try {
                               if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-                              await navigator.clipboard.writeText(turn.answer?.answer ?? "");
+                              await navigator.clipboard.writeText(answerWithSources(turn.answer!, locale));
                               setCopiedTurn(turn.id);
                             } catch { setActionError(text("Could not copy. Select the answer text to copy it.", "복사하지 못했어요. 답변 텍스트를 선택해 복사하세요.")); }
                           }}
                         >
                           {copiedTurn === turn.id ? <Check size={14} /> : <Copy size={14} />}
-                          {copiedTurn === turn.id ? text("Copied", "복사됨") : text("Copy", "복사")}
+                          {copiedTurn === turn.id ? text("Copied", "복사됨") : text("Copy with sources", "출처와 함께 복사")}
                         </button>
+                        {!embedded && <button type="button" disabled={actionsDisabled} title={text("Prepare a research draft for review before starting", "시작 전에 검토할 리서치 초안 준비")} onClick={() => {
+                          try { sessionStorage.setItem(RESEARCH_DRAFT_KEY, turn.question.slice(0, 2000)); router.push("/research"); }
+                          catch { setActionError(text("Could not prepare the research draft. Copy your question into Research Agent.", "리서치 초안을 준비하지 못했어요. 질문을 리서치 에이전트에 복사해 주세요.")); }
+                        }}><Network size={14} />{text("Research this question", "이 질문으로 리서치")}</button>}
                         {!embedded && <button
                           type="button"
                           disabled={actionsDisabled}
@@ -1834,7 +1843,7 @@ export function ChatWorkspace({
             onKeyDown={handleComposerKeyDown}
           />
           <div className="chat-composer__controls">
-            <button type="button" className="chat-tool-button" disabled={actionsDisabled || !!threadArchivedAt} aria-expanded={sourcePickerOpen} onClick={() => { setSelectedLetters(activeLetterIds); setSourcePickerOpen((value) => !value); setFiltersOpen(false); }}><Paperclip size={17} />{activeLetterIds.length ? text(`${activeLetterIds.length} letters`, `서한 ${activeLetterIds.length}개`) : text("Add letters", "서한 추가")}</button>
+            <button type="button" className="chat-tool-button" disabled={actionsDisabled || !!threadArchivedAt} aria-expanded={sourcePickerOpen} onClick={() => { setSelectedLetters(activeLetterIds); setSourcePickerOpen((value) => !value); setFiltersOpen(false); }}><Paperclip size={17} />{activeLetterIds.length ? text(`${activeLetterIds.length} letters`, `서한 ${activeLetterIds.length}개`) : text("Select sources", "근거 자료 선택")}</button>
             <button className="chat-tool-button" type="button" aria-expanded={optionsOpen} aria-controls={embedded ? `${embeddedId}-options` : "chat-additional-options"} onClick={() => { setOptionsOpen((open) => !open); setFiltersOpen(false); }}>
               <SlidersHorizontal size={15} aria-hidden="true" />
               {text("Search & answer options", "검색·답변 설정")}

@@ -1,4 +1,5 @@
 "use client";
+import { LoadingIndicator } from "../controls";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/lib/i18n";
@@ -166,9 +167,7 @@ export function OperationalOverview() {
               </div>
             </header>
             {sources.isPending && (
-              <p role="status">
-                {text("Loading topic counts…", "주제별 건수를 불러오는 중…")}
-              </p>
+              <p><LoadingIndicator label={text("Loading topic counts…", "주제별 건수를 불러오는 중…")} /></p>
             )}
             {!sources.isPending && !topics.length && (
               <p>

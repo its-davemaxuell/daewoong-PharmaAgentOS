@@ -59,6 +59,7 @@ export function ChatThreadTools({ thread, disabled, onChange }: {
       <button type="submit" disabled={pending || !title.trim()} aria-label={text("Save title", "제목 저장")}><Check size={17} /></button>
       <button type="button" onClick={() => setEditing(false)}>{text("Cancel", "취소")}</button>
     </form> : <strong className="chat-thread-tools__title" title={thread.title}>{thread.pinnedAt && <Pin size={14} />}{thread.title}</strong>}
+    <button className="chat-export-button" type="button" disabled={pending || disabled} onClick={() => void download("markdown")}><Download size={16} />{text("Export", "내보내기")}</button>
     <details ref={menu} className="chat-thread-menu" onKeyDown={(event) => { if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary")?.focus(); } }}>
       <summary aria-label={text("Conversation actions", "대화 작업")}><MoreHorizontal size={21} /></summary>
       <div>

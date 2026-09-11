@@ -125,7 +125,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
     const timer = setTimeout(() => {
       try {
         const draft = sessionStorage.getItem(RESEARCH_DRAFT_KEY);
-        if (draft) { setObjective(draft.slice(0, 1000)); sessionStorage.removeItem(RESEARCH_DRAFT_KEY); }
+        if (draft) { setObjective(draft.slice(0, 2000)); sessionStorage.removeItem(RESEARCH_DRAFT_KEY); }
       } catch { /* The research form remains usable when browser storage is unavailable. */ }
     }, 0);
     return () => clearTimeout(timer);
