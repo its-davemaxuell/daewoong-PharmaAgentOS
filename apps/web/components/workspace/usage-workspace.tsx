@@ -5,19 +5,12 @@ import { useI18n } from "@/lib/i18n";
 import { useWorkspaceScope } from "./provider";
 import { WorkspaceErrorState, WorkspaceHeading, WorkspaceLoading } from "./primitives";
 
-const metrics = ["conversations", "chat_requests", "research_runs", "research_model_calls", "research_tokens"] as const;
-type Usage = Record<typeof metrics[number], number> & { since: string; as_of: string; scope: "personal" };
+import { personalUsageOptions, usageMetrics as metrics } from "@/lib/usage-queries";
 
 export function UsageWorkspace() {
   const { text, locale } = useI18n();
   const scope = useWorkspaceScope();
-  const query = useQuery({ queryKey: [scope, "personal-usage"], queryFn: async ({ signal }): Promise<Usage> => {
-    const response = await fetch("/api/usage", { signal });
-    if (!response.ok) throw new Error("Usage unavailable");
-    const data = await response.json();
-    if (data.scope !== "personal" || !Number.isFinite(Date.parse(data.since)) || !Number.isFinite(Date.parse(data.as_of)) || metrics.some(key => !Number.isSafeInteger(data[key]) || data[key] < 0)) throw new Error("Usage unavailable");
-    return data;
-  } });
+  const query = useQuery(personalUsageOptions(scope));
   const names = [text("Conversations created", "생성한 대화"), text("Recorded chat requests", "기록된 챗봇 요청"), text("Research tasks created", "생성한 리서치 작업"), text("Research model calls", "리서치 모델 호출"), text("Research tokens", "리서치 토큰")];
   const download = () => {
     if (!query.data) return;

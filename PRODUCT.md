@@ -93,3 +93,11 @@ The user declined identity-provider setup after asking for team capabilities.
 Keep anonymous browser sessions, existing access controls and manual export-based
 sharing. Personal usage reporting is in scope; named sharing, team membership and
 team-wide reporting require a separately authorized identity setup.
+
+## Startup experience — September 12 correction
+
+The user explicitly prefers the all-menu loading process before showing the site
+for smoothness. Restore the original animated preparation screen by default,
+preload the updated menus, then reveal the ready workspace once. Preserve its
+retry/continue fallback and reduced-motion support. Future UI refinements must
+retain this startup experience unless the user requests changing it.

@@ -3156,3 +3156,15 @@ The user explicitly declined company identity setup. Retain browser-session acce
 existing role/owner enforcement and manual conversation exports. Named shared chat,
 team permissions and team-wide usage aggregation are deferred with that setup;
 no enterprise readiness or organization-wide visibility is claimed.
+
+
+## 2026-09-12 startup restoration
+
+The user's explicit correction supersedes the immediate-shell startup decision.
+Restore the existing all-menu preparation gate before initial site reveal, with
+animated folder artwork, actual readiness progress, fonts/history/opening-page
+readiness, and the updated menu set including personal Usage data. Preserve
+bounded concurrent reads, role filtering, warm caches, Retry/Continue fallback,
+reduced motion and a single reveal without remounting on menu navigation.
+`PORTAL_STARTUP_ENABLED` defaults to enabled; only an explicit `false` disables it.
+The legacy-only startup flag no longer controls the preferred experience.

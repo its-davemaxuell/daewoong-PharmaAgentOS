@@ -10,6 +10,16 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-12 all-menu startup restoration:** The user explicitly prefers preparing
+all menus before the site appears. Restored the original animated preparation gate
+by default through `PORTAL_STARTUP_ENABLED` (only explicit `false` opts out).
+The updated menu set is warmed, including shared personal-usage data; Overview
+preloads its current component. Existing retry/continue, reduced-motion, inert
+content and one-time reveal behavior are retained. This supersedes older notes
+about immediate shell startup. Validation: 95 frontend tests, production build,
+TypeScript and focused lint pass; all four startup scenarios pass across Chromium,
+Firefox and WebKit (12 checks). Deployment verification is recorded below.
+
 **2026-09-12 RAG Chat and Research refinement (deployed):** RAG Chat is the default entry
 point and leads the sidebar alongside Research Agent. All authorized supporting
 menus are direct links. Added accessible loading spinners, persistent route/view

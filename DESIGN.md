@@ -54,9 +54,12 @@ accordions. AI finding support labels and limitations also appear in saved brief
 
 ## Continuity and motion
 
-The default shell never waits for all menus. Load each data region independently,
-retain the owner-scoped query cache and prefetch route/data on navigation intent.
-Legacy animated startup is opt-in with PORTAL_LEGACY_STARTUP_ENABLED=true.
+The animated all-menu preparation screen precedes the initial site reveal, as
+explicitly requested by the user. Preload every authorized menu module and its
+bounded entry data, history, fonts and opening page into the owner-scoped cache.
+Keep progress honest, Retry and Continue available for failed/slow resources,
+and reveal once without replaying startup during menu navigation. Enabled by
+default; PORTAL_STARTUP_ENABLED=false is an explicit testing/emergency opt-out.
 Sidebar geometry changes over 200ms. Controls use 140ms color changes. Panels enter
 with an 8px offset and opacity over 200ms. Reduced motion removes movement.
 Route and URL-backed tab changes use a 200ms content-only opacity transition; the

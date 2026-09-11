@@ -19,7 +19,7 @@ export default async function PortalLayout({ children }: Readonly<{ children: Re
       initialThreads={[]}
       initialLoadState="loading"
     >
-      {process.env.PORTAL_LEGACY_STARTUP_ENABLED === "true" ? <StartupGate roles={identity.roles} linearWorkspace={linearWorkspace}>{shell}</StartupGate> : shell}
+      {process.env.PORTAL_STARTUP_ENABLED !== "false" ? <StartupGate roles={identity.roles} linearWorkspace={linearWorkspace}>{shell}</StartupGate> : shell}
     </ChatHistoryProvider></WorkspaceProvider>
   );
 }

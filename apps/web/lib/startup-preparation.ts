@@ -1,3 +1,4 @@
+import { personalUsageOptions } from "./usage-queries";
 import type { QueryClient } from "@tanstack/react-query";
 import { portalNavigation } from "./navigation";
 import type { AppRole } from "./auth-types";
@@ -10,7 +11,7 @@ import { briefListOptions, inboxOptions, researchListOptions, savedViewsOptions 
 export type PreparationTask = { id: string; en: string; ko: string; run: () => Promise<unknown> };
 export type PreparationStatus = "pending" | "ready" | "failed";
 export const menuModules: Record<string, () => Promise<unknown>> = {
-  "/dashboard": () => import("@/components/agent-platform/beginner-home"),
+  "/dashboard": () => import("@/components/workspace/operational-overview"),
   "/drug-letters": () => import("@/components/workspace/sources-workspace"),
   "/research": () => import("@/components/research/research-workspace"),
   "/saved-work": () => import("@/components/workspace/saved-workspace"),
@@ -46,7 +47,8 @@ export function preparationTasks(client: QueryClient, scope: string, roles: AppR
         break;
       }
       case "/inbox": await client.fetchQuery(inboxOptions(scope, params.get("state") || "new", Number(params.get("page")) || 1, true)); break;
-      case "/usage": case "/settings": case "/agents": case "/help": case "/search": break;
+      case "/usage": await client.fetchQuery(personalUsageOptions(scope)); break;
+      case "/settings": case "/agents": case "/help": case "/search": break;
       default: await client.fetchQuery(menuQueryOptions(scope, (menu.href === "/requests" ? "cases" : menu.href.slice(1)) as MenuResource, menu.href === "/requests" ? new URLSearchParams() : params));
     }
   }}));
