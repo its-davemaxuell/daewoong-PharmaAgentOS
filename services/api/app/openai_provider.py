@@ -37,6 +37,9 @@ def _strict_schema(schema: dict[str, Any]) -> dict[str, Any]:
         result["additionalProperties"] = False
     if "items" in result:
         result["items"] = _strict_schema(result["items"])
+    for key in ("$defs", "definitions"):
+        if key in result:
+            result[key] = {name: _strict_schema(value) for name, value in result[key].items()}
     return result
 
 
