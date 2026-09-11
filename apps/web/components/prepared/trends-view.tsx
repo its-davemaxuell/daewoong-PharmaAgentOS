@@ -68,7 +68,7 @@ export function TrendsView({ value }: { value: MenuData["trends"] }) {
       <header className="trend-brief__header dossier-reveal">
         <div className="trend-brief__title">
           <p><BilingualText en="Regulatory signal board" ko="규제 시그널 보드" /></p>
-          <h1><BilingualText en="What requires attention" ko="지금 확인할 규제 동향" /></h1>
+          <h1><BilingualText en="Trends" ko="동향" /></h1>
           <span>
             <BilingualText
               en={`FDA Drug warning-letter patterns · ${periodLabel(periodStart, periodEnd, "en")}`}

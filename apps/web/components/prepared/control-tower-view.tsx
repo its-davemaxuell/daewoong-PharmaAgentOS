@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import type { MenuData } from "@/lib/menu-data-types";
 import { BilingualText as T } from "@/lib/i18n";
 import { RuntimeControlForm } from "@/components/agent-platform/runtime-control-form";
@@ -33,7 +34,7 @@ export function OperationsView({ value }: { value: MenuData["control-tower"] }) 
       <div className={styles.page}>
         <header>
           <span><T en="Governed operations" ko="운영 관리" /></span>
-          <h1><T en="Service operations" ko="서비스 운영 현황" /></h1>
+          <h1><T en="Operations" ko="운영" /></h1>
           <p>Generated {new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "medium" }).format(new Date(tower.generatedAt))}. Metrics are operational records, not regulatory conclusions.</p>
         </header>
         <div className={styles.metricGrid}>
@@ -59,6 +60,10 @@ export function OperationsView({ value }: { value: MenuData["control-tower"] }) 
             )}
           </section>
         ) : null}
+        <nav className="workspace-viewbar" aria-label="Related operations">
+          <Link href="/evaluations"><T en="Agent evaluations" ko="에이전트 평가" /></Link>
+          <Link href="/agents"><T en="Specialist agents" ko="전문 에이전트" /></Link>
+        </nav>
         <section className={styles.section}>
           <div className={styles.sectionHeading}><div><span>Immutable inventory</span><h2>{inventory.length} <T en="registered versions" ko="개의 등록된 버전" /></h2></div></div>
           <div className={styles.inventoryTable}>{inventory.map((item) => <article key={item.id}><span>{item.kind.replaceAll("_", " ")}</span><strong>{item.key}@{item.version}</strong><code title={item.sha256}>{item.sha256.slice(0, 9)}…{item.sha256.slice(-9)}</code><em>{item.releaseStatus}</em></article>)}</div>

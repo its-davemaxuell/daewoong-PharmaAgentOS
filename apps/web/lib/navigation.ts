@@ -21,7 +21,7 @@ export const legacyNavItems: Array<{
   href: string;
   icon: typeof MessageSquareText;
   requiredRole?: AppRole;
-  section: typeof legacyNavSections[number]["id"];
+  section: "chatbot" | "agent" | "review" | "settings";
 }> = [
   { en: "Chatbot", ko: "챗봇", href: "/ask", icon: MessageSquareText, section: "chatbot" },
   { en: "Warning letter library", ko: "경고서한 자료실", href: "/drug-letters", icon: FileText, section: "chatbot" },
@@ -43,19 +43,37 @@ export const legacyNavItems: Array<{
 export function portalNavigation(linearWorkspace = true) {
   if (!linearWorkspace) return { navSections: legacyNavSections, navItems: legacyNavItems };
   const navSections = [
-    { id: "chatbot", en: "Intelligence", ko: "규제 인텔리전스", icon: FileText },
-    { id: "agent", en: "Work", ko: "내 작업", icon: BriefcaseBusiness },
-    { id: "settings", en: "Workspace", ko: "워크스페이스", icon: Settings },
+    { id: "agent", en: "My work", ko: "내 작업", icon: BriefcaseBusiness },
+    { id: "chatbot", en: "Evidence", ko: "근거 자료", icon: FileText },
+    { id: "review", en: "Team review", ko: "팀 검토", icon: ClipboardCheck },
+    { id: "settings", en: "Utilities", ko: "도구 및 도움말", icon: Settings },
   ] as const;
   const navItems: typeof legacyNavItems = [
-    { en: "Cases", ko: "케이스", href: "/cases", icon: BriefcaseBusiness, section: "chatbot" },
-    { en: "Evidence", ko: "근거 자료", href: "/drug-letters", icon: FileText, section: "chatbot" },
+    { en: "Research", ko: "리서치", href: "/research", icon: Network, section: "agent" },
+    { en: "Inbox", ko: "받은 자료", href: "/inbox", icon: ClipboardCheck, section: "agent" },
+    { en: "Saved work", ko: "저장한 작업", href: "/saved-work", icon: Bookmark, section: "agent" },
+    { en: "FDA sources", ko: "FDA 원문", href: "/drug-letters", icon: FileText, section: "chatbot" },
     { en: "Trends", ko: "동향", href: "/trends", icon: ChartNoAxesColumnIncreasing, section: "chatbot" },
-    { en: "Reviews", ko: "검토", href: "/inbox", icon: ClipboardCheck, section: "agent" },
-    { en: "Saved", ko: "저장한 작업", href: "/saved-work", icon: Bookmark, section: "agent" },
+    { en: "Cases", ko: "케이스", href: "/cases", icon: BriefcaseBusiness, section: "review" },
+    { en: "Source review", ko: "원문 검토", href: "/review", icon: ClipboardCheck, section: "review", requiredRole: "reviewer" },
+    { en: "Approvals", ko: "승인", href: "/approvals", icon: ShieldCheck, section: "review", requiredRole: "reviewer" },
     { en: "Settings", ko: "설정", href: "/settings", icon: Settings, section: "settings" },
     { en: "Help", ko: "도움말", href: "/help", icon: CircleHelp, section: "settings" },
     { en: "Operations", ko: "운영", href: "/control-tower", icon: ShieldCheck, section: "settings", requiredRole: "admin" },
   ];
   return { navSections, navItems };
 }
+
+/** Deep routes stay discoverable without crowding daily navigation. */
+export const secondaryDestinations = [
+  { en: "Chat", ko: "대화", href: "/ask" },
+  { en: "Conversation", ko: "대화", href: "/chat" },
+  { en: "Local drafts", ko: "기기 내 초안", href: "/requests" },
+  { en: "Saved views", ko: "저장한 보기", href: "/saved-views" },
+  { en: "Search", ko: "검색", href: "/search" },
+  { en: "Specialist agents", ko: "전문 에이전트", href: "/agents" },
+  { en: "Agent evaluations", ko: "에이전트 평가", href: "/evaluations" },
+  { en: "Approvals", ko: "승인", href: "/approvals" },
+  { en: "Source review", ko: "원문 검토", href: "/review", requiredRole: "reviewer" as AppRole },
+  { en: "Admin", ko: "관리", href: "/admin", requiredRole: "admin" as AppRole },
+];

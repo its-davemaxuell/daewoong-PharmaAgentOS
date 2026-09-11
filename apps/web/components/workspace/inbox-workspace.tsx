@@ -44,8 +44,8 @@ export function InboxWorkspace() {
     } catch (error) { setFeedback(error instanceof WorkspaceError && error.status === 409 ? text(`${count} saved. Another edit changed an item; refresh and select it again.`, `${count}건 저장됨. 다른 수정으로 항목이 변경되었습니다. 새로 선택하세요.`) : text(`${count} saved. The remaining changes could not be saved. Retry after refreshing.`, `${count}건 저장됨. 나머지 변경을 저장하지 못했습니다. 새로고침 후 다시 시도하세요.`)); }
     finally { await client.invalidateQueries({ queryKey: [scope, "inbox"] }); setPending(false); }
   }
-  return <section className="workspace-page"><WorkspaceHeading title={text("Reviews", "검토")} subtitle={text("Personal source triage · Separate from formal review and approval", "개인 원문 분류 · 공식 검토 및 승인과 별도")} />
-    <nav className="continuity-workflow-links" aria-label={text("Review workflows", "검토 워크플로")}><Link href="/approvals">{text("Approval requests", "승인 요청")}</Link><Link href="/requests">{text("Review drafts", "검토 초안")}</Link><Link href="/cases">{text("Governed cases", "관리 대상 케이스")}</Link></nav>
+  return <section className="workspace-page"><WorkspaceHeading title={text("Inbox", "받은 자료")} subtitle={text("Organize new source updates. Inbox actions do not approve evidence.", "새 원문 업데이트를 정리하세요. 받은 자료 분류는 근거 승인이 아닙니다.")} />
+
     <div className="workspace-viewbar" aria-label={text("Inbox views", "수신함 보기")}>{Object.entries(labels).map(([id, label]) => <button key={id} aria-pressed={state === id} disabled={pending} onClick={() => { setSelection([]); setWorkspaceParams({ state: id, page: null }); }}>{label}{id !== "all" && result.data ? ` ${result.data.counts[id as TriageState] ?? 0}` : ""}</button>)}</div>
     {selected.length > 0 && <div className="workspace-bulk"><span>{text(`${selected.length} selected on this page`, `현재 페이지에서 ${selected.length}건 선택`)}</span>{(["new", "later", "done", "dismissed"] as const).map(next => <ActionButton key={next} actionId={`inbox.${next}`} label={labels[next]} disabled={pending} onClick={() => void apply(next)}>{labels[next]}</ActionButton>)}{pending && <span role="status">{text("Saving…", "저장 중…")}</span>}{dismiss && <label>{text("Dismissal reason", "제외 사유")}<input value={reason} maxLength={1000} onChange={event => setReason(event.target.value)} /><button disabled={reason.trim().length < 3 || pending} onClick={() => void apply("dismissed")}>{text("Confirm dismissal", "제외 확인")}</button></label>}</div>}
     {feedback && <p className="workspace-feedback" role="status">{feedback}</p>}
@@ -54,5 +54,5 @@ export function InboxWorkspace() {
       <Pagination page={page} hasMore={result.data.has_more} onChange={next => { setSelection([]); setWorkspaceParams({ page: String(next) }); }} />
     </>}
     {source && <SourceInspector id={source} onClose={() => setWorkspaceParams({ source: null })} />}
-  </section>;
+  <details className="workspace-provenance"><summary>{text("Team review and local drafts", "팀 검토 및 기기 내 초안")}</summary><nav className="continuity-workflow-links" aria-label={text("Review workflows", "검토 워크플로")}><Link href="/approvals">{text("Approval requests", "승인 요청")}</Link><Link href="/requests">{text("Review drafts", "검토 초안")}</Link><Link href="/cases">{text("Governed cases", "관리 대상 케이스")}</Link></nav></details></section>;
 }

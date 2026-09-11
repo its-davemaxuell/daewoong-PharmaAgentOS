@@ -100,6 +100,9 @@ test("research selection retains history and opens cited evidence without scroll
   await citation.click();
   await expect(page.getByRole("dialog", { name: "Source evidence" })).toBeVisible();
   await expect(page.getByText("Evidence retained with this research")).toBeVisible();
+  const briefBounds = await page.locator("#research-brief").boundingBox();
+  const sourceBounds = await page.locator(".workspace-inspector").boundingBox();
+  expect(briefBounds!.x + briefBounds!.width).toBeLessThanOrEqual(sourceBounds!.x);
   await page.screenshot({ path: info.outputPath("research-evidence.png"), fullPage: true });
   await page.keyboard.press("Escape");
   await expect(citation).toBeFocused();

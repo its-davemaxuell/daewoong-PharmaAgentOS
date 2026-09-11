@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { portalNavigation } from "@/lib/navigation";
+import { portalNavigation, secondaryDestinations } from "@/lib/navigation";
 import type { AppRole } from "@/lib/auth-types";
 import { useI18n } from "@/lib/i18n";
 import { useChatHistory } from "./chat-history-context";
@@ -38,7 +38,7 @@ export function PortalShell({
   const visible = navItems.filter(
     (item) => !item.requiredRole || roles.includes(item.requiredRole),
   );
-  const current = visible.find(
+  const current = [...visible, ...secondaryDestinations].find(
     (item) => path === item.href || path.startsWith(item.href + "/"),
   );
   const [collapsed, setCollapsed] = useState(false);
@@ -108,7 +108,7 @@ export function PortalShell({
         <span>{text("Overview", "개요")}</span>
       </Link>
       {navSections
-        .filter((section) => section.id !== "settings")
+        .filter((section) => section.id !== "settings" && visible.some(item => item.section === section.id))
         .map((section) => (
           <section className="continuity-nav-group" key={section.id}>
             <h2>{text(section.en, section.ko)}</h2>
@@ -139,8 +139,8 @@ export function PortalShell({
             </nav>
           </section>
         ))}
-      <section className="continuity-recents">
-        <h2>{text("Recent conversations", "최근 대화")}</h2>
+      <details className="continuity-recents">
+        <summary>{text("Recent conversations", "최근 대화")}</summary>
         {threads.slice(0, 4).map((thread) => (
           <Link
             key={thread.id}
@@ -160,16 +160,8 @@ export function PortalShell({
             )}
           </p>
         )}
-        <Link
-          href="/research"
-          prefetch={shouldPrefetch("/research")}
-          onFocus={() => prepare("/research")}
-          onPointerEnter={() => prepare("/research")}
-          onClick={() => mobile && close()}
-        >
-          {text("All research →", "전체 리서치 →")}
-        </Link>
-      </section>
+        <Link href="/ask" onClick={() => mobile && close()}>{text("Open chat", "대화 열기")} →</Link>
+      </details>
       <footer className="continuity-sidebar-footer">
         {visible
           .filter((item) => item.section === "settings")
@@ -177,7 +169,8 @@ export function PortalShell({
             const Icon = item.icon;
             return (
               <Link
-                className="continuity-nav"
+                className={`continuity-nav ${path === item.href ? "is-active" : ""}`}
+                aria-current={path === item.href ? "page" : undefined}
                 key={item.href}
                 href={item.href}
                 title={text(item.en, item.ko)}
@@ -254,7 +247,7 @@ export function PortalShell({
         </span>
         <div className="continuity-topbar-actions">
           <LanguageToggle />
-          <Link href="/inbox" aria-label={text("Review queue", "검토 대기열")}>
+          <Link href="/inbox" aria-label={text("Inbox", "받은 자료")}>
             <Bell size={17} />
           </Link>
           <button
@@ -271,6 +264,7 @@ export function PortalShell({
       <dialog
         ref={mobileDialog}
         className="continuity-mobile-nav"
+        aria-label={text("Primary navigation", "주요 탐색")}
         onClose={() => {
           setMobile(false);
           trigger.current?.focus();

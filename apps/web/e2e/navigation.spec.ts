@@ -18,3 +18,21 @@ test('sidebar collapse preserves the shell, persists and respects reduced motion
  expect(await page.locator('.continuity-sidebar').evaluate(node=>node.getAnimations().length)).toBe(0);
  await expect(page.getByRole('button',{name:'Collapse menu',exact:true})).toBeFocused();
 });
+
+test('mobile drawer retains labels after desktop navigation was collapsed',async({page})=>{
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto('/dashboard');
+ await page.getByRole('button',{name:'Collapse menu',exact:true}).click();
+ await page.setViewportSize({width:390,height:900});
+ const trigger=page.locator('.continuity-mobile-trigger');
+ await trigger.click();
+ const drawer=page.locator('.continuity-mobile-nav');
+ await expect(drawer.locator('a[href="/research"] span')).toBeVisible();
+ await expect(drawer.locator('a[href="/inbox"] span')).toBeVisible();
+ await drawer.locator('a[href="/research"]').click();
+ await expect(page).toHaveURL(/\/research$/);
+ await expect(drawer).not.toBeVisible();
+ await trigger.click();
+ await page.keyboard.press('Escape');
+ await expect(trigger).toBeFocused();
+});

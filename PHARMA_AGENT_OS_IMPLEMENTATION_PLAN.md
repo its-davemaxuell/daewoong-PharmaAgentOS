@@ -7,6 +7,35 @@
 
 ---
 
+## September 11 implementation addendum: Clearer workspaces
+
+Approved refinement for a mixed employee audience. Keep the existing neutral/blue
+identity, Daewoong assets, local Pretendard and Streamline icons. Organize navigation
+as Overview; My work (Research, Inbox, Saved work); Evidence (FDA sources, Trends);
+Team review (Cases, role-appropriate Source review and Approvals); utilities.
+Keep existing URLs and authorization. Make Research a permanent entry, collapse
+recent conversations, and keep specialist/evaluation routes discoverable through
+related work and commands.
+
+Overview leads with New research and actual ongoing work, then FDA source activity,
+personal Inbox updates and compact counts. Empty-state examples prepare a question
+without starting a job. Labels must describe the queried data: the bookmark count
+is Saved sources. Use consistent 22px page titles, 15px sections, 14px body copy,
+13px table labels, 12px metadata and readable 15px original passages. Retain the
+232px/56px sidebar and 54px top bar with 24px desktop and 16px mobile gutters.
+
+Standardize headers, working surfaces and toolbars across Research, sources, Saved
+work, Inbox, cases, review, trends and utility screens. Collapse research execution
+details and technical provenance, preserve visible current status and controls,
+and distinguish AI findings, retained original passages and human review. Mobile
+research history must not push the question out of the first viewport.
+
+No backend API or schema change. Preserve session ownership, caches, query state,
+drafts, source versions, citation selection, stop/resume and review restrictions.
+Verify both languages at 1440/1280/768/390px, keyboard, reduced motion, loading/error
+states, research preparation, evidence/assistant continuity and saved work. Record
+implementation and verification in the current handoff; deployment is separate.
+
 ## September 11 implementation addendum: Research-first upgrade
 
 The subsequent approved Research-first production upgrade is specified in

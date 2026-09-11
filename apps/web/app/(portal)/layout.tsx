@@ -14,7 +14,7 @@ export default async function PortalLayout({ children }: Readonly<{ children: Re
   const shell = <PortalShell linearWorkspace={linearWorkspace} roles={identity.roles} newLetterNotification={{}}>{children}</PortalShell>;
 
   return (
-    <WorkspaceProvider key={identity.subject} subject={identity.subject}><ChatHistoryProvider
+    <WorkspaceProvider key={identity.subject} subject={identity.subject} roles={identity.roles} linearWorkspace={linearWorkspace}><ChatHistoryProvider
       key={identity.subject}
       initialThreads={[]}
       initialLoadState="loading"

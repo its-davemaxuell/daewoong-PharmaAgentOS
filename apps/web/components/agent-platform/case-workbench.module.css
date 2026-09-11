@@ -2197,22 +2197,22 @@
   }
 }
 
-/* Layered desk: feature geometry and surface hierarchy. */
+/* Compact working surfaces. */
 .indexPage, .workspacePage { --case-orange: var(--os-primary); --case-orange-soft: var(--os-primary-soft); --case-ink: var(--os-ink); --case-muted: var(--os-muted); --case-rule: var(--os-rule); --case-paper: var(--os-surface); }
 .indexHeader { padding: 0 0 24px; border: 0; gap: 24px; }
-.indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: 2rem; letter-spacing: -.035em; }
+.indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: var(--page-title-size); letter-spacing: -.02em; }
 .lede { font-size: 1rem; margin-top: 12px; color: var(--os-muted); }
 .indexGrid { gap: 20px; padding-top: 0; }
-.caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .planPreview, .accessState { border: 1px solid var(--os-rule); padding: 24px; border-radius: 16px; background: white; box-shadow: var(--os-shadow-panel); min-width: 0; }
-.registerHeading h2, .sectionHeading h2, .objectiveSheet h2, .scopeSheet h2, .planHeader h2, .noPlan h2, .evidenceIntro h2, .historyIntro h2 { font-size: 1.375rem; line-height: 1.4; }
+.caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .planPreview, .accessState { border: 1px solid var(--os-rule); padding: 24px; border-radius: 8px; background: white; box-shadow: var(--os-shadow-panel); min-width: 0; }
+.registerHeading h2, .sectionHeading h2, .objectiveSheet h2, .scopeSheet h2, .planHeader h2, .noPlan h2, .evidenceIntro h2, .historyIntro h2 { font-size: var(--section-title-size); line-height: 1.4; }
 .eyebrow, .sectionIndex, .registerHeading > div > span, .formHeading > span, .roleNote > span, .decisionHeading > span, .ledgerHeading span, .decisionRecord > span { letter-spacing: .02em; text-transform: none; font-weight: 600; }
 .caseList { border-top-color: var(--os-rule); }
-.caseRow { padding-block: 18px; }
+.caseRow { padding-block: 12px; }
 .filters { background: var(--os-inset); border-radius: 10px; padding: 4px; margin-block: 18px; }
 .filters a { border: 0; border-radius: 7px; min-height: 36px; }
 .filters a[data-active="true"] { color: var(--os-primary-deep); background: white; box-shadow: var(--os-shadow-control); }
-.workspaceHeader { background: white; border: 1px solid var(--os-rule); border-radius: 16px; box-shadow: var(--os-shadow-panel); padding: 24px; }
-.workspaceTabs { background: var(--os-inset); padding: 5px; border: 1px solid var(--os-rule); border-radius: 12px; margin-block: 20px; }
+.workspaceHeader { background: white; border: 1px solid var(--os-rule); border-radius: 8px; box-shadow: var(--os-shadow-panel); padding: 24px; }
+.workspaceTabs { background: var(--os-inset); padding: 5px; border: 1px solid var(--os-rule); border-radius: 8px; margin-block: 20px; }
 .workspaceTabs a { border: 0; border-radius: 8px; }
 .workspaceTabs a[aria-current="page"], .workspaceTabs a[data-active="true"] { background: white; color: var(--os-primary-deep); box-shadow: var(--os-shadow-control); }
 .workspaceGrid { gap: 20px; }
@@ -2221,11 +2221,11 @@
 .indexPage button[aria-busy="true"], .workspacePage button[aria-busy="true"] { cursor: progress; }
 .indexPage button:active:not(:disabled), .workspacePage button:active:not(:disabled) { transform: translateY(1px); }
 .workspacePage details[open] > summary { color: var(--os-primary-deep); }
-@media (max-width: 700px) { .caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .workspaceHeader, .planPreview, .accessState { padding: 18px; } .indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: 1.75rem; } }
+@media (max-width: 700px) { .caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .workspaceHeader, .planPreview, .accessState { padding: 18px; } .indexHeader h1, .workspaceHeader h1, .accessState h1 { font-size: var(--page-title-size); } }
 
 .workspacePanel { gap: 20px; }
 .workspacePanel > .objectiveSheet, .workspacePanel > .scopeSheet { padding: 0 0 20px; border: 0; border-bottom: 1px solid var(--os-rule); border-radius: 0; box-shadow: none; background: transparent; }
-.objectiveCopy { font-size: 1.1875rem; line-height: 1.7; margin-block: 12px 18px; }
+.objectiveCopy { font-size: 15px; line-height: 1.7; margin-block: 12px 18px; }
 .ledgerHeading svg, .ledgerBoundary svg { color: var(--os-primary); }
 .hashField > span, .definitionGrid dt, .ledgerMeta dt { color: var(--os-muted); text-transform: none; letter-spacing: .02em; font-weight: 500; }
 @media (max-width: 1050px) { .intakeRail { grid-row: auto; order: 0; } }

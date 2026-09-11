@@ -25,9 +25,11 @@ export function SourceInspector({ id, source, onClose }: { id: string; source?: 
       <h3>{source?.company ?? letter?.company}</h3>
       <button onClick={() => { onClose(); requestAnimationFrame(() => addComparison(source?.letter_id ?? id)); }}>{text("Compare record", "기록 비교")}</button>
       <p>{letter?.subject}</p>
-      <dl className="workspace-metadata"><dt>{text("Version", "버전")}</dt><dd>{source?.version_id ?? letter?.documentVersionId ?? text("Unknown", "알 수 없음")}</dd><dt>{text("Source hash", "원문 해시")}</dt><dd><code>{source?.source_hash ?? letter?.sourceHash ?? text("Unknown", "알 수 없음")}</code></dd>{source && <><dt>{text("Anchor", "원문 위치")}</dt><dd>{source.anchor}</dd></>}</dl>
+      <dl className="workspace-metadata"><dt>{text("Version", "버전")}</dt><dd>{source?.version_id ?? letter?.documentVersionId ?? text("Unknown", "알 수 없음")}</dd>{source && <><dt>{text("Anchor", "원문 위치")}</dt><dd>{source.anchor}</dd></>}</dl>
+      <p className="workspace-eyebrow">{text("Original source passage", "원문 구절")}</p>
       {source && <blockquote>{source.excerpt}</blockquote>}
       {!source && letter?.originalSections.slice(0, 2).map(section => <section key={section.anchor}><h3>{section.heading}</h3><p>{section.paragraphs.join("\n").slice(0, 1500)}</p></section>)}
+      <details className="workspace-provenance"><summary>{text("Technical provenance", "기술적 출처 정보")}</summary><dl className="workspace-metadata"><dt>{text("Source hash", "원문 해시")}</dt><dd><code>{source?.source_hash ?? letter?.sourceHash ?? text("Unknown", "알 수 없음")}</code></dd></dl></details>
       <div className="workspace-viewbar"><SourceLink href={source?.source_url ?? letter?.sourceUrl}>{text("FDA original", "FDA 원문")}</SourceLink><Link href={`/drug-letters/${id}`} prefetch={false}>{text("Open current full reader", "현재 원문 전체 보기")}</Link></div>
     </>}
   </Inspector>;

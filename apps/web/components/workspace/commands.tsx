@@ -5,6 +5,9 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, us
 import { useI18n } from "@/lib/i18n";
 import { Search } from "@/components/icons/Search";
 
+import { portalNavigation, secondaryDestinations } from "@/lib/navigation";
+import type { AppRole } from "@/lib/auth-types";
+
 type Action = { id: string; label: string; enabled: boolean; execute: () => void };
 const emptyActions: Action[] = [];
 const serverActions = () => emptyActions;
@@ -13,7 +16,7 @@ export function useWorkspaceAction({ id, label, enabled, execute }: Action) {
   const { register } = useContext(Actions);
   useEffect(() => register({ id, label, enabled, execute }), [register, id, label, enabled, execute]);
 }
-export function WorkspaceCommands({ children }: { children: React.ReactNode }) {
+export function WorkspaceCommands({ children, roles, linearWorkspace }: { children: React.ReactNode; roles: AppRole[]; linearWorkspace: boolean }) {
   const entries = useRef(new Map<string, Action>());
   const snapshot = useRef<Action[]>(emptyActions);
   const listeners = useRef(new Set<() => void>());
@@ -24,7 +27,7 @@ export function WorkspaceCommands({ children }: { children: React.ReactNode }) {
   }, [publish]);
   const list = useCallback(() => snapshot.current, []);
   const subscribe = useCallback((listener: () => void) => { listeners.current.add(listener); return () => { listeners.current.delete(listener); }; }, []);
-  return <Actions.Provider value={{ register, list, subscribe }}>{children}<CommandMenu /></Actions.Provider>;
+  return <Actions.Provider value={{ register, list, subscribe }}>{children}<CommandMenu roles={roles} linearWorkspace={linearWorkspace} /></Actions.Provider>;
 }
 export function ActionButton({ actionId, label, commandLabel, onClick, disabled, children, ...props }: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> & { actionId: string; label: string; commandLabel?: string; onClick: () => void }) {
   useWorkspaceAction({ id: actionId, label: commandLabel ?? label, enabled: !disabled, execute: onClick });
@@ -34,7 +37,8 @@ export function openCommandMenu() { window.dispatchEvent(new Event("workspace:co
 export function typingTarget(target: EventTarget | null) {
   return target instanceof HTMLElement && Boolean(target.closest("input,textarea,select,[contenteditable=true]"));
 }
-function CommandMenu() {
+function CommandMenu({ roles, linearWorkspace }: { roles: AppRole[]; linearWorkspace: boolean }) {
+  const destinations = [{ en: "Overview", ko: "개요", href: "/dashboard" }, ...portalNavigation(linearWorkspace).navItems, ...secondaryDestinations].filter((item, index, all) => (! ("requiredRole" in item) || !item.requiredRole || roles.includes(item.requiredRole)) && all.findIndex(other => other.href === item.href) === index && item.href !== "/chat");
   const { list, subscribe } = useContext(Actions);
   const { text } = useI18n();
   const router = useRouter();
@@ -72,6 +76,6 @@ function CommandMenu() {
     <p className="workspace-eyebrow">{text("Actions in this view", "현재 화면 작업")}</p>
     {actions.filter(action => action.label.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(action => <button key={action.id} className="workspace-command-item" disabled={!action.enabled} onClick={() => { const current = list().find(item => item.id === action.id); if (current?.enabled) { close(); current.execute(); } }}>{action.label}</button>)}
     <p className="workspace-eyebrow">{text("Navigate", "이동")}</p>
-    {[["Overview", "개요", "/dashboard"], ["Cases", "케이스", "/cases"], ["Evidence", "근거 자료", "/drug-letters"], ["Trends", "동향", "/trends"], ["Reviews", "검토", "/inbox"], ["Saved", "저장한 작업", "/saved-work"], ["Research", "리서치", "/research"], ["Chat", "대화", "/ask"]].filter(([en, ko]) => `${en} ${ko}`.toLowerCase().includes(query.toLowerCase())).map(([en, ko, href]) => <button key={href} className="workspace-command-item" onClick={() => { close(); router.push(href); }}>{text(en, ko)}</button>)}
+    {destinations.filter(({ en, ko }) => `${en} ${ko}`.toLowerCase().includes(query.toLowerCase())).map(({ en, ko, href }) => <button key={href} className="workspace-command-item" onClick={() => { close(); router.push(href); }}>{text(en, ko)}</button>)}
   </dialog>;
 }

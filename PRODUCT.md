@@ -70,3 +70,12 @@ users with compact neutral/blue working surfaces, persistent context and direct
 source inspection. The operational dashboard replaces permanent onboarding.
 The authoritative visual system is DESIGN.md; API authorization and document
 provenance remain product constraints.
+
+## September 11 Clearer Workspaces refinement
+
+The approved refinement serves a mixed employee audience and retains the current
+neutral/blue identity. Everyday navigation prioritizes Research, Inbox and Saved
+work; evidence browsing and governed team review form separate groups. Overview
+leads with starting and continuing real work. Shared page patterns, mobile question
+priority and visible distinctions between source evidence, AI findings and human
+review are the acceptance criteria. DESIGN.md records the updated visual system.

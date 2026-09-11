@@ -19,7 +19,7 @@ export function SourcesWorkspace() {
   const page = useQuery(sourcePageOptions(scope, letterQueryString(initialQuery)));
   if (page.data) return <LettersExplorer initialPage={page.data.data} mode={page.data.mode} initialState={initialQuery} />;
   return <section className="workspace-page">
-    <WorkspaceHeading title={text("Drug Letter Explorer", "의약품 경고서한 탐색기")} />
+    <WorkspaceHeading title={text("FDA sources", "FDA 원문")} />
     {page.isError ? <WorkspaceErrorState retry={() => void page.refetch()} /> : <WorkspaceLoading />}
   </section>;
 }

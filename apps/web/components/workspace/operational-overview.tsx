@@ -16,7 +16,9 @@ import { openAssistant } from "./assistant-panel";
 import { ArrowUpRight } from "../icons/ArrowUpRight";
 import { Search } from "../icons/Search";
 import { formatDate } from "../ui";
-import { WorkspaceErrorState } from "./primitives";
+import { WorkspaceErrorState, WorkspaceHeading, WorkspaceLoading } from "./primitives";
+import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
+import { researchStatusLabel } from "@/lib/research-labels";
 
 export function OperationalOverview() {
   const { text, locale } = useI18n();
@@ -43,78 +45,26 @@ export function OperationalOverview() {
     <div
       className={`continuity-overview ${selected ? "workspace-has-inspector" : ""}`}
     >
-      <header className="continuity-page-header">
-        <div>
-          <p>
-            {text(
-              "Your regulatory workspace",
-              "나의 규제 인텔리전스 워크스페이스",
-            )}
-          </p>
-          <h1>{text("Overview", "개요")}</h1>
-          <span>
-            {text(
-              "Evidence, decisions, and work in progress.",
-              "새로운 근거와 검토할 사항, 진행 중인 작업을 한눈에 확인하세요.",
-            )}
-          </span>
-        </div>
-        <Link className="continuity-primary" href="/research">
-          {text("New research", "새 리서치")}
-          <ArrowUpRight size={15} />
-        </Link>
-      </header>
-      <section
-        className="continuity-metrics"
-        aria-label={text("Workspace summary", "워크스페이스 요약")}
-      >
-        {[
-          {
-            name: text("FDA source records", "FDA 원문 기록"),
-            value: metric(sources.data?.data.collectionTotal),
-            caption: text("Retained evidence library", "보존된 근거 자료실"),
-            href: "/drug-letters",
-          },
-          {
-            name: text("Needs triage", "분류 대기"),
-            value: metric(inbox.data?.counts.new),
-            caption: text(
-              "New to your review queue",
-              "내 검토 대기열의 새 항목",
-            ),
-            href: "/inbox",
-          },
-          {
-            name: text("Active research", "진행 중인 리서치"),
-            value: metric(research.data?.items.length, research.data?.has_more),
-            caption: text(
-              "Continue while research runs",
-              "리서치 중에도 다른 작업 가능",
-            ),
-            href: "/research",
-          },
-          {
-            name: text("Saved evidence", "저장한 근거"),
-            value: metric(saved.data?.items.length, saved.data?.has_more),
-            caption: text("In this browser session", "이 브라우저 세션 기준"),
-            href: "/saved-work",
-          },
-        ].map((item) => (
-          <Link href={item.href} key={item.href}>
-            <span>
-              {item.name}
-              <ArrowUpRight size={14} />
-            </span>
-            <strong>{item.value}</strong>
-            <small>{item.caption}</small>
-          </Link>
-        ))}
+      <WorkspaceHeading title={text("Overview", "개요")} subtitle={text("Start a question, continue your research, or explore FDA sources.", "새 질문을 시작하고, 진행 중인 리서치를 이어가고, FDA 원문을 살펴보세요.")}>
+        <Link className="continuity-primary" href="/research">{text("New research", "새 리서치")}<ArrowUpRight size={15} /></Link>
+      </WorkspaceHeading>
+      <section className="continuity-continue" aria-labelledby="continue-work-title">
+        <header><div><h2 id="continue-work-title">{text("Continue your work", "작업 이어가기")}</h2><p>{text("Research is saved as it runs in this browser session.", "이 브라우저 세션에서 실행한 리서치는 진행 중 자동 저장됩니다.")}</p></div><Link href="/research">{text("All research", "전체 리서치")} →</Link></header>
+        {research.isPending && <WorkspaceLoading />}
+        {research.isError && <WorkspaceErrorState retry={() => void research.refetch()} />}
+        <ul className="workspace-list">
+          {research.data?.items.slice(0, 3).map(run => <li key={run.id}><Link href={`/research?run=${encodeURIComponent(run.id)}`}><span><strong>{run.objective}</strong><small>{text("Last updated", "최근 업데이트")} · {formatDate(run.updated_at, undefined, locale)}</small></span><span className="workspace-status" data-tone={run.status === "running" ? "active" : "neutral"}>{text(...researchStatusLabel(run.status))}</span><ArrowUpRight size={16} /></Link></li>)}
+        </ul>
+        {!research.isPending && !research.isError && !research.data?.items.length && <div className="continuity-start"><p>{text("No research in progress. Start with a question about FDA findings.", "진행 중인 리서치가 없습니다. FDA 지적사항에 대한 질문으로 시작하세요.")}</p><div>{[
+          ["What do FDA letters say about cleaning validation?", "FDA 경고서한은 세척 밸리데이션에 대해 무엇을 지적하나요?"],
+          ["Find recurring data integrity findings.", "반복되는 데이터 완전성 지적사항을 찾아주세요."],
+        ].map(([en, ko]) => <Link key={en} href="/research" onClick={() => { try { sessionStorage.setItem(RESEARCH_DRAFT_KEY, text(en, ko)); } catch { /* Research examples remain available if storage is disabled. */ } }}>{text(en, ko)}<ArrowUpRight size={14} /></Link>)}</div></div>}
       </section>
       <div className="continuity-overview-grid">
         <section className="continuity-activity">
           <header>
             <div>
-              <h2>{text("Recent regulatory activity", "최근 규제 활동")}</h2>
+              <h2>{text("New FDA sources", "새 FDA 원문")}</h2>
               <p>
                 {text(
                   "Latest retained FDA warning letters",
@@ -123,7 +73,7 @@ export function OperationalOverview() {
               </p>
             </div>
             <Link href="/drug-letters">
-              {text("All evidence", "전체 근거")} →
+              {text("All FDA sources", "전체 FDA 원문")} →
             </Link>
           </header>
           {sources.isError && (
@@ -196,60 +146,10 @@ export function OperationalOverview() {
         </section>
         <aside className="continuity-work">
           <section>
-            <header>
-              <h2>{text("Your work", "내 작업")}</h2>
-              <Link href="/saved-work">{text("View all", "전체 보기")} →</Link>
-            </header>
-            <Link className="continuity-work-row" href="/inbox">
-              <span>
-                <strong>{text("Review queue", "검토 대기열")}</strong>
-                <small>
-                  {text(
-                    "Triage new and deferred evidence",
-                    "새 자료와 보류한 자료 분류",
-                  )}
-                </small>
-              </span>
-              <b>{metric(inbox.data?.counts.new)}</b>
-            </Link>
-            <Link className="continuity-work-row" href="/research">
-              <span>
-                <strong>
-                  {text("Research in progress", "진행 중인 리서치")}
-                </strong>
-                <small>
-                  {text("Saved automatically as it runs", "실행 중 자동 저장")}
-                </small>
-              </span>
-              <b>
-                {metric(research.data?.items.length, research.data?.has_more)}
-              </b>
-            </Link>
-            {research.data?.items.slice(0, 3).map((run) => (
-              <Link
-                className="continuity-work-row"
-                key={run.id}
-                href={`/research?run=${run.id}`}
-              >
-                <span>
-                  <strong>{run.objective}</strong>
-                  <small>
-                    {run.status === "running"
-                      ? text("Running", "실행 중")
-                      : text("Queued", "대기 중")}
-                  </small>
-                </span>
-                <ArrowUpRight size={14} />
-              </Link>
-            ))}
-            {inbox.isError || research.isError || saved.isError ? (
-              <p role="status">
-                {text(
-                  "Some work counts are unavailable. Open the relevant view to retry.",
-                  "일부 작업 수를 불러오지 못했습니다. 해당 화면에서 다시 확인하세요.",
-                )}
-              </p>
-            ) : null}
+            <header><div><h2>{text("Inbox", "받은 자료")}</h2><p>{text("Personal source updates", "나의 원문 업데이트")}</p></div></header>
+            <Link className="continuity-work-row" href="/inbox"><span><strong>{text("New to organize", "정리할 새 자료")}</strong><small>{text("Sort updates into New, Later, or Done.", "업데이트를 새 자료, 나중에, 완료로 분류하세요.")}</small></span><b>{metric(inbox.data?.counts.new)}</b></Link>
+            <p className="continuity-inbox-note">{text("Organizing your inbox does not approve evidence.", "받은 자료 정리는 근거 승인이 아닙니다.")}</p>
+            {inbox.isError && <WorkspaceErrorState retry={() => void inbox.refetch()} />}
           </section>
           <section className="continuity-signals">
             <header>
@@ -304,6 +204,53 @@ export function OperationalOverview() {
           </section>
         </aside>
       </div>
+      <section
+        className="continuity-metrics"
+        aria-label={text("Workspace summary", "워크스페이스 요약")}
+      >
+        {[
+          {
+            name: text("FDA source records", "FDA 원문 기록"),
+            value: metric(sources.data?.data.collectionTotal),
+            caption: text("Retained evidence library", "보존된 근거 자료실"),
+            href: "/drug-letters",
+          },
+          {
+            name: text("Needs triage", "분류 대기"),
+            value: metric(inbox.data?.counts.new),
+            caption: text(
+              "New source updates to organize",
+              "정리할 새 원문 업데이트",
+            ),
+            href: "/inbox",
+          },
+          {
+            name: text("Active research", "진행 중인 리서치"),
+            value: metric(research.data?.items.length, research.data?.has_more),
+            caption: text(
+              "Continue while research runs",
+              "리서치 중에도 다른 작업 가능",
+            ),
+            href: "/research",
+          },
+          {
+            name: text("Saved sources", "저장한 원문"),
+            value: metric(saved.data?.items.length, saved.data?.has_more),
+            caption: text("In this browser session", "이 브라우저 세션 기준"),
+            href: "/saved-work?tab=sources",
+          },
+        ].map((item) => (
+          <Link href={item.href} key={item.href}>
+            <span>
+              {item.name}
+              <ArrowUpRight size={14} />
+            </span>
+            <strong>{item.value}</strong>
+            <small>{item.caption}</small>
+          </Link>
+        ))}
+      </section>
+      {saved.isError && <WorkspaceErrorState retry={() => void saved.refetch()} />}
       <button className="continuity-ask-bar" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); openAssistant(); }}>
         <Search size={18} />
         <span>

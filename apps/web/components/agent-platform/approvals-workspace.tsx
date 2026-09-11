@@ -20,7 +20,7 @@ export function ApprovalsWorkspace({ items, status }: { items: ApprovalCenterIte
     return pair ? text(pair[0], pair[1]) : text("Status unavailable", "상태 정보 없음");
   };
   return <div className={styles.page}>
-    <header><h1>{text("Review requests", "검토 요청")}</h1><p>{text("Open a request to inspect its sources and the exact version before recording a decision. Authorized reviewers complete decisions in the case workspace.", "판단을 기록하기 전에 요청을 열어 근거와 정확한 버전을 확인하세요. 권한이 있는 검토자가 검토 기록 화면에서 판단을 완료합니다.")}</p></header>
+    <header><h1>{text("Approvals", "승인")}</h1><p>{text("Open a request to inspect its sources and the exact version before recording a decision. Authorized reviewers complete decisions in the case workspace.", "판단을 기록하기 전에 요청을 열어 근거와 정확한 버전을 확인하세요. 권한이 있는 검토자가 검토 기록 화면에서 판단을 완료합니다.")}</p></header>
     <SelectionGroup><nav className={styles.filters} aria-label={text("Review filters", "검토 필터")}>
       {[undefined, "PENDING", "APPROVED", "REJECTED", "CANCELLED", "EXPIRED"].map(value => <Link className="ui-selection-control" prefetch={false} key={value ?? "all"} href={value ? `/approvals?status=${value}` : "/approvals"} data-active={status === value} aria-current={status === value ? "page" : undefined}>{status === value && <SelectionIndicator />}{value ? label(value) : text("All requests", "모든 요청")}</Link>)}
     </nav></SelectionGroup>

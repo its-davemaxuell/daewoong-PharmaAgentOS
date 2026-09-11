@@ -13,7 +13,10 @@
   --ink: #202124; --ink-soft: #454b60; --muted: #667085;
   --rule: #e6e8ec; --rule-dark: #b3b8ca; --brand-orange: #2563eb;
   --brand-orange-dark: #1d4ed8; --brand-orange-light: #eff6ff;
-  --sidebar: 256px; --topbar: 72px;
+  --sidebar: 232px; --topbar: 54px;
+  --page-title-size: 22px; --section-title-size: 15px;
+  --body-size: 14px; --label-size: 13px; --metadata-size: 12px;
+  --page-gutter: 24px; --inspector-width: 390px;
 
   --motion-press: 110ms; --motion-hover: 160ms; --motion-select: 240ms;
   --motion-panel: 260ms; --motion-context: 300ms;

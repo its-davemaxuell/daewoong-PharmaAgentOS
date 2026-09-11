@@ -5,22 +5,22 @@ primary_target: "apps/web/app/(portal)/dashboard/page.tsx"
 related_targets: ["apps/web/components/agent-platform/beginner-home.tsx","apps/web/components/agent-platform/agent-home.tsx","apps/web/components/agent-platform/agent-team.tsx","apps/web/components/portal-shell.tsx"]
 ---
 
-# Evidence workspace ? approved composition A
+# Clearer workspaces — approved refinement
 
-Mode: Operate. Scope: primary entry, shared shell and specialist exploration.
-Audience: Korean/English employees preparing questions against retained FDA letters.
-User approved a bright, clean, content-rich interface with dimensional compartments.
-DESIGN.md defines the white/indigo world, replacing the earlier navy navigation.
+Mode: Operate. Primary surface: Overview and the persistent portal shell.
+Audience: mixed Korean/English employees, with specialist review accessible.
+Visual authority: DESIGN.md; neutral/blue identity, compact border-defined working
+surfaces, local Pretendard and existing Daewoong/Streamline assets.
 
-Home is a working desk: objective tray left, source preview below, workflow,
-quick questions and actual saved work to the right. The objective hands off through
-tab-local session storage to /research; this action never starts a server job.
-The input becomes editable after hydration so early text is not overwritten.
-Source preview fetches one bounded page and shows five retained records; unavailable
-and preview records are labelled truthfully. Continue working renders real records.
+Overview: page heading and New research; Continue your work with real research
+records and statuses; New FDA sources with in-place evidence inspection; personal
+Inbox and topic counts; compact data-accurate totals. When there is no active work,
+examples hand off through tab-local session storage to Research without starting
+a server job. Partial failures remain local to their data regions.
 
-Keep the three navigation groups, manual disclosure state, existing routes,
-Korean/English support, no-login public viewer entry, source trust boundaries,
-and human review authorization. Local drafts at /requests remain browser-only.
-Quick chat is /ask; persisted research is /research. No invented run, approval,
-source record, or performance claim belongs in the production interface.
+Navigation: Overview; My work (Research, Inbox, Saved work); Evidence (FDA sources,
+Trends); Team review (Cases, role-appropriate Source review and Approvals); utilities.
+Recent conversations collapse. Research history collapses only on mobile. Shell,
+query cache, session identity, deep URLs, source versions and review permissions
+persist. Never substitute a successful run, count, finding or decision for missing
+data. Details and related commands retain access to specialist tools.

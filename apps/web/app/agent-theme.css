@@ -342,7 +342,7 @@ body { color: var(--os-ink); background: var(--os-canvas); }
 .portal-shell .trend-brief { background: transparent; border: 0; box-shadow: none; gap: 20px; }
 .portal-shell .trend-brief__header { padding: 0; border: 0; }
 .portal-shell .trend-brief__title > p:first-child { font-size: .8125rem; text-transform: none; letter-spacing: .02em; color: var(--os-muted); }
-.portal-shell .trend-brief__title h1 { font-size: 2rem; letter-spacing: -.035em; }
+.portal-shell .trend-brief__title h1 { font-size: var(--page-title-size); line-height: 28px; letter-spacing: -.02em; }
 .portal-shell .trend-signal-strip { background: white; border: 1px solid var(--os-rule); border-radius: 14px; box-shadow: var(--os-shadow-panel); }
 .portal-shell .trend-signal { padding: 20px; }
 .portal-shell .trend-signal__icon { color: var(--os-primary-deep); background: var(--os-primary-soft); border-radius: 10px; box-shadow: var(--os-shadow-control); }
@@ -356,7 +356,7 @@ body { color: var(--os-ink); background: var(--os-canvas); }
 .portal-shell .trend-authority-rail code { color: var(--os-ink); }
 .portal-shell .trend-authority-rail li { border-color: var(--os-rule); }
 .portal-shell .trend-authority-rail li > a:hover { background: var(--os-primary-soft); }
-@media (max-width:600px) { .portal-shell .trend-brief__title h1 { font-size: 1.625rem; } .portal-shell .record-tabs .record-tab-list button { min-width: 0; padding-inline: 10px; font-size: .8125rem; } }
+@media (max-width:600px) { .portal-shell .trend-brief__title h1 { font-size: var(--page-title-size); } .portal-shell .record-tabs .record-tab-list button { min-width: 0; padding-inline: 10px; font-size: .8125rem; } }
 
 .portal-shell .trend-theme-row__current, .portal-shell .trend-theme-legend span:first-child i { background: var(--os-primary); }
 .portal-shell .trend-theme-row__prior, .portal-shell .trend-theme-legend span:nth-child(2) i { background: #a9adbf; }

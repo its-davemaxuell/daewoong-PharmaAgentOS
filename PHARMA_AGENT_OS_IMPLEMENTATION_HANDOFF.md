@@ -10,6 +10,28 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-11 Clearer Workspaces refinement (local implementation):** Implemented
+approved task-based navigation with permanent Research, separate personal Inbox
+and team review, collapsed recent conversations and role-filtered command routes.
+Overview leads with real research records and draft-only example preparation;
+source updates and personal triage follow, with accurately named compact counts.
+Shared page geometry, typography, source/list surfaces, case/governance panels,
+trends, settings and Help follow the existing neutral/blue identity. Research
+history collapses on mobile, the process explanation is optional, and detailed
+execution events and technical provenance are disclosures. Saved briefs retain
+finding support labels and limitations. Existing URLs, API authorization, source
+versions, draft/session ownership, inspector continuity and execution restrictions
+remain unchanged. No backend/schema/dependency changes or deployment.
+
+Validation: 94 unit tests, lint, TypeScript and production build pass. Final
+navigation/layout checks pass 24/24 across Chromium, Firefox and WebKit; final
+inspector checks pass 9/9, including direct overlap verification. The initial
+WebKit layout-test timing issue was corrected and rechecked.
+See [verification and screenshots](docs/assurance/clear-workspaces-20260911.md).
+The source plan, DESIGN.md, product context and Overview surface brief reflect
+this approved refinement. The older release records below describe previous
+published revisions; they do not imply that this local change has been deployed.
+
 **2026-09-11 evidence-continuity UI upgrade (deployed and verified):** The
 new user specification supersedes the prepared-startup/Layered Desk presentation.
 The compact persistent shell, operational overview, contextual assistant, source

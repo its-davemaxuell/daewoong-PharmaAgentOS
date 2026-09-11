@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BilingualText } from "@/lib/i18n";
 import { ServiceState } from "./service-state";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { BriefcaseBusiness } from "@/components/icons/BriefcaseBusiness";
@@ -60,10 +61,9 @@ export function CaseIndex({
     <div className={styles.indexPage}>
       <header className={styles.indexHeader}>
         <div>
-          <p className={styles.eyebrow}>PharmaAgent OS · governed work</p>
-          <h1>Regulatory cases</h1>
+          <h1><BilingualText en="Cases" ko="케이스" /></h1>
           <p className={styles.lede}>
-            Convert one retained FDA source version into an inspectable plan, evidence trail, and independent decision.
+            <BilingualText en="Prepare and review case records with their source evidence." ko="원문 근거를 바탕으로 케이스 기록을 준비하고 검토하세요." />
           </p>
         </div>
         <div className={styles.headerControl}>
@@ -164,6 +164,7 @@ export function CaseIndex({
         </aside>
       </div>
 
+      <nav className="workspace-viewbar" aria-label="Case resources"><Link href="/agents"><BilingualText en="Specialist agents" ko="전문 에이전트" /></Link><Link href="/approvals"><BilingualText en="Approvals" ko="승인" /></Link></nav>
       <span className={styles.statusReference} aria-hidden="true">
         Supported states: {CASE_STATUSES.join(" · ")}
       </span>

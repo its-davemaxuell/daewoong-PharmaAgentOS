@@ -68,7 +68,7 @@
 }
 .continuity-brand small {
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 .continuity-search {
@@ -91,7 +91,7 @@
 }
 .continuity-shell kbd {
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--os-muted);
   white-space: nowrap;
 }
@@ -128,18 +128,18 @@
   text-align: center;
 }
 .continuity-nav-group {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .continuity-nav-group h2,
-.continuity-recents h2 {
+.continuity-recents summary {
   padding: 0 10px;
   margin: 0 0 8px;
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 .continuity-recents {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 .continuity-recents a {
   display: flex;
@@ -165,7 +165,7 @@
 }
 .continuity-sidebar-footer {
   margin-top: auto;
-  padding-top: 32px;
+  padding-top: 20px;
 }
 .continuity-session {
   display: flex;
@@ -189,11 +189,11 @@
 .continuity-session strong,
 .continuity-session small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
 }
 .continuity-session small {
   color: var(--os-muted);
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 2px;
 }
 .continuity-topbar {
@@ -249,9 +249,9 @@
   border: 1px solid var(--os-rule);
   font-size: 12px;
 }
-.continuity-shell .continuity-main {
+.continuity-shell.portal-shell .continuity-main {
   margin: 0 0 0 var(--sidebar-width);
-  padding: 86px 32px 32px;
+  padding: 78px var(--page-gutter) 32px;
   min-height: 100dvh;
   background: var(--os-canvas);
   max-width: none;
@@ -262,7 +262,7 @@
 .continuity-collapsed .continuity-sidebar {
   padding-inline: 6px;
 }
-.continuity-collapsed
+.continuity-collapsed .continuity-sidebar
   :is(
     .continuity-brand > span,
     .continuity-search span,
@@ -274,18 +274,18 @@
   ) {
   display: none;
 }
-.continuity-collapsed .continuity-brand {
+.continuity-collapsed .continuity-sidebar .continuity-brand {
   padding-inline: 10px;
 }
-.continuity-collapsed .continuity-nav-group {
+.continuity-collapsed .continuity-sidebar .continuity-nav-group {
   margin-top: 20px;
 }
-.continuity-collapsed .continuity-nav,
-.continuity-collapsed .continuity-search {
+.continuity-collapsed .continuity-sidebar .continuity-nav,
+.continuity-collapsed .continuity-sidebar .continuity-search {
   justify-content: center;
   padding-inline: 8px;
 }
-.continuity-collapsed .continuity-nav .continuity-home-icon {
+.continuity-collapsed .continuity-sidebar .continuity-nav .continuity-home-icon {
   display: block;
 }
 .continuity-mobile-trigger {
@@ -354,13 +354,48 @@
   font-size: 12px;
   white-space: nowrap;
 }
+.continuity-continue {
+  margin-bottom: 24px;
+  border: 1px solid var(--os-rule);
+  border-radius: var(--radius-md);
+  background: var(--os-surface);
+  overflow: hidden;
+}
+.continuity-continue > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid var(--os-rule);
+}
+.continuity-continue .workspace-list > li > a { padding: 12px 20px; }
+.continuity-continue .workspace-list > li > a > span:first-child { flex: 1; min-width: 0; }
+.continuity-continue .workspace-list svg { flex: none; }
+.continuity-continue .workspace-list > li:last-child { border-bottom: 0; }
+.continuity-start { padding: 16px 20px 20px; }
+.continuity-start p { margin: 0 0 12px; color: var(--os-muted); font-size: 14px; }
+.continuity-start > div { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.continuity-start a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; color: var(--os-primary-deep); text-decoration: none; font-size: 13px; }
+.continuity-start a:hover { text-decoration: underline; }
+.continuity-inbox-note { padding: 0 20px 16px; margin: 0; color: var(--os-muted); font-size: 12px; line-height: 1.6; }
+.continuity-recents summary { cursor: pointer; min-height: 32px; align-content: center; }
+.continuity-recents summary:focus-visible { outline: 2px solid var(--os-primary); outline-offset: 2px; }
+.continuity-recents[open] summary { margin-bottom: 4px; }
+.continuity-primary:hover { background: var(--os-primary-deep); }
+@media (max-width: 600px) {
+  .continuity-continue > header { align-items: flex-start; padding: 16px; }
+  .continuity-continue .workspace-list > li > a { flex-wrap: wrap; padding: 12px 16px; gap: 8px; }
+  .continuity-continue .workspace-list > li > a > span:first-child { flex-basis: 100%; }
+  .continuity-start { padding: 16px; }
+}
 .continuity-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   background: white;
   border: 1px solid var(--os-rule);
   border-radius: 8px;
-  margin-bottom: 28px;
+  margin-block: 24px;
   overflow: hidden;
 }
 .continuity-metrics > a {
@@ -384,15 +419,15 @@
 }
 .continuity-metrics strong {
   display: block;
-  font-size: 26px;
-  line-height: 32px;
+  font-size: 18px;
+  line-height: 24px;
   font-weight: 600;
-  margin: 12px 0 6px;
+  margin: 6px 0 2px;
   font-variant-numeric: tabular-nums;
 }
 .continuity-metrics small {
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .continuity-overview-grid {
   display: grid;
@@ -426,9 +461,9 @@
   color: var(--os-muted);
   font-size: 12px;
 }
-.continuity-overview header a {
+.continuity-overview header a:not(.continuity-primary) {
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -438,11 +473,11 @@
 .continuity-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: 13px;
   text-align: left;
 }
 .continuity-table th {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--os-muted);
   background: #fbfbfc;
   font-weight: 500;
@@ -481,15 +516,15 @@
 .continuity-table small {
   display: block;
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 4px;
 }
 .continuity-topic {
-  font-size: 11px;
+  font-size: 12px;
   color: #596474;
 }
 .continuity-source-label {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: #45628a;
   border: 1px solid #dfe7f1;
@@ -519,7 +554,7 @@
 .continuity-work-row small {
   display: block;
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 4px;
 }
 .continuity-work-row b {
@@ -565,7 +600,7 @@
   width: 100%;
   padding: 16px 20px;
   min-height: 54px;
-  margin-top: 24px;
+  margin-top: 20px;
   background: white;
   border: 1px solid var(--os-rule);
   border-radius: 8px;
@@ -577,7 +612,7 @@
 }
 .continuity-footnote {
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 16px;
 }
 .continuity-skeleton {
@@ -612,7 +647,7 @@
   font-size: 13px;
 }
 .continuity-shell .letter-row__provenance {
-  font-size: 11px;
+  font-size: 12px;
 }
 .continuity-shell .record-summary-card {
   padding: 20px;
@@ -672,7 +707,7 @@
   line-height: 1.75;
 }
 .continuity-shell .workspace-inspector {
-  width: 390px;
+  width: var(--inspector-width);
   top: 54px;
   height: calc(100dvh - 54px);
   box-shadow: none;
@@ -728,7 +763,7 @@
 .continuity-assistant-context > span {
   display: block;
   color: var(--os-muted);
-  font-size: 11px;
+  font-size: 12px;
   margin-bottom: 8px;
 }
 .continuity-assistant-context button {
@@ -791,7 +826,7 @@
     margin-right: 420px;
   }
   .continuity-shell .workspace-has-inspector {
-    padding-right: 390px;
+    padding-right: var(--inspector-width);
   }
 }
 @media (max-width: 1200px) {
@@ -813,9 +848,9 @@
     left: 0;
     padding-inline: 16px;
   }
-  .continuity-shell .continuity-main {
+  .continuity-shell.portal-shell .continuity-main {
     margin-left: 0;
-    padding: 78px 20px 24px;
+    padding: 78px 16px 24px;
   }
   .continuity-collapse {
     display: none !important;
@@ -853,7 +888,7 @@
   .continuity-location strong {
     font-size: 12px;
   }
-  .continuity-shell .continuity-main {
+  .continuity-shell.portal-shell .continuity-main {
     padding: 74px 16px 24px;
   }
   .continuity-page-header {
@@ -898,7 +933,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .continuity-sidebar,
   .continuity-topbar,
-  .continuity-shell .continuity-main {
+  .continuity-shell.portal-shell .continuity-main {
     transition:
       width var(--motion-normal) var(--ease-standard),
       margin var(--motion-normal) var(--ease-standard),
@@ -999,7 +1034,7 @@
 }
 @media (min-width: 1280px) {
   .continuity-shell .workspace-has-inspector {
-    padding-right: 390px;
+    padding-right: var(--inspector-width);
   }
 }
 .continuity-workflow-links {

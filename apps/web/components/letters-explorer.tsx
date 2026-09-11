@@ -269,7 +269,7 @@ export function LettersExplorer({
       <SessionNotice />
       <PageGuide
         className="explorer-page__guide"
-        title={{ ko: "의약품 경고서한 탐색기", en: "Drug Letter Explorer" }}
+        title={{ ko: "FDA 원문", en: "FDA sources" }}
         context={{
           ko: `통제된 원문 아카이브 · 현재 기록 ${collectionTotal}건`,
           en: `Controlled source archive · ${collectionTotal} current records`,

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { setWorkspaceParams, workspaceJson, WorkspaceError } from "@/lib/workspace-client";
 import type { BriefSnapshot, SavedWorkspaceView } from "@/lib/workspace-types";
+import { FindingSupport } from "../research/finding";
 import { SourceLink } from "../source-link";
 import { useWorkspaceScope } from "./provider";
 import { ActionButton } from "./commands";
@@ -56,11 +57,11 @@ function BriefInspector({ id, onClose }: { id: string; onClose: () => void }) {
     {result.isPending ? <WorkspaceLoading /> : result.isError ? <WorkspaceErrorState retry={() => void result.refetch()} /> : <>
       <p className="workspace-eyebrow">{text("Immutable snapshot · Draft for human review", "변경 불가 스냅샷 · 사람 검토용 초안")}</p><h3>{result.data.title}</h3>
       <div className="workspace-viewbar"><ActionButton actionId="brief.copy" label={text("Copy brief", "브리핑 복사")} onClick={() => { void navigator.clipboard.writeText(JSON.stringify(result.data.snapshot, null, 2)).then(() => setFeedback(text("Copied", "복사됨"))).catch(() => setFeedback(text("Copy failed. Use Export.", "복사 실패. 내보내기를 사용하세요."))); }} /><a href={`/api/workspace/research/briefs/${id}/export`}>{text("Export JSON", "JSON 내보내기")}</a><Link href={`/research?run=${result.data.run_id}`}>{text("Original run", "원래 작업")}</Link></div>
-      <p role="status">{feedback}</p><ol>{result.data.snapshot.result.findings?.map((finding, index) => <li key={index}><p>{finding.statement}</p><small>{finding.citation_ids.join(", ")}</small></li>)}</ol>
+      <p role="status">{feedback}</p><ol>{result.data.snapshot.result.findings?.map((finding, index) => <li key={index}><FindingSupport finding={finding} /><p>{finding.statement}</p><small>{finding.citation_ids.join(", ")}</small></li>)}</ol>
       <h3>{text("Review questions", "검토 질문")}</h3><ul>{result.data.snapshot.result.review_questions?.map(item => <li key={item}>{item}</li>)}</ul>
       <h3>{text("Limitations", "한계")}</h3><ul>{result.data.snapshot.result.limitations?.map(item => <li key={item}>{item}</li>)}</ul>
       <h3>{text("Retained evidence", "보존된 근거")}</h3>{result.data.snapshot.result.sources?.map(source => <details key={source.id}><summary>{source.id} · {source.company}</summary><blockquote>{source.excerpt}</blockquote><p>{source.version_id} · {source.anchor}</p><code>{source.source_hash}</code><p><SourceLink href={source.source_url}>{text("FDA original", "FDA 원문")}</SourceLink></p></details>)}
-      <h3>{text("Snapshot hash", "스냅샷 해시")}</h3><code>{result.data.content_hash}</code>
+      <details className="workspace-provenance"><summary>{text("Snapshot provenance", "스냅샷 출처 정보")}</summary><p>{text("Snapshot hash", "스냅샷 해시")}</p><code>{result.data.content_hash}</code></details>
     </>}
   </Inspector>;
 }

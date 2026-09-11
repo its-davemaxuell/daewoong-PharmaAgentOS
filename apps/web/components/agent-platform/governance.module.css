@@ -4,7 +4,7 @@
 .page h1 { max-width: 850px; margin: 8px 0 12px; font-size: clamp(2.0625rem, 3vw, 2.8125rem); line-height: 1.2; letter-spacing: -.03em; }
 .page header p { max-width: 760px; color: var(--os-muted); line-height: 1.65; }
 .formGrid, .metricGrid, .cardGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.form, .metricGroup, .card, .run, .inventoryTable { background: var(--os-surface); border: 1px solid var(--os-rule); border-radius: 12px; }
+.form, .metricGroup, .card, .run, .inventoryTable { background: var(--os-surface); border: 1px solid var(--os-rule); border-radius: 8px; }
 .form { padding: 22px; display: grid; gap: 13px; }
 .form h2 { margin: 0 0 5px; }
 .form label { display: grid; gap: 6px; color: var(--os-muted); font-size: 0.9375rem; }
@@ -14,7 +14,7 @@
 .success, .error { margin: 0; padding: 12px; border-radius: var(--radius-inset); font-size: .875rem; line-height: 1.6; }
 .success { color: var(--status-success-ink); background: var(--status-success-surface); }
 .error { color: var(--status-error-ink); background: var(--status-error-surface); }
-.section { margin-top: 36px; }.sectionHeading { display: flex; justify-content: space-between; margin-bottom: 14px; }.sectionHeading h2 { margin: 5px 0 0; font-size: 1.75rem; }
+.section { margin-top: 36px; }.sectionHeading { display: flex; justify-content: space-between; margin-bottom: 14px; }.sectionHeading h2 { margin: 5px 0 0; font-size: var(--page-title-size); }
 .card { padding: 20px; }.card h3 { margin: 9px 0 4px; }.card p { color: var(--os-muted); }.card code, .run code { font-size: 0.8125rem; color: var(--os-muted); }
 .empty { padding: 24px; border: 1px solid var(--os-rule); border-radius: var(--radius-panel); background: var(--os-surface); box-shadow: var(--os-shadow-panel); color: var(--os-muted); line-height: 1.7; font-size: .9375rem; }
 .empty strong { display: block; color: var(--os-ink); font-size: 1.125rem; margin-bottom: 6px; }
@@ -26,7 +26,7 @@
 .filters { display: flex; gap: 7px; margin: 0 0 26px; flex-wrap: wrap; }.filters a { padding: 8px 11px; color: var(--os-muted); border: 1px solid var(--os-rule); background: var(--os-surface); font: 650 0.875rem/1.4 var(--font-pretendard), sans-serif; }.filters a[data-active="true"] { color: var(--os-surface); border-color: var(--os-primary); background: var(--os-primary); }
 .approvalList { display: grid; border: 1px solid var(--os-rule); background: var(--os-surface); }.approvalCard { display: grid; grid-template-columns: minmax(240px, 1fr) 110px 210px; align-items: center; gap: 18px; padding: 17px 19px; border-top: 1px solid var(--os-rule); }.approvalCard:first-child { border-top: 0; }.approvalCard span { color: var(--os-primary); font: 650 0.875rem/1.4 var(--font-pretendard), sans-serif;  }.approvalCard h3 { margin: 5px 0; }.approvalCard p { margin: 0; color: var(--os-muted); font-size: 0.875rem; }.approvalCard > strong { color: var(--os-primary); font-size: 0.8125rem; }.approvalCard[data-status="expired"] > strong, .approvalCard[data-status="rejected"] > strong { color: #a73333; }.approvalCard code { color: var(--os-muted); font-size: 0.8125rem; }
 .controlGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.controlForm { padding: 20px; display: grid; gap: 12px; background: var(--os-surface); border: 1px solid var(--os-rule); border-left: 1px solid var(--os-primary); border-radius: 12px; }
+.controlForm { padding: 20px; display: grid; gap: 12px; background: var(--os-surface); border: 1px solid var(--os-rule); border-left: 1px solid var(--os-primary); border-radius: 8px; }
 .controlForm > div { display: grid; gap: 4px; }.controlForm > div span, .controlForm small { color: var(--os-muted); font-size: 0.8125rem; }.controlForm label { display: grid; gap: 6px; color: var(--os-muted); font-size: 0.9375rem; }.controlForm input, .controlForm select { min-height: var(--control-height); border: 1px solid var(--control-border); padding: 9px 11px; background: var(--os-surface); color: inherit; }.controlForm button { min-height: var(--control-height); border: 0; padding: 10px 15px; color: var(--os-surface); background: var(--os-primary); font-weight: 700; cursor: pointer; }.controlForm button:disabled { opacity: .45; cursor: not-allowed; }
 @media (max-width: 900px) { .formGrid, .metricGrid, .cardGrid, .controlGrid { grid-template-columns: 1fr; }.run, .approvalCard { grid-template-columns: 1fr; }.releaseForm { grid-template-columns: 1fr; }.inventoryTable article { grid-template-columns: 1fr; gap: 4px; } }
 
@@ -38,20 +38,20 @@
 .page :is(input, select, button) { border-radius: var(--control-radius); }
 .page :is(input, select, button, a, summary):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 
-/* Layered desk: feature geometry and surface hierarchy. */
+/* Compact working surfaces. */
 .page { max-width: 1360px; margin-inline: auto; }
 .page > header { margin-bottom: 24px; max-width: 100%; }
-.page h1 { font-size: 2rem; letter-spacing: -.035em; }
+.page h1 { font-size: var(--page-title-size); letter-spacing: -.02em; }
 .page header p { font-size: .9375rem; margin-bottom: 0; }
-.form, .metricGroup, .card, .run, .inventoryTable, .approvalList, .controlForm { border-radius: 16px; box-shadow: var(--os-shadow-panel); }
+.form, .metricGroup, .card, .run, .inventoryTable, .approvalList, .controlForm { border-radius: 8px; box-shadow: var(--os-shadow-panel); }
 .approvalList, .inventoryTable { overflow: hidden; }
 .section { margin-top: 24px; }
-.sectionHeading h2 { font-size: 1.375rem; }
+.sectionHeading h2 { font-size: var(--section-title-size); }
 .formGrid, .metricGrid, .cardGrid, .controlGrid { gap: 20px; }
 .form button, .releaseForm button, .controlForm button { box-shadow: var(--os-shadow-primary); }
 .page button:not(:disabled):active { transform: translateY(1px) scale(.99); }
 .page :is(input, select):focus-visible { background: var(--os-inset); }
-.filters { width: fit-content; padding: 5px; gap: 4px; background: #e7e9f1; border-radius: 12px; margin-bottom: 20px; }
+.filters { width: fit-content; padding: 5px; gap: 4px; background: #e7e9f1; border-radius: 8px; margin-bottom: 20px; }
 .filters a { min-height: 38px; border: 0; background: transparent; font-weight: 600; }
 .filters a[data-active="true"] { background: white; color: var(--os-primary-deep); box-shadow: var(--os-shadow-control); }
 .approvalCard { padding: 20px 24px; }
@@ -60,4 +60,4 @@
 .metricGroup > span { display: block; margin-bottom: 16px; }
 .metricGroup dd { font-size: 1.125rem; font-variant-numeric: tabular-nums; }
 .card p, .run p { line-height: 1.65; }
-@media (max-width: 600px) { .page h1 { font-size: 1.75rem; } .form, .card, .metricGroup, .approvalCard { padding: 18px; } }
+@media (max-width: 600px) { .page h1 { font-size: var(--page-title-size); } .form, .card, .metricGroup, .approvalCard { padding: 18px; } }
