@@ -3105,6 +3105,6 @@ Implemented UI scope:
 - Source-bound finding citations open a highlighted evidence section beside the interpretation. The selected case view is in the URL and supports browser Back.
 - Two-to-four source comparison from previews, retaining source versions and original links; no invented similarity/confidence. Selection persists for the tab.
 - Ctrl/Cmd+K works from text fields; nested dialogs retain focus and Escape ownership. Existing query caching, optimistic bookmarks, bounded evidence pagination and source-filter restoration remain in place.
-- Approval requests and review history remain contextual links from Reviews; evaluation/agent administration links live in admin Settings.
+- Approval requests and review drafts remain contextual links from Reviews; evaluation/agent administration links live in admin Settings.
 
 Follow-on backend/product scope is explicit: source-to-governed-case assignment and complete review within the FDA reader; named reviewer/approver identity integration; versioned cross-case comparison analyses and saved comparisons; qualified confidence and exact PDF page/highlight geometry; unified saved findings/reports; notification delivery; emerging-trend deltas; field analytics and production Web Vitals qualification. Preserve the existing permission and evidence validation boundaries when adding those capabilities. Do not substitute local UI state for formal approval or immutable review events.
