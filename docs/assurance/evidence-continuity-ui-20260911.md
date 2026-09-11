@@ -26,3 +26,17 @@ The complete 90-section specification remains a product target. This release doe
 
 
 Final local startup checks: **9/9 passed** across Chromium, Firefox and WebKit, including usable shell/commands while source data is held, local error recovery, and reduced-motion mobile navigation. The final dialog rerun passes **3/3** with stable fixture identity. The production build includes the final compact embedded-chat styling, opener focus preservation, truthful comparison excerpts, error-vs-empty separation and matched nine-row loading geometry. Final TypeScript/build and zero-warning lint pass.
+
+## Hosted deployment
+
+Application revision `939ca22` is deployed at https://pharmaagent-os-ochre.vercel.app/dashboard. It includes `b91cc77` (core UI), `13629c1` (review-draft label), `e3bff68` (scrollable long-source previews), and the final source-heading wrap/compact typography adjustment. Vercel, Railway API and Railway worker commit statuses all report success. API readiness reports database and object store healthy.
+
+The production smoke uses read/navigation and local draft actions only. Final matrix: five of six journeys passed initially; Korean WebKit encountered the existing server-side library error while opening the full reader. Its isolated repeat passed. An earlier Firefox run also encountered that local error and passed on repetition. These failures are retained, not suppressed or treated as a clean first-pass run. Intermittent hosted source retrieval remains an operational limitation to investigate separately; no backend latency improvement is claimed.
+
+Successful hosted journeys cover the operational overview, a real FDA source preview, the full source reader, case-scoped assistant context, draft preservation on close/reopen, return to the evidence list, reduced-motion mobile navigation, focus restoration and absence of horizontal page overflow. All three browser engines pass in English and Korean across the final matrix and repeat. Successful final shell-visible samples range from 1.03 to 1.91 seconds. The old startup-gate baseline was 17.9 seconds; these are small lab samples with different startup conditions, not a controlled field Core Web Vitals result.
+
+Artifacts: `.artifacts/continuity-redesign/hosted-final/results.json`, `hosted-recovery/results.json`, and associated desktop/mobile screenshots. The original failed smoke exposed the long-source scrolling defect, which was corrected and verified using the real production record. No CSS is injected by the final/recovery smoke.
+
+CI for the final application revision: https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34593868941. Code security: https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34593868921.
+
+Final CI result for `939ca22`: **success**. The complete browser suite passes **234/234** (13.8 minutes), startup suite **9/9**, frontend unit suite **94/94**, and backend suite **600 passed / 10 existing gated skips**. Lint, type checks, production build, contracts, PostgreSQL boundaries/restore, Temporal recovery, container checks and code security all pass. This final full run supersedes the local intermediate failure/rerun history above. Hosted intermittent retrieval failures remain separately disclosed.

@@ -7,7 +7,7 @@ Current status: **FDA library, grounded OpenAI chat and durable FDA Research Age
 **Latest UI implementation (2026-09-11):** Evidence continuity replaces the
 Layered Desk and full-screen startup presentation. The compact persistent shell,
 operational overview, case-aware AI, source comparison and inline citation
-inspection are implemented and locally verified. Publication status and exact
+inspection are deployed at application revision `939ca22`. Publication status and exact
 validation are in [the UI release record](docs/assurance/evidence-continuity-ui-20260911.md).
 The broader source-to-governed-case, PDF and reporting target remains in the
 source plan; personal specialist execution stays disabled.

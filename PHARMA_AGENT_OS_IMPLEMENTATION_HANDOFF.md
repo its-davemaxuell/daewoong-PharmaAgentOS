@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-11 evidence-continuity UI upgrade (verified locally; deployment pending):** The
+**2026-09-11 evidence-continuity UI upgrade (deployed and verified):** The
 new user specification supersedes the prepared-startup/Layered Desk presentation.
 The compact persistent shell, operational overview, contextual assistant, source
 comparison, in-place finding evidence and URL-backed case tabs are implemented.
