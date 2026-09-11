@@ -23,6 +23,9 @@ inspectors/command dialogs cannot open over the loading screen. A no-script
 message explains how to restore the workspace.
 
 Four menu tasks run concurrently, reduced to two for save-data/2G connections.
+The destination starts first, followed by independent operations, trends and
+evaluation reads. This keeps menus sharing the source-page promise from delaying
+those independent requests behind several occupied workers.
 Each task has a 30-second completion bound; at 15 seconds, or immediately after a
 failure, users can retry unfinished work or continue with available menus. Module
 imports, query promises, sidebar state, fonts/artwork and the rendered destination

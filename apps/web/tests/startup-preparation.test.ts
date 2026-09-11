@@ -9,6 +9,8 @@ describe("startup preparation", () => {
     const client = new QueryClient();
     const tasks = preparationTasks(client, "one", ["viewer"], true, new URL("https://example.test/trends?days=30"));
     expect(tasks[0].id).toBe("/trends");
+    const homeTasks = preparationTasks(client, "one", ["viewer"], true, new URL("https://example.test/dashboard"));
+    expect(homeTasks.slice(0, 4).map(task => task.id)).toEqual(["/dashboard", "/control-tower", "/trends", "/evaluations"]);
     expect(tasks.map(task => task.id)).toEqual(expect.arrayContaining(["/inbox", "/requests", "/evaluations", "/control-tower", "/settings", "/help"]));
     expect(tasks.some(task => ["/admin", "/review"].includes(task.id))).toBe(false);
     expect(preparationTasks(client, "two", ["admin", "reviewer"], true, new URL("https://example.test/dashboard")).map(task => task.id)).toEqual(expect.arrayContaining(["/admin", "/review"]));

@@ -49,7 +49,12 @@ export function preparationTasks(client: QueryClient, scope: string, roles: AppR
       default: await client.fetchQuery(menuQueryOptions(scope, (menu.href === "/requests" ? "cases" : menu.href.slice(1)) as MenuResource, menu.href === "/requests" ? new URLSearchParams() : params));
     }
   }}));
-  return tasks.sort((a, b) => Number(b.id === destination.pathname) - Number(a.id === destination.pathname));
+  // Start independent aggregations before Home/Chat/Sources can occupy workers
+  // awaiting the same source page. Production traces put operations and trends
+  // on the critical path; the actual opening page still gets first priority.
+  const early = ["/control-tower", "/trends", "/evaluations", "/drug-letters"];
+  const priority = (task: PreparationTask) => task.id === destination.pathname ? -1 : early.includes(task.id) ? early.indexOf(task.id) : early.length;
+  return tasks.sort((a, b) => priority(a) - priority(b));
 }
 
 /** Bounded workers; failed tasks never suppress successful preparation. */
