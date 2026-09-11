@@ -47,14 +47,14 @@ test("unknown evidence, unavailable provenance and reader focus restoration", as
 
 test("approval locale, empty, restricted and malformed response states", async ({ page, context }) => {
   await page.goto("/approvals");
-  await expect(page.getByRole("heading", { name: "Review requests", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Approvals", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open review", exact: true })).toBeVisible();
   // Complete the initial preference write before the fixture replaces cookie/storage.
   await expect(page.locator("html")).toHaveAttribute("data-locale", "en");
   await context.addCookies([{ name: "dli_locale", value: "ko", url: "http://127.0.0.1:3100" }]);
   await page.evaluate(() => localStorage.setItem("daewoong-fda-locale", "ko"));
   await page.reload();
-  await expect(page.getByRole("heading", { name: "검토 요청", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "승인", exact: true })).toBeVisible();
   await page.goto("/approvals?status=EXPIRED");
   await expect(page.getByRole("heading", { name: "이 조건에 맞는 요청이 없습니다" })).toBeVisible();
   await page.goto("/approvals?status=REJECTED");
