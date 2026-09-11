@@ -3091,3 +3091,20 @@ The following public sources informed the commercial architecture patterns in th
 ## Final product principle
 
 > **PharmaAgent OS must make agent behavior controllable, evidence traceable, actions permissioned, releases testable, failures recoverable, and regulated decisions human-owned.**
+
+## 2026-09-11 evidence-continuity UI upgrade
+
+The user's full UI/UX specification supersedes the prepared-startup and Layered Desk presentation. Primary principle: **Evidence stays fixed. Intelligence moves around it.** This is an implementation of the UI foundation and connected evidence interactions, not a claim that every backend capability in the 90-section target is available.
+
+Implemented UI scope:
+- Persistent 232/56 px navigation rail and 54 px top bar; Overview, Cases, Evidence, Trends, Reviews, Saved. Recent conversations remain accessible. Settings and Help sit below the workflow; operations navigation is role-aware.
+- Immediate shell by default. The historical startup gate now requires explicit `PORTAL_LEGACY_STARTUP_ENABLED=true`; the old `PORTAL_STARTUP_ENABLED` no longer blocks normal startup.
+- Operational overview with independently cached source, triage, research and saved-work queries. Actual values, explicit unavailable states, retained activity during refresh errors, and local retry. No invented weekly deltas or risk scores.
+- Neutral/blue tokens, compact tables, restrained borders, typography and motion, responsive layout and reduced-motion support.
+- Persistent contextual AI panel via Ctrl/Cmd+J; selected source pills remain authoritative. Separate draft namespaces and retained conversations preserve case/general work across panel closure and route navigation. Embedded chat cannot navigate away through branch actions.
+- Source-bound finding citations open a highlighted evidence section beside the interpretation. The selected case view is in the URL and supports browser Back.
+- Two-to-four source comparison from previews, retaining source versions and original links; no invented similarity/confidence. Selection persists for the tab.
+- Ctrl/Cmd+K works from text fields; nested dialogs retain focus and Escape ownership. Existing query caching, optimistic bookmarks, bounded evidence pagination and source-filter restoration remain in place.
+- Approval requests and review history remain contextual links from Reviews; evaluation/agent administration links live in admin Settings.
+
+Follow-on backend/product scope is explicit: source-to-governed-case assignment and complete review within the FDA reader; named reviewer/approver identity integration; versioned cross-case comparison analyses and saved comparisons; qualified confidence and exact PDF page/highlight geometry; unified saved findings/reports; notification delivery; emerging-trend deltas; field analytics and production Web Vitals qualification. Preserve the existing permission and evidence validation boundaries when adding those capabilities. Do not substitute local UI state for formal approval or immutable review events.

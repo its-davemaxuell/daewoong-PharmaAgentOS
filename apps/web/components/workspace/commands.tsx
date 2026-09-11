@@ -50,7 +50,7 @@ function CommandMenu() {
       restore.current = document.activeElement as HTMLElement; setIsOpen(true); setQuery(""); ref.current?.showModal();
     };
     const key = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && !event.isComposing && !typingTarget(event.target)) { event.preventDefault(); open(); }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && !event.isComposing ) { event.preventDefault(); open(); }
     };
     window.addEventListener("workspace:commands", open);
     document.addEventListener("keydown", key);
@@ -72,6 +72,6 @@ function CommandMenu() {
     <p className="workspace-eyebrow">{text("Actions in this view", "현재 화면 작업")}</p>
     {actions.filter(action => action.label.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(action => <button key={action.id} className="workspace-command-item" disabled={!action.enabled} onClick={() => { const current = list().find(item => item.id === action.id); if (current?.enabled) { close(); current.execute(); } }}>{action.label}</button>)}
     <p className="workspace-eyebrow">{text("Navigate", "이동")}</p>
-    {[["Research", "리서치", "/research"], ["Sources", "자료", "/drug-letters"], ["Saved work", "저장한 작업", "/saved-work"], ["Inbox", "수신함", "/inbox"], ["Chat", "챗봇", "/ask"]].filter(([en, ko]) => `${en} ${ko}`.toLowerCase().includes(query.toLowerCase())).map(([en, ko, href]) => <button key={href} className="workspace-command-item" onClick={() => { close(); router.push(href); }}>{text(en, ko)}</button>)}
+    {[["Overview", "개요", "/dashboard"], ["Cases", "케이스", "/cases"], ["Evidence", "근거 자료", "/drug-letters"], ["Trends", "동향", "/trends"], ["Reviews", "검토", "/inbox"], ["Saved", "저장한 작업", "/saved-work"], ["Research", "리서치", "/research"], ["Chat", "대화", "/ask"]].filter(([en, ko]) => `${en} ${ko}`.toLowerCase().includes(query.toLowerCase())).map(([en, ko, href]) => <button key={href} className="workspace-command-item" onClick={() => { close(); router.push(href); }}>{text(en, ko)}</button>)}
   </dialog>;
 }

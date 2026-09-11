@@ -1,10 +1,18 @@
 # PharmaAgent OS — next engineer handoff
 
-Prepared: **2026-09-09**
+Prepared: **2026-09-11**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
-**Latest release (2026-09-11):** Research passage selection, saved context and run
+**Latest UI implementation (2026-09-11):** Evidence continuity replaces the
+Layered Desk and full-screen startup presentation. The compact persistent shell,
+operational overview, case-aware AI, source comparison and inline citation
+inspection are implemented and locally verified. Publication status and exact
+validation are in [the UI release record](docs/assurance/evidence-continuity-ui-20260911.md).
+The broader source-to-governed-case, PDF and reporting target remains in the
+source plan; personal specialist execution stays disabled.
+
+**Previous backend release (2026-09-11):** Research passage selection, saved context and run
 inspection are deployed to the current Vercel/Railway services. Application revision
 `8d0c9a2` includes the strict nested-schema provider fix and source-anchor wrapping. Start with the authoritative
 [implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md) and

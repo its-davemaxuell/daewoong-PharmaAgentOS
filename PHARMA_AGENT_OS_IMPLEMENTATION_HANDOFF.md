@@ -10,6 +10,17 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-11 evidence-continuity UI upgrade (verified locally; deployment pending):** The
+new user specification supersedes the prepared-startup/Layered Desk presentation.
+The compact persistent shell, operational overview, contextual assistant, source
+comparison, in-place finding evidence and URL-backed case tabs are implemented.
+The global startup gate is now opt-in through `PORTAL_LEGACY_STARTUP_ENABLED=true`.
+Real source/work data and backend permission boundaries remain authoritative.
+The source plan contains the current scope and explicit follow-on capabilities;
+see [UI release evidence](docs/assurance/evidence-continuity-ui-20260911.md).
+This is the UI continuity upgrade, not completion of every capability in the
+90-section target, nor activation of personal specialist execution.
+
 **2026-09-11 Attio reference upgrade (partial scope deployed):** Research now
 supports explicit passage selection, server-hydrated and run-bound context snapshots,
 selection-bound idempotency, pre-ranking SQL ACL filtering, and revalidation before

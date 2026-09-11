@@ -63,30 +63,44 @@ test("approval locale, empty, restricted and malformed response states", async (
   await expect(page.getByText(/서비스가 불완전한 검토 데이터를 반환했습니다/).filter({ visible: true })).toBeVisible();
 });
 
-test("Home prepares a research objective without starting a job", async ({ page }) => {
-  const created: string[] = [];
-  page.on("request", request => { if (request.method() === "POST" && request.url().endsWith("/api/research")) created.push(request.url()); });
-  await page.goto("/dashboard");
-  await expect(page.getByRole("button", { name: "Prepare research", exact: true })).toBeDisabled();
-  const objective = "Compare cleaning-validation findings and prepare questions for our quality team.";
-  await page.getByLabel("Your research question", { exact: true }).fill(objective);
-  await page.getByRole("button", { name: "Prepare research", exact: true }).click();
-  await expect(page).toHaveURL(/\/research$/);
-  await expect(page.locator("#research-goal")).toHaveValue(objective);
-  await expect(page.getByRole("button", { name: "Start research", exact: true })).toBeEnabled();
-  expect(created).toEqual([]);
+test("Overview opens research without starting a job", async ({ page }) => {
+ const created: string[] = [];
+ page.on("request", request => { if(request.method()==="POST"&&request.url().endsWith("/api/research")) created.push(request.url()); });
+ await page.goto("/dashboard");
+ await page.getByRole("link",{name:"New research",exact:true}).click();
+ await expect(page).toHaveURL(/\/research$/);
+ await expect(page.locator("#research-goal")).toBeVisible();
+ expect(created).toEqual([]);
 });
 
 test("supporting workspaces and all source tabs retain readable geometry", async ({ page }) => {
   test.setTimeout(180_000);
   const errors: string[] = [];
   const casePrefetches: string[] = [];
-  page.on("pageerror", error => errors.push(error.message));
-  page.on("request", request => {
-    if (page.url().includes(`/cases/${threadId}`) && request.url().includes(`/cases/${threadId}`)
-      && request.headers()["next-router-prefetch"] === "1") casePrefetches.push(request.url());
-  });
+  const context = page.context();
+  const recordError = (error: Error) => errors.push(error.message);
+  const observe = () => {
+    const observedPage = page;
+    observedPage.on("pageerror", recordError);
+    observedPage.on("request", request => {
+      if (observedPage.url().includes(`/cases/${threadId}`) && request.url().includes(`/cases/${threadId}`)
+        && request.headers()["next-router-prefetch"] === "1") casePrefetches.push(request.url());
+    });
+  };
+  observe();
   const openWorkspace = async (route: string) => {
+    // Each geometry sample is an independent cold page. Stop observing only
+    // when disposing that page: WebKit reports cancelled speculative streams
+    // as access-control errors during document replacement. In-app navigation
+    // is exercised separately by the motion and navigation-cache suites.
+    if (page.url() !== "about:blank") {
+      const viewport = page.viewportSize();
+      page.removeListener("pageerror", recordError);
+      await page.close();
+      page = await context.newPage();
+      if (viewport) await page.setViewportSize(viewport);
+      observe();
+    }
     // Streamed case headings can appear before the shell hydrates. Network idle
     // alone can therefore precede its sidebar request on hosted WebKit. Wait for
     // that real request before inspecting or unloading the current workspace.
@@ -112,7 +126,7 @@ test("supporting workspaces and all source tabs retain readable geometry", async
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} at ${width}`).toBe(true);
       if (width === 1440) {
         // Content must clear the fixed navigation, not merely avoid overflow.
-        const sidebarRight = await page.locator(".portal-sidebar").evaluate(element => element.getBoundingClientRect().right);
+        const sidebarRight = await page.locator(".continuity-sidebar").evaluate(element => element.getBoundingClientRect().right);
         expect(await page.locator("main").evaluate(element => element.getBoundingClientRect().left)).toBeGreaterThanOrEqual(sidebarRight);
       }
     }
@@ -146,12 +160,11 @@ test("supporting workspaces and all source tabs retain readable geometry", async
 
 test("navigation disclosure, mobile keyboard return and enlarged text remain usable", async ({ page }) => {
   await page.goto("/dashboard");
-  const settings = page.locator(".portal-workspace-group").nth(2);
-  await settings.locator("summary").first().click();
-  await expect(settings).toHaveAttribute("open", "");
-  await page.getByRole("link", { name: "Sources", exact: true }).click();
+  const settings = page.locator('.continuity-sidebar a[href="/settings"]');
+  await expect(settings).toBeVisible();
+  await page.locator('.continuity-sidebar a[href="/drug-letters"]').click();
   await expect(page.locator(".letter-row")).toHaveCount(20);
-  await expect(settings).toHaveAttribute("open", "");
+  await expect(settings).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   const menu = page.getByRole("button", { name: "Open navigation", exact: true });
   await menu.click();

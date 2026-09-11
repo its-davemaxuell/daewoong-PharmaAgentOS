@@ -1,24 +1,24 @@
-/* Authoritative Layered desk tokens; historical names below are compatibility aliases. */
+/* Evidence continuity design system. Historical names remain compatibility aliases. */
 :root {
-  --os-ink: #202332; --os-muted: #626779; --os-primary: #5856d6;
-  --os-primary-deep: #4442b8; --os-primary-soft: #eeedff;
-  --os-surface: #fff; --os-canvas: #eef0f6; --os-inset: #f5f6fa;
-  --os-nav: #fff; --os-rule: #e1e4ee; --os-control: #858b9d;
+  --os-ink: #202124; --os-muted: #667085; --os-primary: #2563eb;
+  --os-primary-deep: #1d4ed8; --os-primary-soft: #eff6ff;
+  --os-surface: #fff; --os-canvas: #f7f8fa; --os-inset: #fbfbfc;
+  --os-nav: #fff; --os-rule: #e6e8ec; --os-control: #858b9d;
   --os-shadow-control: 0 1px 2px #25244a14, inset 0 1px 0 #ffffffb3;
-  --os-shadow-panel: 0 2px 4px #25244a05, 0 12px 30px -10px #34375220, inset 0 1px 0 #fff;
+  --os-shadow-panel: none;
   --os-shadow-float: 0 4px 10px #25244a0d, 0 22px 60px -16px #34375238;
-  --os-shadow-primary: 0 3px 5px #3e39a521, inset 0 1px 0 #ffffff40, inset 0 -2px 0 #302da52b;
-  --control-height: 2.75rem; --control-radius: 8px; --control-border: #858b9d; --focus-ring: #5856d6;
-  --paper: #eef0f6; --paper-bright: #fff; --paper-deep: #e6e9f2;
-  --ink: #202332; --ink-soft: #454b60; --muted: #626779;
-  --rule: #e1e4ee; --rule-dark: #b3b8ca; --brand-orange: #5856d6;
-  --brand-orange-dark: #4442b8; --brand-orange-light: #eeedff;
+  --os-shadow-primary: 0 1px 2px #00000008;
+  --control-height: 2.25rem; --control-radius: 6px; --control-border: #858b9d; --focus-ring: #2563eb;
+  --paper: #f7f8fa; --paper-bright: #fff; --paper-deep: #e6e9f2;
+  --ink: #202124; --ink-soft: #454b60; --muted: #667085;
+  --rule: #e6e8ec; --rule-dark: #b3b8ca; --brand-orange: #2563eb;
+  --brand-orange-dark: #1d4ed8; --brand-orange-light: #eff6ff;
   --sidebar: 256px; --topbar: 72px;
 
   --motion-press: 110ms; --motion-hover: 160ms; --motion-select: 240ms;
   --motion-panel: 260ms; --motion-context: 300ms;
-  --motion-ease: cubic-bezier(.22,.8,.25,1);
-  --radius-inset: 10px; --radius-panel: 16px;
+  --motion-ease: cubic-bezier(.2,0,0,1);
+  --radius-inset: 6px; --radius-panel: 8px;
   --space-1: .25rem; --space-2: .5rem; --space-3: .75rem;
   --space-4: 1rem; --space-6: 1.5rem; --space-8: 2rem;
   --status-success-ink: #27634d; --status-success-surface: #eff7f3;

@@ -1,5 +1,4 @@
 import { Network } from "@/components/icons/Network";
-import { Bell } from "@/components/icons/Bell";
 import { Bookmark } from "@/components/icons/Bookmark";
 import { BriefcaseBusiness } from "@/components/icons/BriefcaseBusiness";
 import { ChartNoAxesColumnIncreasing } from "@/components/icons/ChartNoAxesColumnIncreasing";
@@ -42,18 +41,21 @@ export const legacyNavItems: Array<{
 ];
 
 export function portalNavigation(linearWorkspace = true) {
-  const navSections = linearWorkspace ? [
-    { id: "chatbot", en: "Workspace", ko: "워크스페이스", icon: MessageSquareText },
-    { id: "agent", en: "Team review", ko: "팀 검토", icon: Network },
-    { id: "settings", en: "Settings & operations", ko: "설정 및 운영", icon: Settings },
-  ] as const : legacyNavSections;
-  const navItems: typeof legacyNavItems = linearWorkspace ? [
-    { en: "Research", ko: "리서치", href: "/research", icon: Network, section: "chatbot" },
-    { en: "Sources", ko: "자료", href: "/drug-letters", icon: FileText, section: "chatbot" },
-    { en: "Saved work", ko: "저장한 작업", href: "/saved-work", icon: Bookmark, section: "chatbot" },
-    { en: "Inbox", ko: "수신함", href: "/inbox", icon: Bell, section: "chatbot" },
-    { en: "Chat", ko: "챗봇", href: "/ask", icon: MessageSquareText, section: "chatbot" },
-    ...legacyNavItems.filter(item => !["/research", "/ask", "/drug-letters", "/saved-views"].includes(item.href)),
-  ] : legacyNavItems;
+  if (!linearWorkspace) return { navSections: legacyNavSections, navItems: legacyNavItems };
+  const navSections = [
+    { id: "chatbot", en: "Intelligence", ko: "규제 인텔리전스", icon: FileText },
+    { id: "agent", en: "Work", ko: "내 작업", icon: BriefcaseBusiness },
+    { id: "settings", en: "Workspace", ko: "워크스페이스", icon: Settings },
+  ] as const;
+  const navItems: typeof legacyNavItems = [
+    { en: "Cases", ko: "케이스", href: "/cases", icon: BriefcaseBusiness, section: "chatbot" },
+    { en: "Evidence", ko: "근거 자료", href: "/drug-letters", icon: FileText, section: "chatbot" },
+    { en: "Trends", ko: "동향", href: "/trends", icon: ChartNoAxesColumnIncreasing, section: "chatbot" },
+    { en: "Reviews", ko: "검토", href: "/inbox", icon: ClipboardCheck, section: "agent" },
+    { en: "Saved", ko: "저장한 작업", href: "/saved-work", icon: Bookmark, section: "agent" },
+    { en: "Settings", ko: "설정", href: "/settings", icon: Settings, section: "settings" },
+    { en: "Help", ko: "도움말", href: "/help", icon: CircleHelp, section: "settings" },
+    { en: "Operations", ko: "운영", href: "/control-tower", icon: ShieldCheck, section: "settings", requiredRole: "admin" },
+  ];
   return { navSections, navItems };
 }

@@ -24,6 +24,7 @@ export function Inspector({ title, onClose, children }: { title: string; onClose
   useEffect(() => { close.current = onClose; }, [onClose]);
   useEffect(() => {
     if (!startupReady) return;
+    window.dispatchEvent(new Event("workspace:evidence-open"));
     const dialog = ref.current;
     const previous = document.activeElement as HTMLElement;
     const query = window.matchMedia("(max-width: 1279px)");
@@ -35,7 +36,9 @@ export function Inspector({ title, onClose, children }: { title: string; onClose
     show(); query.addEventListener("change", show);
     const key = (event: KeyboardEvent) => { if (event.key === "Escape" && !event.isComposing && !query.matches && !document.querySelector("dialog:modal")) { event.preventDefault(); close.current(); } };
     document.addEventListener("keydown", key);
-    return () => { query.removeEventListener("change", show); document.removeEventListener("keydown", key); dialog?.close(); if (previous?.isConnected) previous.focus({ preventScroll: true }); };
+    const assistant = () => close.current();
+    window.addEventListener("workspace:assistant", assistant);
+    return () => { query.removeEventListener("change", show); document.removeEventListener("keydown", key); window.removeEventListener("workspace:assistant", assistant); dialog?.close(); if (previous?.isConnected) previous.focus({ preventScroll: true }); };
   }, [startupReady]);
   return <dialog ref={ref} className="workspace-inspector" aria-labelledby="inspector-title" onCancel={event => { event.preventDefault(); onClose(); }} onKeyDown={event => {
     if (event.key !== "Tab" || !ref.current?.matches(":modal")) return;

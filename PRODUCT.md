@@ -62,3 +62,11 @@ functional baseline. Agent definitions exist under contracts/agents.
 - Make agent responsibility, source evidence, and human decisions inspectable.
 - Distinguish planned, running, completed, unavailable, and restricted states.
 - Lead beginners to FDA agent research; keep quick chat accessible and local draft preparation secondary.
+## September 11 UI direction update
+
+The user's Evidence continuity specification replaces the prior Layered desk
+visual preference. Serve pharmaceutical QA, regulatory affairs and compliance
+users with compact neutral/blue working surfaces, persistent context and direct
+source inspection. The operational dashboard replaces permanent onboarding.
+The authoritative visual system is DESIGN.md; API authorization and document
+provenance remain product constraints.

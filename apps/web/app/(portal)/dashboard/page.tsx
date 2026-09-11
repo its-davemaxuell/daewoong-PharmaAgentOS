@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { BeginnerHome } from "@/components/agent-platform/beginner-home";
+import { OperationalOverview } from "@/components/workspace/operational-overview";
 
 export default async function DashboardPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -14,5 +14,5 @@ export default async function DashboardPage({ searchParams }: {
     }
     redirect(`/ask?${destination.toString()}`);
   }
-  return <BeginnerHome />;
+  return <OperationalOverview />;
 }

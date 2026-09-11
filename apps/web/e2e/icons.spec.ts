@@ -17,7 +17,7 @@ test("Streamline icons render locally and the license credit follows the interfa
     await expect(icons.first()).toBeVisible();
     expect(await icons.count()).toBeGreaterThan(5);
     expect(await page.locator("svg.lucide").count()).toBe(0);
-    const navigationIcon = page.locator(".portal-nav__icon").first();
+    const navigationIcon = page.locator(".continuity-nav svg").first();
     await expect(navigationIcon).toHaveAttribute("aria-hidden", "true");
     expect(await navigationIcon.evaluate(node => parseFloat(getComputedStyle(node).strokeWidth))).toBeGreaterThan(0);
   }

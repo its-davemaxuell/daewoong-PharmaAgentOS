@@ -8,7 +8,7 @@ import { ServiceScope } from "@/components/agent-platform/service-scope";
 import { useI18n } from "@/lib/i18n";
 import styles from "./system-settings.module.css";
 
-export function SystemSettings() {
+export function SystemSettings({ isAdmin = false }: { isAdmin?: boolean }) {
   const { text } = useI18n();
 
   return (
@@ -38,6 +38,7 @@ export function SystemSettings() {
         </Link>
       </section>
 
+      {isAdmin && <section aria-labelledby="settings-administration"><h2 id="settings-administration">{text("Administration", "관리")}</h2><nav className="continuity-workflow-links"><Link href="/evaluations">{text("Evaluations", "평가")}</Link><Link href="/control-tower">{text("Operations", "운영")}</Link><Link href="/agents">{text("Agent configuration", "에이전트 설정")}</Link></nav></section>}
       <section aria-labelledby="settings-about">
         <h2 id="settings-about">{text("About this service", "서비스 안내")}</h2>
         <p>{text("FDA Chatbot brings together conversations and warning-letter sources. FDA AI Agent is your workspace for research goals, saved briefs, and review workflows.", "FDA 챗봇에서 대화와 경고서한 자료를 함께 이용하세요. FDA AI 에이전트에서는 리서치 목표, 저장된 브리핑, 검토 워크플로를 관리할 수 있습니다.")}</p>

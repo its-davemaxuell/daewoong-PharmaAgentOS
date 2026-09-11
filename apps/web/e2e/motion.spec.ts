@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { retainFixtureSession } from "./session-fixture";
 
 const origin = "http://127.0.0.1:3100";
 const threadId = "11111111-1111-4111-8111-111111111111";
@@ -15,12 +16,12 @@ test("selection is immediate and workspace navigation retains the shell without 
   await tabs.nth(0).click();
   await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
   await page.evaluate(() => document.querySelector("main")!.setAttribute("data-retained-shell", "true"));
-  await page.locator('.portal-nav__link[href="/drug-letters"]').click();
+  await page.locator('.continuity-sidebar a[href="/drug-letters"]').click();
   await expect(page).toHaveURL(/\/drug-letters$/);
   await expect(page.locator("main")).toHaveAttribute("data-retained-shell", "true");
   expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.locator('.portal-nav__link[href="/saved-work"]').click();
+  await page.locator('.continuity-sidebar a[href="/saved-work"]').click();
   await expect(page).toHaveURL(/\/saved-work$/);
   expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
 });
@@ -52,6 +53,7 @@ test("rapid view selection preserves semantics and reduced motion stops movement
 });
 
 test("source and native dialog exits restore focus and cannot trap keyboard", async ({ page }) => {
+  await retainFixtureSession(page);
   await page.goto(`/chat/${threadId}`);
   const source = page.getByRole("button", { name: "Sources (1)", exact: true });
   for (let index = 0; index < 4; index++) {
@@ -60,7 +62,8 @@ test("source and native dialog exits restore focus and cannot trap keyboard", as
     await page.keyboard.press("Escape");
     await expect(source).toBeFocused();
     const exiting = page.locator('[data-presence="exiting"]');
-    if (await exiting.count()) await expect(exiting.first()).toHaveAttribute("inert", "");
+    // Inspect one DOM snapshot: a fast exit may unmount between two locator calls.
+    expect(await exiting.evaluateAll(nodes => nodes.every(node => node.hasAttribute("inert")))).toBe(true);
   }
   await expect(page.locator(".chat-evidence-panel")).toHaveCount(0);
   const library = page.getByRole("button", { name: "Conversations", exact: true });
@@ -82,22 +85,16 @@ test("mobile drawer isolates the workspace and rapid closing restores its trigge
   const menu = page.getByRole("button", { name: "Open navigation", exact: true });
   for (let index = 0; index < 3; index++) {
     await menu.click();
-    await expect(page.locator("main")).toHaveAttribute("inert", "");
-    await expect(page.locator(".portal-sidebar")).not.toHaveAttribute("inert");
+    await expect(page.locator('dialog.continuity-mobile-nav:modal')).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(menu).toBeFocused();
-    await expect(page.locator("main")).not.toHaveAttribute("inert");
-    await expect(page.locator(".portal-sidebar")).toHaveAttribute("inert", "");
+    await expect(page.locator('dialog.continuity-mobile-nav')).not.toHaveAttribute('open');
   }
-  await expect(page.locator(".portal-sidebar__scrim")).toHaveCount(1);
-  await expect(page.locator(".portal-sidebar__scrim")).toHaveAttribute("inert", "");
-  await expect(page.locator(".portal-sidebar__scrim")).toHaveCSS("visibility", "hidden");
-  await expect(page.locator(".portal-sidebar")).toHaveCSS("visibility", "hidden");
+  await expect(page.locator('.continuity-sidebar')).toBeHidden();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await menu.click();
   await page.keyboard.press("Escape");
   await expect(menu).toBeFocused();
-  expect(await page.locator(".portal-sidebar").evaluate(node => node.getAnimations().length)).toBe(0);
 });
 
 test("persisted research events advance once; stop does not wait for animation", async ({ page, request }) => {

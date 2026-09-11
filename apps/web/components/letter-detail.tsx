@@ -6,7 +6,11 @@ import { useContextArrival } from "./motion/use-context-arrival";
 import Image from "next/image";
 import Link from "next/link";
 import { SourceLink } from "@/components/source-link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { setWorkspaceParams } from "@/lib/workspace-client";
+import { Inspector } from "./workspace/primitives";
+import { addComparison } from "./workspace/comparison-panel";
+import { openAssistant } from "./workspace/assistant-panel";
 import { AlertTriangle } from "@/components/icons/AlertTriangle";
 import { ArrowLeft } from "@/components/icons/ArrowLeft";
 import { ArrowUpRight } from "@/components/icons/ArrowUpRight";
@@ -22,7 +26,7 @@ import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { Sparkles } from "@/components/icons/Sparkles";
 import { TimerReset } from "@/components/icons/TimerReset";
 import { WandSparkles } from "@/components/icons/WandSparkles";
-import { type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useMemo, useRef, useState } from "react";
 import { PageGuide } from "@/components/page-guide";
 import { LetterBookmarkButton } from "@/components/letter-bookmark-button";
 import { formatDate, StatusPill } from "@/components/ui";
@@ -306,7 +310,7 @@ function FindingResult({ finding, onAnchor }: { finding: AiLetterFinding; onAnch
         <footer className="ai-anchor-list ai-finding__evidence">
           <span>{text("Source evidence", "원문 근거")}</span>
           {finding.evidenceAnchors.map((anchor) => (
-            <button type="button" key={anchor} onClick={() => onAnchor(anchor)}>
+            <button type="button" key={anchor} onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); onAnchor(anchor); }}>
               <Link2 size={13} aria-hidden="true" /> {anchor}
             </button>
           ))}
@@ -350,12 +354,14 @@ function SectionIndex({
 
 export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initiallySaved: boolean }) {
   const { locale, text } = useI18n();
-  const router = useRouter();
-  const [tab, setTab] = useState<ContentTab>("Original");
+  const params = useSearchParams();
+  const requestedTab = params.get("view") as ContentTab;
+  const tab: ContentTab = contentTabs.includes(requestedTab) ? requestedTab : "Original";
+  const setTab = (value: ContentTab) => setWorkspaceParams({ view: value });
+  const [citationAnchor, setCitationAnchor] = useState<string>();
   const viewRef = useContextArrival<HTMLDivElement>(tab, true);
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
-  const [sourceAnchor, setSourceAnchor] = useState<{ id: string }>();
   const [artifacts, setArtifacts] = useState(letter.aiArtifacts);
   const pendingRef = useRef(new Set<GenerationKey>());
   const [pendingGenerations, setPendingGenerations] = useState(new Set<GenerationKey>());
@@ -395,26 +401,8 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   const translatedSections = translation?.content.sections ?? [];
   const sourceSections = showTranslation && translatedSections.length ? translatedSections : letter.originalSections;
 
-  useEffect(() => {
-    if (!sourceAnchor || tab !== "Original" || showTranslation) return;
-    const target = document.getElementById(sourceAnchor.id);
-    if (!target) return;
-    target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
-    target.dataset.sourceLocated = "true";
-    const previousTabIndex = target.getAttribute("tabindex");
-    target.tabIndex = -1;
-    target.focus({ preventScroll: true });
-    const timer = window.setTimeout(() => delete target.dataset.sourceLocated, 900);
-    return () => {
-      clearTimeout(timer); delete target.dataset.sourceLocated;
-      if (previousTabIndex === null) target.removeAttribute("tabindex"); else target.setAttribute("tabindex", previousTabIndex);
-    };
-  }, [sourceAnchor, tab, showTranslation]);
-
   const openAnchor = (anchor: string) => {
-    setShowTranslation(false);
-    setTab("Original");
-    setSourceAnchor({ id: anchor });
+    setCitationAnchor(anchor);
   };
 
   const copyReference = async () => {
@@ -476,7 +464,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   };
 
   const openLetterChat = () => {
-    router.push(`/ask?letter=${encodeURIComponent(letter.id)}&company=${encodeURIComponent(letter.company)}`);
+    openAssistant(letter.id);
   };
 
   const activateTab = (nextTab: ContentTab, moveFocus = false) => {
@@ -521,7 +509,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
   );
 
   return (
-    <article className="page-stack detail-page detail-page--focused">
+    <article className={`page-stack detail-page detail-page--focused continuity-case ${citationAnchor ? "workspace-has-inspector" : ""}`}>
       <div className="detail-page__utility-row">
         <nav className="detail-breadcrumb dossier-reveal" aria-label={text("Breadcrumb", "이동 경로")}>
           <Link href="/drug-letters"><ArrowLeft size={15} aria-hidden="true" /> {text("Drug Letters", "의약품 경고서한")}</Link>
@@ -554,6 +542,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
         </div>
         <div className="record-summary-card__actions">
           <LetterBookmarkButton letterId={letter.id} initiallySaved={initiallySaved} />
+          <button className="button button--secondary" type="button" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); addComparison(letter.id); }}>{text("Compare", "비교")}</button>
           <SourceLink className="button button--fda" href={letter.sourceUrl} target="_blank" rel="noopener noreferrer">
             <Image src="/brand/fda-logo-icon.svg" alt="" aria-hidden="true" width={18} height={22} />
             {text("Open FDA source", "FDA 원문 열기")}
@@ -602,7 +591,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
         <button
           type="button"
           className="record-tab-link"
-          onClick={openLetterChat}
+          onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); openLetterChat(); }}
         >
           <span className="record-tab__index">04</span>
           {text("Ask", "질문")}
@@ -776,7 +765,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
                                 <h4>{point.title}</h4>
                               </header>
                               <p>{point.rationale}</p>
-                              {point.sourceAnchors.length ? <div className="ai-anchor-list">{point.sourceAnchors.map((anchor) => <button type="button" key={anchor} onClick={() => openAnchor(anchor)}><Link2 size={13} /> {anchor}</button>)}</div> : null}
+                              {point.sourceAnchors.length ? <div className="ai-anchor-list">{point.sourceAnchors.map((anchor) => <button type="button" key={anchor} onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); openAnchor(anchor); }}><Link2 size={13} /> {anchor}</button>)}</div> : null}
                             </article>
                           ))}
                         </div>
@@ -824,6 +813,13 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
         <span>{text("Official source retained · bilingual AI results version-bound and reusable · parallel generation supported", "공식 원문 보존 · 이중 언어 AI 결과의 버전 연계 및 재사용 · 병렬 생성 지원")}</span>
         <code>MARCS-CMS {letter.marcsCms}</code>
       </footer>
+      {citationAnchor && <Inspector title={text("Source evidence", "원문 근거")} onClose={() => setCitationAnchor(undefined)}>
+        <p className="continuity-source-label">FDA · {letter.marcsCms}</p><h3>{letter.company}</h3>
+        <dl className="workspace-metadata"><dt>{text("Document version", "문서 버전")}</dt><dd>{letter.sourceVersion}</dd><dt>{text("Source section", "원문 섹션")}</dt><dd>{citationAnchor}</dd></dl>
+        {letter.originalSections.filter(section => section.anchor === citationAnchor).map(section => <section className="continuity-cited-passage" key={section.anchor}><h4>{section.heading}</h4>{section.paragraphs.map((paragraph,index)=><p key={index} lang="en">{paragraph}</p>)}</section>)}
+        {!letter.originalSections.some(section => section.anchor === citationAnchor) && <p role="status">{text("This section could not be located. Verify the original source.", "해당 섹션을 찾지 못했습니다. 원문을 확인하세요.")}</p>}
+        <SourceLink href={letter.sourceUrl} target="_blank" rel="noreferrer">{text("Open original", "원문 열기")}</SourceLink>
+      </Inspector>}
     </article>
   );
 }

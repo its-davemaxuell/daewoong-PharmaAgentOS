@@ -34,6 +34,8 @@ const api = createServer((req, res) => {
     }
     const ids = [...url.searchParams.getAll("source_ids"), ...url.searchParams.getAll("source_id")];
     data = { items: (savedBySession.get(subject) || []).filter(view => !ids.length || ids.includes(view.source_id)), has_more: false, total: 0 };
+  } else if (url.pathname === "/api/v1/workspace/inbox") {
+    data = { items: [], counts: { new: 0, later: 0, completed: 0, excluded: 0 }, has_more: false, page: 1, starts_at: stamp };
   } else if (url.pathname === "/api/v1/letters/search") {
     const query = url.searchParams.get("q") || "";
     if (query === "failure") { res.statusCode = 500; return res.end(JSON.stringify({ detail: "Fixture unavailable" })); }

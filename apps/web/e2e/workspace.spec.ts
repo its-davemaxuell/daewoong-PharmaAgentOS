@@ -73,7 +73,7 @@ test("source inspector retains filtered rows, focus, history and bounded renderi
 test("commands use the current view action and do not interrupt IME input", async ({ page }) => {
   await page.goto("/drug-letters");
   await page.locator(`.letter-row a[href="/drug-letters/${id}"]`).first().click();
-  await page.getByRole("button", { name: "Actions and workspace search" }).click();
+  await page.locator(".continuity-search").click();
   await page.getByRole("button", { name: "Close inspector", exact: true }).last().click();
   await expect(page.locator(".workspace-inspector")).toHaveCount(0);
   const input = page.locator(".archive-search input");

@@ -6,6 +6,7 @@ import "./globals.css";
 import "./tokens.css";
 import "./agent-theme.css";
 import "./workspace.css";
+import "./continuity.css";
 
 
 const pretendard = localFont({

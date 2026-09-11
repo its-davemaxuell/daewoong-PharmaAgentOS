@@ -576,6 +576,7 @@ export function ChatWorkspace({
   initialStarter,
   initialThread,
   landingSeed = "default",
+  embedded = false,
 }: {
   letters: Letter[];
   facets?: Record<string, FilterOption[]>;
@@ -585,7 +586,9 @@ export function ChatWorkspace({
   initialStarter?: string;
   initialThread?: ChatThread;
   landingSeed?: string;
+  embedded?: boolean;
 }) {
+  const embeddedId = useId();
   const [letters, setLetters] = useState(initialLetters);
   const [sourceResults, setSourceResults] = useState(initialLetters);
   const [sourcePage, setSourcePage] = useState(1);
@@ -884,7 +887,7 @@ export function ChatWorkspace({
     setHistoryActiveThreadId(undefined);
     pendingRouteRef.current = undefined;
     followConversationRef.current = true;
-    router.push(newChatHref(nextLandingSeed), { scroll: false });
+    if (!embedded) router.push(newChatHref(nextLandingSeed), { scroll: false });
     requestAnimationFrame(() => composerRef.current?.focus());
   };
 
@@ -906,7 +909,7 @@ export function ChatWorkspace({
         setModelProfile(previous);
       } finally {
         preferenceMutationRef.current = false;
-        preserveChatOptionFocus("chat-model-selector");
+        preserveChatOptionFocus(embedded ? `${embeddedId}-model` : "chat-model-selector");
       }
     });
   };
@@ -931,7 +934,7 @@ export function ChatWorkspace({
         setRetrievalMode(previous);
       } finally {
         preferenceMutationRef.current = false;
-        preserveChatOptionFocus("chat-scope-selector");
+        preserveChatOptionFocus(embedded ? `${embeddedId}-scope` : "chat-scope-selector");
       }
     });
   };
@@ -1135,7 +1138,7 @@ export function ChatWorkspace({
             sessionStorage.removeItem(draftKey);
           } catch { /* Keep the completed response available when draft storage is disabled. */ }
           pendingRouteRef.current = undefined;
-          router.replace(`/chat/${persistedThreadId}`, { scroll: false });
+          if (!embedded) router.replace(`/chat/${persistedThreadId}`, { scroll: false });
         } else if (returnedThreadId) {
           // The backend may resolve or clear active letter scope while answering. Refresh the
           // saved thread so sidebar scope and focus always reflect server-owned state.
@@ -1185,7 +1188,7 @@ export function ChatWorkspace({
           && pendingRouteRef.current === queryThreadId
         ) {
           pendingRouteRef.current = undefined;
-          router.replace(`/chat/${queryThreadId}`, { scroll: false });
+          if (!embedded) router.replace(`/chat/${queryThreadId}`, { scroll: false });
         }
       } finally {
         queryPendingRef.current = false;
@@ -1205,7 +1208,7 @@ export function ChatWorkspace({
       void cancelChatRequest(threadId, clientMessageId)
         .then(() => {
           pendingRouteRef.current = undefined;
-          router.replace(`/chat/${threadId}`, { scroll: false });
+          if (!embedded) router.replace(`/chat/${threadId}`, { scroll: false });
           router.refresh();
         })
         .catch(() => {
@@ -1310,7 +1313,7 @@ export function ChatWorkspace({
   } : undefined;
   const actionsDisabled = !draftLoaded || pending || actionBusy || focusPending || preferencesPending || turns.some((turn) => turn.persistedPending);
   const branchFrom = async (turn: ChatTurn, edit = false) => {
-    if (!activeThreadId || actionsDisabled || actionBusyRef.current) return;
+    if (embedded || !activeThreadId || actionsDisabled || actionBusyRef.current) return;
     const messageId = edit ? turn.answer?.userMessageId ?? turn.id : turn.answer?.assistantMessageId;
     if (!messageId) return;
     actionBusyRef.current = true; setActionBusy(true); setActionError(undefined);
@@ -1354,9 +1357,9 @@ export function ChatWorkspace({
 
   return (
     <MotionProvider><div className={`chat-page chat-workbench${turns.length ? " chat-page--active" : ""}${evidenceTurn?.answer ? " chat-page--evidence" : ""}`}>
-      <ChatLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onUpdated={(thread) => {
+      {!embedded && <ChatLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onUpdated={(thread) => {
         if (thread.id === activeThreadId) { setThreadPinnedAt(thread.pinnedAt); setThreadArchivedAt(thread.archivedAt); setThreadTitle(thread.title); }
-      }} />
+      }} />}
       <div className="chat-page__surface">
         <header className="chat-workbench__header">
           <div className="chat-workbench__heading"><FileSearch size={21} aria-hidden="true" /><h1>{text("FDA assistant", "FDA 어시스턴트")}</h1><small>FDA · Drugs</small></div>
@@ -1434,7 +1437,7 @@ export function ChatWorkspace({
             <section className="chat-turn" key={turn.id} data-introduced={introducedTurns.has(turn.id) || undefined}>
               <div className="chat-user-message">
                 <p>{turn.question}</p>
-                {turn.answer && <button type="button" className="chat-user-message__edit" disabled={actionsDisabled || !!threadArchivedAt} onClick={() => void branchFrom(turn, true)}><Pencil size={14} />{text("Edit question", "질문 수정")}</button>}
+                {turn.answer && !embedded && <button type="button" className="chat-user-message__edit" disabled={actionsDisabled || !!threadArchivedAt} onClick={() => void branchFrom(turn, true)}><Pencil size={14} />{text("Edit question", "질문 수정")}</button>}
                 {turnFilters.length ? (
                   <div className="chat-turn__filter-summary">
                     <Filter size={13} aria-hidden="true" />
@@ -1660,13 +1663,13 @@ export function ChatWorkspace({
                           {copiedTurn === turn.id ? <Check size={14} /> : <Copy size={14} />}
                           {copiedTurn === turn.id ? text("Copied", "복사됨") : text("Copy", "복사")}
                         </button>
-                        <button
+                        {!embedded && <button
                           type="button"
                           disabled={actionsDisabled}
                           onClick={() => void branchFrom(turn)}
                         >
                           <GitBranch size={14} /> {text("Branch", "대화 분기")}
-                        </button>
+                        </button>}
                         <button type="button" disabled={actionsDisabled || !!threadArchivedAt} aria-label={text("Helpful answer", "도움이 된 답변")} aria-pressed={turn.feedbackRating === "helpful"} onClick={() => void rateAnswer(turn, "helpful")}><ThumbsUp size={16} /></button>
                         <button type="button" disabled={actionsDisabled || !!threadArchivedAt} aria-label={text("Unhelpful answer", "도움이 되지 않은 답변")} aria-pressed={turn.feedbackRating === "unhelpful"} onClick={() => void rateAnswer(turn, "unhelpful")}><ThumbsDown size={16} /></button>
                       </div>
@@ -1818,9 +1821,9 @@ export function ChatWorkspace({
               </button>;
             })}
           </div>}
-          <label className="chat-question-label" htmlFor="ai-question">{text("Your question", "궁금한 내용")}</label>
+          <label className="chat-question-label" htmlFor={embedded ? `${embeddedId}-question` : "ai-question"}>{text("Your question", "궁금한 내용")}</label>
           <textarea
-            id="ai-question"
+            id={embedded ? `${embeddedId}-question` : "ai-question"}
             ref={composerRef}
             value={question}
             rows={2}
@@ -1832,12 +1835,12 @@ export function ChatWorkspace({
           />
           <div className="chat-composer__controls">
             <button type="button" className="chat-tool-button" disabled={actionsDisabled || !!threadArchivedAt} aria-expanded={sourcePickerOpen} onClick={() => { setSelectedLetters(activeLetterIds); setSourcePickerOpen((value) => !value); setFiltersOpen(false); }}><Paperclip size={17} />{activeLetterIds.length ? text(`${activeLetterIds.length} letters`, `서한 ${activeLetterIds.length}개`) : text("Add letters", "서한 추가")}</button>
-            <button className="chat-tool-button" type="button" aria-expanded={optionsOpen} aria-controls="chat-additional-options" onClick={() => { setOptionsOpen((open) => !open); setFiltersOpen(false); }}>
+            <button className="chat-tool-button" type="button" aria-expanded={optionsOpen} aria-controls={embedded ? `${embeddedId}-options` : "chat-additional-options"} onClick={() => { setOptionsOpen((open) => !open); setFiltersOpen(false); }}>
               <SlidersHorizontal size={15} aria-hidden="true" />
               {text("Search & answer options", "검색·답변 설정")}
               <ChevronDown size={14} aria-hidden="true" />
             </button>
-            <div id="chat-additional-options" className="chat-additional-options" hidden={!optionsOpen}>
+            <div id={embedded ? `${embeddedId}-options` : "chat-additional-options"} className="chat-additional-options" hidden={!optionsOpen}>
             <button
               className={`chat-tool-button${filtersOpen ? " is-active" : ""}`}
               type="button"
@@ -1850,7 +1853,7 @@ export function ChatWorkspace({
             </button>
             <ChatOptionMenu
               ariaLabel={text("Choose an AI model", "AI 모델 선택")}
-              triggerId="chat-model-selector"
+              triggerId={embedded ? `${embeddedId}-model` : "chat-model-selector"}
               icon={<Sparkles size={14} aria-hidden="true" />}
               value={modelProfile}
               options={modelOptions}
@@ -1859,7 +1862,7 @@ export function ChatWorkspace({
             />
             <ChatOptionMenu
               ariaLabel={text("Choose the evidence scope", "근거 범위 선택")}
-              triggerId="chat-scope-selector"
+              triggerId={embedded ? `${embeddedId}-scope` : "chat-scope-selector"}
               icon={<FileSearch size={14} aria-hidden="true" />}
               value={retrievalMode}
               options={retrievalOptions}
