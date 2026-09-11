@@ -6,9 +6,11 @@ from fastapi import HTTPException
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import ResearchEvent, ResearchRun, utcnow
+from app.cases.hashing import canonical_sha256
+from app.models import DocumentChunk, ResearchEvent, ResearchRun, utcnow
 
 from .schemas import MAX_MODEL_CALLS, MAX_TOTAL_TOKENS, CreateResearch
+from .tools import public_source, source_query, source_record
 
 ACTIVE = {"queued", "running"}
 
@@ -54,7 +56,13 @@ async def create_run(session: AsyncSession, owner: str, payload: CreateResearch)
         )
     )
     if previous:
-        if previous.objective != payload.objective or previous.language != payload.language:
+        saved_context = (previous.checkpoint or {}).get("context") or {}
+        saved_ids = sorted(saved_context.get("selected_chunk_ids", []))
+        if (
+            previous.objective != payload.objective
+            or previous.language != payload.language
+            or saved_ids != sorted(str(value) for value in payload.selected_chunk_ids)
+        ):
             raise HTTPException(409, "This request ID already belongs to a different task")
         return previous
     since = utcnow() - timedelta(days=1)
@@ -83,6 +91,26 @@ async def create_run(session: AsyncSession, owner: str, payload: CreateResearch)
     )
     if active >= 2 or daily >= 10 or total >= 100:
         raise HTTPException(429, "Research capacity reached; finish an active task or try later")
+    selected_ids = sorted(str(value) for value in payload.selected_chunk_ids)
+    selected = []
+    if selected_ids:
+        rows = (
+            await session.execute(
+                source_query().where(DocumentChunk.id.in_(selected_ids)).order_by(DocumentChunk.id)
+            )
+        ).all()
+        selected = [source_record(row) for row in rows if public_source(row)]
+        if {item["chunk_id"] for item in selected} != set(selected_ids):
+            raise HTTPException(409, "Selected evidence is unavailable; refresh your selection")
+    context = {
+        "schema_version": 1,
+        "actor_id": owner,
+        "policy_version": "public-fda-evidence@1",
+        "selected_chunk_ids": selected_ids,
+        "sources": selected,
+        "hydrated_at": utcnow().isoformat(),
+    }
+    context["context_hash"] = canonical_sha256(context)
     run = ResearchRun(
         owner_id=owner,
         client_request_id=str(payload.client_request_id),
@@ -91,13 +119,17 @@ async def create_run(session: AsyncSession, owner: str, payload: CreateResearch)
         status="queued",
         stage="planning",
         revision=0,
-        checkpoint={},
+        checkpoint={"context": context, "candidates": selected},
         model_calls=0,
         total_tokens=0,
         resumes=0,
     )
     session.add(run)
     await session.flush()
+    context = {key: value for key, value in context.items() if key != "context_hash"}
+    context["run_id"] = run.id
+    context["context_hash"] = canonical_sha256(context)
+    run.checkpoint = {"context": dict(context), "candidates": selected}
     add_event(session, run, "queued")
     await session.commit()
     return run
@@ -186,6 +218,7 @@ async def detail(session: AsyncSession, run: ResearchRun, after: int = 0):
     return {
         **summary(run),
         "plan": (run.checkpoint or {}).get("plan", []),
+        "context": (run.checkpoint or {}).get("context"),
         "sources": (run.checkpoint or {}).get("evidence", []),
         "result": run.result,
         "events": [

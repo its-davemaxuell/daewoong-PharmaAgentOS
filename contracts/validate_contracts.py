@@ -207,6 +207,11 @@ def validate_agent_os_contracts(format_checker: FormatChecker) -> tuple[int, int
         validators["agent-definition.schema.json"].validate(definition)
         assert_definition_hash(definition, path.name)
     validators["workflow-definition.schema.json"].validate(workflow)
+    personal_path = ROOT / "workflows/personal-regulatory-impact-review.v1.0.0.yaml"
+    personal = read_yaml_path(personal_path)
+    validators["personal-workflow-definition.schema.json"].validate(personal)
+    assert_definition_hash(personal, personal_path.name)
+    assert_plan_dag(personal["spec"]["steps"], personal_path.name)
     for path, definition in tool_bundles:
         validators["tool-bundle.schema.json"].validate(definition)
         assert_definition_hash(definition, path.name)

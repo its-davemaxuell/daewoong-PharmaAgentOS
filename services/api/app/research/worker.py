@@ -126,6 +126,10 @@ async def finish(database, run, status, code=None, result=None):
 
 
 async def execute_tool(database, model, run, state, proposal):
+    context = state.get("context") or {}
+    selected_ids = context.get("selected_chunk_ids") or []
+    if selected_ids and not await evidence_is_current(database, context["sources"]):
+        return {"error": "selected_context_changed"}, "insufficient_evidence"
     name = proposal.name
     validator = TOOL_MODELS.get(name)
     if not validator:
@@ -156,7 +160,7 @@ async def execute_tool(database, model, run, state, proposal):
                 "next": "Use retained results or report no evidence.",
             }, None
         await event(database, run, "search_started", stage="searching", data={"query": args.query})
-        found = await search_sources(database, args.query)
+        found = await search_sources(database, args.query, selected_ids)
         state["searches"] = state.get("searches", 0) + 1
         candidates = {item["chunk_id"]: item for item in state.get("candidates", [])}
         candidates.update({item["chunk_id"]: item for item in found})
@@ -168,6 +172,8 @@ async def execute_tool(database, model, run, state, proposal):
 
     if name == "read_sources":
         ids = list(dict.fromkeys(str(value) for value in args.chunk_ids))
+        if selected_ids and not set(ids).issubset(selected_ids):
+            return {"error": "outside_selected_context"}, None
         allowed = {item["chunk_id"] for item in state.get("candidates", [])}
         if not set(ids).issubset(allowed):
             return {"error": "source_not_in_search_results"}, None
@@ -228,6 +234,7 @@ async def execute_tool(database, model, run, state, proposal):
     await event(database, run, "check_completed", data={"count": len(cited_ids)})
     return {
         **brief,
+        "schema_version": 2,
         "sources": sources,
         "evidence_check": "ai_checked",
         "intended_use": "human_review_draft",
@@ -246,6 +253,7 @@ async def execute_run(database, model, run):
                         "objective": run.objective,
                         "language": run.language,
                         "scope": "Saved FDA Drug warning letters; prepare a human review draft.",
+                        "selected_context": state.get("context"),
                     },
                     ensure_ascii=False,
                 ),
@@ -253,6 +261,12 @@ async def execute_run(database, model, run):
         ],
     )
     while True:
+        context = state.get("context") or {}
+        if context.get("selected_chunk_ids") and not await evidence_is_current(
+            database, context["sources"]
+        ):
+            await finish(database, run, "insufficient_evidence", "selected_context_changed")
+            return
         await event(database, run, "choosing_action")
         allowance = await reserve(database, run, conversation)
         proposal = await model.propose(conversation, MAX_MODEL_CALLS - run.model_calls)

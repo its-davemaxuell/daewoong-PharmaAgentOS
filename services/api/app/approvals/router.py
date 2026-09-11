@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.approvals.schemas import ApprovalCenterItem, ApprovalCenterPage
+from app.cases.policy import PERSONAL_WORKFLOW
 from app.cases.router import GLOBAL_CASE_READ_ROLES, _require_case_read, _require_list_access
 from app.dependencies import session_dependency
 from app.models import ApprovalRequest, Case, utcnow
@@ -50,13 +51,17 @@ def _response(approval: ApprovalRequest, case: Case) -> ApprovalCenterItem:
 async def list_approvals(
     approval_status: Literal["PENDING", "APPROVED", "REJECTED", "CANCELLED", "EXPIRED"]
     | None = Query(default=None, alias="status"),
-    approval_type: Literal["PLAN_APPROVAL", "STEP_APPROVAL", "ARTIFACT_APPROVAL"]
-    | None = Query(default=None, alias="type"),
+    approval_type: Literal["PLAN_APPROVAL", "STEP_APPROVAL", "ARTIFACT_APPROVAL"] | None = Query(
+        default=None, alias="type"
+    ),
     principal: Principal = Depends(current_principal),
     session: AsyncSession = Depends(session_dependency),
 ) -> ApprovalCenterPage:
     _require_list_access(principal)
     statement = select(ApprovalRequest, Case).join(Case, Case.id == ApprovalRequest.case_id)
+    statement = statement.where(
+        (Case.workflow_key != PERSONAL_WORKFLOW) | (Case.owner_subject == principal.subject)
+    )
     if not principal.has_any(GLOBAL_CASE_READ_ROLES):
         statement = statement.where(Case.owner_subject == principal.subject)
     if approval_status:

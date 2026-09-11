@@ -81,6 +81,19 @@ async def list_research(
     }
 
 
+@router.get("/context")
+async def search_context(
+    request: Request,
+    response: Response,
+    q: str = Query(min_length=2, max_length=180),
+    principal: Principal = Depends(rag_principal),
+):
+    from .tools import search_sources
+
+    private(response)
+    return {"items": await search_sources(request.app.state.database, q)}
+
+
 @router.get("/{run_id}")
 async def get_research(
     run_id: UUID,

@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response
 from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -35,6 +35,7 @@ from app.agent_platform.runtime.service import (
 from app.agent_platform.temporal.client import best_effort_start_or_wake
 from app.audit import add_audit_event
 from app.cases.hashing import canonical_sha256
+from app.cases.policy import personal_case, require_review
 from app.cases.router import (
     _append_event,
     _case_for_read,
@@ -208,11 +209,7 @@ async def _validate_release_bindings(session: AsyncSession, plan: CasePlan) -> N
     ):
         raise HTTPException(status_code=409, detail="Workflow template is not executable")
     steps = list(
-        (
-            await session.scalars(
-                select(CasePlanStep).where(CasePlanStep.plan_id == plan.id)
-            )
-        ).all()
+        (await session.scalars(select(CasePlanStep).where(CasePlanStep.plan_id == plan.id))).all()
     )
     suspension = await active_suspension(
         session, (step.agent_version_id for step in steps if step.agent_version_id)
@@ -288,7 +285,9 @@ async def start_case_run(
     quota_since = utcnow() - timedelta(hours=1)
     recent_runs = int(
         await session.scalar(
-            select(func.count()).select_from(CaseRun).where(
+            select(func.count())
+            .select_from(CaseRun)
+            .where(
                 CaseRun.requested_by == principal.subject,
                 CaseRun.created_at >= quota_since,
             )
@@ -297,7 +296,9 @@ async def start_case_run(
     )
     active_runs = int(
         await session.scalar(
-            select(func.count()).select_from(CaseRun).where(
+            select(func.count())
+            .select_from(CaseRun)
+            .where(
                 CaseRun.requested_by == principal.subject,
                 CaseRun.status.in_(ACTIVE_RUN_STATUSES),
             )
@@ -732,7 +733,7 @@ async def decide_step_approval(
     payload: StepApprovalDecisionRequest,
     request: Request,
     idempotency_key: IdempotencyKey,
-    principal: Principal = Depends(RUN_APPROVERS),
+    principal: Principal = Depends(current_principal),
     settings: Settings = Depends(settings_dependency),
     session: AsyncSession = Depends(session_dependency),
 ) -> CaseRunResponse:
@@ -759,7 +760,12 @@ async def decide_step_approval(
         or approval.approval_type != "STEP_APPROVAL"
     ):
         raise HTTPException(status_code=409, detail="Step approval binding is invalid")
-    if principal.subject in {case.owner_subject, run.requested_by, approval.requested_by}:
+    require_review(case, principal)
+    if not personal_case(case) and principal.subject in {
+        case.owner_subject,
+        run.requested_by,
+        approval.requested_by,
+    }:
         raise HTTPException(
             status_code=403,
             detail="Step approval requires an independent reviewer",
@@ -842,6 +848,48 @@ async def decide_step_approval(
     )
     await session.commit()
     return await _run_response(session, run)
+
+
+@router.get("/runs/{run_id}/inspection")
+async def inspect_run(
+    run_id: UUID,
+    response: Response,
+    principal: Principal = Depends(current_principal),
+    session: AsyncSession = Depends(session_dependency),
+):
+    run, _case = await _run_for_read(session, run_id, principal)
+    response.headers["Cache-Control"] = "private, no-store"
+    invocations = (
+        await session.scalars(
+            select(AgentInvocation)
+            .where(AgentInvocation.run_id == run.id)
+            .order_by(AgentInvocation.created_at, AgentInvocation.id)
+            .limit(1200)
+        )
+    ).all()
+    return {
+        "schema_version": 1,
+        "run_id": run.id,
+        "workflow": (run.checkpoint or {}).get("workflow_template"),
+        "steps": (run.checkpoint or {}).get("step_definitions", []),
+        "attempts": [
+            {
+                **_invocation_response(item).model_dump(mode="json"),
+                "inputs": {
+                    key: (item.input_payload or {}).get(key)
+                    for key in (
+                        "task",
+                        "minimum_evidence",
+                        "allowed_tool_version_ids",
+                        "required_schema",
+                        "upstream_results",
+                    )
+                },
+                "output": item.output_payload if item.status == "COMPLETED" else None,
+            }
+            for item in invocations
+        ],
+    }
 
 
 @router.get("/runs/{run_id}/events")

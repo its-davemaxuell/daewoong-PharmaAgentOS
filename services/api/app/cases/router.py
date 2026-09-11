@@ -35,6 +35,7 @@ from app.pagination import InvalidCursor, decode_cursor, encode_cursor
 from app.security.auth import Principal, current_principal, require_roles
 
 from .hashing import canonical_sha256, case_state_sha256, event_sha256
+from .policy import PERSONAL_WORKFLOW, personal_case, personal_owner, require_review
 from .schemas import (
     ApprovalResponse,
     CaseCreateRequest,
@@ -106,11 +107,13 @@ def _as_utc(value: datetime) -> datetime:
 
 
 def _require_list_access(principal: Principal) -> None:
-    if not principal.has_any(CASE_LIST_ROLES):
+    if not principal.has_any(CASE_LIST_ROLES | {"viewer"}):
         raise HTTPException(status_code=403, detail="Case role is not authorized")
 
 
 def _require_case_read(case: Case, principal: Principal) -> None:
+    if personal_case(case) and not personal_owner(case, principal):
+        raise HTTPException(status_code=404, detail="Case not found")
     if case.owner_subject == principal.subject:
         return
     if principal.has_any(GLOBAL_CASE_READ_ROLES):
@@ -119,6 +122,10 @@ def _require_case_read(case: Case, principal: Principal) -> None:
 
 
 def _require_case_write(case: Case, principal: Principal) -> None:
+    if personal_case(case):
+        if personal_owner(case, principal):
+            return
+        raise HTTPException(status_code=404, detail="Case not found")
     owner_analyst = case.owner_subject == principal.subject and "analyst" in principal.roles
     if owner_analyst or "system_owner" in principal.roles:
         return
@@ -399,10 +406,15 @@ async def create_case(
     payload: CaseCreateRequest,
     request: Request,
     idempotency_key: IdempotencyKey,
-    principal: Principal = Depends(CASE_CREATORS),
+    principal: Principal = Depends(current_principal),
     settings: Settings = Depends(settings_dependency),
     session: AsyncSession = Depends(session_dependency),
 ) -> CaseResponse:
+    if payload.workflow_key == PERSONAL_WORKFLOW:
+        if not settings.personal_case_enabled:
+            raise HTTPException(503, "Personal case execution is not available yet")
+    elif not principal.has_any({"analyst", "system_owner"}):
+        raise HTTPException(403, "Governed case creation requires an analyst")
     fingerprint = _request_fingerprint(payload.model_dump(mode="json"))
     stored_idempotency_key = _scoped_idempotency_key(principal, idempotency_key)
     existing = await session.scalar(
@@ -425,6 +437,12 @@ async def create_case(
         warning_letter_id=payload.warning_letter_id,
         document_version_id=payload.document_version_id,
     )
+    if payload.workflow_key == PERSONAL_WORKFLOW:
+        from app.research.tools import public_source, source_query
+
+        rows = (await session.execute(source_query().where(DocumentVersion.id == version.id))).all()
+        if not rows or not all(public_source(row) for row in rows):
+            raise HTTPException(404, "Source is not available for personal research")
     initial_state_hash = case_state_sha256(
         objective=payload.objective,
         workflow_key=payload.workflow_key,
@@ -528,6 +546,9 @@ async def list_cases(
     except InvalidCursor as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     query = select(Case)
+    query = query.where(
+        (Case.workflow_key != PERSONAL_WORKFLOW) | (Case.owner_subject == principal.subject)
+    )
     if not principal.has_any(GLOBAL_CASE_READ_ROLES):
         query = query.where(Case.owner_subject == principal.subject)
     if case_status is not None:
@@ -599,7 +620,12 @@ async def create_case_plan(
             status_code=409,
             detail="Plan objective must match the case planning-input objective",
         )
-    if payload.assigned_reviewer_id in {principal.subject, case.owner_subject}:
+    if personal_case(case) and payload.assigned_reviewer_id:
+        raise HTTPException(422, "Personal cases are acknowledged by their owner")
+    if not personal_case(case) and payload.assigned_reviewer_id in {
+        principal.subject,
+        case.owner_subject,
+    }:
         raise HTTPException(
             status_code=422,
             detail="Assigned reviewer must be independent from the case owner and plan creator",
@@ -764,7 +790,7 @@ async def decide_case_plan(
     payload: PlanDecisionRequest,
     request: Request,
     idempotency_key: IdempotencyKey,
-    principal: Principal = Depends(PLAN_APPROVERS),
+    principal: Principal = Depends(current_principal),
     settings: Settings = Depends(settings_dependency),
     session: AsyncSession = Depends(session_dependency),
 ) -> CasePlanResponse:
@@ -809,7 +835,10 @@ async def decide_case_plan(
     )
     if not approval:
         raise HTTPException(status_code=409, detail="Plan has no approval request")
-    if case.owner_subject == principal.subject or approval.requested_by == principal.subject:
+    require_review(case, principal)
+    if not personal_case(case) and (
+        case.owner_subject == principal.subject or approval.requested_by == principal.subject
+    ):
         raise HTTPException(status_code=403, detail="Plan creators cannot approve their own plan")
     if approval.assigned_reviewer_id and approval.assigned_reviewer_id != principal.subject:
         raise HTTPException(status_code=403, detail="Plan is assigned to another reviewer")

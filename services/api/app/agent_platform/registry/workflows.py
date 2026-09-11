@@ -15,17 +15,12 @@ from app.resource_paths import resource_root
 _BUNDLED_WORKFLOW = "regulatory-impact-review.v1.0.0.yaml"
 
 
-def bundled_workflow_path() -> Path:
-    return (
-        resource_root()
-        / "contracts"
-        / "workflows"
-        / _BUNDLED_WORKFLOW
-    )
+def bundled_workflow_path(filename: str = _BUNDLED_WORKFLOW) -> Path:
+    return resource_root() / "contracts" / "workflows" / filename
 
 
-def load_bundled_workflow() -> dict[str, Any]:
-    value = yaml.safe_load(bundled_workflow_path().read_text(encoding="utf-8"))
+def load_bundled_workflow(filename: str = _BUNDLED_WORKFLOW) -> dict[str, Any]:
+    value = yaml.safe_load(bundled_workflow_path(filename).read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise RuntimeError("Bundled workflow contract is not an object")
     metadata = value.get("metadata")
@@ -42,8 +37,9 @@ def load_bundled_workflow() -> dict[str, Any]:
 
 async def ensure_bundled_workflow_template(
     session: AsyncSession,
+    filename: str = _BUNDLED_WORKFLOW,
 ) -> WorkflowTemplateVersion:
-    manifest = load_bundled_workflow()
+    manifest = load_bundled_workflow(filename)
     metadata = manifest["metadata"]
     workflow_key = str(metadata["name"])
     version = str(metadata["version"])
@@ -60,7 +56,11 @@ async def ensure_bundled_workflow_template(
     template = WorkflowTemplateVersion(
         workflow_key=workflow_key,
         version=version,
-        display_name="Regulatory impact review",
+        display_name=(
+            "Personal research review"
+            if workflow_key == "personal-regulatory-impact-review"
+            else "Regulatory impact review"
+        ),
         manifest=manifest,
         manifest_sha256=str(metadata["definitionHash"]),
         release_status=str(metadata["releaseState"]),

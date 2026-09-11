@@ -207,6 +207,7 @@ class Settings(BaseSettings):
     railway_private_domain: str | None = None
     serverless_worker_enabled: bool = False
     research_agent_enabled: bool = False
+    personal_case_enabled: bool = False
     worker_database_url: SecretStr | None = None
     worker_trigger_secret: SecretStr | None = None
     worker_slice_seconds: int = Field(default=210, ge=10, le=240)

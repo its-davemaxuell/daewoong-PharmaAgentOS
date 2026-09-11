@@ -210,6 +210,7 @@ async def seed_demo(
         state = ReviewState.PENDING if index == len(in_scope) - 1 else ReviewState.APPROVED
         await ensure_derived_content(session, settings, letter, review_state=state)
     await ensure_bundled_workflow_template(session)
+    await ensure_bundled_workflow_template(session, "personal-regulatory-impact-review.v1.0.0.yaml")
     await ensure_internal_agent_registry(session)
     await ensure_synthetic_internal_corpus(session)
     existing_view = await session.scalar(

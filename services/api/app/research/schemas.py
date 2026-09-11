@@ -1,7 +1,7 @@
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 MAX_MODEL_CALLS = 12
 MAX_TOTAL_TOKENS = 90_000
@@ -16,6 +16,14 @@ class CreateResearch(Strict):
     objective: str = Field(min_length=8, max_length=2_000)
     language: Literal["en", "ko"] = "ko"
     client_request_id: UUID
+    selected_chunk_ids: list[UUID] = Field(default_factory=list, max_length=MAX_EVIDENCE)
+
+    @field_validator("selected_chunk_ids")
+    @classmethod
+    def unique_context(cls, values: list[UUID]) -> list[UUID]:
+        if len(values) != len(set(values)):
+            raise ValueError("Selected evidence must be unique")
+        return values
 
     @field_validator("objective")
     @classmethod
@@ -47,7 +55,19 @@ class ReadSources(Strict):
 
 class CitedFinding(Strict):
     statement: str = Field(min_length=10, max_length=1_200)
-    citation_ids: list[str] = Field(min_length=1, max_length=4)
+    citation_ids: list[str] = Field(max_length=4)
+    support: Literal["supported", "contradicted", "insufficient"] = "supported"
+    limitations: list[Annotated[str, Field(min_length=1, max_length=600)]] = Field(
+        default_factory=list, max_length=5
+    )
+
+    @model_validator(mode="after")
+    def support_needs_evidence(self):
+        if self.support != "insufficient" and not self.citation_ids:
+            raise ValueError("Supported or contradicted findings require citations")
+        if self.support == "insufficient" and not self.limitations:
+            raise ValueError("Insufficient findings must explain the missing evidence")
+        return self
 
 
 class SubmitBrief(Strict):

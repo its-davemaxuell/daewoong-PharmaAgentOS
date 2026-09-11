@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.agent_platform.controls import active_suspension
 from app.agent_platform.regulatory.contracts import RegulatoryFindingList
 from app.agent_platform.runtime.schemas import InvocationUsage
+from app.cases.policy import personal_case
 from app.models import (
     AgentInvocation,
     AgentVersion,
@@ -83,9 +84,7 @@ async def validate_completion_binding(
     control = checkpoint.get("control") or {}
     if control.get("pause_requested") or control.get("cancel_requested"):
         raise HTTPException(status_code=409, detail="Run control prevents step completion")
-    if await active_suspension(
-        session, [step.agent_version_id] if step.agent_version_id else []
-    ):
+    if await active_suspension(session, [step.agent_version_id] if step.agent_version_id else []):
         raise HTTPException(status_code=409, detail="Runtime is suspended")
 
     approved = {RegistryReleaseStatus.APPROVED.value, RegistryReleaseStatus.PRODUCTION.value}
@@ -112,10 +111,12 @@ async def validate_completion_binding(
                 raise HTTPException(status_code=409, detail="Step release binding is unavailable")
 
     approval = await session.scalar(
-        select(ApprovalRequest).where(
+        select(ApprovalRequest)
+        .where(
             ApprovalRequest.plan_id == plan.id,
             ApprovalRequest.approval_type == "PLAN_APPROVAL",
-        ).execution_options(populate_existing=True)
+        )
+        .execution_options(populate_existing=True)
     )
     approvals = [approval]
     if step.requires_approval:
@@ -129,9 +130,11 @@ async def validate_completion_binding(
             or step_approval.plan_step_id != step.id
             or step_approval.step_key != step.step_key
             or not step_approval.decision_by
-            or step_approval.decision_by in {
-                case.owner_subject, run.requested_by, step_approval.requested_by
-            }
+            or (
+                not personal_case(case)
+                and step_approval.decision_by
+                in {case.owner_subject, run.requested_by, step_approval.requested_by}
+            )
         ):
             raise HTTPException(status_code=409, detail="Step approval binding is unavailable")
         approvals.append(step_approval)
