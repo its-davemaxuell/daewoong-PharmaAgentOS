@@ -4,6 +4,15 @@ Prepared: **2026-09-11**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest visual refinement (2026-09-11):** Clearer Workspaces is deployed at
+revision `e56ebe2`. Research/Inbox/Saved work lead daily navigation; Overview leads
+with active work; mobile research and source inspection use the new compact
+layout. Hosted smoke passes 6/6 in English/Korean across all three browsers.
+Web/API readiness and all deployment integrations pass. Code security passes;
+the full quality/security workflow is still running at this checkpoint. See
+[deployment evidence](docs/assurance/clear-workspaces-20260911.md) for the exact
+revision, validation, artifact locations and CI links.
+
 **Latest UI implementation (2026-09-11):** Evidence continuity replaces the
 Layered Desk and full-screen startup presentation. The compact persistent shell,
 operational overview, case-aware AI, source comparison and inline citation

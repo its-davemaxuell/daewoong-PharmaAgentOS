@@ -1,7 +1,7 @@
 # Clearer Workspaces — September 11, 2026
 
-Local implementation of the approved visual and organization refinement. No
-backend API, schema, infrastructure or dependency changes. Not deployed.
+Deployed implementation of the approved visual and organization refinement. No
+backend API, schema, infrastructure or dependency changes.
 
 ## Result
 
@@ -85,3 +85,35 @@ specialist execution, introduce review authority, or change source ownership.
 Existing specialist screen prose and retained source content are preserved.
 The existing Next.js multiple-lockfile/standalone-start warnings remain in the
 local browser harness; they did not prevent compilation or browser execution.
+
+
+## Hosted deployment
+
+Published through the existing GitHub main-branch integrations on September 11,
+2026. UI implementation: `0a24233`; final deployment revision: `e56ebe2` (also aligns
+the existing approval audit with the approved English/Korean page labels).
+
+- Production: https://pharmaagent-os-ochre.vercel.app/dashboard
+- Vercel deployment: https://vercel.com/davemaxuellkr-9654/pharmaagent-os/F4SFZEMEXM21PREVjs71fsRQq3BL
+- Vercel, Railway API and Railway worker commit statuses all report success.
+- Web `/api/health`: HTTP 200, status ok.
+- Railway `/health/ready`: HTTP 200, database ok and object store ok.
+- Hosted smoke: **6/6 passed**, Chromium/Firefox/WebKit in English and Korean.
+  Checks use real public FDA previews, the new navigation and Overview, inspector
+  focus restoration, desktop-collapse/mobile-drawer labels, mobile research history,
+  visible question placement, local draft entry and no horizontal page overflow.
+  No browser errors or research POST requests occurred. No model jobs or formal
+  review mutations were started.
+- The corrected approval audit passes **3/3** locally across the same engines.
+
+Hosted artifacts: `.artifacts/clear-workspaces/hosted/results.json` and matching
+screenshots; script `.artifacts/clear-workspaces/hosted-smoke.mjs`. These production
+screenshots show public FDA records, unlike the fictional local fixture screenshots.
+
+Code security completed successfully for `e56ebe2`. The full quality/security
+workflow was still running when this deployment record was written; frontend,
+web container, PostgreSQL, Temporal, contracts, secret scan and deployment-render
+jobs had passed. No final result is claimed for the pending jobs.
+
+- Quality/security: https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34606731108
+- Code security: https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34606731152
