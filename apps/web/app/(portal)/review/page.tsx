@@ -1,12 +1,10 @@
-import type { Metadata } from "next";
-import { getReviewQueue } from "@/lib/api-client";
+import { randomUUID } from "node:crypto";
+import { Suspense } from "react";
+import { MenuWorkspace } from "@/components/prepared/menu-workspace";
+import { PageLoading } from "@/components/page-loading";
 import { requirePortalRole } from "@/lib/backend-auth";
-import { ReviewConsole } from "@/components/review-console";
-
-export const metadata: Metadata = { title: "Review | 검토" };
-
-export default async function ReviewPage() {
+export const metadata = { title: "Review | 검토" };
+export default async function Page() {
   await requirePortalRole("reviewer");
-  const { data, mode } = await getReviewQueue({ view: "open", pageSize: 10 });
-  return <ReviewConsole initialQueue={data} mode={mode} />;
+  return <Suspense fallback={<PageLoading contained />}><MenuWorkspace name="review" revision={randomUUID()} /></Suspense>;
 }

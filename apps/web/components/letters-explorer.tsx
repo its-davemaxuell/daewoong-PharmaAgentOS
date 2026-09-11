@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { sourcePageOptions } from "@/lib/source-queries";
+import { bookmarkPageOptions, sourcePageOptions } from "@/lib/source-queries";
 import { SourceInspector, fetchSource } from "./workspace/source-inspector";
 import { SaveViewButton } from "./workspace/save-view-button";
 import { useWorkspaceScope } from "./workspace/provider";
-import { setWorkspaceParams, workspaceJson } from "@/lib/workspace-client";
-import type { SavedWorkspaceView, WorkspacePage } from "@/lib/workspace-types";
+import { setWorkspaceParams } from "@/lib/workspace-client";
 import { SessionNotice } from "@/components/session-notice";
 import { SourceLink } from "@/components/source-link";
 import { letterQueryString, readLetterQuery, type LetterPage } from "@/lib/letter-query";
@@ -189,15 +188,7 @@ export function LettersExplorer({
   const documentOptions = (result.facets.document ?? []).map(item => item.value);
   const letters = result.items;
   const bookmarkIds = letters.map(letter => letter.id);
-  const bookmarks = useQuery({ queryKey: [scope, "bookmark-page", bookmarkIds], queryFn: async ({ signal }) => {
-    const params = new URLSearchParams({ limit: "100" });
-    bookmarkIds.forEach(id => params.append("source_ids", id));
-    const saved = await workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?${params}`, { signal });
-    if (!signal.aborted) for (const id of bookmarkIds) {
-      if (!client.getQueryData([scope, "bookmark-pending", id])) client.setQueryData([scope, "bookmark", id], saved.items.some(item => item.source_id === id || item.name === `Drug letter bookmark:${id}`));
-    }
-    return saved;
-  }, enabled: bookmarkIds.length > 0 });
+  const bookmarks = useQuery({ ...bookmarkPageOptions(scope, bookmarkIds, client), enabled: bookmarkIds.length > 0 });
   const total = result.total;
   const collectionTotal = result.collectionTotal;
   const activeFilterCount = Object.entries(filters).filter(([key, value]) => key !== "query" && value).length;

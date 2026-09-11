@@ -10,6 +10,16 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-11 prepared startup upgrade (verification in progress):** The supplied
+FDA-folder frames animate while all accessible menu modules and initial data
+prepare. Secondary menus now share the session query cache; Inbox preview is
+read-only, and the initial destination fades in after readiness. Retry/Continue
+recovery, reduced motion, locale and direct links are covered. Publish the API
+preview before the web gate; no migration is needed. The rollback flag is
+`PORTAL_STARTUP_ENABLED=false`. See
+[the startup verification record](docs/assurance/prepared-startup-20260911.md).
+Production deployment is not yet claimed for this upgrade.
+
 **2026-09-11 navigation cache upgrade (deployed):** Sources now
 uses the session-scoped browser cache for its initial page as well as filters;
 Home and menu preloading share that request. Bookmarks load independently,

@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { briefListOptions } from "@/lib/workspace-queries";
+import { briefListOptions, savedViewsOptions } from "@/lib/workspace-queries";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { setWorkspaceParams, workspaceJson, WorkspaceError } from "@/lib/workspace-client";
-import type { BriefSnapshot, SavedWorkspaceView, WorkspacePage } from "@/lib/workspace-types";
+import type { BriefSnapshot, SavedWorkspaceView } from "@/lib/workspace-types";
 import { SourceLink } from "../source-link";
 import { useWorkspaceScope } from "./provider";
 import { ActionButton } from "./commands";
@@ -25,10 +25,10 @@ export function SavedWorkspace() {
   const [editing, setEditing] = useState<SavedWorkspaceView>();
   const [busy, setBusy] = useState<string>();
   const briefs = useQuery({ ...briefListOptions(scope, page), enabled: tab === "briefs" });
-  const views = useQuery({ queryKey: [scope, "views", tab, cursor], queryFn: ({ signal }) => workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?limit=20&kind=${tab === "sources" ? "source_bookmark" : "source_view"}&cursor=${encodeURIComponent(cursor)}`, { signal }), enabled: tab === "sources" || tab === "views" });
+  const views = useQuery({ ...savedViewsOptions(scope, tab, cursor), enabled: tab === "sources" || tab === "views" });
   async function remove(id: string) {
     setBusy(id); setError(false);
-    try { await workspaceJson(`saved-views/${id}`, { method: "DELETE" }); await client.invalidateQueries({ queryKey: [scope, "views"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark-page"] }); }
+    try { await workspaceJson(`saved-views/${id}`, { method: "DELETE" }); await client.invalidateQueries({ queryKey: [scope, "views"] }); await client.invalidateQueries({ queryKey: [scope, "menu", "saved-views"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark"] }); await client.invalidateQueries({ queryKey: [scope, "bookmark-page"] }); }
     catch { setError(true); } finally { setBusy(undefined); }
   }
   const tabs = [["briefs", text("Briefs", "브리핑")], ["sources", text("Sources", "자료")], ["views", text("Saved views", "저장한 보기")], ["drafts", text("Local drafts", "기기 내 초안")]];

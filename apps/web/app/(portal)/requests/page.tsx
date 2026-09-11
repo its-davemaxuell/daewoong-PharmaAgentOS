@@ -1,12 +1,8 @@
-import { AgentHome } from "@/components/agent-platform/agent-home";
-import { CaseApiError, listAgentCases } from "@/lib/case-api-client";
-
-export default async function RequestsPage() {
-  let page;
-  try {
-    page = await listAgentCases();
-  } catch (error) {
-    return <AgentHome cases={null} access={error instanceof CaseApiError && error.status === 403 ? "restricted" : "unavailable"} />;
-  }
-  return <AgentHome cases={page.items} access="ready" />;
+import { randomUUID } from "node:crypto";
+import { Suspense } from "react";
+import { MenuWorkspace } from "@/components/prepared/menu-workspace";
+import { PageLoading } from "@/components/page-loading";
+export const metadata = { title: "Review drafts | PharmaAgent OS" };
+export default async function Page() {
+  return <Suspense fallback={<PageLoading contained />}><MenuWorkspace name="requests" revision={randomUUID()} /></Suspense>;
 }

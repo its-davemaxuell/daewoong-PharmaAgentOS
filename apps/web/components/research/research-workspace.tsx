@@ -157,7 +157,11 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
 
   const refreshSaved = useCallback(async () => { await queryClient.invalidateQueries({ queryKey: [scope, "research-list"] }); }, [queryClient, scope]);
 
-  useEffect(() => { const timer = setTimeout(() => void refreshSaved(), 0); return () => clearTimeout(timer); }, [refreshSaved]);
+  useEffect(() => {
+    const retryStartup = () => { setError(undefined); setRetry(value => value + 1); };
+    window.addEventListener("workspace:startup-retry", retryStartup);
+    return () => window.removeEventListener("workspace:startup-retry", retryStartup);
+  }, []);
   useEffect(() => {
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
@@ -257,7 +261,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   const elapsed = run?.started_at && now ? Math.max(0, Math.floor(((run.finished_at ? Date.parse(run.finished_at) : now) - Date.parse(run.started_at)) / 1_000)) : 0;
   const formatTime = (date: string) => new Date(date).toLocaleTimeString(locale === "ko" ? "ko-KR" : "en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
   const brief = run?.result;
-  return <div className={styles.workspace}>
+  return <div className={styles.workspace} data-startup-pending={runId && !run && !error ? "true" : undefined} data-startup-failed={runId && !run && error && ![401, 403, 404].includes(error) ? "true" : undefined}>
       <SessionNotice />
     {copyFailed ? <InlineFeedback kind="error">{text("Could not copy. Download the brief or select the text instead.", "복사하지 못했습니다. 브리핑을 다운로드하거나 텍스트를 선택하세요.")}</InlineFeedback> : null}
     <header className={styles.header}>

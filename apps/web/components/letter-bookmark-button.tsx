@@ -56,6 +56,7 @@ export function LetterBookmarkButton({
         await setLetterBookmarkAction(letterId, nextSaved);
         client.setQueryData(key, nextSaved);
         void client.invalidateQueries({ queryKey: [scope, "views"] });
+        void client.invalidateQueries({ queryKey: [scope, "menu", "saved-views"] });
         void client.invalidateQueries({ queryKey: [scope, "bookmark-page"] });
         onChange?.(nextSaved);
       } catch {

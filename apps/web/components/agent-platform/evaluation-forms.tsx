@@ -4,9 +4,9 @@ import { useActionState } from "react";
 import {
   approveReleaseAction,
   createStandardSuiteAction,
-  EMPTY_EVALUATION_ACTION_STATE,
   runSuiteAction,
 } from "@/app/(portal)/evaluations/actions";
+import { EMPTY_EVALUATION_ACTION_STATE } from "@/lib/governance-action-state";
 import type { EvaluationRun, EvaluationSuite, InventoryItem } from "@/lib/governance-api-client";
 import { Button } from "../controls";
 import { BilingualText as T, useI18n } from "@/lib/i18n";

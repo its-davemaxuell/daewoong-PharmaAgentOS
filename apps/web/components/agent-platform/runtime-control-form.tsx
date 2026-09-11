@@ -2,9 +2,9 @@
 
 import { useActionState } from "react";
 import {
-  EMPTY_CONTROL_ACTION_STATE,
   updateRuntimeControlAction,
 } from "@/app/(portal)/control-tower/actions";
+import { EMPTY_CONTROL_ACTION_STATE } from "@/lib/governance-action-state";
 import type { InventoryItem, RuntimeControl } from "@/lib/governance-api-client";
 import { Button } from "../controls";
 import { useI18n } from "@/lib/i18n";

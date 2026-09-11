@@ -10,8 +10,7 @@ import {
 } from "@/lib/governance-api-client";
 import { getPortalIdentity } from "@/lib/backend-auth";
 
-export type EvaluationActionState = { status: "idle" | "success" | "error"; message?: string };
-export const EMPTY_EVALUATION_ACTION_STATE: EvaluationActionState = { status: "idle" };
+import type { EvaluationActionState } from "@/lib/governance-action-state";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SHA256 = /^[a-f0-9]{64}$/;
 

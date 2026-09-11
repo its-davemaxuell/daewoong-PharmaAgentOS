@@ -4,8 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getPortalIdentity } from "@/lib/backend-auth";
 import { GovernanceApiError, updateRuntimeControl } from "@/lib/governance-api-client";
 
-export type ControlActionState = { status: "idle" | "success" | "error"; message?: string };
-export const EMPTY_CONTROL_ACTION_STATE: ControlActionState = { status: "idle" };
+import type { ControlActionState } from "@/lib/governance-action-state";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function value(data: FormData, name: string, max = 2_000) {

@@ -1,12 +1,10 @@
-import type { Metadata } from "next";
-import { getAdminData } from "@/lib/api-client";
+import { randomUUID } from "node:crypto";
+import { Suspense } from "react";
+import { MenuWorkspace } from "@/components/prepared/menu-workspace";
+import { PageLoading } from "@/components/page-loading";
 import { requirePortalRole } from "@/lib/backend-auth";
-import { AdminConsole } from "@/components/admin-console";
-
-export const metadata: Metadata = { title: "Admin | 관리자" };
-
-export default async function AdminPage() {
+export const metadata = { title: "Admin | 관리자" };
+export default async function Page() {
   await requirePortalRole("admin");
-  const { data, mode } = await getAdminData();
-  return <AdminConsole data={data} mode={mode} />;
+  return <Suspense fallback={<PageLoading contained />}><MenuWorkspace name="admin" revision={randomUUID()} /></Suspense>;
 }

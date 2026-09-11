@@ -9,7 +9,8 @@
     "test": "vitest run",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:startup": "playwright test --config playwright.startup.config.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "5.102.8",

@@ -45,7 +45,10 @@ function CommandMenu() {
   const subscribeWhileOpen = useCallback((listener: () => void) => isOpen ? subscribe(listener) : () => {}, [isOpen, subscribe]);
   const actions = useSyncExternalStore(subscribeWhileOpen, list, serverActions);
   useEffect(() => {
-    const open = () => { restore.current = document.activeElement as HTMLElement; setIsOpen(true); setQuery(""); ref.current?.showModal(); };
+    const open = () => {
+      if (document.querySelector('[data-startup-gate]:not([data-state="entered"])')) return;
+      restore.current = document.activeElement as HTMLElement; setIsOpen(true); setQuery(""); ref.current?.showModal();
+    };
     const key = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && !event.isComposing && !typingTarget(event.target)) { event.preventDefault(); open(); }
     };

@@ -4,26 +4,24 @@ import { useEffect, useState } from "react";
 import { useChatHistory } from "@/components/chat-history-context";
 import { useI18n } from "@/lib/i18n";
 import { formatDate } from "@/components/ui";
-import type { ResearchSummary } from "@/lib/research-types";
+import { useQuery } from "@tanstack/react-query";
+import { researchListOptions } from "@/lib/workspace-queries";
+import { useWorkspaceScope } from "../workspace/provider";
 import { readRequests, REQUESTS_KEY, type ReviewRequest } from "@/lib/review-requests";
 
 const researchStates: Record<string, [string, string]> = { queued: ["Queued", "대기 중"], running: ["Running", "진행 중"], completed: ["Brief ready", "브리핑 완료"], stopped: ["Stopped", "중지됨"], failed: ["Failed", "실패"], limit_reached: ["Limit reached", "한도 도달"], insufficient_evidence: ["Insufficient evidence", "근거 부족"] };
 export function ContinueWork({ compact = false }: { compact?: boolean }) {
   const { threads, historyLoadState } = useChatHistory();
   const { text, locale } = useI18n();
-  const [research, setResearch] = useState<ResearchSummary[]>([]);
+  const scope = useWorkspaceScope();
+  const result = useQuery(researchListOptions(scope));
+  const research = (result.data?.items ?? []).filter(item => researchStates[item.status]).slice(0, 3);
   const [drafts, setDrafts] = useState<ReviewRequest[]>([]);
   useEffect(() => {
-    const controller = new AbortController();
     const task = setTimeout(() => {
       try { setDrafts(readRequests(localStorage.getItem(REQUESTS_KEY)).slice(0, 2)); } catch { /* A malformed local archive is never presented as saved work. */ }
     }, 0);
-    fetch("/api/research", { signal: controller.signal, cache: "no-store" }).then(async response => {
-      if (!response.ok) return;
-      const payload = await response.json();
-      if (!controller.signal.aborted && Array.isArray(payload.items)) setResearch(payload.items.filter((item: ResearchSummary) => typeof item.id === "string" && typeof item.objective === "string" && typeof item.updated_at === "string" && researchStates[item.status]).slice(0, 3));
-    }).catch(() => undefined);
-    return () => { clearTimeout(task); controller.abort(); };
+    return () => clearTimeout(task);
   }, []);
   const chats = historyLoadState === "ready" ? threads.filter(item => !item.archivedAt).slice(0, 2) : [];
   if (!chats.length && !research.length && !drafts.length) return null;

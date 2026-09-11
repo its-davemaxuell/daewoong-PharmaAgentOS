@@ -45,6 +45,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       className={pretendard.variable}
     >
       <body className={pretendard.className}>
+        <noscript id="workspace-noscript"><p>JavaScript is required to prepare the workspace. Enable JavaScript and reload this page. / 워크스페이스를 준비하려면 JavaScript를 활성화한 후 새로고침하세요.</p></noscript>
         <I18nProvider initialLocale={initialLocale}>
           <a className="skip-link" href="#main-content">
             <BilingualText en="Skip to main content" ko="본문으로 건너뛰기" />

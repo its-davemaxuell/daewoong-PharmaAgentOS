@@ -90,13 +90,20 @@ test("supporting workspaces and all source tabs retain readable geometry", async
     // Streamed case headings can appear before the shell hydrates. Network idle
     // alone can therefore precede its sidebar request on hosted WebKit. Wait for
     // that real request before inspecting or unloading the current workspace.
-    const [sidebar] = await Promise.all([
+    const [sidebar, sourceWarm] = await Promise.all([
       page.waitForResponse(response => new URL(response.url()).pathname === "/api/portal/sidebar"),
+      page.waitForResponse(response => new URL(response.url()).pathname === "/api/drug-letters"),
       page.goto(route),
     ]);
     expect(sidebar.ok(), `sidebar on ${route}`).toBe(true);
     await sidebar.finished();
-    await page.waitForLoadState("networkidle");
+    // Finish the real idle data warmup before unloading this document. WebKit
+    // reports a same-origin fetch aborted by navigation as an access-control error.
+    await sourceWarm.finished();
+    // Next can retain a speculative RSC stream until its link is activated.
+    // Geometry depends on the rendered destination, not unrelated prefetches.
+    await expect(page.locator("main h1").first()).toBeVisible();
+    await expect(page.locator('main [data-startup-pending="true"]')).toHaveCount(0);
   };
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });

@@ -9,6 +9,7 @@ import { useWorkspaceScope } from "./provider";
 import { ActionButton } from "./commands";
 import { Pagination, WorkspaceErrorState, WorkspaceHeading, WorkspaceLoading } from "./primitives";
 import { SourceInspector } from "./source-inspector";
+import { inboxOptions } from "@/lib/workspace-queries";
 
 export function InboxWorkspace() {
   const params = useSearchParams();
@@ -24,7 +25,7 @@ export function InboxWorkspace() {
   const [reason, setReason] = useState("");
   const [dismiss, setDismiss] = useState(false);
   const [feedback, setFeedback] = useState("");
-  const result = useQuery({ queryKey: [scope, "inbox", state, page], queryFn: ({ signal }) => workspaceJson<InboxPage>(`workspace/inbox?state=${encodeURIComponent(state)}&page=${page}`, { signal }) });
+  const result = useQuery({ ...inboxOptions(scope, state, page), placeholderData: () => client.getQueryData<InboxPage>(inboxOptions(scope, state, page, true).queryKey) });
   const labels: Record<string, string> = { new: text("New", "신규"), later: text("Later", "나중에"), done: text("Done", "완료"), dismissed: text("Dismissed", "제외됨"), all: text("All", "전체") };
   const selected = (result.data?.items ?? []).filter(item => selection.includes(item.id));
   async function apply(next: TriageState) {

@@ -1,6 +1,6 @@
 // Deterministic fictional API; binds loopback only and never contacts production.
 import { createServer } from "node:http";
-import { generateKeyPairSync } from "node:crypto";
+import { generateKeyPairSync, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { longThreadFixture, longThreadId, researchFixture, researchId } from "./motion-fixtures.mjs";
 
@@ -13,11 +13,28 @@ const thread = { id, title: "Fictional saved question", created_at: stamp, updat
   { id: "a1", role: "assistant", sequence: 2, status: "complete", content: "Fictional answer [1]", created_at: stamp, generation_used: true, effective_model_id: "fixture", citations: [{ id: "source-1", letter_id: id, company: "Fictional Pharma", excerpt: "Fictional passage for interaction testing only.", anchor: "p1", source_url: "javascript:alert(1)" }] },
 ] };
 const reviewCase = { id, title: "Fictional cleaning-validation review", objective: "Inspect this fictional source and prepare questions for the quality team.", status: "DRAFT", owner_subject: "fixture-viewer", workflow_key: "regulatory-review", current_state_hash: "a".repeat(64), sources: [{ id, case_id: id, warning_letter_id: id, document_id: id, document_version_id: id, document_version_number: 1, source_role: "primary", source_sha256: "a".repeat(64), source_url: source.canonical_url, pinned_by: "Fixture reviewer", created_at: stamp, immutable: true }], created_at: stamp, updated_at: stamp };
+const savedBySession = new Map();
 const api = createServer((req, res) => {
   const url = new URL(req.url, "http://127.0.0.1");
   res.setHeader("Content-Type", "application/json"); res.setHeader("x-request-id", "fixture-request");
   let data = { items: [], has_more: false, total: 0 };
-  if (url.pathname === "/api/v1/letters/search") {
+  if (url.pathname === "/api/v1/saved-views") {
+    // Loopback fixture only: separate test contexts by their signed-session subject.
+    const subject = JSON.parse(Buffer.from(String(req.headers.authorization).split(".")[1], "base64url").toString()).sub;
+    if (req.method === "POST") {
+      let body = ""; req.on("data", chunk => { body += chunk; });
+      req.on("end", () => {
+        const input = JSON.parse(body);
+        const sourceId = input.name?.startsWith("Drug letter bookmark:") ? input.name.slice("Drug letter bookmark:".length) : null;
+        const view = { ...input, id: randomUUID(), source_id: sourceId, view_kind: sourceId ? "source_bookmark" : "source_view", open_url: "/drug-letters", revision: 1, updated_at: stamp };
+        savedBySession.set(subject, [...(savedBySession.get(subject) || []), view]);
+        res.end(JSON.stringify(view));
+      });
+      return;
+    }
+    const ids = [...url.searchParams.getAll("source_ids"), ...url.searchParams.getAll("source_id")];
+    data = { items: (savedBySession.get(subject) || []).filter(view => !ids.length || ids.includes(view.source_id)), has_more: false, total: 0 };
+  } else if (url.pathname === "/api/v1/letters/search") {
     const query = url.searchParams.get("q") || "";
     if (query === "failure") { res.statusCode = 500; return res.end(JSON.stringify({ detail: "Fixture unavailable" })); }
     const fixtureSize = /^fixture-(100|1000|10000)$/.test(query) ? Number(query.slice(8)) : 10041;
@@ -58,7 +75,7 @@ api.listen(8100, "127.0.0.1");
 const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048, privateKeyEncoding: { type: "pkcs8", format: "pem" }, publicKeyEncoding: { type: "spki", format: "pem" } });
 const web = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", "3100", "-H", "127.0.0.1"], {
   stdio: "inherit", windowsHide: true,
-  env: { ...process.env, EXTERNAL_API_BASE_URL: "http://127.0.0.1:8100", API_BASE_URL: "http://127.0.0.1:8100", API_SESSION_PRIVATE_KEY: privateKey, API_SESSION_ISSUER: "fixture", API_SESSION_AUDIENCE: "fixture", PORTAL_SESSION_SECRET: "fixture-only-not-for-production-".repeat(2), RESEARCH_WORKER_MODE: "poll" },
+  env: { ...process.env, PORTAL_STARTUP_ENABLED: process.env.PORTAL_STARTUP_ENABLED || "false", EXTERNAL_API_BASE_URL: "http://127.0.0.1:8100", API_BASE_URL: "http://127.0.0.1:8100", API_SESSION_PRIVATE_KEY: privateKey, API_SESSION_ISSUER: "fixture", API_SESSION_AUDIENCE: "fixture", PORTAL_SESSION_SECRET: "fixture-only-not-for-production-".repeat(2), RESEARCH_WORKER_MODE: "poll" },
 });
 function stop() { web.kill(); api.close(); }
 process.on("SIGINT", stop); process.on("SIGTERM", stop); process.on("exit", stop);

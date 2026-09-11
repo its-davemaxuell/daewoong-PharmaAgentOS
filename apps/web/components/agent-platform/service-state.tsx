@@ -58,7 +58,7 @@ export function ServiceState({
     : kind === "not-configured" ? ["This review service is not configured. You can prepare a personal draft while setup is completed.", "검토 서비스가 설정되지 않았습니다. 설정이 완료될 때까지 개인 초안을 작성할 수 있습니다."] : undefined;
   const content = surfaces[surface];
   return (
-    <section className="os-service-state">
+    <section className="os-service-state" data-startup-failed={!restricted && kind !== "not-found" ? "true" : undefined}>
       <header>
         <h1>{text(content[0], content[1])}</h1>
         <p>{text(content[2], content[3])}</p>

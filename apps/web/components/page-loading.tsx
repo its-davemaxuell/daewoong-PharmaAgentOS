@@ -7,6 +7,7 @@ export function PageLoading({ contained = false }: { contained?: boolean }) {
     <section
       className={`${styles.loader}${contained ? ` ${styles.contained}` : ""}`}
       aria-busy="true"
+      data-startup-pending="true"
     >
       <div className={styles.frame}>
         <div className={styles.heading} aria-hidden="true" />

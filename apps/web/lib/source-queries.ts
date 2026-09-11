@@ -1,6 +1,20 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, type QueryClient } from "@tanstack/react-query";
 import type { LetterPage } from "./letter-query";
 import type { DataMode } from "./types";
+import type { SavedWorkspaceView, WorkspacePage } from "./workspace-types";
+import { workspaceJson } from "./workspace-client";
+
+export function bookmarkPageOptions(scope: string, ids: string[], client: QueryClient) {
+  return queryOptions({ queryKey: [scope, "bookmark-page", ids], queryFn: async ({ signal }) => {
+    const params = new URLSearchParams({ limit: "100" });
+    ids.forEach(id => params.append("source_ids", id));
+    const saved = await workspaceJson<WorkspacePage<SavedWorkspaceView>>(`saved-views?${params}`, { signal });
+    if (!signal.aborted) for (const id of ids) {
+      if (!client.getQueryData([scope, "bookmark-pending", id])) client.setQueryData([scope, "bookmark", id], saved.items.some(item => item.source_id === id || item.name === `Drug letter bookmark:${id}`));
+    }
+    return saved;
+  } });
+}
 
 export type SourcePage = { data: LetterPage; mode: DataMode };
 

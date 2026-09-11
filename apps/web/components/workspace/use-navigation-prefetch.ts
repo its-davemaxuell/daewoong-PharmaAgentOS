@@ -38,8 +38,8 @@ export function useNavigationPrefetch() {
     if (href === "/drug-letters") void client.prefetchQuery(sourcePageOptions(scope, letterQueryString(readLetterQuery(new URLSearchParams()))));
     if (href === "/research") void client.prefetchQuery(researchListOptions(scope));
     if (href === "/saved-work") void client.prefetchQuery(briefListOptions(scope));
-    // Inbox data is intentionally fetched only on activation: the first read
-    // establishes the user's personal triage horizon.
+    // Startup warms a read-only Inbox preview. This intent fallback must not
+    // establish the user's personal triage horizon before activation.
   };
   // Link's public prefetch=true API loads the complete route, including dynamic
   // pages; router.prefetch's default only warms their loading boundary.

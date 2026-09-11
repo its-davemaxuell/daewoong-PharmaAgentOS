@@ -7,6 +7,27 @@
 
 ---
 
+## September 11 implementation addendum: prepared startup
+
+On each fresh document load, animate the supplied 24 FDA-folder frames while
+preparing every menu accessible to the signed browser session. Share navigation
+definitions, client modules and first-page query data; preserve the opening URL.
+Reveal the prepared screen with a 600 ms opacity transition. Reduced motion uses
+a static frame and immediate reveal. Do not replay on internal navigation.
+
+Preparation uses four concurrent menu tasks (two on constrained connections),
+validated private reads and the existing owner-scoped memory cache. Secondary
+menus use thin routes and authenticated, allowlisted read endpoints. Trends send
+computed summaries rather than a full browser catalogue. Inbox warmup uses a
+read-only preview; only an actual visit establishes its personal horizon.
+
+After failure or 15 seconds, name unfinished steps and offer Retry or Continue
+with available menus. Readiness is based on code/data/initial-render completion,
+never a router-prefetch invocation. Deep records and additional pages remain on
+demand. `PORTAL_STARTUP_ENABLED=false` disables the gate while retaining caching.
+No schema migration is required. Roll out the Inbox preview API before the web
+startup gate; record test and hosted verification in the implementation handoff.
+
 ## September 10 implementation addendum: personal workspace
 
 The user approved implementation of the Linear research adaptation. Apply the
