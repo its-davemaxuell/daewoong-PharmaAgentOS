@@ -5,7 +5,7 @@
 .research-context ul { padding-left: 20px; }
 .research-context li { margin-block: 8px; overflow-wrap: anywhere; }
 .research-context li button { margin-inline-start: 12px; }
-.research-context article { padding-block: 16px; border-bottom: 1px solid var(--os-rule); }
+.research-context article { padding-block: 16px; border-bottom: 1px solid var(--os-rule); overflow-wrap: anywhere; }
 .research-context button, .research-context input { font: inherit; min-height: 44px; border: 1px solid var(--os-control); border-radius: 8px; padding: 8px 12px; color: var(--os-ink); background: var(--os-surface, #fff); }
 .research-context input { min-width: 0; max-width: 100%; flex: 1; }
 .research-context button:disabled { opacity: .55; cursor: not-allowed; }

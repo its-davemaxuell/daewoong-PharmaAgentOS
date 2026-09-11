@@ -3,7 +3,8 @@ import { expect, test } from "@playwright/test";
 const source = {
   chunk_id: "44444444-4444-4444-8444-444444444444", letter_id: "11111111-1111-4111-8111-111111111111",
   company: "Fictional validation evidence / 가상 밸리데이션 근거", source_url: "https://www.fda.gov/inspections/fictional-example",
-  anchor: "paragraph-1", version_id: "55555555-5555-4555-8555-555555555555", version: 1,
+  anchor: "1-your-firm-failed-to-thoroughly-investigate-an-unexplained-discrepancy-or-failure-of-a-batch-or-any-of-its-components-to-meet-any-of-its-specifications",
+  version_id: "55555555-5555-4555-8555-555555555555", version: 1,
   source_hash: "a".repeat(64), chunk_hash: "b".repeat(64), posted_date: "2026-09-01",
   excerpt: "Fictional source passage for browser testing. No real regulatory finding is represented.",
 };
