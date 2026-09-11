@@ -4,6 +4,14 @@ Prepared: **2026-09-09**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest release (2026-09-11):** Research passage selection, saved context and run
+inspection are deployed to the current Vercel/Railway services. Application revision
+`8d0c9a2` includes the strict nested-schema provider fix and source-anchor wrapping. Start with the authoritative
+[implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md) and
+[release evidence](docs/assurance/attio-upgrade-deployment-20260911.md).
+Personal case execution stays disabled; the full approved Attio upgrade remains
+incomplete. The deployment-pending notes below are historical.
+
 **Latest frontend implementation (2026-09-10):** The approved Layered desk A has
 received the complete visual/state and motion pass. Start with
 [the current implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md),

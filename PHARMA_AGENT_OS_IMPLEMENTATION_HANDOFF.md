@@ -10,6 +10,36 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-11 Attio reference upgrade (partial scope deployed):** Research now
+supports explicit passage selection, server-hydrated and run-bound context snapshots,
+selection-bound idempotency, pre-ranking SQL ACL filtering, and revalidation before
+model dispatch. Typed finding support/limitations and frontend validation distinguish
+unknowns and reject incomplete result components. Added owner-authorized historical
+run inspection and a separate disabled personal-workflow definition with initial
+ownership/plan/step acknowledgment policy. Fixed WebKit early-input hydration loss.
+All 94 frontend unit tests, lint, types and production build pass; the new browser
+journey passes Chromium/Firefox/WebKit across five reference widths. The broad API
+run passed 598 tests with 10 existing gated skips before final focused additions.
+The final focused Research/context, personal-policy and run-inspection suite passed
+all 22 tests; its JUnit record is `.artifacts/attio-boundaries.xml`.
+The later plain-text export check also passes: contradicted/insufficient findings
+retain their labels and limitations when copied or downloaded (10 focused web tests).
+Backend `7059df9` was deployed before frontend `c043010`; follow-up `ce5d3c2`
+fixes strict required fields inside referenced model schemas after the hosted smoke
+exposed a provider rejection. Final application revision `8d0c9a2` also fixes long-anchor wrapping.
+API/worker and Vercel report successful deployment. Final backend CI: 600 passed,
+10 gated skips. Hosted selected-context Research completed in seven model calls
+with schema-v2 findings; a second browser session received 404. Hosted English/Korean
+coverage passed in all three browsers, with the final mobile WebKit recheck
+confirming the long-anchor correction. Full quality/security and CodeQL CI passed
+on `8d0c9a2`, including general browser and startup suites.
+See [release evidence](docs/assurance/attio-upgrade-deployment-20260911.md).
+Personal execution remains disabled: worker specialist
+adapters, complete personal artifact review/UI, public synthetic-corpus qualification,
+observed production evaluation, public operations summaries and hosted qualification
+remain unfinished. See `ATTIO_UPGRADE_IMPLEMENTATION.md`; this is not completion of
+the approved upgrade. Do not enable `PERSONAL_CASE_ENABLED` at this checkpoint.
+
 **2026-09-11 prepared startup upgrade (deployed and verified):** The supplied
 FDA-folder frames animate while all accessible menu modules and initial data
 prepare. Secondary menus now share the session query cache; Inbox preview is

@@ -7,6 +7,14 @@
 
 ---
 
+## September 11 implementation addendum: Research-first upgrade
+
+The subsequent approved Research-first production upgrade is specified in
+`ATTIO_UPGRADE_IMPLEMENTATION.md`. It adds explicit evidence context, personal
+case execution and acknowledgments, production specialist adapters and observed
+evaluation. Public users retain browser-session ownership; global operations
+remain privileged. Existing governed independent-QA rules remain intact.
+
 ## September 11 implementation addendum: prepared startup
 
 On each fresh document load, animate the supplied 24 FDA-folder frames while
