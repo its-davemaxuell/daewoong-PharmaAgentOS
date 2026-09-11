@@ -18,7 +18,11 @@ preloads its current component. Existing retry/continue, reduced-motion, inert
 content and one-time reveal behavior are retained. This supersedes older notes
 about immediate shell startup. Validation: 95 frontend tests, production build,
 TypeScript and focused lint pass; all four startup scenarios pass across Chromium,
-Firefox and WebKit (12 checks). Deployment verification is recorded below.
+Firefox and WebKit (12 checks). Revision `2868716` is deployed; Vercel and both
+Railway services report success. Hosted English/Korean checks confirm the loading
+screen, automatic completion of all 20 preparation steps, and navigation without
+replaying startup. Screenshots: `.artifacts/chat-product/hosted-startup-en.png` and
+`hosted-startup-ko.png`.
 
 **2026-09-12 RAG Chat and Research refinement (deployed):** RAG Chat is the default entry
 point and leads the sidebar alongside Research Agent. All authorized supporting
