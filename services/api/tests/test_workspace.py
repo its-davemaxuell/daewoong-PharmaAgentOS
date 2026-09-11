@@ -19,6 +19,30 @@ def owner():
     return {"X-Dev-User": "workspace-" + uuid4().hex, "X-Dev-Roles": "viewer"}
 
 
+def test_inbox_preview_does_not_establish_or_change_horizon(client):
+    headers = owner()
+
+    async def horizon():
+        async with client.app.state.database.session_factory() as session:
+            preference = await session.get(WorkspaceInboxPreference, headers["X-Dev-User"])
+            return preference.starts_at if preference else None
+
+    preview = client.get("/api/v1/workspace/inbox?preview=true", headers=headers)
+    assert preview.status_code == 200, preview.text
+    assert "no-store" in preview.headers["cache-control"]
+    assert asyncio.run(horizon()) is None
+    assert client.get("/api/v1/workspace/inbox?preview=true", headers=headers).status_code == 200
+    assert asyncio.run(horizon()) is None
+
+    visit = client.get("/api/v1/workspace/inbox", headers=headers)
+    assert visit.status_code == 200
+    established = asyncio.run(horizon())
+    assert established is not None
+    later = client.get("/api/v1/workspace/inbox?preview=true", headers=headers)
+    assert later.json()["starts_at"] == visit.json()["starts_at"]
+    assert asyncio.run(horizon()) == established
+
+
 def test_inbox_personal_revision_and_horizon(client):
     headers, other = owner(), owner()
 

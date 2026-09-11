@@ -192,6 +192,7 @@ async def search(
 @router.get("/workspace/inbox", response_model=InboxPage)
 async def inbox(
     response: Response,
+    preview: bool = False,
     state: Literal["all", "new", "later", "done", "dismissed"] = "new",
     page: int = Query(default=1, ge=1, le=10000),
     limit: int = Query(default=20, ge=1, le=100),
@@ -200,11 +201,13 @@ async def inbox(
 ):
     private(response)
     # Establish the personal horizon once; unresolved events never age out.
-    await admission_lock(session)
+    if not preview:
+        await admission_lock(session)
     preference = await session.get(WorkspaceInboxPreference, principal.subject)
-    if preference is None:
+    starts_at = preference.starts_at if preference else utcnow() - timedelta(days=30)
+    if preference is None and not preview:
         preference = WorkspaceInboxPreference(
-            owner_id=principal.subject, starts_at=utcnow() - timedelta(days=30)
+            owner_id=principal.subject, starts_at=starts_at
         )
         session.add(preference)
         await session.flush()
@@ -217,7 +220,7 @@ async def inbox(
             (WorkspaceTriage.event_id == ChangeEvent.id)
             & (WorkspaceTriage.owner_id == principal.subject),
         )
-        .where(*catalog_scope(), ChangeEvent.detected_at >= preference.starts_at)
+        .where(*catalog_scope(), ChangeEvent.detected_at >= starts_at)
     )
     counts = dict(
         (
@@ -249,13 +252,14 @@ async def inbox(
         }
         for event, letter, triage in rows[:limit]
     ]
-    await session.commit()
+    if not preview:
+        await session.commit()
     return {
         "items": items,
         "counts": counts,
         "page": page,
         "has_more": len(rows) > limit,
-        "starts_at": timestamp(preference.starts_at),
+        "starts_at": timestamp(starts_at),
     }
 
 
