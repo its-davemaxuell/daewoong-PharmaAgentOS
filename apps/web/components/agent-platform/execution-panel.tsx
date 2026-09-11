@@ -1,5 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
+import { RunInspector } from "./run-inspector";
 import { useWorkspaceScope } from "../workspace/provider";
 import { workspaceJson } from "@/lib/workspace-client";
 import { Activity } from "@/components/icons/Activity";
@@ -147,6 +148,8 @@ export function ExecutionPanel({
         <div><span>Runtime</span><strong>{run.checkpoint.budget.runtimeSeconds.toFixed(1)}s</strong></div>
         <div><span>Cost</span><strong>${run.checkpoint.budget.costUsd.toFixed(2)}</strong></div>
       </section>
+
+      <RunInspector runId={run.id} />
 
       <section className={styles.runTimeline}>
         <div className={styles.sectionHeading}>

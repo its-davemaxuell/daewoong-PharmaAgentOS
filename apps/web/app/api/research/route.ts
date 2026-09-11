@@ -24,8 +24,14 @@ export async function POST(request: Request) {
       || typeof input.client_request_id !== "string" || !researchId.test(input.client_request_id)) {
       return new Response(null, { status: 422 });
     }
+    const selected = input.selected_chunk_ids ?? [];
+    if (!Array.isArray(selected) || selected.length > 12 || new Set(selected).size !== selected.length
+      || selected.some(id => typeof id !== "string" || !researchId.test(id))) {
+      return new Response(null, { status: 422 });
+    }
     const run = await researchApi("", { method: "POST", body: JSON.stringify({
       objective: input.objective, language: input.language, client_request_id: input.client_request_id,
+      selected_chunk_ids: selected,
     }) });
     after(wakeResearchWorker);
     return Response.json(run, { status: 201, headers: researchHeaders });

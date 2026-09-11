@@ -1,4 +1,17 @@
 /* Linear-inspired work geometry. Domain status colors and brand assets are retained. */
+.research-context { min-width: 0; margin: 16px 0; padding: 16px 0; border: 0; border-top: 1px solid var(--os-rule); font-size: .875rem; }
+.research-context legend { font-weight: 600; }
+.research-context p { max-width: 72ch; overflow-wrap: anywhere; line-height: 1.65; }
+.research-context ul { padding-left: 20px; }
+.research-context li { margin-block: 8px; overflow-wrap: anywhere; }
+.research-context li button { margin-inline-start: 12px; }
+.research-context article { padding-block: 16px; border-bottom: 1px solid var(--os-rule); }
+.research-context button, .research-context input { font: inherit; min-height: 44px; border: 1px solid var(--os-control); border-radius: 8px; padding: 8px 12px; color: var(--os-ink); background: var(--os-surface, #fff); }
+.research-context input { min-width: 0; max-width: 100%; flex: 1; }
+.research-context button:disabled { opacity: .55; cursor: not-allowed; }
+.research-context button:not(:disabled):hover { background: var(--os-inset); }
+.research-context summary { cursor: pointer; padding-block: 8px; }
+.research-context :focus-visible { outline: 2px solid var(--os-primary, #5856d6); outline-offset: 3px; }
 .linear-workspace { --sidebar: 240px; --topbar: 52px; --motion-hover: 100ms; --motion-panel: 200ms; --motion-select: 0ms; --motion-context: 0ms; --os-control-canvas: #767d90; }
 .linear-workspace.portal-shell .portal-sidebar { top: 0; left: 0; bottom: 0; width: 240px; height: 100dvh; border: 0; border-right: 1px solid var(--os-rule); border-radius: 0; box-shadow: none; background: #f5f6fa; }
 .linear-workspace.portal-shell .portal-header { top: 0; left: var(--portal-sidebar-offset); right: 0; height: 52px; border: 0; border-bottom: 1px solid var(--os-rule); border-radius: 0; box-shadow: none; padding: 0 24px; }

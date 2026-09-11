@@ -12,7 +12,7 @@ import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
 import { trustedFdaUrl } from "@/lib/evidence-state";
 import { SessionNotice } from "@/components/session-notice";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { BookOpen } from "@/components/icons/BookOpen";
 import { Check } from "@/components/icons/Check";
@@ -42,6 +42,9 @@ import { ServiceScope } from "@/components/agent-platform/service-scope";
 import { Button, SkeletonRows, InlineFeedback } from "../controls";
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
 import styles from "./research-workspace.module.css";
+import { ContextPicker, type ContextSource } from "./context-picker";
+import { FindingSupport } from "./finding";
+import { isResearchRun as isRun } from "@/lib/research-validation";
 
 const labels: Record<ResearchStatus, [string, string]> = {
   queued: ["Waiting to start", "시작 대기 중"], running: ["Working", "작업 중"],
@@ -91,6 +94,9 @@ const stages = [
   { id: "checking", icon: ShieldCheck, en: "Check", ko: "근거 검토", done: "check_completed" },
   { id: "complete", icon: FileText, en: "Brief", ko: "브리핑", done: "completed" },
 ];
+const subscribeHydration = () => () => {};
+const hydratedSnapshot = () => true;
+const serverHydrationSnapshot = () => false;
 
 function activityLabel(event?: ResearchEvent): [string, string] {
   if (event?.kind === "search_completed" && event.data.count === 0) return ["No matching passages", "일치하는 문단 없음"];
@@ -105,12 +111,6 @@ async function requestJson(url: string, options?: RequestInit) {
   if (!response.ok) throw new RequestFailure(response.status);
   return response.json();
 }
-function isRun(value: unknown): value is ResearchRun {
-  if (!value || typeof value !== "object") return false;
-  const run = value as ResearchRun;
-  return typeof run.id === "string" && Object.hasOwn(labels, run.status) && Number.isInteger(run.revision)
-    && Array.isArray(run.events) && Array.isArray(run.sources) && Array.isArray(run.plan);
-}
 function sourceUrl(source: ResearchSource) { return trustedFdaUrl(source.source_url); }
 
 export function ResearchWorkspace() {
@@ -120,9 +120,11 @@ export function ResearchWorkspace() {
 }
 
 function ResearchWorkspaceInner({ runId }: { runId: string }) {
+  const hydrated = useSyncExternalStore(subscribeHydration, hydratedSnapshot, serverHydrationSnapshot);
   const { text, locale } = useI18n();
   const router = useRouter();
   const [objective, setObjective] = useState("");
+  const [selectedContext, setSelectedContext] = useState<ContextSource[]>([]);
   useEffect(() => {
     if (runId) return;
     const timer = setTimeout(() => {
@@ -219,10 +221,10 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   async function start() {
     if (pending || objective.trim().length < 8) return;
     setPending(true); setError(undefined);
-    const value = `${locale}:${objective.trim()}`;
+    const value = JSON.stringify([locale, objective.trim(), selectedContext.map(source => source.chunk_id).sort()]);
     if (createRequest.current?.value !== value) createRequest.current = { value, id: crypto.randomUUID() };
     try {
-      const created = await requestJson("/api/research", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ objective: objective.trim(), language: locale, client_request_id: createRequest.current.id }) });
+      const created = await requestJson("/api/research", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ objective: objective.trim(), language: locale, client_request_id: createRequest.current.id, selected_chunk_ids: selectedContext.map(source => source.chunk_id) }) });
       if (!isRun(created)) throw new Error("Invalid research response");
       if (mounted.current) router.push(`/research?run=${created.id}`);
     } catch (failure) { setError(failure instanceof RequestFailure ? failure.status : 502); }
@@ -278,7 +280,8 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
         <label id="research-goal-label" htmlFor="research-goal">{text("What would you like prepared?", "어떤 자료를 준비할까요?")}</label>
 
         <form onSubmit={(event) => { event.preventDefault(); void start(); }}>
-          <textarea id="research-goal" value={objective} onChange={(event) => setObjective(event.target.value)} maxLength={2000} rows={4} placeholder={text("For example: Prepare a briefing on cleaning-validation findings for our quality team…", "예: 품질팀을 위한 세척 밸리데이션 지적 사항 브리핑을 준비해 주세요…")} aria-describedby="research-scope" disabled={pending} />
+          <textarea id="research-goal" value={objective} onChange={(event) => setObjective(event.target.value)} maxLength={2000} rows={4} placeholder={text("For example: Prepare a briefing on cleaning-validation findings for our quality team…", "예: 품질팀을 위한 세척 밸리데이션 지적 사항 브리핑을 준비해 주세요…")} aria-describedby="research-scope" disabled={pending || !hydrated} />
+          <ContextPicker selected={selectedContext} onChange={setSelectedContext} disabled={pending || !hydrated} />
           <div className={styles.composerFooter}><span id="research-scope">{text("Korean or English · Review draft", "한국어·영어 · 검토용 초안")}</span><Button variant="primary" type="submit" pending={pending} pendingLabel={text("Saving task…", "요청 저장 중…")} disabled={objective.trim().length < 8}><Play size={19} />{text("Start research", "리서치 시작")}</Button></div>
         </form>
       </section>
@@ -292,6 +295,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       <section className={styles.taskHeader} aria-label={text("Research task", "리서치 작업")}>
         <div className={styles.statusRow}><span data-research-status={run.status} className={`${styles.status} ${active ? styles.statusActive : ""}`}>{active && !connectionLost ? <LoaderCircle className={styles.spin} size={16} /> : run.status === "completed" ? <Check size={17} /> : <Circle size={15} />}{text(...labels[run.status])}</span><span>{text("Sources read", "확인한 근거")} {run.sources.length}</span><span>{text("Elapsed", "경과 시간")} {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}</span></div>
         <h2>{run.objective}</h2>
+        {run.context && <details className="research-context"><summary>{text("Submitted evidence context", "제출한 근거 범위")} · {run.context.selected_chunk_ids.length || text("All accessible FDA sources", "접근 가능한 모든 FDA 자료")}</summary><ul>{run.context.sources.map(source => <li key={source.chunk_id}>{source.company} · v{source.version} · {source.anchor}</li>)}</ul><p>{text("Fixed at submission", "제출 시 고정됨")}: {formatTime(run.context.hydrated_at)}</p></details>}
         <div className={styles.taskActions}><p><CloudCheck size={18} aria-hidden="true" />{active ? text("Runs in the background · Progress saved", "페이지를 닫아도 계속 진행 · 자동 저장") : text("Saved · Reopen in this browser session", "저장 완료 · 같은 브라우저에서 다시 열기")}</p>{active ? <ActionButton actionId="research.stop" label={text("Stop research", "리서치 중지")} type="button" className="button button--secondary" disabled={pending} onClick={() => void control("stop")}><Square size={16} />{text("Stop research", "리서치 중지")}</ActionButton> : run.status === "completed" ? <a className="button button--primary" href="#research-brief" onClick={() => document.getElementById("research-brief")?.focus()}><FileText size={18} />{text("View brief", "브리핑 보기")}<ArrowRight size={18} /></a> : run.can_resume ? <ActionButton actionId="research.resume" label={text("Resume research", "리서치 이어가기")} type="button" className="button button--primary" disabled={pending} onClick={() => void control("resume")}><Play size={17} />{text("Resume research", "리서치 이어서 진행")}</ActionButton> : null}</div>
       </section>
       <SelectionGroup><ol className={styles.stages} aria-label={text("Research stages", "리서치 단계")}>{stages.map((stage) => {
@@ -327,7 +331,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       {run.status === "completed" && brief?.findings ? <section id="research-brief" tabIndex={-1} className={styles.brief} aria-labelledby="research-brief-title">
         <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { setCopyFailed(false); await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setCopyFailed(true); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><SaveBriefButton runId={run.id} revision={run.revision} /><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
         <h2 id="research-brief-title">{brief.title}</h2><h3>{text("Findings from the FDA sources", "FDA 원문에서 확인한 내용")}</h3>
-        <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={(event) => { event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); setPeekSource(id); }}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
+        <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><FindingSupport finding={finding} /><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={(event) => { event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); setPeekSource(id); }}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
         <h3 className={styles.briefHeading}><Target size={21} aria-hidden="true" />{text("Questions for your team", "우리 팀의 검토 질문")}</h3><ul>{brief.review_questions?.map((question) => <li key={question}>{question}</li>)}</ul>
         <details className={styles.reviewNotes}><summary><ShieldCheck size={19} aria-hidden="true" />{text("Limits & review notes", "조사의 한계와 검토 안내")}<ChevronRight size={16} aria-hidden="true" /></summary><ul>{brief.limitations?.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
         <p className={styles.scope}>{text("Check FDA originals before use. This AI draft is not a compliance decision.", "사용 전 FDA 원문을 확인하세요. AI 초안은 규정 준수 판단이 아닙니다.")}</p></details>

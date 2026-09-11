@@ -1,7 +1,7 @@
 import { workspaceApi } from "@/lib/workspace-api";
 import { validMutation } from "@/lib/research-api";
 
-const allowed = /^(workspace\/(search|inbox)(\/[0-9a-f-]{36})?|research\/briefs(\/[0-9a-f-]{36}(\/export)?)?|saved-views(\/[0-9a-f-]{36})?|runs\/[0-9a-f-]{36}(\/events)?)$/;
+const allowed = /^(workspace\/(search|inbox)(\/[0-9a-f-]{36})?|research\/briefs(\/[0-9a-f-]{36}(\/export)?)?|saved-views(\/[0-9a-f-]{36})?|runs\/[0-9a-f-]{36}(\/(events|inspection))?)$/;
 async function proxy(request: Request, context: { params: Promise<{ path: string[] }> }) {
   const path = (await context.params).path.join("/");
   if (!allowed.test(path)) return new Response(null, { status: 404 });
