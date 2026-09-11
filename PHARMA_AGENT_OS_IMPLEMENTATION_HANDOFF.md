@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-12 RAG Chat and Research refinement:** RAG Chat is the default entry
+**2026-09-12 RAG Chat and Research refinement (deployed):** RAG Chat is the default entry
 point and leads the sidebar alongside Research Agent. All authorized supporting
 menus are direct links. Added accessible loading spinners, persistent route/view
 transitions, selection feedback, a refined chat canvas, find-in-chat, discoverable
@@ -20,8 +20,12 @@ session/role/evidence checks remain. The user declined company identity setup;
 sharing remains export-based and reports remain personal. No schema/dependency
 changes or enterprise-readiness claim. See
 [verification record](docs/assurance/chat-product-20260912.md). Validation: 95 frontend
-tests, 7 API tests, 24 cross-browser checks, TypeScript, lint, contracts and
-production build pass. Deployment verification follows in that record.
+tests, 7 focused API tests, 27 cross-browser checks, TypeScript, lint, contracts and
+production build pass. Revision `bf43bf9` is live at
+https://pharmaagent-os-ochre.vercel.app/ask. All three deployment statuses and health
+checks pass; hosted English/Korean checks pass 6/6 across Chromium, Firefox and
+WebKit, and live usage/CSV export succeeds. All quality workflow jobs except the
+still-running full browser suite pass; code-security passes.
 
 **2026-09-11 Clearer Workspaces refinement (deployed and hosted-verified):** Implemented
 approved task-based navigation with permanent Research, separate personal Inbox

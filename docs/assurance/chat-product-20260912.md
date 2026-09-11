@@ -55,3 +55,23 @@ loading, usage failure/retry/download, route/selection motion, English/Korean
 geometry at 1440, 1280, 768 and 390px. The earlier full Chromium motion/navigation
 run passed all its other 19 checks. A previous CI WebKit test matched a hidden
 outgoing research tree; research-goal assertions now select the visible field.
+
+
+## Deployment verification
+
+Application revision `bf43bf9` is deployed at
+https://pharmaagent-os-ochre.vercel.app/ask. Vercel and both Railway services report
+successful deployment. Web health and API readiness return 200; database and
+object-store checks pass.
+
+Hosted English/Korean checks pass **6/6** across Chromium, Firefox and WebKit,
+including the default Chat route, the two primary sidebar destinations, enabled
+composer, mobile menu and Usage link. The real `/api/usage` returns the personal
+report with `Cache-Control: private, no-store`; the hosted CSV download succeeds.
+No chat messages or research jobs were created during hosted verification.
+
+An additional mobile Research regression run passes **3/3** across the browsers
+(27 focused final local checks in total). GitHub code-security passes. The quality
+workflow's frontend, backend, containers, PostgreSQL, Temporal, contracts, secret
+scan and deployment-render jobs pass; its full browser suite is still running:
+https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34618758140.
