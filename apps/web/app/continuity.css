@@ -642,8 +642,22 @@
   font-size: 13px;
 }
 .continuity-shell .source-document {
+  padding: 24px;
   border-radius: 8px;
   box-shadow: none;
+}
+.continuity-shell .source-document > header {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.continuity-shell .source-document > header > div:first-child {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.continuity-shell .source-document > header h2 {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
 }
 .continuity-shell .source-document p {
   font-size: 15px;
