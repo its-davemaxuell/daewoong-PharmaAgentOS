@@ -1,0 +1,457 @@
+{
+  "application_revision": "f40f82bcf42cf5df7b673baff1c126081880c478",
+  "base": "https://pharmaagent-os-ochre.vercel.app",
+  "measured_at": "2026-09-11T01:41:32.626Z",
+  "method": "Fresh English desktop and Korean 390px browser contexts; 15 menu clicks each. Durations include Playwright action and readiness waits. Local WebKit runs on Windows.",
+  "before_startup_mean_ms": 29309,
+  "after_startup_mean_ms": 18720,
+  "reports": [
+    {
+      "engine": "chromium",
+      "locale": "en",
+      "startup_ms": 22605,
+      "menu_median_ms": 99,
+      "menu_min_ms": 73,
+      "menu_max_ms": 363,
+      "menu_timings": [
+        {
+          "href": "/drug-letters",
+          "ms": 260
+        },
+        {
+          "href": "/saved-work",
+          "ms": 97
+        },
+        {
+          "href": "/research",
+          "ms": 94
+        },
+        {
+          "href": "/inbox",
+          "ms": 99
+        },
+        {
+          "href": "/ask",
+          "ms": 137
+        },
+        {
+          "href": "/trends",
+          "ms": 218
+        },
+        {
+          "href": "/requests",
+          "ms": 142
+        },
+        {
+          "href": "/agents",
+          "ms": 363
+        },
+        {
+          "href": "/cases",
+          "ms": 73
+        },
+        {
+          "href": "/approvals",
+          "ms": 78
+        },
+        {
+          "href": "/evaluations",
+          "ms": 78
+        },
+        {
+          "href": "/settings",
+          "ms": 98
+        },
+        {
+          "href": "/help",
+          "ms": 114
+        },
+        {
+          "href": "/control-tower",
+          "ms": 98
+        },
+        {
+          "href": "/drug-letters",
+          "ms": 154
+        }
+      ],
+      "source_page_reads": 1,
+      "errors": [],
+      "horizontal_overflow": false
+    },
+    {
+      "engine": "chromium",
+      "locale": "ko",
+      "startup_ms": 20382,
+      "menu_median_ms": 340,
+      "menu_min_ms": 103,
+      "menu_max_ms": 537,
+      "menu_timings": [
+        {
+          "href": "/drug-letters",
+          "ms": 537
+        },
+        {
+          "href": "/saved-work",
+          "ms": 422
+        },
+        {
+          "href": "/research",
+          "ms": 323
+        },
+        {
+          "href": "/inbox",
+          "ms": 325
+        },
+        {
+          "href": "/ask",
+          "ms": 402
+        },
+        {
+          "href": "/trends",
+          "ms": 493
+        },
+        {
+          "href": "/requests",
+          "ms": 146
+        },
+        {
+          "href": "/agents",
+          "ms": 339
+        },
+        {
+          "href": "/cases",
+          "ms": 341
+        },
+        {
+          "href": "/approvals",
+          "ms": 312
+        },
+        {
+          "href": "/evaluations",
+          "ms": 340
+        },
+        {
+          "href": "/settings",
+          "ms": 103
+        },
+        {
+          "href": "/help",
+          "ms": 367
+        },
+        {
+          "href": "/control-tower",
+          "ms": 401
+        },
+        {
+          "href": "/drug-letters",
+          "ms": 220
+        }
+      ],
+      "source_page_reads": 1,
+      "errors": [],
+      "horizontal_overflow": false
+    },
+    {
+      "engine": "firefox",
+      "locale": "en",
+      "startup_ms": 17235,
+      "menu_median_ms": 100,
+      "menu_min_ms": 76,
+      "menu_max_ms": 286,
+      "menu_timings": [
+        {
+          "href": "/drug-letters",
+          "ms": 166
+        },
+        {
+          "href": "/saved-work",
+          "ms": 100
+        },
+        {
+          "href": "/research",
+          "ms": 122
+        },
+        {
+          "href": "/inbox",
+          "ms": 100
+        },
+        {
+          "href": "/ask",
+          "ms": 119
+        },
+        {
+          "href": "/trends",
+          "ms": 146
+        },
+        {
+          "href": "/requests",
+          "ms": 95
+        },
+        {
+          "href": "/agents",
+          "ms": 286
+        },
+        {
+          "href": "/cases",
+          "ms": 88
+        },
+        {
+          "href": "/approvals",
+          "ms": 76
+        },
+        {
+          "href": "/evaluations",
+          "ms": 77
+        },
+        {
+          "href": "/settings",
+          "ms": 76
+        },
+        {
+          "href": "/help",
+          "ms": 95
+        },
+        {
+          "href": "/control-tower",
+          "ms": 123
+        },
+        {
+          "href": "/drug-letters",
+          "ms": 109
+        }
+      ],
+      "source_page_reads": 1,
+      "errors": [],
+      "horizontal_overflow": false
+    },
+    {
+      "engine": "firefox",
+      "locale": "ko",
+      "startup_ms": 16853,
+      "menu_median_ms": 274,
+      "menu_min_ms": 100,
+      "menu_max_ms": 397,
+      "menu_timings": [
+        {
+          "href": "/drug-letters",
+          "ms": 362
+        },
+        {
+          "href": "/saved-work",
+          "ms": 393
+        },
+        {
+          "href": "/research",
+          "ms": 274
+        },
+        {
+          "href": "/inbox",
+          "ms": 274
+        },
+        {
+          "href": "/ask",
+          "ms": 397
+        },
+        {
+          "href": "/trends",
+          "ms": 365
+        },
+        {
+          "href": "/requests",
+          "ms": 100
+        },
+        {
+          "href": "/agents",
+          "ms": 264
+        },
+        {
+          "href": "/cases",
+          "ms": 251
+        },
+        {
+          "href": "/approvals",
+          "ms": 278
+        },
+        {
+          "href": "/evaluations",
+          "ms": 382
+        },
+        {
+          "href": "/settings",
+          "ms": 107
+        },
+        {
+          "href": "/help",
+          "ms": 361
+        },
+        {
+          "href": "/control-tower",
+          "ms": 251
+        },
+        {
+          "href": "/drug-letters",
+          "ms": 112
+        }
+      ],
+      "source_page_reads": 1,
+      "errors": [],
+      "horizontal_overflow": false
+    },
+    {
+      "engine": "webkit",
+      "locale": "en",
+      "startup_ms": 17580,
+      "menu_median_ms": 598,
+      "menu_min_ms": 360,
+      "menu_max_ms": 16972,
+      "menu_timings": [
+        {
+          "href": "/drug-letters",
+          "ms": 728
+        },
+        {
+          "href": "/saved-work",
+          "ms": 16972
+        },
+        {
+          "href": "/research",
+          "ms": 404
+        },
+        {
+          "href": "/inbox",
+          "ms": 634
+        },
+        {
+          "href": "/ask",
+          "ms": 598
+        },
+        {
+          "href": "/trends",
+          "ms": 862
+        },
+        {
+          "href": "/requests",
+          "ms": 666
+        },
+        {
+          "href": "/agents",
+          "ms": 834
+        },
+        {
+          "href": "/cases",
+          "ms": 550
+        },
+        {
+          "href": "/approvals",
+          "ms": 360
+        },
+        {
+          "href": "/evaluations",
+          "ms": 577
+        },
+        {
+          "href": "/settings",
+          "ms": 485
+        },
+        {
+          "href": "/help",
+          "ms": 496
+        },
+        {
+          "href": "/control-tower",
+          "ms": 574
+        },
+        {
+          "href": "/drug-letters",
+          "ms": 921
+        }
+      ],
+      "source_page_reads": 1,
+      "errors": [],
+      "horizontal_overflow": false
+    },
+    {
+      "engine": "webkit",
+      "locale": "ko",
+      "startup_ms": 17667,
+      "menu_median_ms": 643,
+      "menu_min_ms": 386,
+      "menu_max_ms": 1030,
+      "menu_timings": [
+        {
+          "href": "/drug-letters",
+          "ms": 1030
+        },
+        {
+          "href": "/saved-work",
+          "ms": 884
+        },
+        {
+          "href": "/research",
+          "ms": 675
+        },
+        {
+          "href": "/inbox",
+          "ms": 643
+        },
+        {
+          "href": "/ask",
+          "ms": 777
+        },
+        {
+          "href": "/trends",
+          "ms": 764
+        },
+        {
+          "href": "/requests",
+          "ms": 686
+        },
+        {
+          "href": "/agents",
+          "ms": 560
+        },
+        {
+          "href": "/cases",
+          "ms": 588
+        },
+        {
+          "href": "/approvals",
+          "ms": 618
+        },
+        {
+          "href": "/evaluations",
+          "ms": 501
+        },
+        {
+          "href": "/settings",
+          "ms": 386
+        },
+        {
+          "href": "/help",
+          "ms": 568
+        },
+        {
+          "href": "/control-tower",
+          "ms": 575
+        },
+        {
+          "href": "/drug-letters",
+          "ms": 719
+        }
+      ],
+      "source_page_reads": 1,
+      "errors": [],
+      "horizontal_overflow": false
+    }
+  ],
+  "webkit_saved_followup_click_to_heading_ms": [
+    180,
+    190,
+    199,
+    221,
+    208,
+    236
+  ],
+  "outlier": "One WebKit desktop Saved visit measured 16972ms in the initial sweep. Six targeted Saved visits across three fresh contexts did not reproduce it; browser click-to-heading timing was 180?236ms. The original outlier is retained above."
+}

@@ -67,13 +67,59 @@ view; caches continue to refresh in the background after entry.
   all-menu preparation guards against invalid server-action registration.
 - The initial full local regression had 211/213 passing, with the two failures in
   that geometry synchronization check. Its corrected Chromium/WebKit rerun passed;
-  Firefox also passed its focused rerun. Final hosted/CI measurements follow release.
+  Firefox also passed its focused rerun. Final CI passed all 213 regression and
+  all 15 startup browser tests on `f40f82b`.
+- All ten quality/security jobs and the separate code-security workflow passed,
+  including both runtime container builds, schema/contract checks and secret scan.
+  Backend CI passed 589 tests with 10 existing infrastructure-gated skips.
 
 ## API prerequisite deployment
 
 Commit `cba4acc` adds the read-only Inbox preview and its regression test. All
 589 backend tests passed locally; 10 existing infrastructure-gated tests skipped.
 The API and worker Railway deployments both reported success before web release.
+Two fresh production preview reads also retained moving provisional horizons,
+confirming they did not establish a persisted personal start date.
+
+## Production publication
+
+The web implementation is `1d0c4b2`, followed by startup ordering improvement
+`f40f82bcf42cf5df7b673baff1c126081880c478`. Vercel, Railway API and Railway worker
+all report successful deployment for the final application revision.
+
+- [Web deployment](https://vercel.com/davemaxuellkr-9654/pharmaagent-os/HksmkLz7E3BiwagUXEGQeAdT761H)
+- API deployment: `8aa3a5fe-f89b-4025-9ff2-e9e0975a7adb`.
+- Worker deployment: `101b8e21-3c30-44ed-9f51-f39a8a96d42c`.
+- [Final application CI](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34551425567): success.
+- [Code security](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34551425569): success.
+
+Initial hosted startup measurements were 27–34 seconds. The ordering refinement
+starts independent aggregations earlier while keeping four workers, the same
+queries and the same readiness requirements. Six fresh contexts on the final
+revision passed all-menu navigation, no repeated loader, one source-page read,
+no page errors and no horizontal overflow. No check used Continue to enter.
+
+| Browser / layout | Startup | Median menu visit | Menu visit range |
+| --- | ---: | ---: | ---: |
+| Chromium / English desktop | 22.6 s | 99 ms | 73–363 ms |
+| Chromium / Korean mobile | 20.4 s | 340 ms | 103–537 ms |
+| Firefox / English desktop | 17.2 s | 100 ms | 76–286 ms |
+| Firefox / Korean mobile | 16.9 s | 274 ms | 100–397 ms |
+| WebKit / English desktop | 17.6 s | 598 ms | 360–16,972 ms |
+| WebKit / Korean mobile | 17.7 s | 643 ms | 386–1,030 ms |
+
+Mean startup improved from 29.3 to 18.7 seconds (36%) in these six checks. Timings
+include browser automation action/readiness waits on Windows; they are observations,
+not latency guarantees. One WebKit Saved visit had a 16.97-second outlier. Three
+additional fresh contexts, with network traces and browser event/heading timestamps,
+did not reproduce it: six Saved visits rendered their heading 180–236 ms after the
+click. The original outlier is retained in
+[the measurements](prepared-startup-measurements-20260911.json).
+
+Cold entry still waits for the source/service reads (Sources approximately 11 s;
+operations approximately 14–15 s in these traces). Recovery appears at the specified
+15-second deadline, and automatic reveal occurs when the remaining reads complete.
+The initial preparation cost is intentionally paid before menu browsing.
 
 ## Release and rollback
 

@@ -10,15 +10,24 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-11 prepared startup upgrade (verification in progress):** The supplied
+**2026-09-11 prepared startup upgrade (deployed and verified):** The supplied
 FDA-folder frames animate while all accessible menu modules and initial data
 prepare. Secondary menus now share the session query cache; Inbox preview is
 read-only, and the initial destination fades in after readiness. Retry/Continue
-recovery, reduced motion, locale and direct links are covered. Publish the API
-preview before the web gate; no migration is needed. The rollback flag is
+recovery, reduced motion, locale and direct links are covered. API preview commit
+`cba4acc` deployed before web commit `1d0c4b2`; `f40f82b` then moved independent
+reads earlier to shorten preparation. All three production deployments report
+success. All ten quality/security jobs and the separate code-security workflow
+pass: build, TypeScript, lint, 88 unit tests, 213 regression browser tests, 15
+startup browser tests and 589 backend tests (10 existing gated skips). Six hosted
+desktop/mobile contexts passed in English/Korean across Chromium, Firefox and
+WebKit. Cold startup measured 16.9–22.6 seconds; mean startup fell from 29.3 to
+18.7 seconds after the scheduling refinement. Menu medians were 99–643 ms.
+One WebKit timing outlier and the successful targeted repeats are retained in
+the verification record. No migration is needed. The rollback flag is
 `PORTAL_STARTUP_ENABLED=false`. See
 [the startup verification record](docs/assurance/prepared-startup-20260911.md).
-Production deployment is not yet claimed for this upgrade.
+The live app is https://pharmaagent-os-ochre.vercel.app.
 
 **2026-09-11 navigation cache upgrade (deployed):** Sources now
 uses the session-scoped browser cache for its initial page as well as filters;
