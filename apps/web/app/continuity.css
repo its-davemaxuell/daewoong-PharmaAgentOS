@@ -662,6 +662,8 @@
   top: 54px;
   height: calc(100dvh - 54px);
   box-shadow: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .continuity-assistant {
   position: fixed;
