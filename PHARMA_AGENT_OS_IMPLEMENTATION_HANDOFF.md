@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-12 visual UX refinement (local, not deployed):** Inspected Chat,
+**2026-09-12 visual UX refinement (deployed):** Inspected Chat,
 Research and shared working surfaces in English/Korean desktop/mobile. Increased
 headings, navigation and reading typography; replaced repeated setup prose with
 visual task choices and source-to-review diagrams; shortened optional chat
@@ -28,8 +28,16 @@ scoped to workspace feedback. All 15 final targeted checks pass across the three
 browsers, including that correction and completed-brief/source inspection.
 All 12 startup scenarios pass across runs after a local-server interruption and
 a Windows test-worker crash were retried. See the exact run history and previews
-in [the visual UX record](docs/assurance/visual-ux-20260912.md). Screenshots use
-fictional test fixtures; no hosted deployment or live research was performed.
+in [the visual UX record](docs/assurance/visual-ux-20260912.md). Local screenshots
+use fictional test fixtures. After the user's explicit deployment instruction,
+application revision `c85c27a` and test-only correction `46fea5f` were deployed to
+https://pharmaagent-os-ochre.vercel.app/ask. Vercel and both Railway services report
+success; web/API health checks pass. Hosted English/Korean desktop/mobile checks
+pass 6/6 across Chromium, Firefox and WebKit, with slow startup recovered by one
+Retry in the final checks. No live Chat or Research was submitted. Initial CI
+passed 275/276 browser checks; the remaining hidden-tree selector was corrected
+and passes locally in all three browsers. Follow-up CI passes all other jobs;
+the full browser suite is still running. Details and screenshots are in the record.
 
 **2026-09-12 all-menu startup restoration:** The user explicitly prefers preparing
 all menus before the site appears. Restored the original animated preparation gate
