@@ -10,6 +10,27 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-12 visual UX refinement (local, not deployed):** Inspected Chat,
+Research and shared working surfaces in English/Korean desktop/mobile. Increased
+headings, navigation and reading typography; replaced repeated setup prose with
+visual task choices and source-to-review diagrams; shortened optional chat
+settings; kept selected research evidence visible behind a compact disclosure.
+Completed research now shows the brief before finished activity in DOM order.
+Preserved original animated all-menu startup, citations, review labels, drafts,
+source/version identity, session authorization, stop/resume and all direct routes.
+Smooth interaction feedback respects reduced motion. No API/schema/dependency
+change. Source plan, PRODUCT.md, DESIGN.md and Chat brief are updated.
+
+Validation: 95 unit tests; production build/TypeScript; full lint plus final
+changed-file lint; mechanical design detector pass. Broad browser run passed
+68/69; its WebKit error assertion also matched Next.js's route announcer and was
+scoped to workspace feedback. All 15 final targeted checks pass across the three
+browsers, including that correction and completed-brief/source inspection.
+All 12 startup scenarios pass across runs after a local-server interruption and
+a Windows test-worker crash were retried. See the exact run history and previews
+in [the visual UX record](docs/assurance/visual-ux-20260912.md). Screenshots use
+fictional test fixtures; no hosted deployment or live research was performed.
+
 **2026-09-12 all-menu startup restoration:** The user explicitly prefers preparing
 all menus before the site appears. Restored the original animated preparation gate
 by default through `PORTAL_STARTUP_ENABLED` (only explicit `false` opts out).

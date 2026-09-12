@@ -15,9 +15,12 @@ Save, find, pin, rename, archive, restore and export conversations. Branch from
 an answer or edit a question without overwriting the earlier transcript.
 
 ## Direction
-Use the approved bright white/indigo desk from DESIGN.md: a floating conversation
-compartment, raised persistent composer, inset source passage, and a separate reader. The reading pane is the
-central interaction: open a numbered citation without losing the conversation.
+Use the neutral/blue working surfaces from DESIGN.md: a full-width white
+conversation canvas, anchored composer, retained source passage and separate reader.
+The September 12 visual refinement adds a source-to-review diagram, 32–48px
+opening heading, short task choices and 18px conversation text. Keep examples
+immediately visible, with 180–280ms interaction feedback and reduced-motion support.
+The reading pane is central: open a numbered citation without losing the conversation.
 The narrow-screen reader temporarily occupies the workspace and restores focus
 when closed. Model options remain secondary to the question and source selection.
 

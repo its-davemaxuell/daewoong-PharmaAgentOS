@@ -22,6 +22,7 @@ import { openCommandMenu } from "./workspace/commands";
 import { useNavigationPrefetch } from "./workspace/use-navigation-prefetch";
 import { ComparisonPanel } from "./workspace/comparison-panel";
 import { AssistantPanel, openAssistant } from "./workspace/assistant-panel";
+import "@/app/readability.css";
 
 export function PortalShell({
   children,
@@ -93,16 +94,21 @@ export function PortalShell({
       <button
         className="continuity-search"
         onClick={openCommandMenu}
+        aria-label={text("Search workspace", "워크스페이스 검색")}
         title={text("Search · Ctrl K", "검색 · Ctrl K")}
       >
-        <Search size={16} />
-        <span>{text("Search workspace", "워크스페이스 검색")}</span>
+        <Search size={18} />
+        <span>{text("Search", "검색")}</span>
         <kbd>⌘ K</kbd>
       </button>
       {navSections
         .filter((section) => section.id !== "settings" && visible.some(item => item.section === section.id))
         .map((section) => (
-          <section className="continuity-nav-group" key={section.id}>
+          <section
+            className="continuity-nav-group"
+            data-primary={linearWorkspace && section.id === "agent" || undefined}
+            key={section.id}
+          >
             <h2>{text(section.en, section.ko)}</h2>
             <nav aria-label={text(section.en, section.ko)}>
               {visible
@@ -124,7 +130,7 @@ export function PortalShell({
                       onClick={() => mobile && close()}
                     >
                       {active && <SelectionIndicator tone="tinted" />}
-                      <Icon size={16} />
+                      <Icon size={linearWorkspace && section.id === "agent" ? 20 : 18} />
                       <span>{text(item.en, item.ko)}</span>
                     </Link>
                   );
@@ -132,8 +138,8 @@ export function PortalShell({
             </nav>
           </section>
         ))}
-      <details className="continuity-recents" open>
-        <summary>{text("Recent conversations", "최근 대화")}</summary>
+      {threads.length > 0 && <details className="continuity-recents" open>
+        <summary>{text("Recent chats", "최근 대화")}</summary>
         {threads.slice(0, 4).map((thread) => (
           <Link
             key={thread.id}
@@ -141,20 +147,11 @@ export function PortalShell({
             title={thread.title}
             onClick={() => mobile && close()}
           >
-            <MessageSquareText size={14} />
+            <MessageSquareText size={16} />
             <span>{thread.title}</span>
           </Link>
         ))}
-        {!threads.length && (
-          <p>
-            {text(
-              "Your recent work will appear here.",
-              "최근 작업이 여기에 표시됩니다.",
-            )}
-          </p>
-        )}
-        <Link href="/ask" onClick={() => mobile && close()}>{text("Open chat", "대화 열기")} →</Link>
-      </details>
+      </details>}
       <footer className="continuity-sidebar-footer">
         {visible
           .filter((item) => item.section === "settings")
@@ -170,7 +167,7 @@ export function PortalShell({
                 onClick={() => mobile && close()}
               >
                 {path === item.href && <SelectionIndicator tone="tinted" />}
-                <Icon size={16} />
+                <Icon size={18} />
                 <span>{text(item.en, item.ko)}</span>
               </Link>
             );
@@ -189,7 +186,7 @@ export function PortalShell({
   );
   return (
     <div
-      className={`linear-workspace portal-shell continuity-shell ${collapsed ? "continuity-collapsed" : ""}`}
+      className={`linear-workspace portal-shell continuity-shell readable-workspace ${collapsed ? "continuity-collapsed" : ""}`}
     >
       <aside
         id="primary-navigation"
@@ -208,6 +205,7 @@ export function PortalShell({
               : text("Collapse menu", "메뉴 접기")
           }
           aria-expanded={!collapsed}
+          aria-controls="primary-navigation"
         >
           {collapsed ? (
             <PanelLeftOpen size={17} />
@@ -219,6 +217,8 @@ export function PortalShell({
           className="continuity-mobile-trigger"
           ref={trigger}
           aria-label={text("Open navigation", "탐색 메뉴 열기")}
+          aria-expanded={mobile}
+          aria-controls="mobile-navigation"
           onClick={() => {
             setMobile(true);
             mobileDialog.current?.showModal();
@@ -257,6 +257,7 @@ export function PortalShell({
       </header>
       <dialog
         ref={mobileDialog}
+        id="mobile-navigation"
         className="continuity-mobile-nav"
         aria-label={text("Primary navigation", "주요 탐색")}
         onClose={() => {

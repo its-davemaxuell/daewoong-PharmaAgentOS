@@ -1,0 +1,52 @@
+.picker {
+  margin: 16px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--os-rule);
+  font-size: 15px;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.picker .toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 12px 0;
+  list-style: none;
+  color: var(--os-ink);
+}
+
+.toggle::-webkit-details-marker { display: none; }
+.toggle > svg { flex-shrink: 0; color: var(--os-primary); }
+.toggle > span { flex: 1; min-width: 0; font-weight: 500; }
+.toggle small { display: block; color: var(--os-muted); font-size: 13px; font-weight: 400; line-height: 1.6; }
+.toggle > svg:last-child { transition: transform 220ms cubic-bezier(.16, 1, .3, 1); }
+.picker details[open] > .toggle > svg:last-child { transform: rotate(90deg); }
+.picker details > p { color: var(--os-muted); margin: 4px 0 16px; }
+.picker details > label { margin-bottom: 8px; font-size: 15px; }
+.picker details > article p { font-size: 16px; line-height: 1.8; }
+.selection { margin-top: 12px; }
+.selection > p { margin: 0; color: var(--os-primary-deep); }
+.selection ul { list-style: none; margin: 8px 0; padding: 0; }
+.selection li { display: flex; align-items: flex-start; gap: 12px; }
+.selection li > span { flex: 1; min-width: 0; padding-top: 10px; overflow-wrap: anywhere; }
+.selection li button { flex-shrink: 0; margin: 0; }
+.loading { display: flex; align-items: center; gap: 8px; }
+.spinner { flex-shrink: 0; animation: context-spin 1s linear infinite; }
+@keyframes context-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle > svg:last-child { transition: none; }
+  .spinner { animation: none; }
+}

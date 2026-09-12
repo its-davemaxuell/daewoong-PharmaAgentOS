@@ -3,6 +3,10 @@ import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import type { ResearchSource } from "@/lib/research-types";
 import { isContextSource } from "@/lib/research-validation";
+import { BookOpen } from "@/components/icons/BookOpen";
+import { ChevronRight } from "@/components/icons/ChevronRight";
+import { LoaderCircle } from "@/components/icons/LoaderCircle";
+import styles from "./context-picker.module.css";
 export type ContextSource = Omit<ResearchSource, "id">;
 export function ContextPicker({ selected, onChange, disabled }: {
   selected: ContextSource[]; onChange: (sources: ContextSource[]) => void; disabled: boolean;
@@ -22,14 +26,14 @@ export function ContextPicker({ selected, onChange, disabled }: {
       setResults(body.items); setStatus("ready");
     } catch { setStatus("error"); }
   }
-  return <fieldset disabled={disabled} className="research-context">
-    <legend>{text("Evidence context", "근거 범위")}</legend>
-    <p>{selected.length ? text("Only selected passages will be used. Selection is fixed when research starts.", "선택한 문단만 사용합니다. 리서치 시작 시 선택 내용이 고정됩니다.") : text("Search all accessible FDA sources, or select up to 12 passages.", "접근 가능한 모든 FDA 자료를 검색하거나 문단을 최대 12개 선택하세요.")}</p>
-    {!!selected.length && <ul>{selected.map(source => <li key={source.chunk_id}><span>{source.company} · v{source.version} · {source.anchor}</span><button type="button" onClick={() => onChange(selected.filter(item => item.chunk_id !== source.chunk_id))} aria-label={text(`Remove ${source.company} ${source.anchor}`, `${source.company} ${source.anchor} 제외`)}>{text("Remove", "제외")}</button></li>)}</ul>}
-    <details><summary>{text("Select source passages", "원문 문단 선택")}</summary>
+  return <fieldset disabled={disabled} className={`research-context ${styles.picker}`}>
+    <legend className={styles.visuallyHidden}>{text("Evidence context", "근거 범위")}</legend>
+    {!!selected.length && <div className={styles.selection}><p>{text("Only selected passages · Fixed when research starts", "선택한 문단만 사용 · 시작 시 범위 고정")}</p><ul>{selected.map(source => <li key={source.chunk_id}><span>{source.company} · v{source.version} · {source.anchor}</span><button type="button" onClick={() => onChange(selected.filter(item => item.chunk_id !== source.chunk_id))} aria-label={text(`Remove ${source.company} ${source.anchor}`, `${source.company} ${source.anchor} 제외`)}>{text("Remove", "제외")}</button></li>)}</ul></div>}
+    <details><summary className={styles.toggle}><BookOpen size={20} aria-hidden="true" /><span>{text("Select source passages", "원문 문단 선택")}<small>{selected.length ? text(`${selected.length} selected`, `${selected.length}개 선택됨`) : text("All accessible FDA sources", "접근 가능한 모든 FDA 자료")}</small></span><ChevronRight size={17} aria-hidden="true" /></summary>
+      <p>{text("Choose up to 12 passages, or leave empty to search all accessible FDA sources.", "문단을 최대 12개 선택하세요. 선택하지 않으면 접근 가능한 모든 FDA 자료를 검색합니다.")}</p>
       <label htmlFor="research-context-search">{text("Find evidence", "근거 검색")}</label>
       <div className="workspace-viewbar"><input id="research-context-search" value={query} maxLength={180} onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void search(); } }} /><button type="button" disabled={query.trim().length < 2 || status === "loading"} onClick={() => void search()}>{text("Search", "검색")}</button></div>
-      {status === "loading" && <p role="status">{text("Finding passages…", "문단 검색 중…")}</p>}
+      {status === "loading" && <p className={styles.loading} role="status"><LoaderCircle className={styles.spinner} size={18} aria-hidden="true" />{text("Finding passages…", "문단 검색 중…")}</p>}
       {status === "error" && <p role="alert">{text("Search failed. Your selection is retained; try again.", "검색하지 못했습니다. 선택 내용은 유지됩니다. 다시 시도하세요.")}</p>}
       {status === "ready" && !results.length && <p role="status">{text("No matching passages. Try another term.", "일치하는 문단이 없습니다. 다른 검색어를 사용하세요.")}</p>}
       {results.map(source => <article key={source.chunk_id}><strong>{source.company}</strong><small> · v{source.version} · {source.anchor}</small><p>{source.excerpt}</p><button type="button" disabled={selected.length >= 12 || selected.some(item => item.chunk_id === source.chunk_id)} onClick={() => onChange([...selected, source])}>{selected.some(item => item.chunk_id === source.chunk_id) ? text("Selected", "선택됨") : text("Include passage", "문단 포함")}</button></article>)}

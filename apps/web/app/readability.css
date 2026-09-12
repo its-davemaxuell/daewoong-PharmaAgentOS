@@ -1,0 +1,193 @@
+/* A readable scale for the persistent shell and supporting workspaces. */
+.readable-workspace {
+  --page-title-size: clamp(1.75rem, 2.8vw, 2.25rem);
+  --section-title-size: 1.125rem;
+  --body-size: 1rem;
+  --label-size: 0.9375rem;
+  --metadata-size: 0.8125rem;
+  font-size: 15px;
+}
+
+.readable-workspace .continuity-brand {
+  font-size: 17px;
+  letter-spacing: -0.02em;
+}
+
+.readable-workspace .continuity-search {
+  min-height: 40px;
+  margin-block: 20px;
+  gap: 10px;
+  color: #505967;
+}
+
+/* The inherited search control fixes its font with !important; size its label. */
+.readable-workspace .continuity-search span {
+  font-size: 15px;
+}
+
+.readable-workspace .continuity-nav {
+  min-height: 38px;
+  padding-block: 7px;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.readable-workspace .continuity-nav-group[data-primary] .continuity-nav {
+  min-height: 46px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.readable-workspace .continuity-nav-group h2 {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.readable-workspace .continuity-nav-group {
+  margin-top: 20px;
+}
+
+.readable-workspace .continuity-nav-group:first-of-type {
+  margin-top: 0;
+}
+
+.readable-workspace .continuity-recents summary,
+.readable-workspace .continuity-recents a {
+  font-size: 13px;
+}
+
+.readable-workspace .continuity-session strong {
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.readable-workspace .continuity-topbar :is(button, a) {
+  min-height: 38px;
+}
+
+.readable-workspace .continuity-topbar-actions > button:last-child,
+.readable-workspace .continuity-location {
+  font-size: 14px;
+}
+
+.readable-workspace .continuity-location {
+  min-width: 0;
+}
+
+.readable-workspace .continuity-location strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 550;
+}
+
+.readable-workspace .continuity-topbar-actions {
+  flex-shrink: 0;
+}
+
+.continuity-shell.readable-workspace :is(
+  .workspace-heading h1,
+  .continuity-page-header h1,
+  .page-guide__title,
+  .record-summary-card h1
+) {
+  font-size: var(--page-title-size);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.readable-workspace :is(.workspace-heading, .continuity-page-header) {
+  margin-bottom: 28px;
+}
+
+.readable-workspace :is(.workspace-heading p, .continuity-page-header > div > span) {
+  max-width: 68ch;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.readable-workspace .workspace-list strong {
+  font-size: 15px;
+}
+
+.readable-workspace .workspace-list small,
+.readable-workspace .letter-row__provenance {
+  font-size: 13px;
+}
+
+.readable-workspace .letter-row__company {
+  font-size: 15px;
+}
+
+.readable-workspace :is(.workspace-empty, .workspace-feedback) {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.readable-workspace .continuity-mobile-nav {
+  width: 300px;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 600px) {
+  .readable-workspace .continuity-location {
+    font-size: 0;
+  }
+
+  .readable-workspace .continuity-location strong {
+    font-size: 14px;
+  }
+
+  .readable-workspace .continuity-topbar :is(button, a),
+  .readable-workspace .continuity-mobile-close,
+  .readable-workspace .continuity-mobile-nav .continuity-nav {
+    min-height: 44px;
+  }
+
+  .readable-workspace .continuity-topbar-actions {
+    gap: 2px;
+  }
+
+  .readable-workspace .continuity-page-header {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .readable-workspace .continuity-sidebar,
+  .readable-workspace .continuity-topbar,
+  .continuity-shell.readable-workspace .continuity-main {
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .readable-workspace .continuity-nav svg {
+    transition: color 180ms ease, opacity 180ms ease;
+  }
+
+  .readable-workspace .continuity-nav:hover svg {
+    opacity: 1;
+  }
+
+  .readable-workspace .continuity-mobile-nav[open] {
+    animation: readable-navigation-enter 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .readable-workspace .continuity-mobile-nav[open]::backdrop {
+    animation: readable-navigation-backdrop 220ms ease-out;
+  }
+
+  @keyframes readable-navigation-enter {
+    from { transform: translateX(-32px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes readable-navigation-backdrop {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

@@ -43,3 +43,16 @@ test("explicit context survives failed requests and fits all reference widths", 
   await expect(picker.locator("ul li")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+test("completed research leads with the brief and keeps its source inspection", async ({ page, context }) => {
+  await context.addCookies([{ name: "dli_locale", value: "en", url: "http://127.0.0.1:3100" }]);
+  await page.goto("/research?run=22222222-2222-4222-8222-222222222222");
+  const brief = page.locator("#research-brief");
+  await expect(brief).toBeVisible();
+  expect(await brief.evaluate(node => Boolean(node.compareDocumentPosition(document.getElementById("live-activity-title")!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  await expect(brief.getByRole("button", { name: "Copy brief", exact: true })).toBeVisible();
+  await expect(brief).toContainText("Human review draft");
+  await brief.getByRole("link", { name: "S1", exact: true }).first().click();
+  await expect(page.locator(".workspace-inspector")).toBeVisible();
+  await expect(page.locator(".workspace-inspector")).toContainText("Fictional");
+});

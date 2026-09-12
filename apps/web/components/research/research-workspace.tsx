@@ -37,7 +37,6 @@ import { Square } from "@/components/icons/Square";
 import { Target } from "@/components/icons/Target";
 import { useI18n } from "@/lib/i18n";
 import { mergeResearchRun, researchActive, researchText, type ResearchEvent, type ResearchRun, type ResearchSource } from "@/lib/research-types";
-import { ResearchJourney } from "@/components/agent-platform/research-journey";
 import { ServiceScope } from "@/components/agent-platform/service-scope";
 import { Button, SkeletonRows, InlineFeedback } from "../controls";
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
@@ -208,9 +207,9 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   }, [run?.events.length]);
 
   const examples = [
-    { en: "Prepare a cleaning-validation brief", ko: "세척 밸리데이션 브리핑 준비", prompt: text("Prepare a cleaning-validation briefing for our quality team. Compare relevant FDA warning-letter findings, cite the source passages, and suggest review questions.", "품질팀을 위한 세척 밸리데이션 브리핑을 준비해 주세요. 관련 FDA 경고서한의 지적 사항을 비교하고, 원문 근거와 검토 질문을 정리해 주세요.") },
-    { en: "Compare data-integrity findings", ko: "데이터 완전성 지적 사항 비교", prompt: text("Compare data-integrity findings across companies in the saved FDA warning letters. Explain recurring observations with citations and questions our team could review.", "저장된 FDA 경고서한에서 회사별 데이터 완전성 지적 사항을 비교해 주세요. 반복되는 지적 내용을 출처와 함께 설명하고 우리 팀의 검토 질문을 제안해 주세요.") },
-    { en: "Prepare a quality-oversight discussion", ko: "품질 관리 감독 검토 준비", prompt: text("Research FDA warning-letter findings about quality-unit oversight. Prepare a cited discussion brief for our quality team without assuming these findings apply to our company.", "품질 부서의 감독에 관한 FDA 경고서한 지적 사항을 조사해 주세요. 우리 회사에 해당한다고 가정하지 말고, 품질팀의 논의를 위한 근거 기반 브리핑을 준비해 주세요.") },
+    { en: "Cleaning validation", ko: "세척 밸리데이션", icon: FileCheck2, prompt: text("Prepare a cleaning-validation briefing for our quality team. Compare relevant FDA warning-letter findings, cite the source passages, and suggest review questions.", "품질팀을 위한 세척 밸리데이션 브리핑을 준비해 주세요. 관련 FDA 경고서한의 지적 사항을 비교하고, 원문 근거와 검토 질문을 정리해 주세요.") },
+    { en: "Data integrity", ko: "데이터 완전성", icon: Network, prompt: text("Compare data-integrity findings across companies in the saved FDA warning letters. Explain recurring observations with citations and questions our team could review.", "저장된 FDA 경고서한에서 회사별 데이터 완전성 지적 사항을 비교해 주세요. 반복되는 지적 내용을 출처와 함께 설명하고 우리 팀의 검토 질문을 제안해 주세요.") },
+    { en: "Quality oversight", ko: "품질 관리 감독", icon: ShieldCheck, prompt: text("Research FDA warning-letter findings about quality-unit oversight. Prepare a cited discussion brief for our quality team without assuming these findings apply to our company.", "품질 부서의 감독에 관한 FDA 경고서한 지적 사항을 조사해 주세요. 우리 회사에 해당한다고 가정하지 말고, 품질팀의 논의를 위한 근거 기반 브리핑을 준비해 주세요.") },
   ];
 
   async function start() {
@@ -262,27 +261,31 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       <SessionNotice />
     {copyFailed ? <InlineFeedback kind="error">{text("Could not copy. Download the brief or select the text instead.", "복사하지 못했습니다. 브리핑을 다운로드하거나 텍스트를 선택하세요.")}</InlineFeedback> : null}
     <header className={styles.header}>
-      <div><h1>{text("Research", "리서치")}</h1><p>{text("Ask a question. Check the sources. Keep a brief for review.", "질문하고 원문을 확인한 뒤 검토용 브리핑을 저장하세요.")}</p></div>
+      <div><h1>{text("Research", "리서치")}</h1></div>
       {runId ? <Link className="button button--secondary" href="/research"><Plus size={18} />{text("New research", "새 리서치")}</Link> : <Link prefetch={false} className={styles.quickChat} href="/ask">{text("Quick AI chat", "간단한 AI 질문")} <ArrowRight size={17} /></Link>}
     </header>
 
     {error ? <div className={styles.notice} role="alert"><p>{error === 429 ? text("Research capacity is full. Finish an active task or try again later.", "리서치 이용 한도에 도달했습니다. 진행 중인 작업을 마치거나 나중에 다시 시도해 주세요.") : error === 404 || error === 401 ? text("This task is not available in this browser session. Open one of your saved tasks below.", "이 브라우저 세션에서 사용할 수 없는 작업입니다. 아래에 저장된 작업을 열어 주세요.") : error === 409 ? text("This task cannot be resumed. Check its status or start a more focused task.", "이 작업을 다시 시작할 수 없습니다. 상태를 확인하거나 범위를 좁혀 새 작업을 시작해 주세요.") : text("Research is temporarily unavailable. Your saved tasks are retained. Please try again.", "지금 리서치를 사용할 수 없습니다. 저장된 작업은 유지됩니다. 다시 시도해 주세요.")}</p><button type="button" onClick={() => { setError(undefined); setRetry((value) => value + 1); }}>{text("Dismiss", "닫기")}</button></div> : null}
     {connectionLost ? <div className={styles.notice} role="status"><p>{text("Live updates are reconnecting. This does not mean the task stopped; your progress is saved.", "실시간 진행 상황을 다시 연결하고 있어요. 작업 중지를 의미하지 않으며 진행 내용은 저장됩니다.")}</p><button onClick={() => setRetry((value) => value + 1)}>{text("Reconnect now", "지금 다시 연결")}</button></div> : null}
 
-    {!runId ? <>
+    {!runId ? <div className={styles.setup}>
       <section className={styles.composer} aria-labelledby="research-goal-label">
-        <label id="research-goal-label" htmlFor="research-goal">{text("What would you like prepared?", "어떤 자료를 준비할까요?")}</label>
+        <label id="research-goal-label" className={styles.questionLabel} htmlFor="research-goal">{text("What will you investigate?", "무엇을 조사할까요?")}</label>
 
         <form onSubmit={(event) => { event.preventDefault(); void start(); }}>
-          <textarea id="research-goal" value={objective} onChange={(event) => setObjective(event.target.value)} maxLength={2000} rows={4} placeholder={text("For example: Prepare a briefing on cleaning-validation findings for our quality team…", "예: 품질팀을 위한 세척 밸리데이션 지적 사항 브리핑을 준비해 주세요…")} aria-describedby="research-scope" disabled={pending || !hydrated} />
+          <textarea id="research-goal" value={objective} onChange={(event) => setObjective(event.target.value)} maxLength={2000} rows={3} placeholder={text("Prepare a cleaning-validation brief for our quality team…", "품질팀을 위한 세척 밸리데이션 브리핑을 준비해 주세요…")} aria-describedby="research-scope" disabled={pending || !hydrated} />
           <ContextPicker selected={selectedContext} onChange={setSelectedContext} disabled={pending || !hydrated} />
           <div className={styles.composerFooter}><span id="research-scope">{text("Korean or English · Review draft", "한국어·영어 · 검토용 초안")}</span><Button variant="primary" type="submit" pending={pending} pendingLabel={text("Saving task…", "요청 저장 중…")} disabled={objective.trim().length < 8}><Play size={19} />{text("Start research", "리서치 시작")}</Button></div>
         </form>
       </section>
-      <section className={styles.examples} aria-labelledby="research-examples"><h2 id="research-examples">{text("Start with an example", "예시로 시작하기")}</h2>{examples.map((example) => <button key={example.en} type="button" onClick={() => { setObjective(example.prompt); document.getElementById("research-goal")?.focus(); }}><span>{text(example.en, example.ko)}</span><ArrowRight size={19} /></button>)}</section>
-      <details className="research-context"><summary>{text("How research works", "리서치 진행 방식")}</summary><ResearchJourney compact /></details>
+      <section className={styles.examples} aria-labelledby="research-examples"><h2 id="research-examples">{text("Try a topic", "주제로 시작하기")}</h2><div className={styles.exampleTopics}>{examples.map((example) => <button key={example.en} type="button" disabled={pending || !hydrated} onClick={() => { setObjective(example.prompt); document.getElementById("research-goal")?.focus(); }}><example.icon size={22} aria-hidden="true" /><span>{text(example.en, example.ko)}</span><ArrowRight className={styles.exampleArrow} size={18} aria-hidden="true" /></button>)}</div></section>
+      <ol className={styles.workflow} aria-label={text("How research works", "리서치 진행 방식")}>
+        <li><Target size={25} aria-hidden="true" /><span>{text("Your question", "질문 입력")}</span><ArrowRight size={17} aria-hidden="true" /></li>
+        <li><Search size={25} aria-hidden="true" /><span>{text("Agent checks sources", "에이전트 근거 확인")}</span><ArrowRight size={17} aria-hidden="true" /></li>
+        <li><FileText size={25} aria-hidden="true" /><span>{text("Your review", "담당자 검토")}</span></li>
+      </ol>
       <ServiceScope />
-    </> : !run && !error ? <div className={styles.taskLoading}>
+    </div> : !run && !error ? <div className={styles.taskLoading}>
       <SkeletonRows rows={2} label={text("Opening your research task…", "리서치 작업을 열고 있어요…")} />
       <div className={styles.loadingStages} aria-hidden="true">{stages.map((stage) => <i key={stage.id} />)}</div>
       <div className={styles.workGrid} aria-hidden="true"><div className={styles.activity}><SkeletonRows rows={4} label="" /></div><div className={styles.evidence}><SkeletonRows rows={2} label="" /></div></div>
@@ -293,6 +296,14 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
         {run.context && <details className="research-context"><summary>{text("Submitted evidence context", "제출한 근거 범위")} · {run.context.selected_chunk_ids.length || text("All accessible FDA sources", "접근 가능한 모든 FDA 자료")}</summary><ul>{run.context.sources.map(source => <li key={source.chunk_id}>{source.company} · v{source.version} · {source.anchor}</li>)}</ul><p>{text("Fixed at submission", "제출 시 고정됨")}: {formatTime(run.context.hydrated_at)}</p></details>}
         <div className={styles.taskActions}><p><CloudCheck size={18} aria-hidden="true" />{active ? text("Runs in the background · Progress saved", "페이지를 닫아도 계속 진행 · 자동 저장") : text("Saved · Reopen in this browser session", "저장 완료 · 같은 브라우저에서 다시 열기")}</p>{active ? <ActionButton actionId="research.stop" label={text("Stop research", "리서치 중지")} type="button" className="button button--secondary" disabled={pending} onClick={() => void control("stop")}><Square size={16} />{text("Stop research", "리서치 중지")}</ActionButton> : run.status === "completed" ? <a className="button button--primary" href="#research-brief" onClick={() => document.getElementById("research-brief")?.focus()}><FileText size={18} />{text("View brief", "브리핑 보기")}<ArrowRight size={18} /></a> : run.can_resume ? <ActionButton actionId="research.resume" label={text("Resume research", "리서치 이어가기")} type="button" className="button button--primary" disabled={pending} onClick={() => void control("resume")}><Play size={17} />{text("Resume research", "리서치 이어서 진행")}</ActionButton> : null}</div>
       </section>
+      {run.status === "completed" && brief?.findings ? <section id="research-brief" tabIndex={-1} className={styles.brief} aria-labelledby="research-brief-title">
+        <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { setCopyFailed(false); await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setCopyFailed(true); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><SaveBriefButton runId={run.id} revision={run.revision} /><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
+        <h2 id="research-brief-title">{brief.title}</h2><h3>{text("AI findings · Check against the sources", "AI 분석 결과 · 원문과 대조하세요")}</h3>
+        <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><FindingSupport finding={finding} /><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={(event) => { event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); setPeekSource(id); }}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
+        <h3 className={styles.briefHeading}><Target size={21} aria-hidden="true" />{text("Questions for your team", "우리 팀의 검토 질문")}</h3><ul>{brief.review_questions?.map((question) => <li key={question}>{question}</li>)}</ul>
+        <details open className={styles.reviewNotes}><summary><ShieldCheck size={19} aria-hidden="true" />{text("Limits & review notes", "조사의 한계와 검토 안내")}<ChevronRight size={16} aria-hidden="true" /></summary><ul>{brief.limitations?.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
+        <p className={styles.scope}>{text("Check FDA originals before use. This AI draft is not a compliance decision.", "사용 전 FDA 원문을 확인하세요. AI 초안은 규정 준수 판단이 아닙니다.")}</p></details>
+      </section> : null}
       <SelectionGroup><ol className={styles.stages} aria-label={text("Research stages", "리서치 단계")}>{stages.map((stage) => {
         const done = run.events.some((event) => event.kind === stage.done);
         const working = active && run.stage === stage.id;
@@ -306,7 +317,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       <div className={styles.workGrid}>
         <section className={styles.activity} aria-labelledby="live-activity-title">
           <div className={styles.sectionTitle}><h2 id="live-activity-title">{text("Agent activity", "에이전트 작업 현황")}</h2><span className={styles.liveLabel}>{connectionLost ? text("Reconnecting", "재연결 중") : active ? text("Live updates", "실시간 업데이트") : text("Saved activity", "저장된 작업 기록")}</span></div>
-          <div className={styles.currentAction} role="status" aria-live="polite"><ActivityIcon kind={lastEvent?.kind || "queued"} size={28} /><div><strong>{text("FDA Research Agent", "FDA 리서치 에이전트")}</strong><p>{text(...latestLabel)}</p></div></div>
+          <div className={styles.currentAction} role="status" aria-live="polite"><ActivityIcon kind={lastEvent?.kind || "queued"} size={28} /><div><strong>{text(...latestLabel)}</strong><p>{text("FDA Research Agent", "FDA 리서치 에이전트")}</p></div></div>
           {run.plan.length ? <details className={styles.plan}><summary>{text("Research plan", "조사 계획")} <span>{text(`${run.plan.length} steps`, `${run.plan.length}단계`)}</span></summary><ol>{run.plan.map((step, index) => <li key={`${index}-${step}`}>{step}</li>)}</ol></details> : null}
           <details className={styles.plan}><summary>{text("Execution details", "실행 상세 기록")} · {recordedEvents.length}</summary>
           <ol ref={activityList} className={styles.eventList} onScroll={(event) => { const el = event.currentTarget; followActivity.current = el.scrollHeight - el.scrollTop - el.clientHeight < 70; }} aria-label={text("Recorded agent actions", "저장된 에이전트 동작")}>
@@ -325,14 +336,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
         </section>
       </div>
 
-      {run.status === "completed" && brief?.findings ? <section id="research-brief" tabIndex={-1} className={styles.brief} aria-labelledby="research-brief-title">
-        <div className={styles.sectionTitle}><span className={styles.checked}><ShieldCheck size={18} />{text("Sources checked · Human review draft", "근거 확인 완료 · 담당자 검토용 초안")}</span><div className={styles.exports}><button type="button" onClick={async () => { try { setCopyFailed(false); await navigator.clipboard.writeText(researchText(run)); setCopied(true); } catch { setCopyFailed(true); } }}><Copy size={17} />{copied ? text("Copied", "복사됨") : text("Copy brief", "브리핑 복사")}</button><SaveBriefButton runId={run.id} revision={run.revision} /><button type="button" onClick={download}><Download size={18} />{text("Download", "다운로드")}</button></div></div>
-        <h2 id="research-brief-title">{brief.title}</h2><h3>{text("AI findings · Check against the sources", "AI 분석 결과 · 원문과 대조하세요")}</h3>
-        <ol className={styles.findings}>{brief.findings.map((finding, index) => <li key={index}><FindingSupport finding={finding} /><p>{finding.statement}</p><div className={styles.citations}>{finding.citation_ids.map((id) => <a key={id} href={`#source-${id}`} onClick={(event) => { event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); setPeekSource(id); }}>{id}<ArrowRight size={13} /></a>)}</div></li>)}</ol>
-        <h3 className={styles.briefHeading}><Target size={21} aria-hidden="true" />{text("Questions for your team", "우리 팀의 검토 질문")}</h3><ul>{brief.review_questions?.map((question) => <li key={question}>{question}</li>)}</ul>
-        <details open className={styles.reviewNotes}><summary><ShieldCheck size={19} aria-hidden="true" />{text("Limits & review notes", "조사의 한계와 검토 안내")}<ChevronRight size={16} aria-hidden="true" /></summary><ul>{brief.limitations?.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
-        <p className={styles.scope}>{text("Check FDA originals before use. This AI draft is not a compliance decision.", "사용 전 FDA 원문을 확인하세요. AI 초안은 규정 준수 판단이 아닙니다.")}</p></details>
-      </section> : active ? <div className={styles.waitingBrief}><FileText size={23} /><div><strong>{text("Brief in preparation", "브리핑 준비 중")}</strong><p>{text("Available after the evidence check", "근거 검토 후 확인할 수 있습니다")}</p></div></div> : null}
+      {active ? <div className={styles.waitingBrief}><FileText size={23} /><div><strong>{text("Brief in preparation", "브리핑 준비 중")}</strong><p>{text("Available after the evidence check", "근거 검토 후 확인할 수 있습니다")}</p></div></div> : null}
     </> : null}
 
     {peekSource && run?.sources.find(source => source.id === peekSource) && <SourceInspector id={run.sources.find(source => source.id === peekSource)!.letter_id} source={run.sources.find(source => source.id === peekSource)} onClose={() => setPeekSource(undefined)} />}

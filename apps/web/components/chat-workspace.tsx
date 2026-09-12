@@ -11,6 +11,9 @@ import { readEvidenceCoverage } from "@/lib/evidence-state";
 import { useRouter } from "next/navigation";
 import { ArrowUp } from "@/components/icons/ArrowUp";
 import { ArrowDown } from "@/components/icons/ArrowDown";
+import { ArrowRight } from "@/components/icons/ArrowRight";
+import { MessageSquare } from "@/components/icons/MessageSquare";
+import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { Bot } from "@/components/icons/Bot";
 import { CalendarDays } from "@/components/icons/CalendarDays";
 import { Check } from "@/components/icons/Check";
@@ -1360,7 +1363,7 @@ export function ChatWorkspace({
   };
 
   return (
-    <MotionProvider><div className={`chat-page chat-workbench${turns.length ? " chat-page--active" : ""}${evidenceTurn?.answer ? " chat-page--evidence" : ""}`}>
+    <MotionProvider><div data-embedded={embedded || undefined} className={`chat-page chat-workbench${turns.length ? " chat-page--active" : ""}${evidenceTurn?.answer ? " chat-page--evidence" : ""}`}>
       {!embedded && <ChatLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onUpdated={(thread) => {
         if (thread.id === activeThreadId) { setThreadPinnedAt(thread.pinnedAt); setThreadArchivedAt(thread.archivedAt); setThreadTitle(thread.title); }
       }} />}
@@ -1404,32 +1407,33 @@ export function ChatWorkspace({
       >
         {!turns.length ? (
           <section className="chat-welcome" key={activeLandingSeed}>
-            <div
-              className="chat-welcome__mark"
-              aria-hidden="true"
-            >
-              <FileSearch size={22} />
-            </div>
+            <ol className="chat-evidence-flow" aria-label={text("From source to review", "원문부터 검토까지")}>
+              <li><FileText size={32} aria-hidden="true" /><span>{text("FDA sources", "FDA 원문")}</span></li>
+              <li><MessageSquare size={32} aria-hidden="true" /><span>{text("Cited answers", "근거 있는 답변")}</span></li>
+              <li><ShieldCheck size={32} aria-hidden="true" /><span>{text("Your review", "직접 검토")}</span></li>
+            </ol>
             <h2>{text(
-              initialLetterId ? "Let's read this letter together." : "What would you like to understand?",
-              initialLetterId ? "이 경고서한을 함께 살펴볼까요?" : "어떤 내용이 궁금하신가요?",
+              initialLetterId ? "Let's read this letter." : "A question. A clearer picture.",
+              initialLetterId ? "이 경고서한을 살펴볼까요?" : "질문에서 이해로.",
             )}</h2>
             <p>{text(
-              initialLetterId ? "Edit the prepared question, then send." : "Ask about FDA findings. Read the answer alongside its sources, or use Research Agent for a deeper investigation.",
-              initialLetterId ? "준비된 질문을 확인하고 보내세요." : "FDA 지적사항을 질문하고 답변의 근거를 확인하세요. 심층 조사는 리서치 에이전트로 이어갈 수 있습니다.",
+              initialLetterId ? "Edit the prepared question, then send." : "Ask about FDA findings. Follow the evidence.",
+              initialLetterId ? "준비된 질문을 확인하고 보내세요." : "FDA 지적 사항을 묻고, 원문 근거를 확인하세요.",
             )}</p>
-            <div className="chat-suggestions">
+            <div className="chat-suggestions" aria-label={text("Start with a question", "예시 질문으로 시작")}>
               {!initialLetterId && beginnerPrompts.map((prompt) => (
                 <button
                   type="button"
                   key={prompt.id}
+                  aria-label={text(prompt.title.en, prompt.title.ko)}
                   onClick={() => {
                     setQuestion(text(prompt.prompt.en, prompt.prompt.ko));
                     requestAnimationFrame(() => composerRef.current?.focus());
                   }}
                 >
-                  <Search size={15} aria-hidden="true" />
-                  <span>{text(prompt.title.en, prompt.title.ko)}</span>
+                  {prompt.id === "understand" ? <FileSearch size={25} aria-hidden="true" /> : prompt.id === "compare" ? <GitBranch size={25} aria-hidden="true" /> : <MessageSquare size={25} aria-hidden="true" />}
+                  <span>{prompt.id === "understand" ? text("Understand a finding", "지적 사항 이해") : prompt.id === "compare" ? text("Compare cases", "사례 비교") : text("Prepare team questions", "팀 검토 질문")}</span>
+                  <ArrowRight className="chat-suggestion-arrow" size={18} aria-hidden="true" />
                 </button>
               ))}
             </div>
@@ -1830,7 +1834,7 @@ export function ChatWorkspace({
               </button>;
             })}
           </div>}
-          <label className="chat-question-label" htmlFor={embedded ? `${embeddedId}-question` : "ai-question"}>{text("Your question", "궁금한 내용")}</label>
+          <label className="sr-only" htmlFor={embedded ? `${embeddedId}-question` : "ai-question"}>{text("Your question", "궁금한 내용")}</label>
           <textarea
             id={embedded ? `${embeddedId}-question` : "ai-question"}
             ref={composerRef}
@@ -1838,15 +1842,15 @@ export function ChatWorkspace({
             rows={2}
             maxLength={2000}
             disabled={!draftLoaded || !!threadArchivedAt}
-            placeholder={!draftLoaded ? text("Restoring your draft…", "작성 중인 질문을 불러오는 중…") : text("e.g. Explain FDA findings about cleaning validation in simple terms.", "예: 세척 밸리데이션 관련 FDA 지적 사항을 쉽게 설명해주세요.")}
+            placeholder={!draftLoaded ? text("Restoring your draft…", "작성 중인 질문을 불러오는 중…") : text("Ask anything about FDA findings…", "FDA 지적 사항에 대해 질문하세요…")}
             onChange={(event) => setQuestion(event.target.value)}
             onKeyDown={handleComposerKeyDown}
           />
           <div className="chat-composer__controls">
             <button type="button" className="chat-tool-button" disabled={actionsDisabled || !!threadArchivedAt} aria-expanded={sourcePickerOpen} onClick={() => { setSelectedLetters(activeLetterIds); setSourcePickerOpen((value) => !value); setFiltersOpen(false); }}><Paperclip size={17} />{activeLetterIds.length ? text(`${activeLetterIds.length} letters`, `서한 ${activeLetterIds.length}개`) : text("Select sources", "근거 자료 선택")}</button>
-            <button className="chat-tool-button" type="button" aria-expanded={optionsOpen} aria-controls={embedded ? `${embeddedId}-options` : "chat-additional-options"} onClick={() => { setOptionsOpen((open) => !open); setFiltersOpen(false); }}>
+            <button className="chat-tool-button" type="button" aria-label={text("Search & answer options", "검색·답변 설정")} aria-expanded={optionsOpen} aria-controls={embedded ? `${embeddedId}-options` : "chat-additional-options"} onClick={() => { setOptionsOpen((open) => !open); setFiltersOpen(false); }}>
               <SlidersHorizontal size={15} aria-hidden="true" />
-              {text("Search & answer options", "검색·답변 설정")}
+              {text("Options", "설정")}
               <ChevronDown size={14} aria-hidden="true" />
             </button>
             <div id={embedded ? `${embeddedId}-options` : "chat-additional-options"} className="chat-additional-options" hidden={!optionsOpen}>
@@ -1911,11 +1915,8 @@ export function ChatWorkspace({
           </div>
         </div>
         <p className="chat-composer-note">
-          <span className="chat-character-count">{question.length}/2,000</span>
-          {text(
-            "Check AI answers against FDA sources. Enter to send · Shift + Enter for a new line.",
-            "AI 답변은 FDA 원문과 대조하세요. Enter 전송 · Shift + Enter 줄바꿈.",
-          )}
+          <span>{text("Check AI answers against FDA sources.", "AI 답변은 FDA 원문과 대조하세요.")}</span>
+          {question.length > 1600 ? <span className="chat-character-count">{question.length}/2,000</span> : <span className="chat-keyboard-hint" aria-hidden="true"><kbd>Shift</kbd> + <kbd>Enter</kbd> {text("new line", "줄바꿈")}</span>}
         </p>
       </div>
       </div>

@@ -101,3 +101,12 @@ for smoothness. Restore the original animated preparation screen by default,
 preload the updated menus, then reveal the ready workspace once. Preserve its
 retry/continue fallback and reduced-motion support. Future UI refinements must
 retain this startup experience unless the user requests changing it.
+
+## Visual UX preference — September 12
+
+The user requested a service-wide UX inspection and implementation, preferring
+less text, useful visuals, larger type and smooth transitions, with external
+award-winning websites as optional inspiration. Prioritize Chat and Research.
+Keep the current neutral/blue identity, bilingual workflows, original animated
+startup, evidence truth and existing access controls. Use visual workflow cues,
+short task choices and progressive disclosure instead of repeated instructions.

@@ -73,3 +73,36 @@ test("usage failure remains explicit and report export uses actual scoped data",
   await page.getByRole("button", { name: "Export CSV", exact: true }).click();
   expect((await download).suggestedFilename()).toBe("pharmaagent-personal-usage.csv");
 });
+
+for (const locale of ["en", "ko"] as const) {
+  test(`visual chat starters prepare an editable question at every width in ${locale}`, async ({ page, context }, info) => {
+    let queries = 0;
+    page.on("request", request => {
+      if (request.method() === "POST" && request.url().endsWith("/api/chat/query")) queries++;
+    });
+    await context.addCookies([{ name: "dli_locale", value: locale, url: "http://127.0.0.1:3100" }]);
+    await page.goto("/ask");
+    const question = page.getByRole("textbox", { name: locale === "en" ? "Your question" : "궁금한 내용", exact: true });
+    await expect(question).toBeEnabled();
+    await expect(page.locator(".chat-evidence-flow li")).toHaveCount(3);
+    for (const width of [1440, 1280, 768, 390, 320]) {
+      await page.setViewportSize({ width, height: 844 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `overflow at ${width}`).toBe(true);
+      const composer = await page.locator(".chat-composer").boundingBox();
+      expect(composer!.y).toBeGreaterThan(0);
+      expect(composer!.y + composer!.height).toBeLessThanOrEqual(844);
+      expect(await question.evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(16);
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(page.locator(".chat-evidence-flow")).toHaveCSS("animation-name", "none");
+    await page.screenshot({ path: info.outputPath(`chat-${locale}-390.png`), fullPage: true });
+    await page.locator(".chat-suggestions button").first().click();
+    await expect(question).toBeFocused();
+    await expect(question).toHaveValue(locale === "en" ? /cleaning validation/ : /세척 밸리데이션/);
+    expect(queries).toBe(0);
+    await page.getByRole("button", { name: locale === "en" ? "Search & answer options" : "검색·답변 설정", exact: true }).click();
+    await expect(page.locator("#chat-additional-options")).toBeVisible();
+    await expect(question).toHaveValue(locale === "en" ? /cleaning validation/ : /세척 밸리데이션/);
+  });
+}

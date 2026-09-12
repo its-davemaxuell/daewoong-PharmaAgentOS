@@ -17,9 +17,11 @@ Never invent metrics, FDA findings, confidence, review decisions or similarity.
 
 Canvas #F7F8FA, surface #FFFFFF, inset #FBFBFC, text #202124, secondary #667085,
 border #E6E8EC, blue #2563EB, blue tint #EFF6FF. Existing semantic status colors
-remain. Local Pretendard supports both languages. Page titles 22/28, section
-headings 15/22, body 14/21, table labels 13/20, metadata 12/18. Source prose retains
-15px with generous line spacing. Do not use global scaling.
+remain. Local Pretendard supports both languages. The September 12 visual UX
+refinement increases supporting page titles to 28–36px, section headings to 18px,
+body to 16px, list labels to 15px and metadata to 13px. Chat answers use 18px;
+chat and research original passages use 17px with generous line spacing.
+Do not use global scaling.
 
 Spacing uses 4/8/12/16/20/24/32/40px. Controls 32–40px desktop, at least 40px on
 mobile. Corners: 4px small labels, 6px controls, 8px panels, 10px major overlays.
@@ -43,7 +45,7 @@ role restrictions still apply. Recent conversations are expanded. Keep route
 headings, commands, breadcrumbs and navigation labels consistent in both languages.
 Personal Inbox triage remains separate from governed review and approval.
 
-Use shared workspace headings and list surfaces. Main headings are 22/28 with one
+Use shared workspace headings and list surfaces. Main headings are 28–36px with one
 short explanation and one dominant action. Toolbars sit directly above results;
 pagination follows them. Research history stays at the left on desktop and is a
 closed, accessible disclosure on mobile. The research question leads the new-task
@@ -101,3 +103,25 @@ The user declined company sign-in setup. Preserve the 30-day browser-session
 model and owner authorization. Sharing uses existing exports; do not imply named
 team collaboration. Usage reports display actual personal activity and research
 usage with CSV export, never estimated chat costs or invented team statistics.
+
+## Visual UX refinement — September 12
+
+The user requested less text, more visuals, larger typography and smooth
+transitions. Keep the neutral/blue identity and primary Chat/Research navigation.
+Chat opens with a compact source → cited answer → human review diagram,
+a 32–48px heading, one short sentence, and three visual task choices. On mobile,
+choices become rows and the composer remains anchored. Suggestions fill an editable
+question; sending remains a separate action. Settings use a concise Options trigger;
+accessible labels retain their precise names. Answer and source content is intact.
+
+Research uses a 30px page heading (27px mobile), a 24–32px question label and
+17–18px input. Topic choices prepare drafts. Evidence setup is a disclosure;
+scope and selected passages stay visible when it closes. A short three-step
+diagram replaces process prose. Actual current activity leads its status panel.
+Completed runs put the review brief before finished activity in DOM order.
+
+Navigation text is 15px, with 16px primary destinations and larger existing icons.
+All authorized routes stay direct. Recent chats appear only when records exist.
+Supporting pages inherit the larger readable scale. Keep the original all-menu
+startup. Diagram entrance lasts 560ms; hover and settings feedback 180–260ms;
+sidebar motion 280ms. Keep choices immediately visible and respect reduced motion.

@@ -41,7 +41,7 @@ test("home keeps active work visible while a source request fails", async ({ pag
   expect((await active.boundingBox())!.y).toBeLessThan(500);
   await expect(active).toHaveAttribute("href", "/research?run=fictional-active");
   await expect(active).toContainText("Working");
-  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.locator("main .workspace-feedback[role=alert]")).toBeVisible();
 });
 
 test("mobile research gives the question priority and keeps history accessible", async ({ page }) => {
@@ -72,7 +72,12 @@ for (const locale of ["en", "ko"]) {
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} overflow at ${width}`).toBe(true);
         // Sources replaces its loading heading after hydration. Resolve the visible
         // heading on each retry instead of measuring a detached loading node.
-        await expect(page.locator("main h1").filter({ visible: true }).first(), `${route} title at ${width}`).toHaveCSS("font-size", "22px");
+        // Shared titles start at 28px; research uses a compact 27px mobile title.
+        const minimumTitleSize = route === "research" && width <= 640 ? 27 : 28;
+        await expect.poll(async () => page.locator("main h1").filter({ visible: true }).first()
+          .evaluate(heading => Number.parseFloat(getComputedStyle(heading).fontSize)), {
+          message: `${route} title remains readable at ${width} in ${locale}`,
+        }).toBeGreaterThanOrEqual(minimumTitleSize);
         if ((width === 1440 || width === 390) && ["dashboard", "research", "cases"].includes(route)) {
           await page.screenshot({ path: info.outputPath(`${route}-${locale}-${width}.png`), fullPage: true });
         }

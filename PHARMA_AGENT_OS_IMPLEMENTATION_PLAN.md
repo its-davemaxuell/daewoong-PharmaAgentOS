@@ -7,6 +7,24 @@
 
 ---
 
+## September 12 implementation addendum: Visual UX refinement
+
+User request: inspect and improve the service with less text, more useful visuals,
+larger typography and smooth transitions. Retain the current neutral/blue identity,
+local Pretendard, existing icons and original all-menu preparation screen.
+
+Refine Chat and Research as the primary workflows. Replace repeated onboarding
+copy with short task choices and source-to-review process diagrams. Keep drafts,
+source selection, answer text, citations and human-review labels intact. Increase
+question and answer typography, simplify optional settings, and preserve the
+anchored mobile composer. Raise shared supporting-page and navigation typography
+without zooming the application. All existing authorized destinations remain direct.
+
+Verify English/Korean desktop and mobile, reduced motion, keyboard/focus behavior,
+draft-only examples and research handoff, selected evidence retention, navigation
+and original startup. No API, schema or dependency changes. Record findings and
+verification in the implementation handoff. Deployment remains separate.
+
 ## September 11 implementation addendum: Clearer workspaces
 
 Approved refinement for a mixed employee audience. Keep the existing neutral/blue
