@@ -49,13 +49,15 @@ test("mobile research gives the question priority and keeps history accessible",
   await page.goto("/research");
   await expect(page.locator("#research-goal").filter({ visible: true })).toBeEnabled();
   expect((await page.locator("#research-goal").filter({ visible: true }).boundingBox())!.y).toBeLessThan(450);
-  await expect(page.locator(".research-history-body")).toBeHidden();
+  // Prepared routes can retain a hidden research tree during hydration.
+  const history = page.locator(".research-desk").filter({ visible: true }).locator(".research-history-body");
+  await expect(history).toBeHidden();
   await page.getByRole("button", { name: "Show history", exact: true }).click();
-  await expect(page.locator(".research-history-body")).toBeVisible();
+  await expect(history).toBeVisible();
   await page.getByRole("button", { name: "Hide history", exact: true }).click();
-  await expect(page.locator(".research-history-body")).toBeHidden();
+  await expect(history).toBeHidden();
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(page.locator(".research-history-body")).toBeVisible();
+  await expect(history).toBeVisible();
 });
 
 for (const locale of ["en", "ko"]) {
