@@ -1,6 +1,6 @@
 # PharmaAgent OS implementation handoff
 
-**Handoff date:** 2026-09-15
+**Handoff date:** 2026-09-16
 
 **Next engineer:** Start with [the transfer brief](NEXT_ENGINEER_HANDOFF.md) for
 the publication state, production blockers, verification and ordered
@@ -9,6 +9,17 @@ next steps. This file remains the authoritative implementation record.
 **Authoritative workspace:** `C:\Users\user\Desktop\PharmaAgentOS`  
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
+
+**2026-09-16 neumorphism and interactions (deployed):** The user's deployment
+instruction published application revision `8a2cd74` to
+https://pharmaagent-os-ochre.vercel.app/ask. Vercel and both Railway services
+report success; web/API health checks pass. The release contains both September
+15 implementations below. All six hosted English/Korean desktop/mobile checks
+pass in Chromium, Firefox and WebKit, including keyboard press feedback, the
+mobile close target and reduced motion. Cold sessions needed one Retry for menu
+preparation. Code security and all quality jobs except the still-running full
+browser suite pass. Evidence and rollback reference are in the
+[deployment record](docs/assurance/neumorphism-deployment-20260916.md).
 
 **2026-09-15 interaction follow-up (local implementation):** Extended the
 neumorphic site with shared quick tap and keyboard press feedback, cancellation

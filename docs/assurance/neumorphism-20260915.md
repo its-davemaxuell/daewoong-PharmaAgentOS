@@ -1,5 +1,9 @@
 # Neumorphic website — September 15, 2026
 
+Published September 16 as application revision `8a2cd74`; see the
+[deployment record](neumorphism-deployment-20260916.md). The local verification
+history below describes the implementation before publication.
+
 ## Implementation
 
 Replaced the flat visual system with cool porcelain surfaces, paired light/dark

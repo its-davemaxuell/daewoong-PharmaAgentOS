@@ -1,5 +1,9 @@
 # Website interaction refinement — September 15, 2026
 
+Published September 16 as application revision `8a2cd74`; see the
+[deployment record](neumorphism-deployment-20260916.md). The local verification
+history below describes the implementation before publication.
+
 ## Implemented locally
 
 The user's follow-up asks for complete smooth transitions, press animations and
@@ -75,6 +79,6 @@ the regression now verifies retained links and immediate inertness.
 
 ## Scope
 
-Local and uncommitted; no deployment performed. This pass runs Chromium, with
+The implementation pass was local and uncommitted. This pass ran Chromium, with
 feature-gated native fallback behavior for other engines; it is not a fresh full
 Firefox/WebKit qualification. Privileged operations remain role-restricted.
