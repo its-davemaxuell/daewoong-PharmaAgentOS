@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 
@@ -51,6 +52,72 @@ def structured_response(value: dict[str, object]) -> httpx.Response:
         200,
         json={"candidates": [{"content": {"parts": [{"text": json.dumps(value)}]}}]},
     )
+
+
+@pytest.mark.asyncio
+async def test_translation_bounds_parallel_batches_and_reconstructs_original_order():
+    active = maximum = 0
+
+    async def handler(request):
+        nonlocal active, maximum
+        active += 1
+        maximum = max(maximum, active)
+        try:
+            units = translation_units_from_request(request)
+            await asyncio.sleep(0.02 if "heading" in units[0]["unit_id"] else 0.005)
+            return structured_response({"units": [
+                {"unit_id": unit["unit_id"], "translated_text": valid_korean_unit(unit)}
+                for unit in units
+            ]})
+        finally:
+            active -= 1
+
+    generator = GeminiDocumentGenerator(gemini_settings(), transport=httpx.MockTransport(handler))
+    output = await generator.generate_translation(source_sections=[DocumentSourceSection(
+        anchor="observations", heading="Process Validation",
+        paragraphs=[f"Review process observation {index}." for index in range(40)],
+    )])
+    assert maximum == 3
+    assert active == 0
+    assert len(output["sections"][0]["paragraphs"]) == 40
+    for index, paragraph in enumerate(output["sections"][0]["paragraphs"]):
+        assert re.search(rf"\b{index}\b", paragraph)
+
+
+@pytest.mark.asyncio
+async def test_translation_cancels_sibling_batches_on_provider_failure():
+    active = cancelled = 0
+
+    async def handler(request):
+        nonlocal active, cancelled
+        active += 1
+        try:
+            units = translation_units_from_request(request)
+            if "heading" in units[0]["unit_id"]:
+                await asyncio.sleep(0.01)
+                return httpx.Response(429, json={"error": "bounded fixture failure"})
+            await asyncio.sleep(10)
+            raise AssertionError("Sibling should have been cancelled")
+        except asyncio.CancelledError:
+            cancelled += 1
+            raise
+        finally:
+            active -= 1
+
+    generator = GeminiDocumentGenerator(
+        gemini_settings(
+            document_ai_attempts_per_model=1, document_translation_fallback_model_ids=[],
+            document_ai_rate_limit_backoff_seconds=0,
+        ),
+        transport=httpx.MockTransport(handler),
+    )
+    with pytest.raises(AiGenerationError):
+        await generator.generate_translation(source_sections=[DocumentSourceSection(
+            anchor="observations", heading="Process Validation",
+            paragraphs=[f"Review observation {index}." for index in range(40)],
+        )])
+    assert active == 0
+    assert cancelled >= 1
 
 
 @pytest.mark.asyncio

@@ -6,6 +6,7 @@ import logging
 import re
 from collections import Counter
 from collections.abc import AsyncIterator
+from copy import copy
 from dataclasses import asdict, dataclass
 from typing import Any, Literal, Protocol
 from urllib.parse import quote
@@ -1471,6 +1472,7 @@ class ValidatedDocumentGenerator:
             *,
             batch_index: int,
             batch_path: str,
+            generator: ValidatedDocumentGenerator,
         ) -> dict[str, str]:
             failure_code: str | None = None
             failure_unit_id: str | None = None
@@ -1478,7 +1480,7 @@ class ValidatedDocumentGenerator:
             base_validation_attempts = 1 if can_split else TRANSLATION_BATCH_VALIDATION_ATTEMPTS
             validation_attempt_limit = base_validation_attempts
             maximum_validation_attempts = base_validation_attempts + max(
-                len(self._translation_model_ids) - 1, 0
+                len(generator._translation_model_ids) - 1, 0
             )
             quality_failed_models: set[str] = set()
             validation_attempt = 0
@@ -1486,9 +1488,9 @@ class ValidatedDocumentGenerator:
                 validation_attempt += 1
                 available_models = tuple(
                     model_id
-                    for model_id in self._translation_model_ids
+                    for model_id in generator._translation_model_ids
                     if model_id not in quality_failed_models
-                    and model_id not in self._unavailable_model_ids
+                    and model_id not in generator._unavailable_model_ids
                 )
                 if not available_models:
                     if can_split:
@@ -1496,8 +1498,8 @@ class ValidatedDocumentGenerator:
                     quality_failed_models.clear()
                     available_models = tuple(
                         model_id
-                        for model_id in self._translation_model_ids
-                        if model_id not in self._unavailable_model_ids
+                        for model_id in generator._translation_model_ids
+                        if model_id not in generator._unavailable_model_ids
                     )
                     if not available_models:
                         raise AiGenerationError(
@@ -1535,7 +1537,7 @@ class ValidatedDocumentGenerator:
                             "must come only from the supplied immutable placeholders."
                         )
                 try:
-                    output = await self._generate_structured(
+                    output = await generator._generate_structured(
                         system_instruction=system_instruction,
                         task=task,
                         payload={
@@ -1559,7 +1561,7 @@ class ValidatedDocumentGenerator:
                             "batch=%s units=%d model=%s reason=%s",
                             batch_path,
                             len(batch),
-                            self.model_id,
+                            generator.model_id,
                             reason,
                         )
                         raise
@@ -1579,7 +1581,7 @@ class ValidatedDocumentGenerator:
                         len(batch),
                         validation_attempt,
                         validation_attempt_limit,
-                        self.model_id,
+                        generator.model_id,
                         failure_code,
                     )
                     continue
@@ -1588,13 +1590,13 @@ class ValidatedDocumentGenerator:
                 except _TranslationBatchValidationError as exc:
                     failure_code = exc.reason_code
                     failure_unit_id = exc.unit_id
-                    failed_model = self.model_id
+                    failed_model = generator.model_id
                     if failed_model not in quality_failed_models:
                         quality_failed_models.add(failed_model)
                         untried_model_remains = any(
                             model_id not in quality_failed_models
-                            and model_id not in self._unavailable_model_ids
-                            for model_id in self._translation_model_ids
+                            and model_id not in generator._unavailable_model_ids
+                            for model_id in generator._translation_model_ids
                         )
                         if (
                             untried_model_remains
@@ -1608,7 +1610,7 @@ class ValidatedDocumentGenerator:
                         len(batch),
                         validation_attempt,
                         validation_attempt_limit,
-                        self.model_id,
+                        generator.model_id,
                         failure_code,
                         failure_unit_id or "batch",
                     )
@@ -1650,6 +1652,7 @@ class ValidatedDocumentGenerator:
                             partition,
                             batch_index=batch_index,
                             batch_path=f"{batch_path}.{partition_number}",
+                            generator=generator,
                         )
                     )
                 return restored_partitions
@@ -1664,26 +1667,34 @@ class ValidatedDocumentGenerator:
             len(units),
             len(batches),
         )
-        for batch_index, batch in enumerate(batches):
-            try:
+        # Independent immutable units can run concurrently. Isolate mutable model/fallback
+        # state per batch, cap provider fan-out, and cancel all siblings on failure. Nothing
+        # is reconstructed or persisted until every batch passes the same strict validators.
+        semaphore = asyncio.Semaphore(3)
+
+        async def run_batch(index: int, batch: list[_TranslationUnit]):
+            async with semaphore:
+                generator = copy(self)
+                generator._unavailable_model_ids = set(self._unavailable_model_ids)
                 restored = await translate_batch(
-                    batch,
-                    batch_index=batch_index,
-                    batch_path=f"{batch_index + 1}/{len(batches)}",
+                    batch, batch_index=index, batch_path=f"{index + 1}/{len(batches)}",
+                    generator=generator,
                 )
-            except AiGenerationError as exc:
-                if not str(exc).startswith("Translation batch "):
-                    logger.warning(
-                        "document_translation_provider_failed batch=%d/%d units=%d "
-                        "model=%s reason=%s",
-                        batch_index + 1,
-                        len(batches),
-                        len(batch),
-                        self.model_id,
-                        _safe_generation_reason(exc),
-                    )
-                raise
+                return restored, generator.model_id
+
+        tasks = [
+            asyncio.create_task(run_batch(index, batch)) for index, batch in enumerate(batches)
+        ]
+        try:
+            results = await asyncio.gather(*tasks)
+        except BaseException:
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            raise
+        for restored, model_id in results:
             translated_units.update(restored)
+            self.model_id = model_id
         if len(translated_units) != len(units):
             raise AiGenerationError("Translation did not reconstruct every source unit")
         logger.info(
