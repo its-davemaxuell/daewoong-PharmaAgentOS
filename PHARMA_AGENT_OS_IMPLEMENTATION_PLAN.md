@@ -3212,7 +3212,7 @@ bounded concurrent reads, role filtering, warm caches, Retry/Continue fallback,
 reduced motion and a single reveal without remounting on menu navigation.
 `PORTAL_STARTUP_ENABLED` defaults to enabled; only an explicit `false` disables it.
 The legacy-only startup flag no longer controls the preferred experience.
-# Public pipeline examples — requested 2026-09-16
+## Public pipeline examples — requested 2026-09-16
 
 Add a public, clearly labeled Examples area using fresh executions of the existing
 services. Cover Chat, Research, document analysis/translation, specialist reference
@@ -3221,3 +3221,10 @@ defects before publishing. Preserve private browser histories. Publish curated
 snapshots with inputs, outputs, sources and execution provenance; identify isolated
 synthetic demonstrations and simulated review decisions explicitly. Keep unfinished
 personal execution disabled. Verify the public area in real browsers and deploy.
+
+Implementation: 18 curated examples cover nine hosted FDA results and nine isolated
+reference-service results. Source links, exact excerpts, timestamps, inputs and
+hashed downloads make each output inspectable. Actual-run defects were repaired in
+Research planning/verification, Chat evidence selection, translation and impact
+description. See `docs/assurance/public-examples-20260916.md` and the handoff for
+execution details, browser verification and deployment status.

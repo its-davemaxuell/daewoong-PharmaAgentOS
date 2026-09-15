@@ -1,0 +1,351 @@
+{
+  "example": "research-laboratory-ko",
+  "origin": "https://pharmaagent-os-ochre.vercel.app",
+  "captured_at": "2026-09-15T16:25:24Z",
+  "synthetic_sources": false,
+  "simulated_reviews": false,
+  "human_approved": false,
+  "method": "Hosted Research worker / 6 model calls",
+  "input": "공개 예시용 검토 초안: 저장된 FDA 의약품 경고서한 중 시험실 조사 또는 부적합 시험결과(OOS) 처리에 관한 최소 두 회사의 관찰사항을 비교하세요. 근거가 있는 발견사항 3~5개와 회사별 차이, 해당 시험을 수행하는 조직에서 검토할 수 있는 조건부 질문을 한국어로 작성하세요. 실제 내부 자료는 제공되지 않았으므로 우리 회사의 준수 상태를 추정하지 마세요.",
+  "output": {
+    "objective": "공개 예시용 검토 초안: 저장된 FDA 의약품 경고서한 중 시험실 조사 또는 부적합 시험결과(OOS) 처리에 관한 최소 두 회사의 관찰사항을 비교하세요. 근거가 있는 발견사항 3~5개와 회사별 차이, 해당 시험을 수행하는 조직에서 검토할 수 있는 조건부 질문을 한국어로 작성하세요. 실제 내부 자료는 제공되지 않았으므로 우리 회사의 준수 상태를 추정하지 마세요.",
+    "language": "ko",
+    "status": "completed",
+    "plan": [
+      "저장된 경고서한에서 'out of specification' 또는 'OOS' 및 'laboratory investigation' 검색",
+      "최소 두 회사의 관련 청크를 읽기",
+      "3~5개의 근거 있는 비교 발견사항 초안 작성",
+      "회사별 차이점과 검토용 조건부 질문 작성",
+      "제한사항을 포함해 초안 제출"
+    ],
+    "result": {
+      "title": "OOS 조사 비교 초안: FDA 경고서한 근거",
+      "findings": [
+        {
+          "statement": "Huons Co., Ltd.의 경고서한은 OOS 결과에 대해 불충분한 조사와 부적절한 가설검증 사용을 지적한다.",
+          "citation_ids": [
+            "S2"
+          ],
+          "support": "supported",
+          "limitations": [
+            "서한은 특정 사례를 설명하나 회사의 전체 OOS 프로세스 문서를 완전하게 제시하지 않음"
+          ]
+        },
+        {
+          "statement": "Active Cosmetics Manufacturing Inc.의 경고서한은 미생물학적 OOS 결과를 충분히 조사하지 않고, 재검사 통과를 근거로 배치를 방출한 사례를 지적한다.",
+          "citation_ids": [
+            "S1"
+          ],
+          "support": "supported",
+          "limitations": [
+            "서한은 OTC 제품의 특정 배치 사례를 바탕으로 하며 회사의 향후 시정조치 응답 전체를 포함하지 않음"
+          ]
+        },
+        {
+          "statement": "Intas Pharmaceuticals Limited의 경고서한은 반복적인 OOS(특히 안정성/함량 저하) 문제와 불충분한 CAPA로 인해 만성적 실패와 만료기간 변경 및 리콜이 있었음을 보고한다.",
+          "citation_ids": [
+            "S3"
+          ],
+          "support": "supported",
+          "limitations": [
+            "서한에 일부 민감한 수치(b)(4)가 삭제되어 있어 정확한 수량·기간 세부사항은 확인 불가"
+          ]
+        }
+      ],
+      "review_questions": [
+        "우리 조직이 OOS 결과 조사 시 가설검증을 재현 가능한 방식으로 설계하고 문서화했는가?",
+        "미생물학적 OOS 사례에서 재시험 결과만으로 배치 방출을 고려하는 조건이 있는가?",
+        "반복적 OOS(예: 안정성 저하) 발생 시 CAPA가 근본원인과 장기적 재발방지에 충분히 초점을 맞추는가?",
+        "품질단위(QU)의 독립성과 데이터 무결성 감독은 어떻게 보장되는가?"
+      ],
+      "limitations": [
+        "이 초안은 FDA의 특정 경고서한에 근거함. 경고서한은 조사 결과 및 사례를 보고하나 기업 내부 전체 문서·시정조치의 완전성을 제공하지 않음",
+        "제시된 서한들에는 편집된 민감한 정보(b)(4)가 포함되어 있어 일부 세부사항은 식별 불가함"
+      ],
+      "schema_version": 2,
+      "sources": [
+        {
+          "chunk_id": "2dcd36f4-41b3-4fe2-a679-23ef1d18448f",
+          "document_id": "122d1015-fa53-4268-8b55-26fc61a354ad",
+          "letter_id": "20693916-d36c-4105-a9d8-bb13108c9583",
+          "company": "Active Cosmetics Manufacturing Inc.",
+          "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/active-cosmetics-manufacturing-inc-722408-04222026",
+          "anchor": "introduction",
+          "version_id": "15b076b9-4109-434b-a321-53460673c2a4",
+          "version": 1,
+          "source_hash": "c109146d1fe880c126010b6503869c2a3112d3171ff0453d2d7c5bb8c54cf94b",
+          "chunk_hash": "2a08fd5f8c13c8faffe0c366217548ea70772eb57f6e157aaa226d51a9fd4b9c",
+          "text_representation": "document-chunk-content-utf8@1",
+          "start_offset": 0,
+          "end_offset": 2062,
+          "posted_date": "2026-05-05",
+          "excerpt": "More Warning Letters\n7075 Kingspointe Parkway, Suites 2, 3, 4, and 5 Orlando , FL 32819-6540 United States\nUnited States\nWarning Letter 320-26-71\nApril 22, 2026\nDear Ms. Ferreira:\nThe United States Food and Drug Administration (FDA) inspected your drug manufacturing facility, Active Cosmetics Manufacturing Inc., FEI 3005351079, at 7075 Kingspointe Parkway, Suites 2, 3, 4, and 5, Orlando, from October 27 to 31, 2025.\nThis warning letter summarizes significant violations of Current Good Manufacturing Practice (CGMP) regulations for finished pharmaceuticals. See Title 21 Code of Federal Regulations (CFR), parts 210 and 211 (21 CFR parts 210 and 211).\nBecause your methods, facilities, or controls for manufacturing, processing, packing, or holding do not conform to CGMP, your drug products are adulterated within the meaning of section 501(a)(2)(B) of the Federal Food, Drug, and Cosmetic Act (FD&C Act), 21 U.S.C. 351(a)(2)(B).\nWe reviewed your November 21, 2025 response to our Form FDA 483 in detail.\nDuring our inspection, our investigators observed specific violations including, but not limited to, the following.\n1. Your firm failed to thoroughly investigate any unexplained discrepancy or failure of a batch or any of its components to meet any of its specifications, whether or not the batch has already been distributed (21 CFR 211.192).\nYou manufacture topical over-the-counter (OTC) drug products, including (b)(4) labeled for use in (b)(4) . You failed to adequately investigate out-of-specification (OOS) microbiological test results of your drug products.\nYou released batches for commercial distribution based on passing retest results, without conducting thorough investigations to determine the root causes of the original results. For example:\nBatch (b)(4) was found to contain the objectionable microorganism Staphylococcus aureus .\nBatch (b)(4) was found to contain the objectionable microorganism Pseudomonas aeruginosa .\nBatch (b)(4) failed the Neogen Soleris Next Generation System test that you claimed assesses total viable count.",
+          "id": "S1"
+        },
+        {
+          "chunk_id": "45873b6f-77bd-4fd9-acb4-1718f730068b",
+          "document_id": "3476964d-e255-4030-8157-49720862e657",
+          "letter_id": "dbcd061b-7d34-49ba-8d15-a3d03f11d8f9",
+          "company": "Huons Co., Ltd.",
+          "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/huons-co-ltd-724650-06152026",
+          "anchor": "introduction-2-your-firm-failed-to-thoroughl",
+          "version_id": "7fac29e0-278a-4473-949d-845d1b2d7226",
+          "version": 1,
+          "source_hash": "fd58d9cd73e19529ab174e5f6eac91978126b7b42179c00bb9f244f85f07bd4f",
+          "chunk_hash": "6c3cfe1232c6dea0ab616d03eceaad4adb1377ed58cf9b42bd6d93071ec67850",
+          "text_representation": "document-chunk-content-utf8@1",
+          "start_offset": 0,
+          "end_offset": 1994,
+          "posted_date": "2026-06-23",
+          "excerpt": "2. Your firm failed to thoroughly investigate any unexplained discrepancy or failure of a batch or any of its components to meet any of its specifications, whether or not the batch has already been distributed (21 CFR 211.192).\nYour firm failed to open adequate investigations into out-of-specification (OOS) results.\nFor example, (b)(4) batch (b)(4) failed initial testing due to unknown impurities. Your firm opened an out-of-specification investigation that included performing hypothesis testing for contaminated glassware. To simulate your hypothesis, your firm prepared a second sample using glassware marked for disposal to mimic the original failed sample. This second sample met acceptance criteria. Your firm still used the passing hypothesis test results as justification to invalidate the original test result.\nYou also failed to adequately investigate other out-of-specification results, including the endotoxin failure discussed under the first violation in this warning letter.\nIn response you indicated that your firm is conducting a retrospective assessment of all OOS investigations for all U.S. drug products on the market, but you did not provide a specific timeline for completion. Your response is also inadequate because it fails to sufficiently address the need for improved quality unit (QU) oversight of investigations. In addition, the data integrity issues at your firm significantly compromise your QU’s ability to perform its obligation to assess laboratory data and evaluate OOS investigations.\nFor more information about handling failing, out-of-specification, out-of-trend, or other unexpected results and documentation of your investigations, see FDA’s guidance document Investigating Out-of- Specification (OOS) Test Results for Pharmaceutical Production at https://www.fda.gov/regulatory-information/search-fda-guidance-documents/investigating-out-specification-oos-test-results-pharmaceutical-production-level-2-revision.\nIn response to this letter provide:",
+          "id": "S2"
+        },
+        {
+          "chunk_id": "739760d8-6dd2-4413-916d-23bc3037248d",
+          "document_id": "b8641864-b699-4681-aa92-fcd897659546",
+          "letter_id": "e4424025-6af1-4a4b-b3d4-382db6b66f91",
+          "company": "Intas Pharmaceuticals Limited",
+          "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/intas-pharmaceuticals-limited-721151-03302026",
+          "anchor": "introduction",
+          "version_id": "27103504-558c-4b4e-a86d-d0210e8d5ea5",
+          "version": 1,
+          "source_hash": "bd78d841b3c5ab3e9024ed694dc00a2067b669d1419fe18968eabce0768853b4",
+          "chunk_hash": "96902f527a4eb0a0a35094e58f5e23bf6fa3f3efc6e379c96722c25c11782b3b",
+          "text_representation": "document-chunk-content-utf8@1",
+          "start_offset": 0,
+          "end_offset": 2064,
+          "posted_date": "2026-04-28",
+          "excerpt": "More Warning Letters\nPlot No. 255, Magnet Corporate Park Nr. Sola Bridge, S. G. Highway, Thaltej Ahmedabad India\nUnited States\nWarning Letter 320-26-57\nMarch 30, 2026\nDear Mr. Maheshwari:\nThe United States Food and Drug Administration (FDA) inspected your drug manufacturing facility, Intas Pharmaceuticals Limited, FEI 3005890633, located at Camp Road, Selaqui, Dehradun, from September 8 to 17, 2025.\nThis warning letter summarizes significant violations of Current Good Manufacturing Practice (CGMP) regulations for finished pharmaceuticals. See Title 21 Code of Federal Regulations (CFR), parts 210 and 211 (21 CFR parts 210 and 211).\nBecause your methods, facilities, or controls for manufacturing, processing, packing, or holding do not conform to CGMP, your drug products are adulterated within the meaning of section 501(a)(2)(B) of the Federal Food, Drug, and Cosmetic Act (FD&C Act), 21 U.S.C. 351(a)(2)(B).\nWe reviewed your October 8, 2025, response to our Form FDA 483 in detail and acknowledge receipt of your subsequent correspondence.\nDuring our inspection, our investigators observed specific violations including, but not limited to, the following.\n1. Your firm failed to thoroughly investigate any unexplained discrepancy or failure of a batch or any of its components to meet any of its specifications, whether or not the batch has already been distributed (21 CFR 211.192).\nYour investigations into out-of-specification (OOS) assay results were inadequate. Your corrective and preventive actions (CAPAs) to address your persistent OOS assay results for (b)(4) tablets were not robust, as evidenced by the continued trend of subpotent assay stability failures and multiple (b)(4) to drug product expiry period.\nFor example, since 2023, your testing has shown multiple confirmed stability OOS results for (b)(4) batches. You (b)(4) your expiry period from (b)(4) to (b)(4) , and then further (b)(4) it to the current (b)(4) . We acknowledge your decision to recall (b)(4) batches of (b)(4) tablets in response to stability OOS results since 2024.",
+          "id": "S3"
+        }
+      ],
+      "evidence_check": "ai_checked",
+      "intended_use": "human_review_draft"
+    },
+    "sources": [
+      {
+        "chunk_id": "2dcd36f4-41b3-4fe2-a679-23ef1d18448f",
+        "document_id": "122d1015-fa53-4268-8b55-26fc61a354ad",
+        "letter_id": "20693916-d36c-4105-a9d8-bb13108c9583",
+        "company": "Active Cosmetics Manufacturing Inc.",
+        "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/active-cosmetics-manufacturing-inc-722408-04222026",
+        "anchor": "introduction",
+        "version_id": "15b076b9-4109-434b-a321-53460673c2a4",
+        "version": 1,
+        "source_hash": "c109146d1fe880c126010b6503869c2a3112d3171ff0453d2d7c5bb8c54cf94b",
+        "chunk_hash": "2a08fd5f8c13c8faffe0c366217548ea70772eb57f6e157aaa226d51a9fd4b9c",
+        "text_representation": "document-chunk-content-utf8@1",
+        "start_offset": 0,
+        "end_offset": 2062,
+        "posted_date": "2026-05-05",
+        "excerpt": "More Warning Letters\n7075 Kingspointe Parkway, Suites 2, 3, 4, and 5 Orlando , FL 32819-6540 United States\nUnited States\nWarning Letter 320-26-71\nApril 22, 2026\nDear Ms. Ferreira:\nThe United States Food and Drug Administration (FDA) inspected your drug manufacturing facility, Active Cosmetics Manufacturing Inc., FEI 3005351079, at 7075 Kingspointe Parkway, Suites 2, 3, 4, and 5, Orlando, from October 27 to 31, 2025.\nThis warning letter summarizes significant violations of Current Good Manufacturing Practice (CGMP) regulations for finished pharmaceuticals. See Title 21 Code of Federal Regulations (CFR), parts 210 and 211 (21 CFR parts 210 and 211).\nBecause your methods, facilities, or controls for manufacturing, processing, packing, or holding do not conform to CGMP, your drug products are adulterated within the meaning of section 501(a)(2)(B) of the Federal Food, Drug, and Cosmetic Act (FD&C Act), 21 U.S.C. 351(a)(2)(B).\nWe reviewed your November 21, 2025 response to our Form FDA 483 in detail.\nDuring our inspection, our investigators observed specific violations including, but not limited to, the following.\n1. Your firm failed to thoroughly investigate any unexplained discrepancy or failure of a batch or any of its components to meet any of its specifications, whether or not the batch has already been distributed (21 CFR 211.192).\nYou manufacture topical over-the-counter (OTC) drug products, including (b)(4) labeled for use in (b)(4) . You failed to adequately investigate out-of-specification (OOS) microbiological test results of your drug products.\nYou released batches for commercial distribution based on passing retest results, without conducting thorough investigations to determine the root causes of the original results. For example:\nBatch (b)(4) was found to contain the objectionable microorganism Staphylococcus aureus .\nBatch (b)(4) was found to contain the objectionable microorganism Pseudomonas aeruginosa .\nBatch (b)(4) failed the Neogen Soleris Next Generation System test that you claimed assesses total viable count.",
+        "id": "S1"
+      },
+      {
+        "chunk_id": "45873b6f-77bd-4fd9-acb4-1718f730068b",
+        "document_id": "3476964d-e255-4030-8157-49720862e657",
+        "letter_id": "dbcd061b-7d34-49ba-8d15-a3d03f11d8f9",
+        "company": "Huons Co., Ltd.",
+        "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/huons-co-ltd-724650-06152026",
+        "anchor": "introduction-2-your-firm-failed-to-thoroughl",
+        "version_id": "7fac29e0-278a-4473-949d-845d1b2d7226",
+        "version": 1,
+        "source_hash": "fd58d9cd73e19529ab174e5f6eac91978126b7b42179c00bb9f244f85f07bd4f",
+        "chunk_hash": "6c3cfe1232c6dea0ab616d03eceaad4adb1377ed58cf9b42bd6d93071ec67850",
+        "text_representation": "document-chunk-content-utf8@1",
+        "start_offset": 0,
+        "end_offset": 1994,
+        "posted_date": "2026-06-23",
+        "excerpt": "2. Your firm failed to thoroughly investigate any unexplained discrepancy or failure of a batch or any of its components to meet any of its specifications, whether or not the batch has already been distributed (21 CFR 211.192).\nYour firm failed to open adequate investigations into out-of-specification (OOS) results.\nFor example, (b)(4) batch (b)(4) failed initial testing due to unknown impurities. Your firm opened an out-of-specification investigation that included performing hypothesis testing for contaminated glassware. To simulate your hypothesis, your firm prepared a second sample using glassware marked for disposal to mimic the original failed sample. This second sample met acceptance criteria. Your firm still used the passing hypothesis test results as justification to invalidate the original test result.\nYou also failed to adequately investigate other out-of-specification results, including the endotoxin failure discussed under the first violation in this warning letter.\nIn response you indicated that your firm is conducting a retrospective assessment of all OOS investigations for all U.S. drug products on the market, but you did not provide a specific timeline for completion. Your response is also inadequate because it fails to sufficiently address the need for improved quality unit (QU) oversight of investigations. In addition, the data integrity issues at your firm significantly compromise your QU’s ability to perform its obligation to assess laboratory data and evaluate OOS investigations.\nFor more information about handling failing, out-of-specification, out-of-trend, or other unexpected results and documentation of your investigations, see FDA’s guidance document Investigating Out-of- Specification (OOS) Test Results for Pharmaceutical Production at https://www.fda.gov/regulatory-information/search-fda-guidance-documents/investigating-out-specification-oos-test-results-pharmaceutical-production-level-2-revision.\nIn response to this letter provide:",
+        "id": "S2"
+      },
+      {
+        "chunk_id": "739760d8-6dd2-4413-916d-23bc3037248d",
+        "document_id": "b8641864-b699-4681-aa92-fcd897659546",
+        "letter_id": "e4424025-6af1-4a4b-b3d4-382db6b66f91",
+        "company": "Intas Pharmaceuticals Limited",
+        "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/intas-pharmaceuticals-limited-721151-03302026",
+        "anchor": "introduction",
+        "version_id": "27103504-558c-4b4e-a86d-d0210e8d5ea5",
+        "version": 1,
+        "source_hash": "bd78d841b3c5ab3e9024ed694dc00a2067b669d1419fe18968eabce0768853b4",
+        "chunk_hash": "96902f527a4eb0a0a35094e58f5e23bf6fa3f3efc6e379c96722c25c11782b3b",
+        "text_representation": "document-chunk-content-utf8@1",
+        "start_offset": 0,
+        "end_offset": 2064,
+        "posted_date": "2026-04-28",
+        "excerpt": "More Warning Letters\nPlot No. 255, Magnet Corporate Park Nr. Sola Bridge, S. G. Highway, Thaltej Ahmedabad India\nUnited States\nWarning Letter 320-26-57\nMarch 30, 2026\nDear Mr. Maheshwari:\nThe United States Food and Drug Administration (FDA) inspected your drug manufacturing facility, Intas Pharmaceuticals Limited, FEI 3005890633, located at Camp Road, Selaqui, Dehradun, from September 8 to 17, 2025.\nThis warning letter summarizes significant violations of Current Good Manufacturing Practice (CGMP) regulations for finished pharmaceuticals. See Title 21 Code of Federal Regulations (CFR), parts 210 and 211 (21 CFR parts 210 and 211).\nBecause your methods, facilities, or controls for manufacturing, processing, packing, or holding do not conform to CGMP, your drug products are adulterated within the meaning of section 501(a)(2)(B) of the Federal Food, Drug, and Cosmetic Act (FD&C Act), 21 U.S.C. 351(a)(2)(B).\nWe reviewed your October 8, 2025, response to our Form FDA 483 in detail and acknowledge receipt of your subsequent correspondence.\nDuring our inspection, our investigators observed specific violations including, but not limited to, the following.\n1. Your firm failed to thoroughly investigate any unexplained discrepancy or failure of a batch or any of its components to meet any of its specifications, whether or not the batch has already been distributed (21 CFR 211.192).\nYour investigations into out-of-specification (OOS) assay results were inadequate. Your corrective and preventive actions (CAPAs) to address your persistent OOS assay results for (b)(4) tablets were not robust, as evidenced by the continued trend of subpotent assay stability failures and multiple (b)(4) to drug product expiry period.\nFor example, since 2023, your testing has shown multiple confirmed stability OOS results for (b)(4) batches. You (b)(4) your expiry period from (b)(4) to (b)(4) , and then further (b)(4) it to the current (b)(4) . We acknowledge your decision to recall (b)(4) batches of (b)(4) tablets in response to stability OOS results since 2024.",
+        "id": "S3"
+      }
+    ],
+    "events": [
+      {
+        "sequence": 1,
+        "kind": "queued",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:25:29.642038+00:00"
+      },
+      {
+        "sequence": 2,
+        "kind": "started",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:25:31.535562+00:00"
+      },
+      {
+        "sequence": 3,
+        "kind": "choosing_action",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:25:34.552018+00:00"
+      },
+      {
+        "sequence": 4,
+        "kind": "action_needs_revision",
+        "stage": "planning",
+        "data": {
+          "code": "plan_language_mismatch"
+        },
+        "created_at": "2026-09-15T16:25:46.364254+00:00"
+      },
+      {
+        "sequence": 5,
+        "kind": "choosing_action",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:25:49.483965+00:00"
+      },
+      {
+        "sequence": 6,
+        "kind": "plan_saved",
+        "stage": "planning",
+        "data": {
+          "steps": [
+            "저장된 경고서한에서 'out of specification' 또는 'OOS' 및 'laboratory investigation' 검색",
+            "최소 두 회사의 관련 청크를 읽기",
+            "3~5개의 근거 있는 비교 발견사항 초안 작성",
+            "회사별 차이점과 검토용 조건부 질문 작성",
+            "제한사항을 포함해 초안 제출"
+          ]
+        },
+        "created_at": "2026-09-15T16:26:00.623669+00:00"
+      },
+      {
+        "sequence": 7,
+        "kind": "choosing_action",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:26:06.521647+00:00"
+      },
+      {
+        "sequence": 8,
+        "kind": "search_started",
+        "stage": "searching",
+        "data": {
+          "query": "out of specification OOS laboratory investigation warning letter pharmaceutical company 'out-of-specification' 'OOS' 'laboratory' 'investigation' 'warning letter'"
+        },
+        "created_at": "2026-09-15T16:26:16.842126+00:00"
+      },
+      {
+        "sequence": 9,
+        "kind": "search_completed",
+        "stage": "searching",
+        "data": {
+          "query": "out of specification OOS laboratory investigation warning letter pharmaceutical company 'out-of-specification' 'OOS' 'laboratory' 'investigation' 'warning letter'",
+          "count": 8
+        },
+        "created_at": "2026-09-15T16:26:26.998394+00:00"
+      },
+      {
+        "sequence": 10,
+        "kind": "choosing_action",
+        "stage": "searching",
+        "data": {},
+        "created_at": "2026-09-15T16:26:33.405873+00:00"
+      },
+      {
+        "sequence": 11,
+        "kind": "read_started",
+        "stage": "reading",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:26:44.803608+00:00"
+      },
+      {
+        "sequence": 12,
+        "kind": "read_completed",
+        "stage": "reading",
+        "data": {
+          "count": 3,
+          "sources": [
+            {
+              "id": "S2",
+              "company": "Huons Co., Ltd.",
+              "letter_id": "dbcd061b-7d34-49ba-8d15-a3d03f11d8f9",
+              "anchor": "introduction-2-your-firm-failed-to-thoroughl"
+            },
+            {
+              "id": "S1",
+              "company": "Active Cosmetics Manufacturing Inc.",
+              "letter_id": "20693916-d36c-4105-a9d8-bb13108c9583",
+              "anchor": "introduction"
+            },
+            {
+              "id": "S3",
+              "company": "Intas Pharmaceuticals Limited",
+              "letter_id": "e4424025-6af1-4a4b-b3d4-382db6b66f91",
+              "anchor": "introduction"
+            }
+          ]
+        },
+        "created_at": "2026-09-15T16:26:51.079076+00:00"
+      },
+      {
+        "sequence": 13,
+        "kind": "choosing_action",
+        "stage": "reading",
+        "data": {},
+        "created_at": "2026-09-15T16:26:58.259878+00:00"
+      },
+      {
+        "sequence": 14,
+        "kind": "draft_prepared",
+        "stage": "writing",
+        "data": {
+          "title": "OOS 조사 비교 초안: FDA 경고서한 근거"
+        },
+        "created_at": "2026-09-15T16:27:17.131982+00:00"
+      },
+      {
+        "sequence": 15,
+        "kind": "check_started",
+        "stage": "checking",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:27:20.533870+00:00"
+      },
+      {
+        "sequence": 16,
+        "kind": "check_completed",
+        "stage": "checking",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:27:45.189461+00:00"
+      },
+      {
+        "sequence": 17,
+        "kind": "completed",
+        "stage": "complete",
+        "data": {},
+        "created_at": "2026-09-15T16:27:51.998813+00:00"
+      }
+    ],
+    "model_calls": 6,
+    "started_at": "2026-09-15T16:25:31.534126+00:00",
+    "finished_at": "2026-09-15T16:27:51.998424+00:00"
+  }
+}

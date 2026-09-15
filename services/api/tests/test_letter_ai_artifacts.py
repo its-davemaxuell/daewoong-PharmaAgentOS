@@ -31,7 +31,7 @@ from app.seed import seed_demo
 class FakeDocumentGenerator:
     provider = "test-provider"
     model_id = "test-document-model"
-    prompt_version = "letter-translation-ko-v4"
+    prompt_version = "letter-translation-ko-v6"
 
     def __init__(
         self,
@@ -50,7 +50,7 @@ class FakeDocumentGenerator:
         self, *, source_sections: list[DocumentSourceSection]
     ) -> dict[str, object]:
         self.translation_calls += 1
-        self.prompt_version = "letter-translation-ko-v4"
+        self.prompt_version = "letter-translation-ko-v6"
         return {
             "sections": [
                 {
@@ -573,7 +573,7 @@ def test_outdated_translation_prompt_is_not_served_or_reused(
 
     assert generated.status_code == 200
     assert generated.json()["id"] != outdated_id
-    assert generated.json()["prompt_version"] == "letter-translation-ko-v4"
+    assert generated.json()["prompt_version"] == "letter-translation-ko-v6"
     assert generator.translation_calls == 1
 
 
@@ -768,7 +768,7 @@ def test_quality_guarded_translation_fallback_model_id_is_persisted_and_reported
 
     assert generated.status_code == 200
     assert generated.json()["model_id"] == "gemini-3.1-flash-lite"
-    assert generated.json()["prompt_version"] == "letter-translation-ko-v4"
+    assert generated.json()["prompt_version"] == "letter-translation-ko-v6"
     assert requested_models == [
         "gemini-3.7-flash",
         "gemini-3.6-flash",

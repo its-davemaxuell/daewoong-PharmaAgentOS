@@ -1,0 +1,44 @@
+{
+  "example": "verification",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.245454+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "VerificationEngine.verify",
+  "input": "{\n  \"hypothesis_id\": \"e3662b76-0c2a-4d36-9697-9695b67447a0\"\n}",
+  "output": {
+    "id": "2080fa4a-dc78-494f-bc6d-ed571b185d3e",
+    "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+    "run_id": null,
+    "plan_id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+    "plan_version": 1,
+    "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+    "bound_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+    "input_sha256": "c5b73d58da237ab5f0e392110efad3e4fb39f57bf86dec7353d60b06adb063f1",
+    "correction_iteration": 0,
+    "status": "PASS",
+    "checks": [
+      {
+        "check": "hypothesis:e3662b76-0c2a-4d36-9697-9695b67447a0",
+        "status": "PASS",
+        "detail": "Dual-source, boundary, distinction, and semantic checks completed."
+      },
+      {
+        "check": "cross-hypothesis-contradictions",
+        "status": "PASS",
+        "detail": "0 contradictory relationship groups detected."
+      }
+    ],
+    "issues": [],
+    "verified_hypothesis_ids": [
+      "e3662b76-0c2a-4d36-9697-9695b67447a0"
+    ],
+    "report_sha256": "5e79fc3edf7c46c7de1cf65946245f52c00881df7540d9a5439caca6f8224fa3",
+    "verifier_name": "verification-agent",
+    "verifier_version": "1.2.1",
+    "created_by": "verification-agent@1.2.1",
+    "created_at": "2026-09-15T16:04:04.230257Z",
+    "independent_context": true
+  }
+}

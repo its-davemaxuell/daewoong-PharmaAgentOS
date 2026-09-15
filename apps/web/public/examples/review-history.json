@@ -1,0 +1,212 @@
+{
+  "example": "review-history",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.357022+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "case event history; all reviewer actions simulated",
+  "input": "{\n  \"case_id\": \"e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c\"\n}",
+  "output": {
+    "items": [
+      {
+        "id": "eae22026-325c-4149-be9d-71fd0ad9a692",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 1,
+        "event_type": "CASE_CREATED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "6080f7ce-2e68-4c1a-9447-40dc557729c5",
+        "payload": {
+          "request_fingerprint": "26c1417cb39c81d348576e8df5fa227d7397f1a7e54ceb839cfa0df1fd9839d3",
+          "title": "Example: fictional data-integrity review",
+          "objective": "Compare a synthetic FDA observation with fictional internal procedures and prepare a draft for human review.",
+          "workflow_key": "regulatory-impact-review"
+        },
+        "previous_event_hash": null,
+        "event_hash": "0b797d6c6a8503a6ff9223468c7f1e5f57434ee5f3978d502d370af16da7b86a",
+        "state_hash": "6ae4ca382e640749584a32fa80687dff7806fcb7b69f33cbb1971d8af820c9d2",
+        "occurred_at": "2026-09-15T16:03:41.191269"
+      },
+      {
+        "id": "5db21160-3a6d-4f20-8ab0-77f18e4eaa96",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 2,
+        "event_type": "SOURCE_PINNED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "6080f7ce-2e68-4c1a-9447-40dc557729c5",
+        "payload": {
+          "case_source_id": "862edfa8-81a9-48a4-bb52-ff72f89ab9d8",
+          "warning_letter_id": "797468ab-e000-42e1-8c6c-79de2c75e3c2",
+          "document_id": "97a5fb28-a021-4605-8e35-19a343a72031",
+          "document_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+          "source_role": "PRIMARY_REGULATORY",
+          "source_sha256": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417"
+        },
+        "previous_event_hash": "0b797d6c6a8503a6ff9223468c7f1e5f57434ee5f3978d502d370af16da7b86a",
+        "event_hash": "19a13c3052a38d9b2c7611587becff42892205aa0b6cbefc4b501b6050aae6a3",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:03:41.207155"
+      },
+      {
+        "id": "e7c6723e-e913-4484-afa6-b53093d7608c",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 3,
+        "event_type": "PLAN_GENERATED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "66047847-3975-4395-b77e-96c67efa30dc",
+        "payload": {
+          "request_fingerprint": "4451d4ae2059f3b7e05138a42626dc342921beab103267241c6e8cd894e8edb5",
+          "plan_id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+          "plan_version": 1,
+          "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+          "based_on_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba"
+        },
+        "previous_event_hash": "19a13c3052a38d9b2c7611587becff42892205aa0b6cbefc4b501b6050aae6a3",
+        "event_hash": "1c5481c818c9bdc40ad92fc31443ec818f8685c21a1282420c7c6deec55d4cf2",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:03:41.270784"
+      },
+      {
+        "id": "5b3aacd7-e50d-4ebf-bc86-baaf33f2bf86",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 4,
+        "event_type": "APPROVAL_REQUESTED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "66047847-3975-4395-b77e-96c67efa30dc",
+        "payload": {
+          "approval_id": "99e97108-5aee-401e-a96e-8088b28b8c05",
+          "plan_id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+          "plan_version": 1,
+          "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+          "bound_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+          "assigned_reviewer_id": "simulated-demo-reviewer",
+          "expires_at": "2026-09-22T16:03:41.254859+00:00"
+        },
+        "previous_event_hash": "1c5481c818c9bdc40ad92fc31443ec818f8685c21a1282420c7c6deec55d4cf2",
+        "event_hash": "b7dbcdb96eb53e09d651675a166c5965e19943d153e357ddfc4438045cb31d2f",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:03:41.270784"
+      },
+      {
+        "id": "3c59fb4a-4598-4717-a523-a4314ffe72d3",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 5,
+        "event_type": "PLAN_APPROVED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-reviewer",
+        "request_id": "1cb9b34b-47e3-480c-95be-4496270663cd",
+        "payload": {
+          "request_fingerprint": "910016c84406bf6ad71c31e0f2c8e57093ea1ddde40eb43b104ac598025bdea5",
+          "decision": "approve",
+          "reason": "SIMULATED reviewer action for isolated demonstration; no human qualification.",
+          "approval_id": "99e97108-5aee-401e-a96e-8088b28b8c05",
+          "plan_id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+          "plan_version": 1,
+          "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+          "bound_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba"
+        },
+        "previous_event_hash": "b7dbcdb96eb53e09d651675a166c5965e19943d153e357ddfc4438045cb31d2f",
+        "event_hash": "ec9f181da310606eccc2beae0a6de107ad0b25f6c584a95e8e79ab6637bfb63b",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:03:41.318464"
+      },
+      {
+        "id": "7f28204d-aae6-453b-8fa3-daf032f963c8",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 6,
+        "event_type": "IMPACT_HYPOTHESES_GENERATED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "48732ed9-be25-4187-92c4-afd1d6c42c77",
+        "payload": {
+          "request_fingerprint": "df40322e2e473300522b22517080fcb79dca445aa6bff9691266c5ca1640ee61",
+          "hypothesis_ids": [
+            "e3662b76-0c2a-4d36-9697-9695b67447a0",
+            "fabd7168-55ac-4201-899d-12335ba9fdb2",
+            "82e9b10e-6264-4151-b1ed-b98511cdce25",
+            "96cdfb8b-3482-49cc-a999-9c279fa9ebcc",
+            "0eaa6db9-43e8-4e6e-ada4-ce9900994c47",
+            "a1cfbb4e-0f22-4b8a-a0f6-579452241280"
+          ],
+          "generated_count": 6,
+          "agent": {
+            "name": "impact-analysis-agent",
+            "version": "1.0.0"
+          },
+          "decision_support_only": true
+        },
+        "previous_event_hash": "ec9f181da310606eccc2beae0a6de107ad0b25f6c584a95e8e79ab6637bfb63b",
+        "event_hash": "bbafd79877a774e25499f06f89b48addb8cedd55e4e27001e4a9da41ab767db0",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:04:04.108101"
+      },
+      {
+        "id": "4d263f14-e290-4a02-85f4-a62271941e54",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 7,
+        "event_type": "IMPACT_HYPOTHESIS_ACCEPTED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-reviewer",
+        "request_id": "98b863f0-e442-4760-8024-1d89f714cf66",
+        "payload": {
+          "request_fingerprint": "2227780d5cf5b1fd4fd7ce41a6005223d9c1532961a24e61c91815d9cd6402b6",
+          "hypothesis_id": "e3662b76-0c2a-4d36-9697-9695b67447a0",
+          "hypothesis_sha256": "859ce8ab36ec10a6d10e1b060ef4d47516322ecad06906870adf62ac3c4b238b",
+          "status": "ACCEPTED"
+        },
+        "previous_event_hash": "bbafd79877a774e25499f06f89b48addb8cedd55e4e27001e4a9da41ab767db0",
+        "event_hash": "814317142c44b147931423a1581a6a1fa7f6104f6eaeb8529897a81288f973c1",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:04:04.150237"
+      },
+      {
+        "id": "1cfbd375-2a6c-4e1c-ac23-e8aeeca0879c",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 8,
+        "event_type": "VERIFICATION_PASS",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "676ba186-f287-45ae-ae92-d7d552e8a62b",
+        "payload": {
+          "verification_report_id": "2080fa4a-dc78-494f-bc6d-ed571b185d3e",
+          "report_sha256": "5e79fc3edf7c46c7de1cf65946245f52c00881df7540d9a5439caca6f8224fa3",
+          "status": "PASS",
+          "correction_iteration": 0,
+          "issue_count": 0
+        },
+        "previous_event_hash": "814317142c44b147931423a1581a6a1fa7f6104f6eaeb8529897a81288f973c1",
+        "event_hash": "976846b92a2d28883862f80c33ed086e46d1267d8a2eea39c0158ffa9f605b59",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:04:04.245454"
+      },
+      {
+        "id": "aa3d957b-3247-46e0-b624-818c0af56090",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "sequence": 9,
+        "event_type": "ARTIFACT_COMPOSED",
+        "actor_type": "user",
+        "actor_id": "simulated-demo-author",
+        "request_id": "eb2c087e-c2fe-476d-b406-74912a942ba2",
+        "payload": {
+          "request_fingerprint": "e5c4390f5882950c79c289a9bc4839b346baa61675bee1d6042e30a33dbff666",
+          "artifact_id": "fac174f9-a79a-4ef6-8fdb-efec1fe1d832",
+          "artifact_version_id": "55a1fe64-59f4-452d-bc1c-c6aa2291324f",
+          "version": 1,
+          "content_sha256": "e8c2a459b31bc7f009def60206f57d787c4244c42bd3d7476d635f4f1978bedf",
+          "evidence_manifest_sha256": "cf1250267a296cee1f055baf54708f78094f711d18fdbb28bdeef0ab09f59b34",
+          "approval_id": "f7629fc6-ab72-42f7-9898-51eace84120e"
+        },
+        "previous_event_hash": "976846b92a2d28883862f80c33ed086e46d1267d8a2eea39c0158ffa9f605b59",
+        "event_hash": "1e0b6be494fe925c1d7159b75b303aa39b6b9e4b82f1585f8299251f17f2d840",
+        "state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+        "occurred_at": "2026-09-15T16:04:04.309054"
+      }
+    ],
+    "next_cursor": null,
+    "has_more": false
+  }
+}

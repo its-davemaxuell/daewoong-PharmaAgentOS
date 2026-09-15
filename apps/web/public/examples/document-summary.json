@@ -1,0 +1,67 @@
+{
+  "example": "document-summary",
+  "origin": "https://pharmaagent-os-ochre.vercel.app",
+  "captured_at": "2026-09-15T15:52:32Z",
+  "synthetic_sources": false,
+  "simulated_reviews": false,
+  "human_approved": false,
+  "method": "Hosted document summary / gpt-5-mini / letter-artifacts-bilingual-v2",
+  "input": "Dabur India Limited — Analyze the retained FDA warning letter in English.",
+  "output": {
+    "artifactType": "summary",
+    "language": "en",
+    "content": {
+      "executiveSummary": "FDA inspected Dabur India Limited (FEI 3001413302) from January 12–16, 2026 and identified significant violations of CGMP (21 CFR parts 210 and 211). FDA concluded the firm’s methods, facilities, or controls do not conform to CGMP and that the firm’s drug products are adulterated under section 501(a)(2)(B) of the FD&C Act (21 U.S.C. 351(a)(2)(B)). Key observations included: a deficient Quality Unit that signed off on records with apparent falsification and transcription discrepancies; incomplete laboratory records and missing microbiological plates; inadequate cleaning and cleaning validation for non-dedicated equipment; and lack of process validation for many marketed OTC products. FDA recommended a qualified CGMP consultant, requested extensive remedial submissions for each deficiency, noted a voluntary recall for some products, and placed all drugs offered for import from the firm on Import Alert 66-40 on June 5, 2026.",
+      "attentionPoints": [
+        {
+          "title": "Quality Unit oversight and record review authority",
+          "rationale": "FDA observed the Quality Unit (QU) signed off on records that included a falsified equipment logbook and analytical data discrepancies; FDA states the QU failed to ensure data integrity and completeness (e.g., discovery of a falsified logbook and discrepancies between source analytical data and final batch records). Review whether your QU has explicit authority, documented procedures, and resourcing to identify and escalate suspected record falsification, transcription errors, and to perform complete final batch reviews before disposition decisions.",
+          "sourceAnchors": [
+            "1-your-firm-failed-to-establish-an-adequate-quality-control-unit-with-the-respon"
+          ]
+        },
+        {
+          "title": "Laboratory data completeness and sample traceability",
+          "rationale": "FDA found laboratory notebooks and records lacking complete data (missing microbiology plates, absence of test procedures and analytical workbooks for multiple batches, and missing equipment logbook entries). Examine controls for sample handling, retention and disposal, lab record completeness (analytical notebooks, workbooks, test data sheets), and instrument usage logs to ensure all test results are attributable, legible, contemporaneous, original, and accurate.",
+          "sourceAnchors": [
+            "2-your-firm-failed-to-ensure-that-laboratory-records-included-complete-data-deri"
+          ]
+        },
+        {
+          "title": "Cleaning validation and controls for non-dedicated equipment",
+          "rationale": "FDA identified reliance on visual inspection only, absence of established carryover limits, lack of quantitative residue testing and no cleaning validation for some multi-product lines. Review cleaning validation programs, worst-case identification, swab/surface sampling plans, and interim controls for cross-contamination when equipment is non-dedicated.",
+          "sourceAnchors": [
+            "3-your-firm-failed-to-establish-and-follow-adequate-written-procedures-for-clean"
+          ]
+        },
+        {
+          "title": "Process validation plans and interim controls",
+          "rationale": "FDA observed that process validation had not been performed for many marketed products and that the firm did not provide timeframes or interim controls (e.g., enhanced finished-product testing) for products produced before validation. Verify that process validation strategies include timelines, product-specific plans, and interim risk-mitigation measures for products already manufactured and distributed.",
+          "sourceAnchors": [
+            "4-your-firm-failed-to-establish-adequate-written-procedures-for-production-and-p"
+          ]
+        },
+        {
+          "title": "Distribution, recall readiness, and Import Alert implications",
+          "rationale": "FDA recommended removal of certain batches, the firm initiated a voluntary recall for some products, and FDA placed the firm on Import Alert 66-40. Review procedures for customer notification, recall execution, product disposition, and regulatory reporting in the event of import refusals or broader market actions.",
+          "sourceAnchors": [
+            "drug-recall",
+            "conclusion"
+          ]
+        }
+      ],
+      "comparisonQuestions": [
+        "Internally compare: Does Daewoong’s Quality Unit have documented authority, resourcing, and documented final batch review practices comparable to the expectations FDA describes in '1-your-firm-failed-to-establish-an-adequate-quality-control-unit-with-the-respon'?",
+        "Internally compare: How do Daewoong’s laboratory sample retention, plate/archive practices, and instrument usage logging compare to the gaps FDA identified in '2-your-firm-failed-to-ensure-that-laboratory-records-included-complete-data-deri'?",
+        "Internally compare: Do Daewoong’s cleaning validation methods, worst-case identification, and swab/surface sampling meet the elements FDA found missing in '3-your-firm-failed-to-establish-and-follow-adequate-written-procedures-for-clean'?",
+        "Internally compare: Does Daewoong maintain product-specific process validation timelines and interim controls for products manufactured prior to completion of validation consistent with the expectations outlined in '4-your-firm-failed-to-establish-adequate-written-procedures-for-production-and-p'?"
+      ],
+      "disclaimer": "This material supports internal comparison against the FDA source. It is not a conclusion about Daewoong Pharmaceutical or Daewoong Bio's compliance and is not legal advice."
+    },
+    "provider": "openai",
+    "modelId": "gpt-5-mini",
+    "promptVersion": "letter-artifacts-bilingual-v2",
+    "sourceHash": "1a5123c024949f8204b85f405b738eb13865e962a369ff91599c36456009b20e",
+    "createdAt": "2026-09-15T15:52:38.504059Z"
+  }
+}

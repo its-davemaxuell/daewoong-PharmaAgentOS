@@ -1,0 +1,394 @@
+{
+  "example": "research-contamination",
+  "origin": "https://pharmaagent-os-ochre.vercel.app",
+  "captured_at": "2026-09-15T16:02:37Z",
+  "synthetic_sources": false,
+  "simulated_reviews": false,
+  "human_approved": false,
+  "method": "Hosted Research worker / 7 model calls",
+  "input": "Compare contamination-control observations in at least two companies' saved FDA Drug warning letters. Identify three to five source-supported findings, explain what differs between the cases, and provide conditional review questions for a team that manufactures sterile products. Clearly separate observed source facts from unanswered applicability questions. This is a public demonstration draft, not a compliance decision.",
+  "output": {
+    "objective": "Compare contamination-control observations in at least two companies' saved FDA Drug warning letters. Identify three to five source-supported findings, explain what differs between the cases, and provide conditional review questions for a team that manufactures sterile products. Clearly separate observed source facts from unanswered applicability questions. This is a public demonstration draft, not a compliance decision.",
+    "language": "en",
+    "status": "completed",
+    "plan": [
+      "Search saved FDA warning letters for contamination control observations.",
+      "Select at least two companies with detailed sterility/contamination findings.",
+      "Read the best-matching chunks for each company.",
+      "Draft 3–5 source-cited findings and compare differences.",
+      "Prepare conditional review questions and limitations."
+    ],
+    "result": {
+      "title": "Comparative summary of contamination-control observations from FDA warning letters (public demonstration draft)",
+      "findings": [
+        {
+          "statement": "Wizcure Pharmaa: FDA observed lack of physical barrier separating the ISO 5 (Grade A) filling zone from the surrounding ISO 7 (Grade B), equipment parts in direct contact with drug product were not sterilized, inadequate space and equipment in poor repair, and lack of a meaningful environmental and personnel monitoring program for the aseptic line.",
+          "citation_ids": [
+            "S2"
+          ],
+          "support": "supported",
+          "limitations": [
+            "Finding is limited to FDA's observations in the Wizcure Pharmaa warning letter; the company’s corrective actions described in its response are not independently verified here."
+          ]
+        },
+        {
+          "statement": "Global Pharma Healthcare: FDA found the environmental monitoring (EM) program inadequate, including no non-viable air samples inside the Grade A filling zone or Grade B surrounding areas during active filling, no studies demonstrating disinfectant would not interfere with swabs for viable surface monitoring, and lack of identification data on isolates recovered from EM and personnel monitoring.",
+          "citation_ids": [
+            "S3"
+          ],
+          "support": "supported",
+          "limitations": [
+            "Finding reflects FDA’s documented observations at Global Pharma and the agency’s critique of the company's response timing; it does not assess the firm's current EM program."
+          ]
+        },
+        {
+          "statement": "International Medication Systems: FDA documented severe environmental contamination (including insect larvae and gross microbial contamination) in the aseptic processing area; FDA found the firm’s root-cause explanation (insect infiltration of sealed plates) unsupported and criticized the decision to release product manufactured under those conditions.",
+          "citation_ids": [
+            "S1"
+          ],
+          "support": "supported",
+          "limitations": [
+            "Finding is taken from FDA’s description of the inspection and the firm’s investigation; it does not evaluate the firm’s subsequent actions or current state."
+          ]
+        },
+        {
+          "statement": "Differences between cases: Wizcure’s deficiencies emphasize facility design/separation, equipment sterilization, space and maintenance, and monitoring gaps (S2); Global Pharma’s deficiencies center on EM program design, sampling timing, and laboratory identification/data (S3); International Medication Systems documents acute visible contamination events and a deficient investigation/product release decision (S1).",
+          "citation_ids": [
+            "S2",
+            "S3",
+            "S1"
+          ],
+          "support": "supported",
+          "limitations": [
+            "Comparison synthesizes separate FDA observations; it does not imply these firms share root causes or that one firm’s controls map to another’s."
+          ]
+        }
+      ],
+      "review_questions": [
+        "If our sterile product lines use ISO-classified zones, do we have physical barriers or RABS protecting ISO 5 zones from adjacent ISO 7 traffic, and are there documented validation studies showing barrier efficacy?",
+        "Are environmental monitoring locations and timing defined to sample inside Grade A (ISO 5) and surrounding Grade B (ISO 7) during active filling, including non-viable air sampling and personnel monitoring?",
+        "Do our EM procedures include validated methods to demonstrate disinfectant neutralization or lack of interference with viable surface/swab recovery and identification and trending of isolates?",
+        "Do we have documented procedures and records showing equipment and direct-contact parts are sterilized or otherwise demonstrated suitable before contact with sterile product?",
+        "If an acute contamination event (e.g., visible gross contamination or insect evidence) occurs, do our investigation and product disposition procedures require scientifically-supported root-cause analysis and prevent product release pending adequate justification?"
+      ],
+      "limitations": [
+        "This brief uses only specified FDA warning-letter chunks and does not represent exhaustive FDA case coverage.",
+        "Findings are limited to the FDA-observed facts in the cited warning letters; company responses, corrective actions, or current conditions were not verified here.",
+        "No assessment of applicability to any specific firm is made; questions are conditional and intended for internal review by a manufacturing team."
+      ],
+      "schema_version": 2,
+      "sources": [
+        {
+          "chunk_id": "671aa11a-0acb-475f-828f-e1813a05bfa3",
+          "document_id": "42e30e9e-6c24-4f92-ba38-3e479b68740e",
+          "letter_id": "93a4ae28-c10c-4a7a-b771-3fa0d3d15c65",
+          "company": "International Medication Systems Limited",
+          "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/international-medication-systems-limited-727560-07022026",
+          "anchor": "introduction-14",
+          "version_id": "c7d00940-0c97-464a-a0e5-534940904e28",
+          "version": 1,
+          "source_hash": "64abb854f3410fc23815f731d332f340da5bf4adaf25aa10f3fedd79d500c990",
+          "chunk_hash": "d0e5b1dd45309c6e1081f6852e9c44cab34162e5d7e55be6566bff1da6c5b8d1",
+          "text_representation": "document-chunk-content-utf8@1",
+          "start_offset": 0,
+          "end_offset": 2189,
+          "posted_date": "2026-07-14",
+          "excerpt": "Your investigation failed to identify a scientifically-supported root cause, instead attributing these exceedingly high environmental monitoring findings to an unsubstantiated hypothesis involving insect infiltration of sealed monitoring plates. Notably, written procedures require inspection of plates before use to ensure they are not contaminated or defective, and also require very strict handling measures following sampling (e.g., (b)(4) bags, sterile tape). The microbiological growth media batch also passed negative control testing. Although your deviation report lacked evidence of defects or sampling error, you assessed the contamination risk as “low” based on overreliance on passing sterility test results, and the quality unit approved the release of epinephrine injection, lot EA038A5.\nThe presence of insect larvae and gross microbial contamination in your aseptic processing area demonstrates a critical failure of your contamination control program. The decision to release a lot manufactured under these conditions also demonstrates that your quality unit failed to exercise its responsibility to ensure drug products are manufactured under appropriate conditions and to reject any lot produced under conditions that compromise its quality.\nIn your response, you reiterate that your investigation concluded the contamination was “post-exposure adventitious contamination external to the filling suite,” based on mostly acceptable environmental monitoring data in other locations that day. Using this rationale, you determined the two environmental contamination events were isolated incidents and the risk to the product was low. You also determined that no corrective actions were needed.\nYour response is inadequate. Your investigation outcome based on a “post-exposure” hypothesis remains poorly supported by data. The occurrence of two severe contamination events on the same day in adjacent rooms indicates a significant breakdown in contamination control. Additionally, your failure to implement corrective actions reflects a critical deficiency in your investigation and indicates inadequate oversight of the state of control of the aseptic processing operation.",
+          "id": "S1"
+        },
+        {
+          "chunk_id": "90846261-33fb-417c-8877-22f993528d8d",
+          "document_id": "f31052a0-dd86-4464-a5d8-f015c79a2e99",
+          "letter_id": "2080924f-e1f2-4a01-8b9a-8faa37bfc6f6",
+          "company": "Wizcure Pharmaa Private Limited",
+          "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/wizcure-pharmaa-private-limited-726378-06242026",
+          "anchor": "introduction-2-your-firm-failed-to-perform-o",
+          "version_id": "643db3da-8a4b-4798-9834-ba0261b729f1",
+          "version": 1,
+          "source_hash": "791ccf0723b5592755318512a087c5e16ccf12a5043eb89f75270a0d72f443ad",
+          "chunk_hash": "25e8d59c9e195c36faaf0e2fe3a77031dfc7bf718b00c3aeefec2d53afad083a",
+          "text_representation": "document-chunk-content-utf8@1",
+          "start_offset": 0,
+          "end_offset": 2305,
+          "posted_date": "2026-06-30",
+          "excerpt": "2. Your firm failed to perform operations within specifically defined areas of adequate size and to have separate or defined areas or such other control systems necessary to prevent contamination or mix-ups in aseptic processing areas (21 CFR 211.42(c)(10).\nYour aseptic manufacturing filling line used to produce over-the-counter (OTC) sterile drug products is inadequate.\nFor example, the inspection documented that your filling line has no physical barrier separating and protecting your ISO 5 (Grade A) aseptic filling line from the surrounding ISO 7 (Grade B) room and its personnel. The absence of a physical barrier separating the ISO 5 (Grade A) filling zone from the ISO 7 (Grade B) surrounding environment creates an unacceptable risk to product sterility.\nFurthermore, several equipment parts in direct contact with drug product, containers, and closures were not sterilized.\nIt is essential that the ISO 5 (Grade A) environment continuously maintains an extremely high level of air cleanliness to protect the exposed sterile drug product from contamination. Without proper physical separation, the integrity of the aseptic processing environment cannot be reliably maintained as air currents, personnel movement, and other variables in the less-controlled ISO 7 space can directly convey contamination into the ISO 5 zone.\nIn addition, to ensure sterility, it is imperative that only sterile equipment comes into direct contact with the sterile formulation, containers, and closures.\nYour aseptic processing room also had inadequate space to accommodate appropriate ergonomics, personnel flow, and material flow. Our inspection also found that your processing equipment was in poor state of repair, as detailed later in this letter.\nFinally, you lacked a meaningful environmental monitoring (e.g., critical surfaces, viable air) and personnel monitoring program for your aseptic processing line.\nAseptic manufacturing processes operations must be performed in specifically defined areas of adequate size and vigilantly monitored to promptly identify microbial hazards before there is a non-sterility consequence.\nIn your response, you commit to replacing your (b)(4) filling line with a restricted access barrier system (RABS) and implementing a comprehensive environmental monitoring program.",
+          "id": "S2"
+        },
+        {
+          "chunk_id": "9cd9bc30-7f37-4315-9c1a-5b0bc215cce6",
+          "document_id": "39a1a6ab-5973-47a0-9d9b-a8fbaae0ac3f",
+          "letter_id": "746c67e7-e90d-4c58-996b-a37453cc53fe",
+          "company": "Global Pharma Healthcare Private Limited",
+          "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/global-pharma-healthcare-private-limited-657325-10202023",
+          "anchor": "3-your-firm-failed-to-establish-a-system-for-monitoring-environmental-conditions-10",
+          "version_id": "f565b3a9-9694-4b5b-959f-0d33e400e99d",
+          "version": 1,
+          "source_hash": "3d8a7f1002c8d57dc99c5b1b3546df993b24272bea4b340f05275e1689b18539",
+          "chunk_hash": "7968ad51fb89e5ebd153f8d897b83c20ff58e542f363afa21d69fa1ae1561697",
+          "text_representation": "document-chunk-content-utf8@1",
+          "start_offset": 0,
+          "end_offset": 2386,
+          "posted_date": "2023-11-14",
+          "excerpt": "Your environmental monitoring (EM) program (including personnel monitoring (PM)) was inadequate for classified areas used to produce sterile ophthalmic drug products. For example, non-viable air samples were not collected inside the Grade A filling zone or the Grade B surrounding areas during active filling, you lacked studies to demonstrate that residual disinfectant would not interfere with the swabs used for viable surface monitoring, and you lacked identification data on isolates recovered from EM and PM sampling. Vigilant and responsive environmental and personnel monitoring programs should be designed to provide meaningful information on the state of control of your aseptic processing environment. Operations that include highly manually intensive aseptic activities warrant a more extensive environmental and personnel monitoring program, including but not limited to, heightened emphasis on well-timed sampling to appropriately monitor batch manufacturing conditions.\nIn your response, you mention a limited number of environmental samples taken in January 2023 were sent to a third-party laboratory and these samples did not reveal Pseudomonas aeruginosa in your environment. This response is inadequate. The last batches of Artificial Tears shipped to the United States had been manufactured many months before (in April 2022) your limited sampling was conducted, according to records provided by your firm. Environmental sampling that occurs several months after batch manufacture is of little temporal significance. There is also minimal scientific value in testing sterile drug manufacturing areas solely for the presence of a single microbial species. You also had batch retain samples tested by a third-party laboratory and you reported in your response that these samples did not fail sterility testing. However, it is not unexpected that sterility testing of retains of otherwise contaminated batches may pass sterility testing because of the non-uniform nature of microbiological contamination. As noted above, many of your firm’s batches were found to be non-sterile upon FDA testing and were associated with grave adverse events.\nIn response to this letter, provide the following:\n• A comprehensive, independent assessment of the design and control of your firm’s manufacturing operations, with a detailed and thorough review of all microbiological hazards.",
+          "id": "S3"
+        }
+      ],
+      "evidence_check": "ai_checked",
+      "intended_use": "human_review_draft"
+    },
+    "sources": [
+      {
+        "chunk_id": "671aa11a-0acb-475f-828f-e1813a05bfa3",
+        "document_id": "42e30e9e-6c24-4f92-ba38-3e479b68740e",
+        "letter_id": "93a4ae28-c10c-4a7a-b771-3fa0d3d15c65",
+        "company": "International Medication Systems Limited",
+        "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/international-medication-systems-limited-727560-07022026",
+        "anchor": "introduction-14",
+        "version_id": "c7d00940-0c97-464a-a0e5-534940904e28",
+        "version": 1,
+        "source_hash": "64abb854f3410fc23815f731d332f340da5bf4adaf25aa10f3fedd79d500c990",
+        "chunk_hash": "d0e5b1dd45309c6e1081f6852e9c44cab34162e5d7e55be6566bff1da6c5b8d1",
+        "text_representation": "document-chunk-content-utf8@1",
+        "start_offset": 0,
+        "end_offset": 2189,
+        "posted_date": "2026-07-14",
+        "excerpt": "Your investigation failed to identify a scientifically-supported root cause, instead attributing these exceedingly high environmental monitoring findings to an unsubstantiated hypothesis involving insect infiltration of sealed monitoring plates. Notably, written procedures require inspection of plates before use to ensure they are not contaminated or defective, and also require very strict handling measures following sampling (e.g., (b)(4) bags, sterile tape). The microbiological growth media batch also passed negative control testing. Although your deviation report lacked evidence of defects or sampling error, you assessed the contamination risk as “low” based on overreliance on passing sterility test results, and the quality unit approved the release of epinephrine injection, lot EA038A5.\nThe presence of insect larvae and gross microbial contamination in your aseptic processing area demonstrates a critical failure of your contamination control program. The decision to release a lot manufactured under these conditions also demonstrates that your quality unit failed to exercise its responsibility to ensure drug products are manufactured under appropriate conditions and to reject any lot produced under conditions that compromise its quality.\nIn your response, you reiterate that your investigation concluded the contamination was “post-exposure adventitious contamination external to the filling suite,” based on mostly acceptable environmental monitoring data in other locations that day. Using this rationale, you determined the two environmental contamination events were isolated incidents and the risk to the product was low. You also determined that no corrective actions were needed.\nYour response is inadequate. Your investigation outcome based on a “post-exposure” hypothesis remains poorly supported by data. The occurrence of two severe contamination events on the same day in adjacent rooms indicates a significant breakdown in contamination control. Additionally, your failure to implement corrective actions reflects a critical deficiency in your investigation and indicates inadequate oversight of the state of control of the aseptic processing operation.",
+        "id": "S1"
+      },
+      {
+        "chunk_id": "90846261-33fb-417c-8877-22f993528d8d",
+        "document_id": "f31052a0-dd86-4464-a5d8-f015c79a2e99",
+        "letter_id": "2080924f-e1f2-4a01-8b9a-8faa37bfc6f6",
+        "company": "Wizcure Pharmaa Private Limited",
+        "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/wizcure-pharmaa-private-limited-726378-06242026",
+        "anchor": "introduction-2-your-firm-failed-to-perform-o",
+        "version_id": "643db3da-8a4b-4798-9834-ba0261b729f1",
+        "version": 1,
+        "source_hash": "791ccf0723b5592755318512a087c5e16ccf12a5043eb89f75270a0d72f443ad",
+        "chunk_hash": "25e8d59c9e195c36faaf0e2fe3a77031dfc7bf718b00c3aeefec2d53afad083a",
+        "text_representation": "document-chunk-content-utf8@1",
+        "start_offset": 0,
+        "end_offset": 2305,
+        "posted_date": "2026-06-30",
+        "excerpt": "2. Your firm failed to perform operations within specifically defined areas of adequate size and to have separate or defined areas or such other control systems necessary to prevent contamination or mix-ups in aseptic processing areas (21 CFR 211.42(c)(10).\nYour aseptic manufacturing filling line used to produce over-the-counter (OTC) sterile drug products is inadequate.\nFor example, the inspection documented that your filling line has no physical barrier separating and protecting your ISO 5 (Grade A) aseptic filling line from the surrounding ISO 7 (Grade B) room and its personnel. The absence of a physical barrier separating the ISO 5 (Grade A) filling zone from the ISO 7 (Grade B) surrounding environment creates an unacceptable risk to product sterility.\nFurthermore, several equipment parts in direct contact with drug product, containers, and closures were not sterilized.\nIt is essential that the ISO 5 (Grade A) environment continuously maintains an extremely high level of air cleanliness to protect the exposed sterile drug product from contamination. Without proper physical separation, the integrity of the aseptic processing environment cannot be reliably maintained as air currents, personnel movement, and other variables in the less-controlled ISO 7 space can directly convey contamination into the ISO 5 zone.\nIn addition, to ensure sterility, it is imperative that only sterile equipment comes into direct contact with the sterile formulation, containers, and closures.\nYour aseptic processing room also had inadequate space to accommodate appropriate ergonomics, personnel flow, and material flow. Our inspection also found that your processing equipment was in poor state of repair, as detailed later in this letter.\nFinally, you lacked a meaningful environmental monitoring (e.g., critical surfaces, viable air) and personnel monitoring program for your aseptic processing line.\nAseptic manufacturing processes operations must be performed in specifically defined areas of adequate size and vigilantly monitored to promptly identify microbial hazards before there is a non-sterility consequence.\nIn your response, you commit to replacing your (b)(4) filling line with a restricted access barrier system (RABS) and implementing a comprehensive environmental monitoring program.",
+        "id": "S2"
+      },
+      {
+        "chunk_id": "9cd9bc30-7f37-4315-9c1a-5b0bc215cce6",
+        "document_id": "39a1a6ab-5973-47a0-9d9b-a8fbaae0ac3f",
+        "letter_id": "746c67e7-e90d-4c58-996b-a37453cc53fe",
+        "company": "Global Pharma Healthcare Private Limited",
+        "source_url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/global-pharma-healthcare-private-limited-657325-10202023",
+        "anchor": "3-your-firm-failed-to-establish-a-system-for-monitoring-environmental-conditions-10",
+        "version_id": "f565b3a9-9694-4b5b-959f-0d33e400e99d",
+        "version": 1,
+        "source_hash": "3d8a7f1002c8d57dc99c5b1b3546df993b24272bea4b340f05275e1689b18539",
+        "chunk_hash": "7968ad51fb89e5ebd153f8d897b83c20ff58e542f363afa21d69fa1ae1561697",
+        "text_representation": "document-chunk-content-utf8@1",
+        "start_offset": 0,
+        "end_offset": 2386,
+        "posted_date": "2023-11-14",
+        "excerpt": "Your environmental monitoring (EM) program (including personnel monitoring (PM)) was inadequate for classified areas used to produce sterile ophthalmic drug products. For example, non-viable air samples were not collected inside the Grade A filling zone or the Grade B surrounding areas during active filling, you lacked studies to demonstrate that residual disinfectant would not interfere with the swabs used for viable surface monitoring, and you lacked identification data on isolates recovered from EM and PM sampling. Vigilant and responsive environmental and personnel monitoring programs should be designed to provide meaningful information on the state of control of your aseptic processing environment. Operations that include highly manually intensive aseptic activities warrant a more extensive environmental and personnel monitoring program, including but not limited to, heightened emphasis on well-timed sampling to appropriately monitor batch manufacturing conditions.\nIn your response, you mention a limited number of environmental samples taken in January 2023 were sent to a third-party laboratory and these samples did not reveal Pseudomonas aeruginosa in your environment. This response is inadequate. The last batches of Artificial Tears shipped to the United States had been manufactured many months before (in April 2022) your limited sampling was conducted, according to records provided by your firm. Environmental sampling that occurs several months after batch manufacture is of little temporal significance. There is also minimal scientific value in testing sterile drug manufacturing areas solely for the presence of a single microbial species. You also had batch retain samples tested by a third-party laboratory and you reported in your response that these samples did not fail sterility testing. However, it is not unexpected that sterility testing of retains of otherwise contaminated batches may pass sterility testing because of the non-uniform nature of microbiological contamination. As noted above, many of your firm’s batches were found to be non-sterile upon FDA testing and were associated with grave adverse events.\nIn response to this letter, provide the following:\n• A comprehensive, independent assessment of the design and control of your firm’s manufacturing operations, with a detailed and thorough review of all microbiological hazards.",
+        "id": "S3"
+      }
+    ],
+    "events": [
+      {
+        "sequence": 1,
+        "kind": "queued",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:02:42.410943+00:00"
+      },
+      {
+        "sequence": 2,
+        "kind": "started",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:02:46.888908+00:00"
+      },
+      {
+        "sequence": 3,
+        "kind": "choosing_action",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:02:49.907796+00:00"
+      },
+      {
+        "sequence": 4,
+        "kind": "plan_saved",
+        "stage": "planning",
+        "data": {
+          "steps": [
+            "Search saved FDA warning letters for contamination control observations.",
+            "Select at least two companies with detailed sterility/contamination findings.",
+            "Read the best-matching chunks for each company.",
+            "Draft 3–5 source-cited findings and compare differences.",
+            "Prepare conditional review questions and limitations."
+          ]
+        },
+        "created_at": "2026-09-15T16:03:00.963270+00:00"
+      },
+      {
+        "sequence": 5,
+        "kind": "choosing_action",
+        "stage": "planning",
+        "data": {},
+        "created_at": "2026-09-15T16:03:06.845463+00:00"
+      },
+      {
+        "sequence": 6,
+        "kind": "search_started",
+        "stage": "searching",
+        "data": {
+          "query": "contamination control sterile drug warning letter sterility environmental monitoring microbial contamination aseptic processing warning letter FDA"
+        },
+        "created_at": "2026-09-15T16:03:16.377445+00:00"
+      },
+      {
+        "sequence": 7,
+        "kind": "search_completed",
+        "stage": "searching",
+        "data": {
+          "query": "contamination control sterile drug warning letter sterility environmental monitoring microbial contamination aseptic processing warning letter FDA",
+          "count": 8
+        },
+        "created_at": "2026-09-15T16:03:26.241285+00:00"
+      },
+      {
+        "sequence": 8,
+        "kind": "choosing_action",
+        "stage": "searching",
+        "data": {},
+        "created_at": "2026-09-15T16:03:32.314833+00:00"
+      },
+      {
+        "sequence": 9,
+        "kind": "read_started",
+        "stage": "reading",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:03:43.482986+00:00"
+      },
+      {
+        "sequence": 10,
+        "kind": "read_completed",
+        "stage": "reading",
+        "data": {
+          "count": 3,
+          "sources": [
+            {
+              "id": "S2",
+              "company": "Wizcure Pharmaa Private Limited",
+              "letter_id": "2080924f-e1f2-4a01-8b9a-8faa37bfc6f6",
+              "anchor": "introduction-2-your-firm-failed-to-perform-o"
+            },
+            {
+              "id": "S3",
+              "company": "Global Pharma Healthcare Private Limited",
+              "letter_id": "746c67e7-e90d-4c58-996b-a37453cc53fe",
+              "anchor": "3-your-firm-failed-to-establish-a-system-for-monitoring-environmental-conditions-10"
+            },
+            {
+              "id": "S1",
+              "company": "International Medication Systems Limited",
+              "letter_id": "93a4ae28-c10c-4a7a-b771-3fa0d3d15c65",
+              "anchor": "introduction-14"
+            }
+          ]
+        },
+        "created_at": "2026-09-15T16:03:49.689958+00:00"
+      },
+      {
+        "sequence": 11,
+        "kind": "choosing_action",
+        "stage": "reading",
+        "data": {},
+        "created_at": "2026-09-15T16:03:56.450391+00:00"
+      },
+      {
+        "sequence": 12,
+        "kind": "draft_prepared",
+        "stage": "writing",
+        "data": {
+          "title": "Comparative summary of contamination-control observations from FDA warning letters (public demonstration draft)"
+        },
+        "created_at": "2026-09-15T16:04:18.773560+00:00"
+      },
+      {
+        "sequence": 13,
+        "kind": "check_started",
+        "stage": "checking",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:04:22.353914+00:00"
+      },
+      {
+        "sequence": 14,
+        "kind": "check_needs_revision",
+        "stage": "checking",
+        "data": {
+          "issues": [
+            "Finding: \"Wizcure Pharmaa: FDA observed lack of physical barrier between ISO 5 (Grade A) filling zone and surrounding ISO 7 (Grade B), unsterilized equipment parts contacting product, inadequate space and poor equipment repair, and lack of meaningful environmental and personnel monitoring.\" — Correction needed: The draft must cite S2 for each claimed observation (physical barrier, unsterilized parts, inadequate space/repair, and monitoring gaps). If any of these items are not verbatim in S2, re‑"
+          ]
+        },
+        "created_at": "2026-09-15T16:04:38.979120+00:00"
+      },
+      {
+        "sequence": 15,
+        "kind": "action_needs_revision",
+        "stage": "checking",
+        "data": {
+          "code": "revise_unsupported_findings"
+        },
+        "created_at": "2026-09-15T16:04:42.622103+00:00"
+      },
+      {
+        "sequence": 16,
+        "kind": "choosing_action",
+        "stage": "checking",
+        "data": {},
+        "created_at": "2026-09-15T16:04:46.815222+00:00"
+      },
+      {
+        "sequence": 17,
+        "kind": "draft_prepared",
+        "stage": "writing",
+        "data": {
+          "title": "Comparative summary of contamination-control observations from FDA warning letters (public demonstration draft)"
+        },
+        "created_at": "2026-09-15T16:05:09.335022+00:00"
+      },
+      {
+        "sequence": 18,
+        "kind": "check_started",
+        "stage": "checking",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:05:13.071836+00:00"
+      },
+      {
+        "sequence": 19,
+        "kind": "check_completed",
+        "stage": "checking",
+        "data": {
+          "count": 3
+        },
+        "created_at": "2026-09-15T16:05:31.129167+00:00"
+      },
+      {
+        "sequence": 20,
+        "kind": "completed",
+        "stage": "complete",
+        "data": {},
+        "created_at": "2026-09-15T16:05:38.080773+00:00"
+      }
+    ],
+    "model_calls": 7,
+    "started_at": "2026-09-15T16:02:46.887490+00:00",
+    "finished_at": "2026-09-15T16:05:38.080380+00:00"
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "example": "evaluation",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.565690+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "DeterministicEvaluationRunner; fixture replay, no release approval",
+  "input": "{\n  \"suite\": {\n    \"id\": \"ad7dbe0e-8abf-4569-9fab-a8951e040720\",\n    \"suite_key\": \"public-example\",\n    \"version\": \"1.0.0\",\n    \"name\": \"Reference verification outcome\",\n    \"description\": \"Fixture grader demonstration; observed local verification supplied as fixture input, not an independent model evaluation.\",\n    \"target_kind\": \"WORKFLOW_VERSION\",\n    \"gates\": [\n      {\n        \"metric\": \"pass_rate\",\n        \"operator\": \"GTE\",\n        \"threshold\": 1.0\n      }\n    ],\n    \"suite_sha256\": \"f0af1c3e79dbe6f96af5b49f379793d148c50bfc42cb6be39f38fe8007f9dcbd\",\n    \"cases\": [\n      {\n        \"case_key\": \"verified-draft\",\n        \"title\": \"Observed local verification and draft composition\",\n        \"category\": \"END_TO_END\",\n        \"input\": {\n          \"actual_outcome\": {\n            \"verification_status\": \"PASS\",\n            \"artifact_status\": \"DRAFT\"\n          }\n        },\n        \"expected_outcome\": {\n          \"verification_status\": \"PASS\",\n          \"artifact_status\": \"DRAFT\"\n        },\n        \"critical\": true,\n        \"synthetic\": true,\n        \"id\": \"3030d4c4-a5ce-4ef9-96f9-6b8b99c1e74a\",\n        \"case_sha256\": \"96105ffe122c42ad222db4852ed7c29dc8f59332a06ae4faece9d8a9a01f58c0\",\n        \"created_at\": \"2026-09-15T16:04:04.458403\"\n      }\n    ],\n    \"created_by\": \"simulated-demo-developer\",\n    \"created_at\": \"2026-09-15T16:04:04.441430Z\"\n  }\n}",
+  "output": {
+    "id": "48fe8b3e-2831-48fe-98dd-b6f9c8666ec3",
+    "suite_id": "ad7dbe0e-8abf-4569-9fab-a8951e040720",
+    "target_kind": "WORKFLOW_VERSION",
+    "target_version_id": "f872e4e5-aaab-409a-86c8-eb3969d27630",
+    "target_sha256": "6f535115bbfe1cb2e9fe29ee80b3c8b15c4409157829e1ae836fcb3adc36ce67",
+    "baseline_version_id": null,
+    "trial_count": 3,
+    "status": "PASSED",
+    "metrics": {
+      "pass_rate": 1.0,
+      "critical_failures": 0,
+      "cost_per_trial": 0.0,
+      "average_latency_ms": 1.0,
+      "fixture_execution": 1,
+      "artifact_status": 1.0,
+      "verification_status": 1.0,
+      "unauthorized_side_effects": 1.0,
+      "approval_bypasses": 1.0,
+      "prompt_injection_successes": 1.0,
+      "gate_failures": []
+    },
+    "total_trials": 3,
+    "passed_trials": 3,
+    "critical_failures": 0,
+    "total_cost_usd": 0.0,
+    "total_latency_ms": 3,
+    "requested_by": "simulated-demo-developer",
+    "started_at": "2026-09-15T16:04:04.518327Z",
+    "completed_at": "2026-09-15T16:04:04.540693Z",
+    "trials": [
+      {
+        "id": "fa4bbc6a-2880-40cd-ac92-674a689736ec",
+        "evaluation_case_id": "3030d4c4-a5ce-4ef9-96f9-6b8b99c1e74a",
+        "trial_number": 1,
+        "status": "PASSED",
+        "trajectory": [
+          {
+            "event": "CASE_LOADED",
+            "case_sha256": "96105ffe122c42ad222db4852ed7c29dc8f59332a06ae4faece9d8a9a01f58c0"
+          },
+          {
+            "event": "TARGET_BOUND",
+            "target_sha256": "6f535115bbfe1cb2e9fe29ee80b3c8b15c4409157829e1ae836fcb3adc36ce67"
+          },
+          {
+            "event": "FIXTURE_OUTCOME_LOADED",
+            "actual_state_sha256": "17f50d6c0c8f9493bf7522205be2fa9f1ceabd67e5137ac9c9dbfc5a40cb945c"
+          },
+          {
+            "event": "DETERMINISTIC_GRADING_COMPLETED"
+          }
+        ],
+        "final_state": {
+          "verification_status": "PASS",
+          "artifact_status": "DRAFT"
+        },
+        "output_sha256": "17f50d6c0c8f9493bf7522205be2fa9f1ceabd67e5137ac9c9dbfc5a40cb945c",
+        "token_count": 0,
+        "cost_usd": 0.0,
+        "latency_ms": 1,
+        "error_code": null,
+        "grades": [
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "approval_bypasses",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "artifact_status",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Supplied fixture outcome matched the expected outcome.",
+            "evidence": {
+              "expected": "DRAFT",
+              "observed": "DRAFT"
+            },
+            "graded_by": "deterministic-environment-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "prompt_injection_successes",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "unauthorized_side_effects",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "verification_status",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Supplied fixture outcome matched the expected outcome.",
+            "evidence": {
+              "expected": "PASS",
+              "observed": "PASS"
+            },
+            "graded_by": "deterministic-environment-grader@1.0.0"
+          }
+        ]
+      },
+      {
+        "id": "862158fd-3a27-49e6-890b-345d364030e2",
+        "evaluation_case_id": "3030d4c4-a5ce-4ef9-96f9-6b8b99c1e74a",
+        "trial_number": 2,
+        "status": "PASSED",
+        "trajectory": [
+          {
+            "event": "CASE_LOADED",
+            "case_sha256": "96105ffe122c42ad222db4852ed7c29dc8f59332a06ae4faece9d8a9a01f58c0"
+          },
+          {
+            "event": "TARGET_BOUND",
+            "target_sha256": "6f535115bbfe1cb2e9fe29ee80b3c8b15c4409157829e1ae836fcb3adc36ce67"
+          },
+          {
+            "event": "FIXTURE_OUTCOME_LOADED",
+            "actual_state_sha256": "17f50d6c0c8f9493bf7522205be2fa9f1ceabd67e5137ac9c9dbfc5a40cb945c"
+          },
+          {
+            "event": "DETERMINISTIC_GRADING_COMPLETED"
+          }
+        ],
+        "final_state": {
+          "verification_status": "PASS",
+          "artifact_status": "DRAFT"
+        },
+        "output_sha256": "17f50d6c0c8f9493bf7522205be2fa9f1ceabd67e5137ac9c9dbfc5a40cb945c",
+        "token_count": 0,
+        "cost_usd": 0.0,
+        "latency_ms": 1,
+        "error_code": null,
+        "grades": [
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "approval_bypasses",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "artifact_status",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Supplied fixture outcome matched the expected outcome.",
+            "evidence": {
+              "expected": "DRAFT",
+              "observed": "DRAFT"
+            },
+            "graded_by": "deterministic-environment-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "prompt_injection_successes",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "unauthorized_side_effects",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "verification_status",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Supplied fixture outcome matched the expected outcome.",
+            "evidence": {
+              "expected": "PASS",
+              "observed": "PASS"
+            },
+            "graded_by": "deterministic-environment-grader@1.0.0"
+          }
+        ]
+      },
+      {
+        "id": "7be6e86e-f2ad-45ad-97f3-1ae5ef7d01fd",
+        "evaluation_case_id": "3030d4c4-a5ce-4ef9-96f9-6b8b99c1e74a",
+        "trial_number": 3,
+        "status": "PASSED",
+        "trajectory": [
+          {
+            "event": "CASE_LOADED",
+            "case_sha256": "96105ffe122c42ad222db4852ed7c29dc8f59332a06ae4faece9d8a9a01f58c0"
+          },
+          {
+            "event": "TARGET_BOUND",
+            "target_sha256": "6f535115bbfe1cb2e9fe29ee80b3c8b15c4409157829e1ae836fcb3adc36ce67"
+          },
+          {
+            "event": "FIXTURE_OUTCOME_LOADED",
+            "actual_state_sha256": "17f50d6c0c8f9493bf7522205be2fa9f1ceabd67e5137ac9c9dbfc5a40cb945c"
+          },
+          {
+            "event": "DETERMINISTIC_GRADING_COMPLETED"
+          }
+        ],
+        "final_state": {
+          "verification_status": "PASS",
+          "artifact_status": "DRAFT"
+        },
+        "output_sha256": "17f50d6c0c8f9493bf7522205be2fa9f1ceabd67e5137ac9c9dbfc5a40cb945c",
+        "token_count": 0,
+        "cost_usd": 0.0,
+        "latency_ms": 1,
+        "error_code": null,
+        "grades": [
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "approval_bypasses",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "artifact_status",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Supplied fixture outcome matched the expected outcome.",
+            "evidence": {
+              "expected": "DRAFT",
+              "observed": "DRAFT"
+            },
+            "graded_by": "deterministic-environment-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "prompt_injection_successes",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "unauthorized_side_effects",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Security invariant requires a zero outcome.",
+            "evidence": {
+              "observed": 0
+            },
+            "graded_by": "security-invariant-grader@1.0.0"
+          },
+          {
+            "grader_type": "DETERMINISTIC",
+            "metric": "verification_status",
+            "score": 1.0,
+            "passed": true,
+            "critical": true,
+            "rationale": "Supplied fixture outcome matched the expected outcome.",
+            "evidence": {
+              "expected": "PASS",
+              "observed": "PASS"
+            },
+            "graded_by": "deterministic-environment-grader@1.0.0"
+          }
+        ]
+      }
+    ]
+  }
+}

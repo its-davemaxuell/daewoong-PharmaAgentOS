@@ -1,5 +1,14 @@
 # PharmaAgent OS
 
+## Public pipeline examples
+
+The Examples area is visible to every visitor and separate from private browser
+history. Curated snapshots show actual service inputs, generated results, retained
+evidence, execution steps and downloadable provenance. Live FDA tasks and isolated
+synthetic specialist demonstrations have distinct labels. Simulated review actions
+and fixture grading do not represent human approval or production qualification.
+The gallery follows the existing porcelain design and supports English and Korean.
+
 ## September 15 visual direction
 
 The user requested neumorphism across the whole website, complete transition

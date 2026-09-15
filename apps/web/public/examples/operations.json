@@ -1,0 +1,278 @@
+{
+  "example": "operations",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.430966+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "control-tower inventory service",
+  "input": "No input parameters supplied.",
+  "output": {
+    "items": [
+      {
+        "id": "16e466ad-842c-45e4-98cc-88ab0ebde388",
+        "kind": "AGENT_VERSION",
+        "key": "regulatory-evidence-agent",
+        "version": "1.3.0",
+        "sha256": "5b19303a147b12c07533523127a58577ff7fe5d27a19413443d7f32a5d775daa",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "e371441c-4f32-43e4-b9b8-ad9e7d851def",
+        "kind": "AGENT_VERSION",
+        "key": "case-orchestrator",
+        "version": "1.0.0",
+        "sha256": "4d1df30f66219c09cbce680ef23ed439b763f65a12620f1435b5e8db1c0beb42",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "ef6af37a-fa7f-4409-8fe4-9421e8e89d41",
+        "kind": "AGENT_VERSION",
+        "key": "internal-knowledge-agent",
+        "version": "1.1.0",
+        "sha256": "f1a6ff4ffed4033dd6928c974b606b1dffff7996a9f2529423fc46c6b9c335c5",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "815b624b-7b0b-41ff-9093-165b145882cf",
+        "kind": "AGENT_VERSION",
+        "key": "impact-analysis-agent",
+        "version": "1.0.2",
+        "sha256": "df2372f12bb1bac165608c7722e38e3d6954dae962365ef66cbdaebab1d591f5",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "781c0408-a462-4a24-bb46-747ee2457c7a",
+        "kind": "AGENT_VERSION",
+        "key": "verification-agent",
+        "version": "1.2.1",
+        "sha256": "bb4437ef676bbe079046d83a576ef9ff893e42d3e5380be31654ddc538ebd6fa",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "baea88f1-7dae-4567-83a0-a8ccdcefd479",
+        "kind": "SKILL_VERSION",
+        "key": "warning-letter-analysis",
+        "version": "2.1.0",
+        "sha256": "3d954474be4c38083dc223f3326140e381836cf3b3a85e2374563420fe660ce5",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "098e9d6f-5fd9-4718-887d-480e7a4b57e8",
+        "kind": "SKILL_VERSION",
+        "key": "regulatory-finding-extraction",
+        "version": "1.0.0",
+        "sha256": "ac0dbf48a711179dee8299cbb90a774ba38c71153daca4608c899d263c6edb93",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "608f6fce-698f-4e83-bd52-a1e6fdd86490",
+        "kind": "SKILL_VERSION",
+        "key": "data-integrity-lens",
+        "version": "1.0.0",
+        "sha256": "0e5eb6f9b2316c3fa613a62a4de3c0c41cb0bf22d43f6c9ffb2cbe0eec0989d5",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "479870c7-26dd-4efc-90ab-ccce29d28388",
+        "kind": "SKILL_VERSION",
+        "key": "sterile-manufacturing-lens",
+        "version": "1.0.0",
+        "sha256": "6bc1517e96771ab866df9b5faca3329bac3bf4d50ef722be53934c1280e04c6c",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "8b883844-8d44-42c8-b7ea-0b0310a3b355",
+        "kind": "SKILL_VERSION",
+        "key": "laboratory-controls-lens",
+        "version": "1.0.0",
+        "sha256": "e894a4ab67686303eb7ff6deff2222530e1ae24c2956ba1d642416f3dffc56ee",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "4df441e7-7299-49d9-a624-a1d4238c61fd",
+        "kind": "SKILL_VERSION",
+        "key": "training-qualification-lens",
+        "version": "1.0.0",
+        "sha256": "7b82cd165c8797045d863fec9b1b43aebfe4edc48e01d4633a7d00f13d2979b7",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "9f834fc5-a446-4be9-ad4f-b336fff0bb5b",
+        "kind": "SKILL_VERSION",
+        "key": "internal-document-comparison",
+        "version": "1.0.0",
+        "sha256": "78e89b09dcd197a6b120e26181a5b6db5e3aa3561d46c3daa890302eaeba31f7",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "415f8513-a798-4c79-aad8-6faba29f7cee",
+        "kind": "SKILL_VERSION",
+        "key": "impact-hypothesis-generation",
+        "version": "1.0.0",
+        "sha256": "282c6e3088d991e54f9d74eb98f450e20b096d31d1cd40a5c81b4afc21795aa4",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "68cdcee6-4007-47c3-9873-3cbcf9013b6d",
+        "kind": "SKILL_VERSION",
+        "key": "citation-validation",
+        "version": "1.0.0",
+        "sha256": "5893e45ac8afd878a4f107143c61c5c051bb6a2808f1676628353a90997ac164",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "82aa396f-f75c-4472-b905-3ecb686bee6a",
+        "kind": "SKILL_VERSION",
+        "key": "report-language-guidelines",
+        "version": "1.0.0",
+        "sha256": "600c2feb3e11f62443edf78319b73900c2185ee714000e87ed3bddcf1ad6931f",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "75a0819f-68e9-45ca-afb1-09f7481ec00c",
+        "kind": "TOOL_VERSION",
+        "key": "regulatory.get_version",
+        "version": "1.0.0",
+        "sha256": "478dbf57c2b85c75e77616ce723e2b5fd771250516c91e69d26aabcec19b4952",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "58e80dde-e45d-4b2e-9a3e-8aafb71af3ab",
+        "kind": "TOOL_VERSION",
+        "key": "regulatory.get_section",
+        "version": "1.0.0",
+        "sha256": "478dbf57c2b85c75e77616ce723e2b5fd771250516c91e69d26aabcec19b4952",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "b646dd1a-7c32-42be-a7ce-55a19a7eb27e",
+        "kind": "TOOL_VERSION",
+        "key": "regulatory.get_anchor",
+        "version": "1.0.0",
+        "sha256": "478dbf57c2b85c75e77616ce723e2b5fd771250516c91e69d26aabcec19b4952",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "0058ed11-b93c-4092-9fe6-7a37c222309b",
+        "kind": "TOOL_VERSION",
+        "key": "regulatory.compare_versions",
+        "version": "1.0.0",
+        "sha256": "478dbf57c2b85c75e77616ce723e2b5fd771250516c91e69d26aabcec19b4952",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "7bc69da9-d2b3-4d49-9e26-b8feb6ae736b",
+        "kind": "TOOL_VERSION",
+        "key": "regulatory.search_regulatory_references",
+        "version": "1.0.0",
+        "sha256": "478dbf57c2b85c75e77616ce723e2b5fd771250516c91e69d26aabcec19b4952",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "70209782-7830-4cf2-a899-38d16255066d",
+        "kind": "TOOL_VERSION",
+        "key": "knowledge.search_assets",
+        "version": "1.0.0",
+        "sha256": "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "d936828b-28a7-4e4c-ab7c-5fa60f9f30d3",
+        "kind": "TOOL_VERSION",
+        "key": "knowledge.get_asset",
+        "version": "1.0.0",
+        "sha256": "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "6de495b1-510c-401a-951e-f51d691ae6c8",
+        "kind": "TOOL_VERSION",
+        "key": "knowledge.get_document_version",
+        "version": "1.0.0",
+        "sha256": "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "50201ac8-51a3-43dd-9158-f26d40c89902",
+        "kind": "TOOL_VERSION",
+        "key": "knowledge.get_anchor",
+        "version": "1.0.0",
+        "sha256": "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "9a550054-817e-4a24-8b8e-49f4b0e0fbb0",
+        "kind": "TOOL_VERSION",
+        "key": "knowledge.get_revision_history",
+        "version": "1.0.0",
+        "sha256": "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "69dd5cd4-2989-43b1-9fd8-234eb421c52d",
+        "kind": "TOOL_VERSION",
+        "key": "knowledge.get_related_assets",
+        "version": "1.0.0",
+        "sha256": "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "e0a52c21-17ac-4cd6-8c03-d689a83928ec",
+        "kind": "TOOL_VERSION",
+        "key": "workflow.create_internal_notification_draft",
+        "version": "1.0.0",
+        "sha256": "a0896543a821f9ee474e9ede7219cd689af09e141186908d0cf1ec5f4ea2f67c",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "56626479-7516-4fdc-84c6-ea84238d4f0c",
+        "kind": "TOOL_VERSION",
+        "key": "workflow.create_email_draft",
+        "version": "1.0.0",
+        "sha256": "a0896543a821f9ee474e9ede7219cd689af09e141186908d0cf1ec5f4ea2f67c",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "1781bdcd-0413-409d-8edb-c59f495ec43d",
+        "kind": "TOOL_VERSION",
+        "key": "workflow.create_collaboration_draft",
+        "version": "1.0.0",
+        "sha256": "a0896543a821f9ee474e9ede7219cd689af09e141186908d0cf1ec5f4ea2f67c",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "3b70c90c-412e-4cf8-b7ec-d9bb7b02a99e",
+        "kind": "TOOL_VERSION",
+        "key": "workflow.create_task_draft",
+        "version": "1.0.0",
+        "sha256": "a0896543a821f9ee474e9ede7219cd689af09e141186908d0cf1ec5f4ea2f67c",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "eedfd5f1-1382-47cb-8130-2f4dbd4fba9a",
+        "kind": "TOOL_VERSION",
+        "key": "workflow.read_document_metadata",
+        "version": "1.0.0",
+        "sha256": "a0896543a821f9ee474e9ede7219cd689af09e141186908d0cf1ec5f4ea2f67c",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "f872e4e5-aaab-409a-86c8-eb3969d27630",
+        "kind": "WORKFLOW_VERSION",
+        "key": "regulatory-impact-review",
+        "version": "1.0.0",
+        "sha256": "6f535115bbfe1cb2e9fe29ee80b3c8b15c4409157829e1ae836fcb3adc36ce67",
+        "release_status": "APPROVED"
+      },
+      {
+        "id": "d9aa6693-222c-48b8-a88e-f1c8e1713f1c",
+        "kind": "WORKFLOW_VERSION",
+        "key": "personal-regulatory-impact-review",
+        "version": "1.0.0",
+        "sha256": "9d8a03cb79411de0544adf8b43682a06ddd82d5e33fde30b43d6342fc98b86e3",
+        "release_status": "DRAFT"
+      }
+    ]
+  }
+}

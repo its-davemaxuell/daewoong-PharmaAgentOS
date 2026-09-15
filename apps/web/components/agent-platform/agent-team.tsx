@@ -143,6 +143,10 @@ export function AgentTeam() {
               {text("Prepare a review request", "검토 요청 작성하기")}
               <ArrowRight size={16} />
             </Link>
+            <Link href="/examples">
+              {text("See actual pipeline examples", "실제 파이프라인 예시 보기")}
+              <ArrowRight size={16} />
+            </Link>
             <details>
               <summary>{text("Definition identifier", "정의 식별자")}</summary>
               <code>

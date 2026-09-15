@@ -1,0 +1,158 @@
+{
+  "example": "internal-knowledge",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.007604+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "KnowledgeRepository.search",
+  "input": "data integrity audit trail review",
+  "output": {
+    "query": "data integrity audit trail review",
+    "items": [
+      {
+        "asset_id": "21324ce1-5825-4cbd-b92b-ef40b734c9df",
+        "asset_key": "SOP-DI-004",
+        "asset_type": "SOP",
+        "title": "Electronic Data and Audit Trail Review",
+        "domain": "Data Integrity",
+        "classification": "INTERNAL_SYNTHETIC",
+        "synthetic": true,
+        "asset_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "effective_from": "2024-10-01",
+        "effective_to": null,
+        "relationship_signal": "APPROVED_RELATION_PRESENT",
+        "internal_evidence_anchors": [
+          {
+            "id": "risk-based-review",
+            "excerpt": "System owners perform documented, risk-based audit trail review before batch disposition and at the approved periodic frequency.",
+            "excerpt_sha256": "682b5b82ce6470e1182558d7d0033f4af2e9692f8d659c437e1b82806a256d62"
+          }
+        ],
+        "access_status": "AVAILABLE",
+        "retrieval_score": 0.767489,
+        "lexical_score": 0.8,
+        "semantic_score": 0.649969,
+        "relation_score": 1.0,
+        "missing_metadata": []
+      },
+      {
+        "asset_id": "0252424e-eaac-4f27-b42d-1a432cd91024",
+        "asset_key": "FRM-DI-011",
+        "asset_type": "Form",
+        "title": "Audit Trail Review Record",
+        "domain": "Data Integrity",
+        "classification": "INTERNAL_SYNTHETIC",
+        "synthetic": true,
+        "asset_version_id": "77ad65df-87b6-46f0-876c-ef5228ae194c",
+        "revision": 3,
+        "effective_status": "EFFECTIVE",
+        "effective_from": "2024-10-01",
+        "effective_to": null,
+        "relationship_signal": "APPROVED_RELATION_PRESENT",
+        "internal_evidence_anchors": [
+          {
+            "id": "required-fields",
+            "excerpt": "This synthetic form captures system identifier, review period, reviewer, audit trail filters, observed anomalies, linked evidence, disposition, and Quality Unit escalation reference.",
+            "excerpt_sha256": "3f7ca8fe1c9d1630a90711beb8ccc974d46373ab69747345845431928064ca52"
+          }
+        ],
+        "access_status": "AVAILABLE",
+        "retrieval_score": 0.755643,
+        "lexical_score": 0.733333,
+        "semantic_score": 0.720885,
+        "relation_score": 1.0,
+        "missing_metadata": []
+      },
+      {
+        "asset_id": "fc14aded-3af8-4fe7-94cf-baafc3d73eda",
+        "asset_key": "PROC-ASEP-001",
+        "asset_type": "Process",
+        "title": "Sterile Filling Process",
+        "domain": "Sterility Assurance",
+        "classification": "INTERNAL_SYNTHETIC",
+        "synthetic": true,
+        "asset_version_id": "addf0507-5fb0-4634-92db-e3603257793c",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "effective_from": "2025-02-15",
+        "effective_to": null,
+        "relationship_signal": "APPROVED_RELATION_PRESENT",
+        "internal_evidence_anchors": [
+          {
+            "id": "process-scope",
+            "excerpt": "The synthetic sterile filling process includes component preparation, environmental monitoring, aseptic filling, intervention control under SOP-ASEP-010, and review of qualification and media-fill evidence.",
+            "excerpt_sha256": "4c2a4b27f4effeab0e546789c46b02887b62d1b6e8e071401fd69a42fc72618a"
+          }
+        ],
+        "access_status": "AVAILABLE",
+        "retrieval_score": 0.374886,
+        "lexical_score": 0.133333,
+        "semantic_score": 0.575864,
+        "relation_score": 1.0,
+        "missing_metadata": []
+      },
+      {
+        "asset_id": "4db64cd2-4afd-48db-9249-9bc1966c0cd6",
+        "asset_key": "TRN-ASEP-002",
+        "asset_type": "Training requirement",
+        "title": "Aseptic Operator Qualification Curriculum",
+        "domain": "Sterility Assurance",
+        "classification": "INTERNAL_SYNTHETIC",
+        "synthetic": true,
+        "asset_version_id": "56ea7d73-aea1-4118-8e20-6d4b3d01bca2",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "effective_from": "2025-02-15",
+        "effective_to": null,
+        "relationship_signal": "APPROVED_RELATION_PRESENT",
+        "internal_evidence_anchors": [
+          {
+            "id": "qualification-components",
+            "excerpt": "Operators complete gowning, aseptic behavior, intervention simulation, and observed qualification before independent work.",
+            "excerpt_sha256": "ace4cf1f5d5521f9876134c37a53ece5bf34a2d39be727e4f00e6e3cafdd5b86"
+          }
+        ],
+        "access_status": "AVAILABLE",
+        "retrieval_score": 0.30248,
+        "lexical_score": 0.0,
+        "semantic_score": 0.578514,
+        "relation_score": 1.0,
+        "missing_metadata": []
+      },
+      {
+        "asset_id": "bdcbea04-5408-4020-bcd3-e6433dde1d3d",
+        "asset_key": "VAL-CS-021",
+        "asset_type": "Validation document",
+        "title": "Computerized System Validation Protocol",
+        "domain": "Computerized Systems",
+        "classification": "INTERNAL_SYNTHETIC",
+        "synthetic": true,
+        "asset_version_id": "e412710c-2da1-458b-8ee1-b4d81f54ed3d",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "effective_from": "2025-03-01",
+        "effective_to": null,
+        "relationship_signal": "LEXICAL_SEMANTIC_ONLY",
+        "internal_evidence_anchors": [
+          {
+            "id": "validation-scope",
+            "excerpt": "The synthetic protocol verifies access control, audit-event generation, time synchronization, record retention, backup recovery, and review reporting for configured computerized systems.",
+            "excerpt_sha256": "d95368fbcf447c932ac5c642c9745732ff6aeff3b670b1dd2fd235b38eae4b89"
+          }
+        ],
+        "access_status": "AVAILABLE",
+        "retrieval_score": 0.265944,
+        "lexical_score": 0.133333,
+        "semantic_score": 0.550315,
+        "relation_score": 0.0,
+        "missing_metadata": []
+      }
+    ],
+    "total_authorized_candidates": 7,
+    "acl_filtered_before_ranking": true,
+    "corpus_notice": "Synthetic portfolio demonstration data only; not a real controlled quality system."
+  }
+}

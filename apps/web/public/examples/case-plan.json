@@ -1,0 +1,72 @@
+{
+  "example": "case-plan",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:03:41.286666+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "case creation / versioned plan service",
+  "input": "Compare a synthetic FDA observation with fictional internal procedures and prepare a draft for human review.",
+  "output": {
+    "id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+    "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+    "version": 1,
+    "objective": "Compare a synthetic FDA observation with fictional internal procedures and prepare a draft for human review.",
+    "plan_schema_version": "1.0.0",
+    "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+    "based_on_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+    "workflow_template_version_id": "f872e4e5-aaab-409a-86c8-eb3969d27630",
+    "prohibited_actions": [
+      "MODIFY_CONTROLLED_DOCUMENT",
+      "CREATE_CAPA",
+      "APPROVE_CAPA",
+      "UPDATE_QMS_RECORD",
+      "UPDATE_EDMS_RECORD",
+      "UPDATE_MES_RECORD",
+      "UPDATE_LIMS_RECORD",
+      "RELEASE_OR_REJECT_PRODUCT",
+      "SUBMIT_TO_REGULATOR"
+    ],
+    "created_by": "simulated-demo-author",
+    "created_at": "2026-09-15T16:03:41.254859Z",
+    "steps": [
+      {
+        "id": "b636a70e-5001-4d0c-b103-1f0a3dff3cdb",
+        "position": 1,
+        "step_key": "evidence_impact_verification",
+        "title": "Compare evidence and verify a draft",
+        "instructions": "Check exact external/internal anchors; keep unresolved applicability explicit.",
+        "depends_on": [],
+        "agent_version_id": null,
+        "skill_version_ids": [],
+        "tool_version_ids": [],
+        "output_schema_ref": "VerificationReport@1.0.0",
+        "risk_level": "R2",
+        "requires_approval": false,
+        "limits": {
+          "max_turns": 4,
+          "max_tool_calls": 8,
+          "max_input_tokens": 20000,
+          "max_output_tokens": 5000,
+          "max_runtime_seconds": 120,
+          "max_cost_usd": 2.0
+        },
+        "created_at": "2026-09-15T16:03:41.254859"
+      }
+    ],
+    "approval": {
+      "id": "99e97108-5aee-401e-a96e-8088b28b8c05",
+      "approval_type": "PLAN_APPROVAL",
+      "status": "PENDING",
+      "requested_by": "simulated-demo-author",
+      "assigned_reviewer_id": "simulated-demo-reviewer",
+      "decision_by": null,
+      "decision_reason": null,
+      "decided_at": null,
+      "expires_at": "2026-09-22T16:03:41.254859Z",
+      "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+      "bound_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+      "created_at": "2026-09-15T16:03:41.254859Z"
+    }
+  }
+}

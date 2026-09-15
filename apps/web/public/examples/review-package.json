@@ -1,0 +1,121 @@
+{
+  "example": "review-package",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.342966+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "verification / artifact composition service",
+  "input": "{\n  \"verification_id\": \"2080fa4a-dc78-494f-bc6d-ed571b185d3e\"\n}",
+  "output": {
+    "id": "55a1fe64-59f4-452d-bc1c-c6aa2291324f",
+    "artifact_id": "fac174f9-a79a-4ef6-8fdb-efec1fe1d832",
+    "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+    "artifact_key": "regulatory-impact-review-package",
+    "artifact_type": "REGULATORY_IMPACT_REVIEW",
+    "title": "Example: fictional data-integrity comparison",
+    "version": 1,
+    "plan_id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+    "plan_version": 1,
+    "plan_sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8",
+    "bound_state_hash": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba",
+    "run_id": null,
+    "verification_report_id": "2080fa4a-dc78-494f-bc6d-ed571b185d3e",
+    "content_schema_version": "RegulatoryImpactReviewPackage@1.0.0",
+    "content": {
+      "schema_version": "regulatory-impact-review-package@1.0.0",
+      "title": "Example: fictional data-integrity comparison",
+      "notice": "Decision support only. This report does not determine compliance, require CAPA, or authorize controlled-system changes.",
+      "case": {
+        "id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "objective": "Compare a synthetic FDA observation with fictional internal procedures and prepare a draft for human review.",
+        "state_sha256": "e40e0d5b58fb8d12d45b648c75259d5c5546935e2162d489cbec706e7780adba"
+      },
+      "plan": {
+        "id": "539019d9-ff0e-4a5b-b72a-abdada7b5b40",
+        "version": 1,
+        "sha256": "a6b00b82c8e79ac094249d0b3ba4129f53854f1617fcff115c82abfad34238a8"
+      },
+      "verification": {
+        "id": "2080fa4a-dc78-494f-bc6d-ed571b185d3e",
+        "status": "PASS",
+        "sha256": "5e79fc3edf7c46c7de1cf65946245f52c00881df7540d9a5439caca6f8224fa3",
+        "agent": "verification-agent@1.2.1"
+      },
+      "impact_hypotheses": [
+        {
+          "id": "e3662b76-0c2a-4d36-9697-9695b67447a0",
+          "sha256": "859ce8ab36ec10a6d10e1b060ef4d47516322ecad06906870adf62ac3c4b238b",
+          "asset_id": "21324ce1-5825-4cbd-b92b-ef40b734c9df",
+          "asset_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+          "relationship_type": "FINDING_MAY_RELATE_TO_PROCEDURE",
+          "statement": "The source observation — Your quality unit did not adequately review and approve batch records as required by 21 CFR 211.22. — may warrant human comparison with SOP-DI-004 revision 2 (Data Integrity); this is an impact hypothesis, not a compliance or change-control conclusion.",
+          "known_facts": [
+            "The retained external finding is labeled rf-001.",
+            "SOP-DI-004 revision 2 is marked EFFECTIVE in the synthetic corpus."
+          ],
+          "derived_relationships": [
+            "Hybrid retrieval linked the finding vocabulary to the Data Integrity domain with score 0.767."
+          ],
+          "assumptions": [
+            "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+          ],
+          "counterevidence": [
+            "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+          ],
+          "unknowns": [
+            "Applicability, implementation state, and operating effectiveness require authorized human review."
+          ],
+          "recommended_verification": [
+            "A qualified reviewer should compare the full effective revision of SOP-DI-004 with the exact external source anchor.",
+            "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+          ],
+          "external_evidence": [
+            {
+              "source_type": "EXTERNAL_REGULATORY",
+              "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+              "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+              "anchor_id": "cgmp-violations",
+              "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+            }
+          ],
+          "internal_evidence": [
+            {
+              "source_type": "INTERNAL_ASSET",
+              "source_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+              "source_hash": "5151f17bdb7bc00f15a29706b1b7c023cb81fba4a1e69f36e9b6768d45b410a2",
+              "anchor_id": "risk-based-review",
+              "excerpt": "System owners perform documented, risk-based audit trail review before batch disposition and at the approved periodic frequency."
+            }
+          ]
+        }
+      ]
+    },
+    "content_sha256": "e8c2a459b31bc7f009def60206f57d787c4244c42bd3d7476d635f4f1978bedf",
+    "evidence_manifest_sha256": "cf1250267a296cee1f055baf54708f78094f711d18fdbb28bdeef0ab09f59b34",
+    "status": "DRAFT",
+    "created_by": "artifact-composer@1.0.0",
+    "created_at": "2026-09-15T16:04:04.292962Z",
+    "evidence": [
+      {
+        "id": "d0649ec5-6a48-481c-ba6c-6357f4417ff6",
+        "case_source_id": "862edfa8-81a9-48a4-bb52-ff72f89ab9d8",
+        "document_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+        "source_sha256": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+        "anchor": "cgmp-violations",
+        "excerpt_sha256": "df332bb8c8f9af66421ed756950ce06d2f2bb751a843619c4a6ab1f8eb2504a6",
+        "evidence_role": "SUPPORTING"
+      }
+    ],
+    "approval": {
+      "id": "f7629fc6-ab72-42f7-9898-51eace84120e",
+      "status": "PENDING",
+      "requested_by": "simulated-demo-author",
+      "assigned_reviewer_id": "simulated-demo-reviewer",
+      "decision_by": null,
+      "decision_reason": null,
+      "decided_at": null,
+      "expires_at": "2026-09-22T16:04:04.266492Z"
+    }
+  }
+}

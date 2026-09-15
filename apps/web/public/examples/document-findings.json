@@ -1,0 +1,121 @@
+{
+  "example": "document-findings",
+  "origin": "https://pharmaagent-os-ochre.vercel.app",
+  "captured_at": "2026-09-15T16:27:57Z",
+  "synthetic_sources": false,
+  "simulated_reviews": false,
+  "human_approved": false,
+  "method": "Hosted document findings / gpt-5-mini / letter-artifacts-bilingual-v2",
+  "input": "Dabur India Limited — Analyze the retained FDA warning letter in English.",
+  "output": {
+    "artifactType": "findings",
+    "language": "en",
+    "content": {
+      "findings": [
+        {
+          "label": "Finding 1",
+          "title": "Inadequate Quality Unit oversight and record integrity (21 CFR 211.22(a))",
+          "finding": "FDA observed that the firm’s Quality Unit failed to exercise its authority and responsibilities, including approving or rejecting records; the investigator was provided a newly created logbook that appeared falsified while the original logbook was later found in the document room. FDA also identified discrepancies between source analytical data books and final values reported in batch manufacturing records or certificates of analysis; the QU signed off on these records without ensuring data consistency and accuracy.",
+          "requestedActions": [
+            "A comprehensive assessment of documentation systems used throughout your manufacturing and laboratory operations to determine where documentation practices are insufficient. Include a detailed corrective action and preventive action (CAPA) plan that comprehensively remediates your firm’s documentation practices to ensure you retain attributable, legible, complete, original, accurate, contemporaneous records throughout your operation.",
+            "A comprehensive assessment and remediation plan to ensure your QU is given the authority and resources to effectively function. The assessment should also include, but not be limited to: o A determination of whether procedures used by your firm are robust and appropriate o Provisions for QU oversight throughout your operations to evaluate adherence to appropriate practices o A complete and final review of each batch and its related information before the QU disposition decision o Oversight and approval of investigations and discharging of all other QU duties to ensure identity, strength, quality, and purity of all products."
+          ],
+          "categories": [
+            "Quality Unit",
+            "Data Integrity",
+            "Documentation Control"
+          ],
+          "attentionLevel": "high",
+          "evidenceAnchors": [
+            "1-your-firm-failed-to-establish-an-adequate-quality-control-unit-with-the-respon"
+          ]
+        },
+        {
+          "label": "Finding 2",
+          "title": "Incomplete laboratory records and missing test data (21 CFR 211.194(a))",
+          "finding": "FDA found laboratory records did not include complete data: approximately (b)(4) microbiology plates and approximately (b)(4) media plates were documented as incubated but were physically absent with no documented explanation; test procedures, analytical workbooks, or test data sheets were not produced to support reported certificate of analysis results for approximately (b)(4) batches of U.S. marketed products; and required entries were missing in equipment logbooks reflecting use of multiple instruments.",
+          "requestedActions": [
+            "A comprehensive investigation into the extent of the inaccuracies in data records and reporting. Your investigation should include: o A detailed investigation protocol and methodology; a summary of all laboratories, manufacturing operations, and systems to be covered by the assessment; and a justification for any part of your operation that you propose to exclude. o Interviews of current and former employees to identify the nature, scope, and root cause of data inaccuracies. We recommend that these interviews be conducted by a qualified third party. o An assessment of the extent of data integrity deficiencies at your facility. Identify omissions, alterations, deletions, record destruction, non-contemporaneous record completion, and other deficiencies. Describe all parts of your facility’s operations in which you discovered data integrity lapses. o A comprehensive retrospective evaluation of the nature of all data integrity deficiencies. We recommend that a qualified third party with specific expertise in the area where potential breaches were identified should evaluate all data integrity lapses.",
+            "A current risk assessment of the potential effects of the observed failures on the quality of your drugs. Your assessment should include analyses of the risks to patients caused by the release of drugs affected by a lapse of data integrity and analyses of the risks posed by ongoing operations.",
+            "A management strategy for your firm that includes the details of your global corrective action and preventive action plan. Your strategy should include: o A detailed corrective action plan that describes how you intend to ensure the reliability and completeness of all the data you generate including analytical data, manufacturing records, and all data submitted to FDA. o A comprehensive description of the root causes of your data integrity lapses including evidence that the scope and depth of the current action plan is commensurate with the findings of the investigation and risk assessment. Indicate whether individuals responsible for data integrity lapses remain able to influence CGMP-related or drug application data at your firm. o Interim measures describing the actions you have taken or will take to protect patients and to ensure the quality of your drugs, such as notifying your customers, recalling product, conducting additional testing, adding lots to your stability programs to assure stability, drug application actions, and enhanced complaint monitoring. o Long-term measures describing any remediation efforts and enhancements to procedures, processes, methods, controls, systems, management oversight, and human resources (e.g., training, staffing improvements) designed to ensure the integrity of your company’s data. o A commitment to have a qualified consultant conduct extensive annual audits, for at least two years, to assist in evaluating CAPA effectiveness after you have executed your data integrity remediation protocol. o Inform FDA if you will be hiring a Chief Integrity Officer who is fully empowered to receive anonymous complaints from employees reporting data integrity concerns and with the authority to ensure any potential breach is promptly investigated (by independent quality assurance function, along with expertise from outside entities whenever needed). o A status report for any of the above activities already underway or completed."
+          ],
+          "categories": [
+            "Laboratory Records",
+            "Data Integrity",
+            "Investigations"
+          ],
+          "attentionLevel": "high",
+          "evidenceAnchors": [
+            "2-your-firm-failed-to-ensure-that-laboratory-records-included-complete-data-deri"
+          ]
+        },
+        {
+          "label": "Finding 3",
+          "title": "Inadequate cleaning procedures and cleaning validation (21 CFR 211.67(b))",
+          "finding": "FDA found cleaning practices inadequate to remove potential contaminants and prevent carryover on shared non-dedicated equipment. The firm’s cleaning validation relied exclusively on visual inspection, lacked maximum allowable carryover limits, quantitative residue testing, and direct surface sampling; no cleaning validation was performed for a Unit/Line used to manufacture at least (b)(4) different OTC products.",
+          "requestedActions": [
+            "Your CAPA plan to implement routine, vigilant operations management oversight of facilities and equipment. This plan should incorporate oversight from a qualified independent consultant and ensure, among other things, prompt detection of equipment/facilities performance issues, effective execution of repairs, adherence to appropriate preventive maintenance schedules, timely technological upgrades to the equipment/facility infrastructure, and improved systems for ongoing management review. Your plan should also ensure that appropriate actions are taken throughout the company network.",
+            "A comprehensive, independent retrospective assessment of your cleaning effectiveness to evaluate the scope of cross-contamination hazards. Include the identity of residues, other manufacturing equipment that may have been improperly cleaned, and an assessment whether cross-contaminated drug products may have been released for distribution. The assessment should identify any inadequacies of cleaning procedures and practices, and encompass each piece of manufacturing equipment used to manufacture more than one drug product.",
+            "Appropriate improvements to your cleaning validation program, with special emphasis on incorporating conditions identified as worst case in your drug manufacturing operation. This should include but not be limited to identification and evaluation of all worst-case: o drugs with higher toxicities o drugs with higher drug potencies o drugs of lower solubility in their cleaning solvents o drugs with characteristics that make them difficult to clean o swabbing locations for areas that are most difficult to clean o maximum hold times before cleaning",
+            "In addition, describe the steps that must be taken in your change management system before introduction of new manufacturing equipment or a new drug product.",
+            "A summary of updated SOPs that ensure an appropriate program is in place for verification and validation of cleaning procedures for drug products, processes, and equipment."
+          ],
+          "categories": [
+            "Cleaning Validation",
+            "Cross-Contamination Risk",
+            "Equipment Procedures"
+          ],
+          "attentionLevel": "high",
+          "evidenceAnchors": [
+            "3-your-firm-failed-to-establish-and-follow-adequate-written-procedures-for-clean"
+          ]
+        },
+        {
+          "label": "Finding 4",
+          "title": "Lack of manufacturing process validation and missing interim controls (21 CFR 211.100(a))",
+          "finding": "FDA determined the firm failed to validate manufacturing processes for many OTC drug products; the firm acknowledged that process validation had not been performed for (b)(4) of the (b)(4) drug products manufactured on specific lines. The firm did not provide schedules or interim controls (e.g., enhanced finished-product testing) for products manufactured and distributed prior to completing validation.",
+          "requestedActions": [
+            "A detailed summary of your validation program for ensuring a state of control throughout the product lifecycle, along with associated procedures. Describe your program for process performance qualification and ongoing monitoring of both intra-batch and inter-batch variation to ensure a continuing state of control.",
+            "A timeline for performing process performance qualification for each of your marketed drug products.",
+            "Process performance protocols, and written procedures for qualification of equipment and facilities.",
+            "A detailed program for designing, validating, maintaining, controlling, and monitoring each of your manufacturing processes that includes vigilant monitoring of intra-batch and inter-batch variation to ensure an ongoing state of control. Also, include your program for qualification of your equipment and facility."
+          ],
+          "categories": [
+            "Process Validation",
+            "Production Controls",
+            "Product Quality"
+          ],
+          "attentionLevel": "high",
+          "evidenceAnchors": [
+            "4-your-firm-failed-to-establish-adequate-written-procedures-for-production-and-p"
+          ]
+        },
+        {
+          "label": "Finding 5",
+          "title": "Recall actions and import detention status",
+          "finding": "FDA recommended consideration of removing batches from the U.S. market on May 13, 2026; the firm issued a voluntary recall of certain products on June 2, 2026 but had not recalled other (b)(4) products. FDA placed all drugs and drug products offered for import from the firm on Import Alert 66-40 on June 5, 2026.",
+          "requestedActions": [
+            "Correct any violations promptly and respond in writing within 15 working days specifying what you have done to address any violations and to prevent their recurrence. If you cannot complete corrective actions within 15 working days, state your reasons for delay and your schedule for completion.",
+            "Provide responses and documentation to FDA at CDER-OC-OMQ-Communications@fda.hhs.gov, identify your response with FEI 3001413302 and ATTN: Rokhsana Safaai-Jazi."
+          ],
+          "categories": [
+            "Recall/Market Actions",
+            "Regulatory Communication",
+            "Import/Export Controls"
+          ],
+          "attentionLevel": "high",
+          "evidenceAnchors": [
+            "drug-recall",
+            "conclusion"
+          ]
+        }
+      ],
+      "comparisonQuestions": []
+    },
+    "provider": "openai",
+    "modelId": "gpt-5-mini",
+    "promptVersion": "letter-artifacts-bilingual-v2",
+    "sourceHash": "1a5123c024949f8204b85f405b738eb13865e962a369ff91599c36456009b20e",
+    "createdAt": "2026-09-15T15:52:38.504059Z"
+  }
+}

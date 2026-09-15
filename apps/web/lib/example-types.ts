@@ -1,0 +1,21 @@
+export type ExampleGroup = "workspace" | "sources" | "specialists" | "governance";
+export type PublicExample = {
+  slug: string;
+  title: [string, string];
+  description: [string, string];
+  group: ExampleGroup;
+  origin: "live" | "reference";
+  language: "en" | "ko";
+  executedAt: string;
+  status: string;
+  method: string;
+  recordId?: string;
+  input: string;
+  sections: Array<{ title: string; text?: string; items?: string[]; sourceIds?: string[] }>;
+  sources: Array<{ id: string; label: string; excerpt: string; url?: string; anchor?: string; version?: string; hash?: string }>;
+  steps: Array<{ label: string; detail?: string }>;
+  limitations: string[];
+  download: string;
+  sha256: string;
+};
+export type ExampleSummary = Omit<PublicExample, "sections" | "sources" | "input" | "steps" | "limitations" | "sha256"> & { sourceCount: number };

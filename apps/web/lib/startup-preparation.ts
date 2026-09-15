@@ -11,6 +11,7 @@ import { briefListOptions, inboxOptions, researchListOptions, savedViewsOptions 
 export type PreparationTask = { id: string; en: string; ko: string; run: () => Promise<unknown> };
 export type PreparationStatus = "pending" | "ready" | "failed";
 export const menuModules: Record<string, () => Promise<unknown>> = {
+  "/examples": () => import("@/components/examples/examples-gallery"),
   "/dashboard": () => import("@/components/workspace/operational-overview"),
   "/drug-letters": () => import("@/components/workspace/sources-workspace"),
   "/research": () => import("@/components/research/research-workspace"),
@@ -48,7 +49,7 @@ export function preparationTasks(client: QueryClient, scope: string, roles: AppR
       }
       case "/inbox": await client.fetchQuery(inboxOptions(scope, params.get("state") || "new", Number(params.get("page")) || 1, true)); break;
       case "/usage": await client.fetchQuery(personalUsageOptions(scope)); break;
-      case "/settings": case "/agents": case "/help": case "/search": break;
+      case "/settings": case "/agents": case "/help": case "/search": case "/examples": break;
       default: await client.fetchQuery(menuQueryOptions(scope, (menu.href === "/requests" ? "cases" : menu.href.slice(1)) as MenuResource, menu.href === "/requests" ? new URLSearchParams() : params));
     }
   }}));

@@ -24,6 +24,7 @@ export const legacyNavItems: Array<{
   section: "chatbot" | "agent" | "review" | "settings" | "work" | "administration";
 }> = [
   { en: "Chatbot", ko: "챗봇", href: "/ask", icon: MessageSquareText, section: "chatbot" },
+  { en: "Examples", ko: "실행 예시", href: "/examples", icon: FileText, section: "chatbot" },
   { en: "Warning letter library", ko: "경고서한 자료실", href: "/drug-letters", icon: FileText, section: "chatbot" },
   { en: "Saved sources", ko: "저장한 자료", href: "/saved-views", icon: Bookmark, section: "chatbot" },
   { en: "Regulatory trends", ko: "규제 동향", href: "/trends", icon: ChartNoAxesColumnIncreasing, section: "chatbot" },
@@ -54,6 +55,7 @@ export function portalNavigation(linearWorkspace = true) {
   const navItems: typeof legacyNavItems = [
     { en: "RAG Chat", ko: "RAG 챗봇", href: "/ask", icon: MessageSquareText, section: "agent" },
     { en: "Research Agent", ko: "리서치 에이전트", href: "/research", icon: Network, section: "agent" },
+    { en: "Examples", ko: "실행 예시", href: "/examples", icon: FileText, section: "agent" },
     { en: "Overview", ko: "개요", href: "/dashboard", icon: BriefcaseBusiness, section: "work" },
     { en: "Inbox", ko: "받은 자료", href: "/inbox", icon: ClipboardCheck, section: "work" },
     { en: "Saved work", ko: "저장한 작업", href: "/saved-work", icon: Bookmark, section: "work" },

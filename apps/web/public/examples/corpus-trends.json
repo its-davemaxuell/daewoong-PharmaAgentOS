@@ -1,0 +1,43 @@
+{
+  "example": "corpus-trends",
+  "origin": "https://pharmaagent-os-ochre.vercel.app",
+  "captured_at": "2026-09-15T16:08:39Z",
+  "synthetic_sources": false,
+  "simulated_reviews": false,
+  "human_approved": false,
+  "method": "Hosted trends aggregation service",
+  "input": "Aggregate the saved collection for 2026-06-18 through 2026-09-15.",
+  "output": {
+    "currentCount": 62,
+    "periodStart": "2026-06-18",
+    "periodEnd": "2026-09-15",
+    "categoryTrends": [
+      {
+        "label": "Laboratory Controls",
+        "value": 4,
+        "previous": 0
+      },
+      {
+        "label": "Quality Unit Oversight",
+        "value": 4,
+        "previous": 0
+      },
+      {
+        "label": "Data Integrity",
+        "value": 3,
+        "previous": 0
+      },
+      {
+        "label": "Investigations",
+        "value": 3,
+        "previous": 0
+      },
+      {
+        "label": "Documentation",
+        "value": 2,
+        "previous": 0
+      }
+    ],
+    "regulations": []
+  }
+}

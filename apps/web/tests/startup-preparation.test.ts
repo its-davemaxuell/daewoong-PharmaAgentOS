@@ -5,6 +5,15 @@ import { menuParameters, menuQueryOptions, validMenuData } from "@/lib/menu-quer
 import { researchListOptions } from "@/lib/workspace-queries";
 
 describe("startup preparation", () => {
+  it("prepares public examples without requesting a private menu endpoint", async () => {
+    const client = new QueryClient();
+    const fetchQuery = vi.spyOn(client, "fetchQuery").mockRejectedValue(new Error("No example API exists"));
+    try {
+      const task = preparationTasks(client, "viewer", ["viewer"], true, new URL("https://example.test/examples")).find(item => item.id === "/examples")!;
+      await expect(task.run()).resolves.toBeUndefined();
+      expect(fetchQuery).not.toHaveBeenCalled();
+    } finally { fetchQuery.mockRestore(); client.clear(); }
+  });
   it("prepares every permitted menu including collapsed groups, prioritizing the destination", () => {
     const client = new QueryClient();
     const tasks = preparationTasks(client, "one", ["viewer"], true, new URL("https://example.test/trends?days=30"));

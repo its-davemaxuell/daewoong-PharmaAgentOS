@@ -1,0 +1,422 @@
+{
+  "example": "impact-analysis",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:04.134273+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "ImpactAnalysisAgent.generate_for_case",
+  "input": "data integrity audit trail review",
+  "output": {
+    "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+    "generated_count": 6,
+    "items": [
+      {
+        "id": "e3662b76-0c2a-4d36-9697-9695b67447a0",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "run_id": null,
+        "finding_id": "22f3a135-5285-447e-8172-754ec4cb9379",
+        "asset_id": "21324ce1-5825-4cbd-b92b-ef40b734c9df",
+        "asset_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+        "asset_key": "SOP-DI-004",
+        "asset_title": "Electronic Data and Audit Trail Review",
+        "asset_type": "SOP",
+        "asset_domain": "Data Integrity",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "relationship_type": "FINDING_MAY_RELATE_TO_PROCEDURE",
+        "statement": "The source observation — Your quality unit did not adequately review and approve batch records as required by 21 CFR 211.22. — may warrant human comparison with SOP-DI-004 revision 2 (Data Integrity); this is an impact hypothesis, not a compliance or change-control conclusion.",
+        "known_facts": [
+          "The retained external finding is labeled rf-001.",
+          "SOP-DI-004 revision 2 is marked EFFECTIVE in the synthetic corpus."
+        ],
+        "derived_relationships": [
+          "Hybrid retrieval linked the finding vocabulary to the Data Integrity domain with score 0.767."
+        ],
+        "assumptions": [
+          "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+        ],
+        "counterevidence": [
+          "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+        ],
+        "unknowns": [
+          "Applicability, implementation state, and operating effectiveness require authorized human review."
+        ],
+        "recommended_verification": [
+          "A qualified reviewer should compare the full effective revision of SOP-DI-004 with the exact external source anchor.",
+          "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+        ],
+        "external_evidence": [
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "cgmp-violations",
+            "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+          }
+        ],
+        "internal_evidence": [
+          {
+            "source_type": "INTERNAL_ASSET",
+            "source_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+            "source_hash": "5151f17bdb7bc00f15a29706b1b7c023cb81fba4a1e69f36e9b6768d45b410a2",
+            "anchor_id": "risk-based-review",
+            "excerpt": "System owners perform documented, risk-based audit trail review before batch disposition and at the approved periodic frequency."
+          }
+        ],
+        "confidence": 0.7675,
+        "review_priority": "MEDIUM",
+        "status": "PROPOSED",
+        "hypothesis_sha256": "859ce8ab36ec10a6d10e1b060ef4d47516322ecad06906870adf62ac3c4b238b",
+        "created_by": "simulated-demo-author",
+        "reviewed_by": null,
+        "review_reason": null,
+        "reviewed_at": null,
+        "created_at": "2026-09-15T16:04:04.055561Z",
+        "decision_support_only": true
+      },
+      {
+        "id": "fabd7168-55ac-4201-899d-12335ba9fdb2",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "run_id": null,
+        "finding_id": "22f3a135-5285-447e-8172-754ec4cb9379",
+        "asset_id": "0252424e-eaac-4f27-b42d-1a432cd91024",
+        "asset_version_id": "77ad65df-87b6-46f0-876c-ef5228ae194c",
+        "asset_key": "FRM-DI-011",
+        "asset_title": "Audit Trail Review Record",
+        "asset_type": "Form",
+        "asset_domain": "Data Integrity",
+        "revision": 3,
+        "effective_status": "EFFECTIVE",
+        "relationship_type": "FINDING_MAY_RELATE_TO_CONTROL",
+        "statement": "The source observation — Your quality unit did not adequately review and approve batch records as required by 21 CFR 211.22. — may warrant human comparison with FRM-DI-011 revision 3 (Data Integrity); this is an impact hypothesis, not a compliance or change-control conclusion.",
+        "known_facts": [
+          "The retained external finding is labeled rf-001.",
+          "FRM-DI-011 revision 3 is marked EFFECTIVE in the synthetic corpus."
+        ],
+        "derived_relationships": [
+          "Hybrid retrieval linked the finding vocabulary to the Data Integrity domain with score 0.756."
+        ],
+        "assumptions": [
+          "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+        ],
+        "counterevidence": [
+          "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+        ],
+        "unknowns": [
+          "Applicability, implementation state, and operating effectiveness require authorized human review."
+        ],
+        "recommended_verification": [
+          "A qualified reviewer should compare the full effective revision of FRM-DI-011 with the exact external source anchor.",
+          "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+        ],
+        "external_evidence": [
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "cgmp-violations",
+            "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+          }
+        ],
+        "internal_evidence": [
+          {
+            "source_type": "INTERNAL_ASSET",
+            "source_version_id": "77ad65df-87b6-46f0-876c-ef5228ae194c",
+            "source_hash": "3f7ca8fe1c9d1630a90711beb8ccc974d46373ab69747345845431928064ca52",
+            "anchor_id": "required-fields",
+            "excerpt": "This synthetic form captures system identifier, review period, reviewer, audit trail filters, observed anomalies, linked evidence, disposition, and Quality Unit escalation reference."
+          }
+        ],
+        "confidence": 0.7556,
+        "review_priority": "MEDIUM",
+        "status": "PROPOSED",
+        "hypothesis_sha256": "66bf9432162e089a22176c6698754ccd6ec087141bcb079cb399d02befb8fa9a",
+        "created_by": "simulated-demo-author",
+        "reviewed_by": null,
+        "review_reason": null,
+        "reviewed_at": null,
+        "created_at": "2026-09-15T16:04:04.074858Z",
+        "decision_support_only": true
+      },
+      {
+        "id": "0eaa6db9-43e8-4e6e-ada4-ce9900994c47",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "run_id": null,
+        "finding_id": "c6063c70-8bd5-415a-8d85-2dea944207c9",
+        "asset_id": "0252424e-eaac-4f27-b42d-1a432cd91024",
+        "asset_version_id": "77ad65df-87b6-46f0-876c-ef5228ae194c",
+        "asset_key": "FRM-DI-011",
+        "asset_title": "Audit Trail Review Record",
+        "asset_type": "Form",
+        "asset_domain": "Data Integrity",
+        "revision": 3,
+        "effective_status": "EFFECTIVE",
+        "relationship_type": "FINDING_MAY_RELATE_TO_CONTROL",
+        "statement": "The source observation — Investigations did not extend to other batches that may have been associated with the failure, and records did not document the scientific rationale for the investigation scope (21 CFR 211.192). — may warrant human comparison with FRM-DI-011 revision 3 (Data Integrity); this is an impact hypothesis, not a compliance or change-control conclusion.",
+        "known_facts": [
+          "The retained external finding is labeled rf-002.",
+          "FRM-DI-011 revision 3 is marked EFFECTIVE in the synthetic corpus."
+        ],
+        "derived_relationships": [
+          "Hybrid retrieval linked the finding vocabulary to the Data Integrity domain with score 0.756."
+        ],
+        "assumptions": [
+          "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+        ],
+        "counterevidence": [
+          "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+        ],
+        "unknowns": [
+          "Applicability, implementation state, and operating effectiveness require authorized human review."
+        ],
+        "recommended_verification": [
+          "A qualified reviewer should compare the full effective revision of FRM-DI-011 with the exact external source anchor.",
+          "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+        ],
+        "external_evidence": [
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "cgmp-violations",
+            "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+          },
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "fda-requests",
+            "excerpt": "FDA Requests\nProvide an independent assessment of quality-unit authority, batch disposition, and investigation effectiveness.\nRespond within 15 working days. 1\n1 Redacted contact details are represented as [REDACTED]."
+          }
+        ],
+        "internal_evidence": [
+          {
+            "source_type": "INTERNAL_ASSET",
+            "source_version_id": "77ad65df-87b6-46f0-876c-ef5228ae194c",
+            "source_hash": "3f7ca8fe1c9d1630a90711beb8ccc974d46373ab69747345845431928064ca52",
+            "anchor_id": "required-fields",
+            "excerpt": "This synthetic form captures system identifier, review period, reviewer, audit trail filters, observed anomalies, linked evidence, disposition, and Quality Unit escalation reference."
+          }
+        ],
+        "confidence": 0.7556,
+        "review_priority": "MEDIUM",
+        "status": "PROPOSED",
+        "hypothesis_sha256": "49f71a7dfad554af4b8c5941959d4ef11c2e857be2922c544ec3a04531280f85",
+        "created_by": "simulated-demo-author",
+        "reviewed_by": null,
+        "review_reason": null,
+        "reviewed_at": null,
+        "created_at": "2026-09-15T16:04:04.086779Z",
+        "decision_support_only": true
+      },
+      {
+        "id": "96cdfb8b-3482-49cc-a999-9c279fa9ebcc",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "run_id": null,
+        "finding_id": "c6063c70-8bd5-415a-8d85-2dea944207c9",
+        "asset_id": "21324ce1-5825-4cbd-b92b-ef40b734c9df",
+        "asset_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+        "asset_key": "SOP-DI-004",
+        "asset_title": "Electronic Data and Audit Trail Review",
+        "asset_type": "SOP",
+        "asset_domain": "Data Integrity",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "relationship_type": "FINDING_MAY_RELATE_TO_PROCEDURE",
+        "statement": "The source observation — Investigations did not extend to other batches that may have been associated with the failure, and records did not document the scientific rationale for the investigation scope (21 CFR 211.192). — may warrant human comparison with SOP-DI-004 revision 2 (Data Integrity); this is an impact hypothesis, not a compliance or change-control conclusion.",
+        "known_facts": [
+          "The retained external finding is labeled rf-002.",
+          "SOP-DI-004 revision 2 is marked EFFECTIVE in the synthetic corpus."
+        ],
+        "derived_relationships": [
+          "Hybrid retrieval linked the finding vocabulary to the Data Integrity domain with score 0.767."
+        ],
+        "assumptions": [
+          "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+        ],
+        "counterevidence": [
+          "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+        ],
+        "unknowns": [
+          "Applicability, implementation state, and operating effectiveness require authorized human review."
+        ],
+        "recommended_verification": [
+          "A qualified reviewer should compare the full effective revision of SOP-DI-004 with the exact external source anchor.",
+          "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+        ],
+        "external_evidence": [
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "cgmp-violations",
+            "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+          },
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "fda-requests",
+            "excerpt": "FDA Requests\nProvide an independent assessment of quality-unit authority, batch disposition, and investigation effectiveness.\nRespond within 15 working days. 1\n1 Redacted contact details are represented as [REDACTED]."
+          }
+        ],
+        "internal_evidence": [
+          {
+            "source_type": "INTERNAL_ASSET",
+            "source_version_id": "0601df49-fa88-423f-aacf-9bbc1c01a0e9",
+            "source_hash": "5151f17bdb7bc00f15a29706b1b7c023cb81fba4a1e69f36e9b6768d45b410a2",
+            "anchor_id": "risk-based-review",
+            "excerpt": "System owners perform documented, risk-based audit trail review before batch disposition and at the approved periodic frequency."
+          }
+        ],
+        "confidence": 0.7675,
+        "review_priority": "MEDIUM",
+        "status": "PROPOSED",
+        "hypothesis_sha256": "028499306441a6b273f4fffae1a1eada3c7621f1ee17c05077d3a04bc2fda542",
+        "created_by": "simulated-demo-author",
+        "reviewed_by": null,
+        "review_reason": null,
+        "reviewed_at": null,
+        "created_at": "2026-09-15T16:04:04.086779Z",
+        "decision_support_only": true
+      },
+      {
+        "id": "82e9b10e-6264-4151-b1ed-b98511cdce25",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "run_id": null,
+        "finding_id": "22f3a135-5285-447e-8172-754ec4cb9379",
+        "asset_id": "fc14aded-3af8-4fe7-94cf-baafc3d73eda",
+        "asset_version_id": "addf0507-5fb0-4634-92db-e3603257793c",
+        "asset_key": "PROC-ASEP-001",
+        "asset_title": "Sterile Filling Process",
+        "asset_type": "Process",
+        "asset_domain": "Sterility Assurance",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "relationship_type": "FINDING_MAY_RELATE_TO_PROCESS",
+        "statement": "The source observation — Your quality unit did not adequately review and approve batch records as required by 21 CFR 211.22. — may warrant human comparison with PROC-ASEP-001 revision 2 (Sterility Assurance); this is an impact hypothesis, not a compliance or change-control conclusion.",
+        "known_facts": [
+          "The retained external finding is labeled rf-001.",
+          "PROC-ASEP-001 revision 2 is marked EFFECTIVE in the synthetic corpus."
+        ],
+        "derived_relationships": [
+          "Hybrid retrieval linked the finding vocabulary to the Sterility Assurance domain with score 0.375."
+        ],
+        "assumptions": [
+          "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+        ],
+        "counterevidence": [
+          "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+        ],
+        "unknowns": [
+          "Applicability, implementation state, and operating effectiveness require authorized human review."
+        ],
+        "recommended_verification": [
+          "A qualified reviewer should compare the full effective revision of PROC-ASEP-001 with the exact external source anchor.",
+          "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+        ],
+        "external_evidence": [
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "cgmp-violations",
+            "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+          }
+        ],
+        "internal_evidence": [
+          {
+            "source_type": "INTERNAL_ASSET",
+            "source_version_id": "addf0507-5fb0-4634-92db-e3603257793c",
+            "source_hash": "4c2a4b27f4effeab0e546789c46b02887b62d1b6e8e071401fd69a42fc72618a",
+            "anchor_id": "process-scope",
+            "excerpt": "The synthetic sterile filling process includes component preparation, environmental monitoring, aseptic filling, intervention control under SOP-ASEP-010, and review of qualification and media-fill evidence."
+          }
+        ],
+        "confidence": 0.3749,
+        "review_priority": "LOW",
+        "status": "PROPOSED",
+        "hypothesis_sha256": "d5d610a6439fa8cf6d215dc573537369561fdaba4ee9cfd6cf43da4833c87449",
+        "created_by": "simulated-demo-author",
+        "reviewed_by": null,
+        "review_reason": null,
+        "reviewed_at": null,
+        "created_at": "2026-09-15T16:04:04.086779Z",
+        "decision_support_only": true
+      },
+      {
+        "id": "a1cfbb4e-0f22-4b8a-a0f6-579452241280",
+        "case_id": "e43dec5e-83b9-4a4d-95cf-5de4ea0c6f7c",
+        "run_id": null,
+        "finding_id": "c6063c70-8bd5-415a-8d85-2dea944207c9",
+        "asset_id": "fc14aded-3af8-4fe7-94cf-baafc3d73eda",
+        "asset_version_id": "addf0507-5fb0-4634-92db-e3603257793c",
+        "asset_key": "PROC-ASEP-001",
+        "asset_title": "Sterile Filling Process",
+        "asset_type": "Process",
+        "asset_domain": "Sterility Assurance",
+        "revision": 2,
+        "effective_status": "EFFECTIVE",
+        "relationship_type": "FINDING_MAY_RELATE_TO_PROCESS",
+        "statement": "The source observation — Investigations did not extend to other batches that may have been associated with the failure, and records did not document the scientific rationale for the investigation scope (21 CFR 211.192). — may warrant human comparison with PROC-ASEP-001 revision 2 (Sterility Assurance); this is an impact hypothesis, not a compliance or change-control conclusion.",
+        "known_facts": [
+          "The retained external finding is labeled rf-002.",
+          "PROC-ASEP-001 revision 2 is marked EFFECTIVE in the synthetic corpus."
+        ],
+        "derived_relationships": [
+          "Hybrid retrieval linked the finding vocabulary to the Sterility Assurance domain with score 0.375."
+        ],
+        "assumptions": [
+          "The synthetic asset taxonomy is sufficiently analogous for portfolio demonstration."
+        ],
+        "counterevidence": [
+          "The cited internal excerpt does not establish that the external observation occurred in this synthetic process."
+        ],
+        "unknowns": [
+          "Applicability, implementation state, and operating effectiveness require authorized human review."
+        ],
+        "recommended_verification": [
+          "A qualified reviewer should compare the full effective revision of PROC-ASEP-001 with the exact external source anchor.",
+          "Confirm whether additional restricted systems, records, or validation evidence are applicable before accepting the relationship."
+        ],
+        "external_evidence": [
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "cgmp-violations",
+            "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope."
+          },
+          {
+            "source_type": "EXTERNAL_REGULATORY",
+            "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+            "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+            "anchor_id": "fda-requests",
+            "excerpt": "FDA Requests\nProvide an independent assessment of quality-unit authority, batch disposition, and investigation effectiveness.\nRespond within 15 working days. 1\n1 Redacted contact details are represented as [REDACTED]."
+          }
+        ],
+        "internal_evidence": [
+          {
+            "source_type": "INTERNAL_ASSET",
+            "source_version_id": "addf0507-5fb0-4634-92db-e3603257793c",
+            "source_hash": "4c2a4b27f4effeab0e546789c46b02887b62d1b6e8e071401fd69a42fc72618a",
+            "anchor_id": "process-scope",
+            "excerpt": "The synthetic sterile filling process includes component preparation, environmental monitoring, aseptic filling, intervention control under SOP-ASEP-010, and review of qualification and media-fill evidence."
+          }
+        ],
+        "confidence": 0.3749,
+        "review_priority": "LOW",
+        "status": "PROPOSED",
+        "hypothesis_sha256": "bfeb7b0a172e698b4bcdfd58221fb7b710c7e8c8954bbc37168e503da61838a4",
+        "created_by": "simulated-demo-author",
+        "reviewed_by": null,
+        "review_reason": null,
+        "reviewed_at": null,
+        "created_at": "2026-09-15T16:04:04.102732Z",
+        "decision_support_only": true
+      }
+    ],
+    "notice": "Hypotheses support human review only; they are not compliance, CAPA, or document-change decisions."
+  }
+}

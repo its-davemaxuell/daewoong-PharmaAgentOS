@@ -1,0 +1,109 @@
+{
+  "example": "regulatory-evidence",
+  "origin": "isolated-local-reference",
+  "captured_at": "2026-09-15T16:04:03.846224+00:00",
+  "synthetic_sources": true,
+  "simulated_reviews": true,
+  "human_approved": false,
+  "method": "run_regulatory_evidence_agent / gpt-5-mini",
+  "input": "Extract the source firm's data integrity and quality oversight observations for a fictional internal comparison.",
+  "output": {
+    "output": {
+      "schema_version": "2.0.0",
+      "taxonomy_version": "drug-taxonomy-v1.0.0",
+      "findings": [
+        {
+          "finding_id": "rf-001",
+          "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+          "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+          "title": "Quality unit did not adequately review and approve batch records",
+          "finding_text": "Your quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.",
+          "quality_system_categories": [
+            "Quality Unit / QA Oversight",
+            "Documentation / GDP / Batch Records"
+          ],
+          "process_lenses": [
+            "preventive",
+            "retrospective"
+          ],
+          "regulatory_references": [
+            {
+              "reference": "21 CFR 211.22",
+              "evidence_anchor_ids": [
+                "cgmp-violations"
+              ]
+            }
+          ],
+          "fda_requested_actions": [],
+          "evidence": [
+            {
+              "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+              "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+              "anchor_id": "cgmp-violations",
+              "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope.",
+              "excerpt_sha256": "8a5517768254bf2248ef85269505815c5393fd894f559fc448eca8564ebd94e5",
+              "evidence_class": "PRIMARY_AUTHORITATIVE"
+            }
+          ],
+          "confidence": 0.9,
+          "extraction_warnings": []
+        },
+        {
+          "finding_id": "rf-002",
+          "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+          "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+          "title": "Investigations lacked scope and scientific rationale documentation",
+          "finding_text": "Investigations did not extend to other batches that may have been associated with the failure, and records did not document the scientific rationale for the investigation scope (21 CFR 211.192).",
+          "quality_system_categories": [
+            "Deviations / Investigations / OOS / OOT / CAPA",
+            "Documentation / GDP / Batch Records"
+          ],
+          "process_lenses": [
+            "retrospective",
+            "monitoring"
+          ],
+          "regulatory_references": [
+            {
+              "reference": "21 CFR 211.192",
+              "evidence_anchor_ids": [
+                "cgmp-violations"
+              ]
+            }
+          ],
+          "fda_requested_actions": [
+            {
+              "action": "Provide an independent assessment of quality-unit authority, batch disposition, and investigation effectiveness.",
+              "evidence_anchor_ids": [
+                "fda-requests"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+              "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+              "anchor_id": "cgmp-violations",
+              "excerpt": "CGMP Violations\nYour quality unit did not adequately review and approve batch records as required by 21 CFR 211.22.\nYour investigations did not extend to other batches that may have been associated with the failure under 21 CFR 211.192. Records did not document the scientific rationale for the investigation scope.",
+              "excerpt_sha256": "8a5517768254bf2248ef85269505815c5393fd894f559fc448eca8564ebd94e5",
+              "evidence_class": "PRIMARY_AUTHORITATIVE"
+            },
+            {
+              "source_version_id": "1f188c2d-984c-43ee-875e-cf398241d0f3",
+              "source_hash": "a48280c437ae62bf226a725ea42385a461bcc984ef04b21bb7b2255073be2417",
+              "anchor_id": "fda-requests",
+              "excerpt": "FDA Requests\nProvide an independent assessment of quality-unit authority, batch disposition, and investigation effectiveness.\nRespond within 15 working days. 1\n1 Redacted contact details are represented as [REDACTED].",
+              "excerpt_sha256": "3f3344f2cf45add55eb6b2dba2a10b70c58be8b1a7a5530b182bc763ad8f15b4",
+              "evidence_class": "PRIMARY_AUTHORITATIVE"
+            }
+          ],
+          "confidence": 0.88,
+          "extraction_warnings": []
+        }
+      ]
+    },
+    "model_attempts": 1,
+    "correction_loops": 0,
+    "tool_calls": 2,
+    "status": "success"
+  }
+}

@@ -10,19 +10,28 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-16 public pipeline examples (in progress):** User requested actual pipeline
-results across service areas in a clearly labeled public Examples area. Generate
-fresh demonstration tasks and publish only curated snapshots; retain browser history
-ownership. Hosted generation exposed missing Research tool-schema string bounds
-(repeated overlong plan retries), unhelpful correction feedback, and Chat ranking
-of boilerplate / truncation before matching evidence. Fixes expose the real bounds,
-return field-specific errors, weight terms by authorized-corpus frequency, and select
-exact contiguous evidence windows. A malformed chat identifier now returns 422.
-Affected backend checks pass (95 combined tests and 12 Research tests after adding
-the feedback regression). Public gallery, reruns, translation diagnosis and final
-deployment verification are still in progress. Reference specialist/approval/eval
-demonstrations must explicitly distinguish simulated reviewers and fixture grading
-from live model execution and independent human approval.
+**2026-09-16 public pipeline examples:** Implemented a public `/examples` gallery
+and 18 inspectable results across Chat, Research, document summary/findings/translation,
+search, trends, specialist services, review and operations. Nine results use hosted
+FDA services; nine execute actual reference services with fictional documents and
+explicitly simulated reviewers. Inputs, exact evidence, execution steps and hashed
+downloads are public snapshots; private browser history remains separate.
+
+Actual runs exposed and repaired Research schema/correction loops, boilerplate-heavy
+Chat retrieval, overstrict evidence verification, translation address/number-word
+validation, long serial translation and Korean terminology, plus opaque impact
+hypothesis prose. English and Korean Research reruns completed in seven/six calls.
+Reference composition ends at a draft, and evaluation is labeled fixture grading.
+No production specialist qualification or independent approval is implied.
+
+Web unit tests (99), build/TypeScript, lint, the final AI suite (57) and all nine
+targeted browser cases pass across the recorded runs. One local test-server
+interruption was recovered by rerunning the two affected browser cases. All four
+Chromium startup scenarios pass. The complete hosted translation v6 passed in
+152.61 seconds with ten sections and corrected terminology. Final hosted deployment
+verification remains the last release step.
+See [the examples assurance record](docs/assurance/public-examples-20260916.md) for
+capture methods, exact execution distinctions, fixes, evidence and final release.
 
 **2026-09-16 neumorphism and interactions (deployed):** The user's deployment
 instruction published application revision `8a2cd74` to
