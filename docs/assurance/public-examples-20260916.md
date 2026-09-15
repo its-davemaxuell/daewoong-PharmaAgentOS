@@ -139,5 +139,32 @@ simulated reviewer calls to production.
 
 Hosted translation v6 is retained with source hash
 `1a5123c024949f8204b85f405b738eb13865e962a369ff91599c36456009b20e`.
-Final public-site revision and live browser evidence await the last deployment
-check. The existing neumorphic site remains live throughout.
+
+Application revision **`94563f8ee9d087edbf1b34a0676b8f8b695fe878`** is deployed at
+https://pharmaagent-os-ochre.vercel.app/examples. At 2026-09-15 16:56 UTC (September
+16 in Seoul), Vercel and both Railway services report success. Web `/api/health`
+and API `/health/ready` return 200. Pipeline fixes were deployed before generating
+the final curated results. Rollback for this gallery is the prior application
+revision `df03a8e`; it retains the tested pipeline fixes but has no public gallery.
+
+**Hosted browser audit: 6/6 sessions passed, 108 example-page checks.** Each of
+Chromium, Firefox and WebKit used fresh English desktop (1440 px) and Korean mobile
+(390 px, reduced motion) contexts. All 18 records appeared in every session; exact
+download bytes matched the catalog fingerprints. Source references opened their
+disclosures. There were no script errors, horizontal overflow or Chat/Research POST
+submissions. Each cold session needed one startup Retry, then entered successfully;
+this existing all-menu preparation behavior was retained.
+
+Personally inspected the deployed Chromium gallery, mobile Korean translation and
+mobile review-package screenshots. Final screenshots start from the top of the page.
+Machine-readable results and screenshots are retained inside the workspace at
+`.artifacts/pipeline-examples/browser-hosted/`, including `results.json`,
+`chromium-en-1440-gallery.png`, `chromium-ko-390-review-package.png` and
+`chromium-ko-390-translation.png`.
+
+CI run [34997420254](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34997420254)
+passes backend (**607 passed, 10 environment-gated skips**), frontend, both container
+jobs/scans, secret scan, contracts, PostgreSQL schema, Temporal recovery and deployment
+render. The full CI browser job is still running at this record; the targeted local
+and independent hosted browser checks above are complete. Code security passed in
+run [34997420267](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/34997420267).

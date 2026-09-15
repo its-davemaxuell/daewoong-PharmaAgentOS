@@ -3228,3 +3228,8 @@ hashed downloads make each output inspectable. Actual-run defects were repaired 
 Research planning/verification, Chat evidence selection, translation and impact
 description. See `docs/assurance/public-examples-20260916.md` and the handoff for
 execution details, browser verification and deployment status.
+
+Delivered at https://pharmaagent-os-ochre.vercel.app/examples in application revision
+`94563f8`. Six fresh hosted Chromium/Firefox/WebKit sessions verify all 18 examples
+in English desktop/Korean mobile, source links and exact download fingerprints.
+Private history remains separate; synthetic demonstrations remain explicitly labeled.

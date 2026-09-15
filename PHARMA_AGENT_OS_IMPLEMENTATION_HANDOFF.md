@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-16 public pipeline examples:** Implemented a public `/examples` gallery
+**2026-09-16 public pipeline examples (deployed):** Published a public `/examples` gallery
 and 18 inspectable results across Chat, Research, document summary/findings/translation,
 search, trends, specialist services, review and operations. Nine results use hosted
 FDA services; nine execute actual reference services with fictional documents and
@@ -28,8 +28,14 @@ Web unit tests (99), build/TypeScript, lint, the final AI suite (57) and all nin
 targeted browser cases pass across the recorded runs. One local test-server
 interruption was recovered by rerunning the two affected browser cases. All four
 Chromium startup scenarios pass. The complete hosted translation v6 passed in
-152.61 seconds with ten sections and corrected terminology. Final hosted deployment
-verification remains the last release step.
+152.61 seconds with ten sections and corrected terminology. Application revision
+`94563f8` is deployed at https://pharmaagent-os-ochre.vercel.app/examples; Vercel and
+both Railway services report success. All six fresh hosted browser sessions pass
+(108 example pages across Chromium/Firefox/WebKit, English desktop/Korean mobile),
+with exact download hashes, no script errors or generation submissions, and no
+horizontal overflow. Each cold session recovered with one startup Retry. CI backend
+passes 607 tests with ten environment-gated skips; the full CI browser suite remains
+running at this record. Independent public-example verification is complete.
 See [the examples assurance record](docs/assurance/public-examples-20260916.md) for
 capture methods, exact execution distinctions, fixes, evidence and final release.
 
