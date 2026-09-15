@@ -51,7 +51,7 @@ COMPANY_NAME_SUFFIX = re.compile(
 )
 ADDRESS_MARKER = re.compile(
     r"\b(?:Room|Building|Suite|Floor|Street|Road|Avenue|Boulevard|Lane|Drive|Park|"
-    r"District|City|Province|State|County|Township)\b",
+    r"District|City|Province|State|County|Township|Office)\b",
     re.IGNORECASE,
 )
 OFFICIAL_ORGANIZATION_NAME = re.compile(
@@ -1450,6 +1450,8 @@ class ValidatedDocumentGenerator:
             "citations, numbers, URLs, dates, redactions, and formal closings. Do not invent any "
             "new "
             "number, citation, URL, date, redaction, or other protected source token. "
+            "Translate spelled-out English numbers using Korean number words, never new digits: "
+            "for example 'at least two years' becomes '최소 두 해 동안', not '최소 2년간'. "
             "A placeholder may also protect a full English month-name date or formal closing; "
             "restore it unchanged and never reinterpret its month/day order. For any unprotected "
             "formal closing, use this fixed glossary: Sincerely = 감사합니다; "
@@ -1525,6 +1527,12 @@ class ValidatedDocumentGenerator:
                             " The previous output copied English prose. Every substantive "
                             "translated_text must contain a complete Korean translation with "
                             "Hangul, while retaining only protected or necessary English terms."
+                        )
+                    elif failure_code == "protected_token_multiset_mismatch":
+                        task += (
+                            " Do not convert English number words into Arabic digits. Translate "
+                            "'two years' as '두 해', not '2년'. All digits, dates and citations "
+                            "must come only from the supplied immutable placeholders."
                         )
                 try:
                     output = await self._generate_structured(

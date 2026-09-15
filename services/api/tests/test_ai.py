@@ -509,7 +509,7 @@ async def test_document_generator_uses_separate_stable_structured_profile() -> N
     task_text = body["contents"][0]["parts"][0]["text"]
     assert "Every FDA or regulatory official term and heading must contain Korean" in task_text
     assert "official terms, and immutable placeholders" not in task_text
-    assert generator.prompt_version == "letter-translation-ko-v4"
+    assert generator.prompt_version == "letter-translation-ko-v5"
 
 
 @pytest.mark.asyncio
@@ -612,7 +612,7 @@ async def test_document_translation_failure_exhausts_only_configured_document_mo
         * 3
     )
     assert requested_models[-1] == "gemini-3.1-flash-lite"
-    assert generator.prompt_version == "letter-translation-ko-v4"
+    assert generator.prompt_version == "letter-translation-ko-v5"
 
 
 @pytest.mark.asyncio
@@ -1331,8 +1331,11 @@ async def test_document_translation_allows_only_proper_names_and_protected_sourc
 
 
 @pytest.mark.asyncio
-async def test_document_translation_allows_numeric_postal_address_without_korean() -> None:
-    address = "Room 609, Building 6, no. 6 Ziyuan Road, Huayuan High-tech Industrial Park, 300384"
+@pytest.mark.parametrize("address", [
+    "Room 609, Building 6, no. 6 Ziyuan Road, Huayuan High-tech Industrial Park, 300384",
+    "Dabur Corporate Office, Kaushambi Sahibabad Ghaziabad 201010 India",
+])
+async def test_document_translation_allows_numeric_postal_address_without_korean(address) -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         units = translation_units_from_request(request)

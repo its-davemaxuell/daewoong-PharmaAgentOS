@@ -117,8 +117,9 @@ class ImpactAnalysisAgent:
                     continue
                 relationship_type = self._relationship_type(group.finding, candidate)
                 statement = (
-                    f"Finding {group.finding.label} may warrant human comparison with "
-                    f"{candidate.asset_key} revision {candidate.revision}; this is an impact "
+                    f"The source observation — {group.finding.finding_text[:600]} — "
+                    f"may warrant human comparison with {candidate.asset_key} "
+                    f"revision {candidate.revision} ({candidate.domain}); this is an impact "
                     "hypothesis, not a compliance or change-control conclusion."
                 )
                 payload: dict[str, Any] = {

@@ -151,6 +151,11 @@ claims of exhaustive coverage, claims about Daewoong's compliance, or regulated 
 Review questions must be questions for human consideration, not orders to alter controlled
 processes. Check that user-facing prose uses the requested language. Return supported=true
 only if ALL findings pass. This is an AI evidence check, not a regulatory approval.
+Reject only material factual, attribution, citation, scope or language errors. Faithful
+paraphrases and semantically equivalent verbs are acceptable. Do not reject a supported
+statement for style, optional extra detail, or a limitation already present. Do not ask
+for a citation that is already in citation_ids. If your review finds every claim supported,
+return supported=true and issues=[]; do not invent a correction to fill the issues list.
 Return at most four concise issues in the requested language, each naming the finding and
 the precise correction needed. Do not invent claims that are not in the draft. Do not
 include private reasoning, self-commentary or references outside the supplied sources.""",
@@ -158,6 +163,7 @@ include private reasoning, self-commentary or references outside the supplied so
                     {"language": language, "brief": brief, "evidence": evidence}, ensure_ascii=False
                 ),
                 "max_output_tokens": 1_500,
+                "reasoning": {"effort": "low"},
                 "text": {
                     "format": {
                         "type": "json_schema",

@@ -157,7 +157,7 @@ class Settings(BaseSettings):
             "gemini-3.1-flash-lite",
         ]
     )
-    document_translation_prompt_version: str = "letter-translation-ko-v4"
+    document_translation_prompt_version: str = "letter-translation-ko-v5"
     document_ai_timeout_seconds: float = Field(default=90.0, gt=0, le=180)
     document_ai_max_output_tokens: int = Field(default=16_384, ge=1_024, le=65_536)
     document_ai_attempts_per_model: int = Field(default=2, ge=1, le=3)
