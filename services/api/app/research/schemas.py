@@ -35,7 +35,9 @@ class CreateResearch(Strict):
 
 
 class PlanResearch(Strict):
-    steps: list[str] = Field(min_length=2, max_length=5)
+    steps: list[Annotated[str, Field(min_length=1, max_length=180)]] = Field(
+        min_length=2, max_length=5
+    )
 
     @field_validator("steps")
     @classmethod
@@ -73,8 +75,12 @@ class CitedFinding(Strict):
 class SubmitBrief(Strict):
     title: str = Field(min_length=5, max_length=180)
     findings: list[CitedFinding] = Field(min_length=1, max_length=8)
-    review_questions: list[str] = Field(min_length=1, max_length=6)
-    limitations: list[str] = Field(min_length=1, max_length=5)
+    review_questions: list[Annotated[str, Field(min_length=1, max_length=600)]] = Field(
+        min_length=1, max_length=6
+    )
+    limitations: list[Annotated[str, Field(min_length=1, max_length=600)]] = Field(
+        min_length=1, max_length=5
+    )
 
     @field_validator("review_questions", "limitations")
     @classmethod

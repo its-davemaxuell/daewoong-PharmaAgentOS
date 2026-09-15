@@ -136,8 +136,16 @@ async def execute_tool(database, model, run, state, proposal):
         return {"error": "unknown_tool"}, None
     try:
         args = validator.model_validate(proposal.arguments)
-    except ValidationError:
-        return {"error": "invalid_arguments", "instruction": "Follow the tool schema."}, None
+    except ValidationError as exc:
+        return {
+            "error": "invalid_arguments",
+            "instruction": "Correct these fields and call the tool again.",
+            # Give actionable field bounds, without copying untrusted argument values.
+            "issues": [
+                {"field": ".".join(str(part) for part in issue["loc"]), "message": issue["msg"]}
+                for issue in exc.errors(include_input=False, include_url=False)[:5]
+            ],
+        }, None
     if name != "plan_research" and not state.get("plan"):
         return {"error": "plan_required"}, None
 

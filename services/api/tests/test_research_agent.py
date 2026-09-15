@@ -32,6 +32,21 @@ def proposal(name, args):
     )
 
 
+@pytest.mark.asyncio
+async def test_invalid_plan_reports_field_bound_without_echoing_source_input():
+    from types import SimpleNamespace
+
+    result, terminal = await execute_tool(
+        None, None, SimpleNamespace(language="en"), {},
+        proposal("plan_research", {"steps": ["private-source-text " * 20, "Read evidence"]}),
+    )
+    assert terminal is None
+    assert result["error"] == "invalid_arguments"
+    assert result["issues"][0]["field"] == "steps.0"
+    assert "180" in result["issues"][0]["message"]
+    assert "private-source-text" not in json.dumps(result)
+
+
 class ScriptedModel:
     """Harness fixture only; hosted qualification uses actual OpenAI calls."""
 

@@ -47,6 +47,7 @@ from app.dependencies import (
 from app.embedding_store import SemanticRetrievalError, semantic_scores_for_allowed_chunks
 from app.embeddings import EmbeddingGenerationError, GeminiEmbeddingGenerator
 from app.enums import ReviewDecision, ReviewState, ScopeStatus
+from app.lexical_ranking import query_weights, relevant_excerpt
 from app.models import (
     AiSummary,
     ChatMessage,
@@ -2359,9 +2360,13 @@ async def _query_rag_impl(
                 logger.warning(
                     "Semantic retrieval fell back to lexical ranking: %s", type(exc).__name__
                 )
+        tokenized_rows = [_tokens(chunk.content) for chunk, _letter, _document in authorized_rows]
+        weights = query_weights(question_tokens, tokenized_rows)
+        total_weight = sum(weights.values()) or 1.0
         ranked: list[tuple[float, int, DocumentChunk, WarningLetter, Document]] = []
-        for chunk, letter, document in authorized_rows:
-            content_tokens = _tokens(chunk.content)
+        for (chunk, letter, document), content_tokens in zip(
+            authorized_rows, tokenized_rows, strict=True
+        ):
             overlap = question_tokens.intersection(content_tokens)
             expansion_overlap = expansion_tokens.intersection(content_tokens)
             anchor_priority = chunk.source_anchor in priority_anchors
@@ -2369,7 +2374,7 @@ async def _query_rag_impl(
             minimum_overlap = 1 if korean_query else min(2, len(question_tokens))
             direct_match = bool(overlap) and len(overlap) >= minimum_overlap
             if direct_match:
-                density = len(overlap) / max(1, len(question_tokens))
+                density = sum(weights.get(token, 0) for token in overlap) / total_weight
                 score = density + min(0.25, len(overlap) * 0.025)
                 overlap_count = len(overlap)
             elif anchor_priority:
@@ -2420,7 +2425,7 @@ async def _query_rag_impl(
                 issue_date=letter.issue_date,
                 posted_date=letter.posted_date,
                 source_anchor=chunk.source_anchor,
-                excerpt=chunk.content[:800],
+                excerpt=relevant_excerpt(chunk.content, weights),
                 source_url=document.canonical_url,
                 score=round(score, 4),
                 document_version_id=chunk.document_version_id,

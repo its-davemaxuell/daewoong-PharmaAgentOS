@@ -126,6 +126,9 @@ export async function POST(request: Request) {
   if (threadId && !UUID_PATTERN.test(threadId)) {
     return Response.json({ error: "The chat thread reference is invalid." }, { status: 422 });
   }
+  if (clientMessageId && !threadId) {
+    return Response.json({ error: "A message identifier requires a chat thread." }, { status: 422 });
+  }
   const retrievalMode = RETRIEVAL_MODES.has(rawOptions.retrievalMode as ChatRetrievalMode)
     ? rawOptions.retrievalMode as ChatRetrievalMode
     : "auto";

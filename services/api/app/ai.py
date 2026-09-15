@@ -494,7 +494,11 @@ class ValidatedChatGenerator:
             "substantive FDA claim inline with one or more evidence markers such as [1]. Use only "
             "marker numbers supplied in the request. If the authorized evidence does not support "
             "a conclusion, say so plainly. Do not assess Daewoong compliance, create a CAPA "
-            "requirement, or turn neutral comparison questions into conclusions. Return only a "
+            "requirement, or turn neutral comparison questions into conclusions. Attribute FDA "
+            "observations to the named source company; never address the reader as that firm. "
+            "Review questions must be conditional on whether the reader performs the activity, "
+            "without parenthetical orders to investigate, remediate, or change procedures. "
+            "Return only a "
             f"concise answer, without a sources list or preamble. {language_instruction}"
         )
         user_payload = json.dumps(

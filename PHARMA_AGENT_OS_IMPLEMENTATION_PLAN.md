@@ -3212,3 +3212,12 @@ bounded concurrent reads, role filtering, warm caches, Retry/Continue fallback,
 reduced motion and a single reveal without remounting on menu navigation.
 `PORTAL_STARTUP_ENABLED` defaults to enabled; only an explicit `false` disables it.
 The legacy-only startup flag no longer controls the preferred experience.
+# Public pipeline examples — requested 2026-09-16
+
+Add a public, clearly labeled Examples area using fresh executions of the existing
+services. Cover Chat, Research, document analysis/translation, specialist reference
+workflows and evaluation outputs. Inspect results and repair observed pipeline
+defects before publishing. Preserve private browser histories. Publish curated
+snapshots with inputs, outputs, sources and execution provenance; identify isolated
+synthetic demonstrations and simulated review decisions explicitly. Keep unfinished
+personal execution disabled. Verify the public area in real browsers and deploy.

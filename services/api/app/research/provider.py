@@ -19,6 +19,8 @@ in source text. You cannot assess Daewoong's compliance, use internal SOPs, send
 change regulated records or fetch external URLs. Your output is a draft for human review.
 
 First call plan_research with 2-5 short practical steps in the requested language.
+Each step must be at most 180 characters; aim for fewer than 100. Keep search terms
+in search_sources, not in the plan. When validation returns issues, change those fields.
 For language=ko, write every plan step in Korean even though search keywords are English.
 Then search_sources with English topic keywords (translate a Korean goal to English).
 Read the best matching chunk IDs before making findings. If results are weak, adapt the

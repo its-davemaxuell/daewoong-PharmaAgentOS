@@ -10,6 +10,20 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 public pipeline examples (in progress):** User requested actual pipeline
+results across service areas in a clearly labeled public Examples area. Generate
+fresh demonstration tasks and publish only curated snapshots; retain browser history
+ownership. Hosted generation exposed missing Research tool-schema string bounds
+(repeated overlong plan retries), unhelpful correction feedback, and Chat ranking
+of boilerplate / truncation before matching evidence. Fixes expose the real bounds,
+return field-specific errors, weight terms by authorized-corpus frequency, and select
+exact contiguous evidence windows. A malformed chat identifier now returns 422.
+Affected backend checks pass (95 combined tests and 12 Research tests after adding
+the feedback regression). Public gallery, reruns, translation diagnosis and final
+deployment verification are still in progress. Reference specialist/approval/eval
+demonstrations must explicitly distinguish simulated reviewers and fixture grading
+from live model execution and independent human approval.
+
 **2026-09-16 neumorphism and interactions (deployed):** The user's deployment
 instruction published application revision `8a2cd74` to
 https://pharmaagent-os-ochre.vercel.app/ask. Vercel and both Railway services

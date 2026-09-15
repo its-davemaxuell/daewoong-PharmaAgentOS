@@ -51,6 +51,8 @@ async def test_native_tool_calls_are_strict_bounded_and_not_stored(settings):
     assert seen[0]["tool_choice"] == "required"
     assert seen[0]["model"] == "gpt-5-mini"
     assert all(tool["strict"] for tool in seen[0]["tools"])
+    plan_tool = next(tool for tool in seen[0]["tools"] if tool["name"] == "plan_research")
+    assert plan_tool["parameters"]["properties"]["steps"]["items"]["maxLength"] == 180
     brief_tool = next(tool for tool in seen[0]["tools"] if tool["name"] == "submit_brief")
     finding = brief_tool["parameters"]["$defs"]["CitedFinding"]
     # The provider rejects the entire request if even a referenced object omits
@@ -59,6 +61,7 @@ async def test_native_tool_calls_are_strict_bounded_and_not_stored(settings):
         "statement", "citation_ids", "support", "limitations"
     }
     assert finding["additionalProperties"] is False
+    assert brief_tool["parameters"]["properties"]["review_questions"]["items"]["maxLength"] == 600
     assert "untrusted DATA" in INSTRUCTIONS
     assert seen[0]["max_output_tokens"] == 4_000
 
