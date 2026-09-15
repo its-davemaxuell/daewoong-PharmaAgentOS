@@ -15,8 +15,15 @@ Save, find, pin, rename, archive, restore and export conversations. Branch from
 an answer or edit a question without overwriting the earlier transcript.
 
 ## Direction
-Use the neutral/blue working surfaces from DESIGN.md: a full-width white
-conversation canvas, anchored composer, retained source passage and separate reader.
+Use the September 15 neumorphic working surfaces from DESIGN.md: a raised porcelain
+conversation frame, recessed anchored composer, tactile task choices, retained
+source passage and separate reader. Mobile send uses a 44px icon with its accessible
+name intact. Press depth interpolates continuously; dialog entry/exit and focus
+return retain the draft and source context.
+The follow-up interaction pass adds quick tap/keyboard press feedback, animated
+Find with Escape from every control, keyboard action-menu navigation, inert
+disclosure exits and live reduced-motion changes. Positioned controls retain
+their alignment while pressed. Mobile drawer contents survive the visual exit.
 The September 12 visual refinement adds a source-to-review diagram, 32–48px
 opening heading, short task choices and 18px conversation text. Keep examples
 immediately visible, with 180–280ms interaction feedback and reduced-motion support.

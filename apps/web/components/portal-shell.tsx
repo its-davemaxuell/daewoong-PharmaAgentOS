@@ -46,6 +46,8 @@ export function PortalShell({
   );
   const [collapsed, setCollapsed] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const [mobileContents, setMobileContents] = useState(false);
+  const mobileRevision = useRef(0);
   const mobileDialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const { prepare, shouldPrefetch } = useNavigationPrefetch();
@@ -68,9 +70,20 @@ export function PortalShell({
     });
   }
   function close() {
-    mobileDialog.current?.close();
+    const dialog = mobileDialog.current;
+    if (!dialog) return;
+    const revision = ++mobileRevision.current;
+    dialog.inert = true;
+    dialog.close();
     setMobile(false);
-    trigger.current?.focus();
+    trigger.current?.focus({ preventScroll: true });
+    // Keep navigation visible throughout the native exit; reopening invalidates it.
+    const finish = () => {
+      if (dialog.isConnected && !dialog.open && revision === mobileRevision.current) setMobileContents(false);
+    };
+    const animations = dialog.getAnimations();
+    if (animations.length) void Promise.allSettled(animations.map(animation => animation.finished)).then(finish);
+    else finish();
   }
   const navigation = (
     <SelectionGroup><div className="continuity-navigation">
@@ -186,7 +199,7 @@ export function PortalShell({
   );
   return (
     <div
-      className={`linear-workspace portal-shell continuity-shell readable-workspace ${collapsed ? "continuity-collapsed" : ""}`}
+      className={`linear-workspace portal-shell continuity-shell readable-workspace neumorphic-workspace ${collapsed ? "continuity-collapsed" : ""}`}
     >
       <aside
         id="primary-navigation"
@@ -220,7 +233,10 @@ export function PortalShell({
           aria-expanded={mobile}
           aria-controls="mobile-navigation"
           onClick={() => {
+            mobileRevision.current++;
+            setMobileContents(true);
             setMobile(true);
+            if (mobileDialog.current) mobileDialog.current.inert = false;
             mobileDialog.current?.showModal();
           }}
         >
@@ -260,10 +276,8 @@ export function PortalShell({
         id="mobile-navigation"
         className="continuity-mobile-nav"
         aria-label={text("Primary navigation", "주요 탐색")}
-        onClose={() => {
-          setMobile(false);
-          trigger.current?.focus();
-        }}
+        onCancel={event => { event.preventDefault(); close(); }}
+        onClose={() => { if (mobileDialog.current && !mobileDialog.current.open && !mobileDialog.current.inert) close(); }}
       >
         <button
           className="continuity-mobile-close"
@@ -272,7 +286,7 @@ export function PortalShell({
         >
           <X size={18} />
         </button>
-        {mobile && navigation}
+        {mobileContents && navigation}
       </dialog>
       <main
         id="main-content"

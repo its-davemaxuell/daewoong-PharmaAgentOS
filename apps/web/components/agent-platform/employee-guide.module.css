@@ -30,3 +30,6 @@
 .guide h2 { font-size: 1.25rem; }
 .guide p { font-size: .9375rem; }
 @media (max-width: 600px) { .guide section { padding: 18px; } }
+
+.guide section { border: 0; border-radius: var(--radius-panel); }
+.destinations a { border-radius: 10px; padding-inline: 12px; }

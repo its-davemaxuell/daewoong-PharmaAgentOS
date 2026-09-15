@@ -1,5 +1,19 @@
 # PharmaAgent OS
 
+## September 15 visual direction
+
+The user requested neumorphism across the whole website, complete transition
+animations, and personal Chromium/Playwright inspection. This supersedes earlier
+flat-surface preferences. DESIGN.md records the shared porcelain surfaces, tactile
+controls and recessed fields. Preserve existing product behavior, bilingual
+workflows, startup preparation, source provenance, browser-session ownership and
+role restrictions. Deploying the implementation is a separate action.
+
+The follow-up request explicitly extends smooth transitions, press animations
+and interactive feedback throughout the same neumorphic website. Keyboard and
+touch receive equivalent acknowledgment; animation must preserve immediate
+activation, accessible focus and interruption-safe operation.
+
 <!-- impeccable:product-schema 1 -->
 
 ## Platform

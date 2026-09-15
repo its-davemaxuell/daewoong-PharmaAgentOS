@@ -2233,3 +2233,10 @@
 .workspaceTabs a, .workspaceTabs small, .caseState > small { color: var(--os-muted); }
 .workspaceTabs a > span { color: var(--os-muted); }
 .sourceSummaryList > li > span { color: var(--os-primary-deep); background: var(--os-primary-soft); border-radius: 6px; }
+
+.caseRegister, .intakeRail, .workspacePanel, .caseLedger, .objectiveSheet, .scopeSheet, .planPreview, .accessState, .workspaceHeader { border: 0; border-radius: var(--radius-panel); background: var(--os-canvas); }
+.workspacePanel > .objectiveSheet, .workspacePanel > .scopeSheet { border-radius: 0; background: transparent; }
+.filters, .workspaceTabs { border: 0; border-radius: 14px; padding: 8px; background: var(--os-canvas); box-shadow: var(--neu-inset); }
+.filters a[data-active="true"], .workspaceTabs a[aria-current="page"], .workspaceTabs a[data-active="true"] { background: var(--os-canvas); }
+.indexPage :is(input, select, textarea), .workspacePage :is(input, select, textarea) { box-shadow: var(--neu-inset); }
+.readOnlyIntake { background: var(--os-canvas); border: 0; border-radius: 14px; box-shadow: var(--neu-inset); }

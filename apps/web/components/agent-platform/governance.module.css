@@ -48,6 +48,10 @@
 .section { margin-top: 24px; }
 .sectionHeading h2 { font-size: var(--section-title-size); }
 .formGrid, .metricGrid, .cardGrid, .controlGrid { gap: 20px; }
+
+.form, .metricGroup, .card, .run, .inventoryTable, .approvalList, .controlForm, .empty { border: 0; border-radius: var(--radius-panel); }
+.page :is(input, select) { background: var(--os-canvas); box-shadow: var(--neu-inset); color: var(--os-ink); }
+.page :is(.form, .releaseForm, .controlForm) button { color: #fff; box-shadow: var(--os-shadow-primary); }
 .form button, .releaseForm button, .controlForm button { box-shadow: var(--os-shadow-primary); }
 .page button:not(:disabled):active { transform: translateY(1px) scale(.99); }
 .page :is(input, select):focus-visible { background: var(--os-inset); }
@@ -61,3 +65,10 @@
 .metricGroup dd { font-size: 1.125rem; font-variant-numeric: tabular-nums; }
 .card p, .run p { line-height: 1.65; }
 @media (max-width: 600px) { .page h1 { font-size: var(--page-title-size); } .form, .card, .metricGroup, .approvalCard { padding: 18px; } }
+
+.filters { gap: 12px; padding: 8px; border-radius: 14px; background: var(--os-canvas); box-shadow: var(--neu-inset); }
+.filters a { border: 0; box-shadow: var(--neu-raised); }
+.filters a[data-active="true"] { background: var(--os-primary-soft); color: var(--os-primary-deep); box-shadow: var(--neu-pressed); }
+.page :is(.form, .releaseForm, .controlForm) button:is(:active, [data-press-feedback]):not(:disabled) { background: var(--os-primary-deep); box-shadow: var(--neu-primary-pressed); }
+.filters a:is(:active, [data-press-feedback]) { box-shadow: var(--neu-pressed); }
+@media (hover: hover) { .filters a:not([data-active="true"]):hover { background: var(--os-primary-soft); box-shadow: var(--neu-hover); } }

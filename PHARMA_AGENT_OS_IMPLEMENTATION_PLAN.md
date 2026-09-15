@@ -7,7 +7,33 @@
 
 ---
 
+## September 15 implementation addendum: Neumorphic website
+
+Replace the website's visual system with a continuous cool porcelain canvas,
+paired light/dark elevation, raised tactile controls, recessed inputs and cobalt
+selections. Apply shared material to Chat, Research, Overview, sources and original
+readers, saved work, cases, governance, agents, usage, Settings, Help, dialogs,
+mobile navigation, startup, loading and error states. Preserve all routes,
+authorization, anonymous sessions, citations and real service states.
+
+Complete hover/press, selection, route, panel, dialog entry/exit and disclosure
+transitions. Keep the shell and streaming state mounted, make exiting panels
+inert, restore focus immediately, and honor reduced motion and forced colors.
+Verify the actual rendered website using Chromium/Playwright in English/Korean
+at desktop/mobile widths. DESIGN.md owns the new material rules; record browser
+evidence and checks in the implementation handoff. No deployment is implied.
+
+Follow-up request: complete smooth transitions, press animations and interactive
+feedback across the website. Extend native pointer/keyboard press feedback without
+delaying activation; cover cancellation, disabled states, fields, rows, menus and
+small supporting actions. Complete mobile navigation and conversation Find exits,
+native action-menu keyboard navigation, and live reduced-motion changes. Verify
+native focus, repeated use, preserved drafts and reading position in Chromium.
+
 ## September 12 implementation addendum: Visual UX refinement
+
+> Superseded visually by the September 15 neumorphism addendum above; its product
+> behavior, readability and startup constraints remain applicable.
 
 User request: inspect and improve the service with less text, more useful visuals,
 larger typography and smooth transitions. Retain the current neutral/blue identity,

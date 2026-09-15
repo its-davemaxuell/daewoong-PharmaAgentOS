@@ -1897,6 +1897,7 @@ export function ChatWorkspace({
               <button
                 className="chat-send-button"
                 type="button"
+                aria-label={text("Ask AI", "질문 보내기")}
                 disabled={
                   !draftLoaded
                   || pending

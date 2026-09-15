@@ -174,3 +174,24 @@
 .brief h2 { margin: 16px 0; }
 .brief h3 { margin-top: 24px; }
 @media (max-width: 640px) { .brief { padding: 16px; } }
+
+/* Neumorphic research: a raised work surface with a recessed question well. */
+.composer, .activity, .evidence, .brief { border: 0; border-radius: var(--radius-panel); box-shadow: var(--os-shadow-panel); }
+.composer textarea { border-radius: var(--radius-inset); background: var(--os-canvas); box-shadow: var(--neu-inset); }
+.composer textarea:focus { background: var(--os-canvas); }
+.exampleTopics { border: 0; gap: 16px; padding: 4px; }
+.exampleTopics button { border: 0; border-radius: 14px; background: var(--os-canvas); box-shadow: var(--neu-raised); padding: 16px; transition: box-shadow 180ms var(--motion-ease), color 180ms var(--motion-ease), background-color 180ms var(--motion-ease), transform 110ms var(--motion-ease); }
+.exampleTopics button + button { border: 0; }
+.exampleTopics button:hover:not(:disabled) { box-shadow: var(--neu-hover); background: var(--os-canvas); }
+.exampleTopics button:is(:active, [data-press-feedback]):not(:disabled) { box-shadow: var(--neu-pressed); transform: translateY(1px); }
+.workflow li > svg:first-child { box-sizing: content-box; padding: 12px; border-radius: 14px; box-shadow: var(--neu-raised); background: var(--os-canvas); }
+.workflow li > svg:last-child:not(:first-child) { top: 25px; }
+.stages { border: 0; border-radius: 16px; padding: 6px; background: var(--os-canvas); box-shadow: var(--neu-inset); }
+.stages li { border-radius: 12px; }
+.stages .stageActive { box-shadow: var(--neu-raised); }
+.currentAction { border-radius: 14px; box-shadow: var(--neu-inset); }
+.source blockquote { background: var(--os-inset); padding: 20px; border-radius: 14px; box-shadow: var(--neu-inset); }
+.status, .sourceId, .citations a { border-radius: 8px; }
+.exports button { padding: 8px 12px; border-radius: 10px; background: var(--os-canvas); box-shadow: var(--neu-raised); }
+.exports button:is(:active, [data-press-feedback]):not(:disabled) { box-shadow: var(--neu-pressed); }
+@container (max-width: 640px) { .exampleTopics { gap: 12px; } .exampleTopics button { min-height: 58px; } }

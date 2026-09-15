@@ -247,3 +247,10 @@
 .roster button { padding: 14px 12px; margin-bottom: 4px; }
 .roster button[aria-pressed="true"] { background: white; border-color: #d5d1f3; box-shadow: var(--os-shadow-control); }
 @media (max-width: 760px) { .workspace { grid-template-columns: 1fr; } .roster { border-right: 0; border-bottom: 1px solid var(--os-rule); } }
+
+.workspace { background: var(--os-canvas); border: 0; border-radius: var(--radius-panel); }
+.toolbar label { background: var(--os-canvas); box-shadow: var(--neu-inset); border-radius: 12px; }
+.roster { background: var(--os-canvas); }
+.roster button { background: transparent; border: 0; border-radius: 12px; }
+.roster button[aria-pressed="true"] { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); }
+.detail { background: var(--os-canvas); }

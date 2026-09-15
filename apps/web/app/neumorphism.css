@@ -1,0 +1,453 @@
+/*
+THESIS: Evidence work on one sculpted, tactile surface.
+OWN-WORLD: Cool porcelain, upper-left light, slate type, cobalt keys, recessed wells.
+STORY: Ask a question, inspect its evidence, and retain the work for human review.
+FIRST VIEWPORT: Persistent navigation, a raised conversation frame, three task keys,
+and an anchored recessed composer. Source reading remains beside the conversation.
+FORM: User-pinned neumorphism across the existing operational website.
+*/
+:root {
+  --os-ink: #243247;
+  --os-muted: #53647a;
+  --os-primary: #275bd6;
+  --os-primary-deep: #204cb5;
+  --os-primary-soft: #dce7fa;
+  --os-canvas: #e9eef4;
+  --os-surface: #e9eef4;
+  --os-inset: #f1f4f8;
+  --os-nav: #e9eef4;
+  --os-rule: #cbd5e1;
+  --os-control: #7c8ba0;
+  --neu-light: #ffffff;
+  --neu-shade: #c5cedb;
+  /* Keep outer/inset slots matched: changing inset topology cannot interpolate. */
+  --neu-raised: 5px 5px 12px #c5cedbe6, -5px -5px 12px #ffffffeb, inset 0 0 0 #c5cedb00, inset 0 0 0 #ffffff00;
+  --neu-hover: 3px 3px 7px #c5cedbe6, -3px -3px 7px #ffffffeb, inset 0 0 0 #c5cedb00, inset 0 0 0 #ffffff00;
+  --neu-pressed: 0 0 0 #c5cedb00, 0 0 0 #ffffff00, inset 3px 3px 6px #c5cedbe6, inset -3px -3px 6px #ffffffeb;
+  --neu-primary-pressed: 0 0 0 #b0bfd600, 0 0 0 #ffffff00, inset 3px 3px 7px #16398c, inset -2px -2px 5px #5b80df;
+  --neu-inset: inset 4px 4px 9px #c5cedbd9, inset -4px -4px 9px #ffffffeb;
+  --os-shadow-control: var(--neu-raised);
+  --os-shadow-panel: 9px 9px 24px #c5cedbcc, -9px -9px 24px #ffffffd9;
+  --os-shadow-float: 14px 18px 42px #687b9561, -6px -6px 20px #ffffffb3;
+  --os-shadow-primary: 4px 4px 9px #b0bfd6, -4px -4px 9px #ffffffd9, inset 1px 1px 2px #ffffff40, inset -1px -1px 3px #13388966;
+  --control-radius: 10px;
+  --control-border: #7c8ba0;
+  --focus-ring: #275bd6;
+  --radius-inset: 14px;
+  --radius-panel: 20px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --paper: var(--os-canvas);
+  --paper-bright: var(--os-surface);
+  --paper-deep: #dde5ef;
+  --ink: var(--os-ink);
+  --ink-soft: #3d5069;
+  --muted: var(--os-muted);
+  --rule: var(--os-rule);
+  --rule-dark: var(--os-control);
+  --brand-orange: var(--os-primary);
+  --brand-orange-dark: var(--os-primary-deep);
+  --brand-orange-light: var(--os-primary-soft);
+}
+
+.neumorphic-app { background: var(--os-canvas); color: var(--os-ink); }
+.neumorphic-app ::selection { background: #c5d6f8; color: #18386f; }
+.neumorphic-app :where(input, textarea)::placeholder { color: var(--os-muted); opacity: 1; }
+.neumorphic-app :where(button, a, input, textarea, select, summary):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.neumorphic-workspace.linear-workspace {
+  --motion-press: 110ms;
+  --motion-hover: 180ms;
+  --motion-select: 240ms;
+  --motion-panel: 260ms;
+  --motion-context: 300ms;
+  --os-control-canvas: var(--os-control);
+}
+
+/* Shell: the canvas is continuous, navigation is pressed into it. */
+.neumorphic-workspace .continuity-sidebar {
+  background: var(--os-canvas);
+  border: 0;
+  box-shadow: 5px 0 14px #c5cedb80, inset -1px 0 0 #ffffffb3;
+  scrollbar-width: thin;
+  scrollbar-color: #aebdce transparent;
+}
+.neumorphic-workspace .continuity-topbar {
+  background: var(--os-canvas);
+  border: 0;
+  box-shadow: 0 3px 10px #c5cedb70, inset 0 -1px 0 #ffffffa6;
+}
+.neumorphic-workspace .continuity-search {
+  background: var(--os-canvas);
+  border: 1px solid var(--os-control);
+  border-radius: var(--control-radius);
+  box-shadow: var(--neu-inset);
+  padding-inline: 10px;
+}
+.neumorphic-workspace .continuity-nav {
+  border-radius: var(--control-radius);
+  margin-block: 4px;
+  color: var(--os-muted);
+}
+.neumorphic-workspace .continuity-nav:is(:hover, :focus-visible) { background: #dfe7f2; color: var(--os-primary-deep); }
+.neumorphic-workspace .continuity-nav.is-active,
+.neumorphic-workspace .continuity-nav.is-active:hover { background: transparent; color: var(--os-primary-deep); }
+.neumorphic-app [data-motion-indicator] { background: var(--os-canvas); box-shadow: var(--neu-raised); }
+.neumorphic-app [data-motion-indicator][data-tone="tinted"] { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); }
+.neumorphic-workspace .continuity-nav.is-active > svg { color: var(--os-primary); }
+.neumorphic-workspace .continuity-avatar { background: var(--os-canvas); border: 0; box-shadow: var(--neu-raised); border-radius: 9px; }
+.neumorphic-workspace .continuity-recents a { border-radius: 8px; }
+.neumorphic-workspace .continuity-recents a:hover { background: var(--os-primary-soft); }
+.neumorphic-app .language-toggle { background: var(--os-canvas); border: 0; border-radius: 12px; padding: 5px; box-shadow: var(--neu-inset); }
+.neumorphic-app .language-toggle .language-toggle__option { border: 0; border-radius: 8px; background: transparent; box-shadow: none; }
+.neumorphic-app .language-toggle .language-toggle__option[aria-pressed="true"] { background: transparent; color: var(--os-primary-deep); box-shadow: none; }
+.neumorphic-app .language-toggle__icon { color: var(--os-muted); }
+
+/* Small controls share the same tactile depth across every workspace. */
+.neumorphic-app :is(.button, .continuity-primary, .chat-new-button, .chat-tool-button,
+  .chat-send-button, .chat-icon-button, .chat-export-button, .workspace-density,
+  .workspace-heading-actions > button, .workspace-pagination button,
+  .workspace-bulk button, .research-run-list button, .research-context button,
+  .chat-source-strip > div button, .chat-evidence-panel__tabs button,
+  .chat-library footer button, .chat-thread-tools form button,
+  .chat-selected-letters button, .continuity-mobile-close) {
+  background: var(--os-canvas);
+  color: var(--os-ink);
+  border: 0;
+  border-radius: var(--control-radius);
+  box-shadow: var(--neu-raised);
+}
+.neumorphic-workspace .continuity-topbar :is(.continuity-collapse, .continuity-mobile-trigger),
+.neumorphic-workspace .continuity-topbar-actions > :is(a, button) {
+  background: var(--os-canvas);
+  border: 0;
+  border-radius: var(--control-radius);
+  box-shadow: var(--neu-raised);
+  min-height: 36px;
+}
+.neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button) {
+  background: var(--os-primary);
+  color: #fff;
+  box-shadow: var(--os-shadow-primary);
+}
+.neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button):hover:not(:disabled) { background: var(--os-primary-deep); color: #fff; }
+.neumorphic-app :is(button, .button)[disabled] { cursor: not-allowed; }
+.neumorphic-app .button:disabled,
+.neumorphic-app .chat-workbench .chat-send-button:disabled { opacity: 1; background: #dce3ed; color: #586a83; box-shadow: var(--neu-pressed); }
+.neumorphic-app :is(.workspace-viewbar, .chat-library__tabs) {
+  background: var(--os-canvas);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--neu-inset);
+  padding: 8px;
+  gap: 8px;
+}
+.neumorphic-app :is(.workspace-viewbar, .chat-library__tabs) .ui-selection-control { border: 0; border-radius: 8px; background: transparent; box-shadow: none; }
+.neumorphic-app :is(.workspace-viewbar, .chat-library__tabs) .ui-selection-control[aria-pressed="true"] { background: transparent; color: var(--os-primary-deep); }
+
+/* Major surfaces use one elevation; dense rows keep simple separators. */
+.neumorphic-workspace :is(.continuity-continue, .continuity-activity,
+  .continuity-work > section, .continuity-metrics, .continuity-start,
+  .archive-toolbar, .archive-ledger, .workspace-list, .workspace-collection,
+  .workspace-empty, .governance-panel, .trends-panel, .review-panel,
+  .detail-panel, .letter-detail__header, .empty-state) {
+  background: var(--os-surface);
+  border: 0;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--os-shadow-panel);
+}
+.neumorphic-workspace .workspace-collection { padding: 20px; }
+.neumorphic-workspace .workspace-collection .workspace-list { box-shadow: none; border-radius: 0; }
+.neumorphic-workspace .continuity-continue .workspace-list { box-shadow: none; }
+.neumorphic-workspace .continuity-table th,
+.neumorphic-workspace .archive-ledger__head { background: #e1e8f1; }
+.neumorphic-workspace :is(.continuity-table, .archive-ledger) { overflow: hidden; }
+.neumorphic-workspace .continuity-table tr:hover td,
+.neumorphic-workspace .letter-row:hover { background: #e0e9f5; }
+.neumorphic-workspace .continuity-table tr[data-selected="true"] td,
+.neumorphic-workspace .letter-row[data-selected="true"] { background: var(--os-primary-soft); }
+.neumorphic-workspace .workspace-list > li > :is(a, button) { box-shadow: none; }
+.neumorphic-workspace :is(.continuity-ask-bar, .workspace-feedback, .workspace-bulk, .chat-user-message) {
+  background: var(--os-canvas);
+  border: 0;
+  border-radius: var(--radius-inset);
+  box-shadow: var(--neu-inset);
+}
+.neumorphic-workspace .workspace-feedback[role="alert"] { background: var(--status-error-surface); }
+.neumorphic-app :is(.workspace-page, .research-run-list, .workspace-save-view,
+  .research-context, .archive-toolbar, .filter-field, .chat-thread-tools)
+  :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  background: var(--os-canvas);
+  border: 1px solid var(--os-control);
+  border-radius: var(--control-radius);
+  box-shadow: var(--neu-inset);
+  color: var(--os-ink);
+}
+.neumorphic-workspace .research-run-list { border-right: 0; padding-right: 20px; }
+.neumorphic-workspace .research-run-list .workspace-list { margin-block: 16px; border-radius: 12px; box-shadow: var(--neu-raised); }
+
+/* Source archives and original documents carry the same material as Chat. */
+.neumorphic-workspace .letter-row { background: var(--os-surface); }
+.neumorphic-workspace :is(.archive-meta, .filter-drawer, .record-tabs) { background: var(--os-canvas); border: 0; border-radius: 14px; box-shadow: var(--neu-inset); }
+.neumorphic-workspace .archive-meta { padding: 12px; }
+.neumorphic-workspace .archive-search { background: var(--os-canvas); border: 1px solid var(--os-control); border-radius: 12px; box-shadow: var(--neu-inset); }
+.neumorphic-workspace .archive-search input { background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+.neumorphic-workspace :is(.filter-toggle, .reset-button, .archive-pagination button, .letter-row__actions button, .letter-row__actions a, .page-guide__summary) { background: var(--os-canvas); border: 0; border-radius: 10px; box-shadow: var(--neu-raised); }
+.neumorphic-workspace .archive-pagination [aria-current="page"] { background: var(--os-primary-soft); color: var(--os-primary-deep); box-shadow: var(--neu-pressed); }
+.neumorphic-workspace :is(.record-summary-card, .source-document, .paper-panel, .saved-letters-empty, .saved-letter-collection, .page-guide__panel,
+  .trend-signal-strip, .trend-authority-rail, .ai-generate-panel) { background: var(--os-surface); border: 0; border-radius: var(--radius-panel); box-shadow: var(--os-shadow-panel); }
+.neumorphic-workspace .record-tabs { padding: 8px; }
+.neumorphic-workspace .record-tab-list button { border: 0; border-radius: 10px; }
+.neumorphic-workspace .record-tab-list button[aria-selected="true"] { background: transparent; }
+.neumorphic-workspace :is(.record-facts, .ai-finding, .continuity-cited-passage, .original-index, .continuity-assistant-context) { background: var(--os-canvas); border-radius: 12px; }
+.neumorphic-workspace .source-document { background: var(--os-inset); }
+.neumorphic-workspace .workspace-inspector { box-shadow: var(--os-shadow-float); }
+.neumorphic-workspace .trend-period-selector { background: var(--os-canvas); border: 0; border-radius: 12px; box-shadow: var(--neu-inset); padding: 6px; }
+.neumorphic-workspace .trend-period-selector button { border-radius: 8px; }
+.neumorphic-app .state-page { background: var(--os-surface); border: 0; border-radius: var(--radius-panel); box-shadow: var(--os-shadow-panel); }
+.neumorphic-workspace :is(.review-queue, .review-stage, .ops-status, .admin-quick-settings) { background: var(--os-surface); border: 0; border-radius: var(--radius-panel); box-shadow: var(--os-shadow-panel); }
+.neumorphic-workspace :is(.review-queue__filters, .review-stage__header, .review-source, .review-derived, .admin-setting-card) { background: var(--os-canvas); border-color: var(--os-rule); }
+.neumorphic-workspace .admin-setting-card { border: 0; border-radius: 14px; box-shadow: var(--neu-inset); }
+.neumorphic-workspace :is(.review-dialog, .modal-card) { background: var(--os-surface); border: 0; border-radius: var(--radius-panel); box-shadow: var(--os-shadow-float); }
+
+/* Chat: a raised frame, a recessed composer and three sculpted task keys. */
+.neumorphic-workspace.continuity-shell .continuity-main:has(> .chat-page) { padding: 72px 20px 20px; }
+.neumorphic-workspace.continuity-shell .chat-page.chat-workbench { gap: 20px; }
+.neumorphic-workspace.continuity-shell .chat-workbench > .chat-page__surface,
+.neumorphic-workspace.continuity-shell .chat-workbench .chat-evidence-panel {
+  background: var(--os-surface);
+  border: 0;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--os-shadow-panel);
+}
+.neumorphic-workspace .chat-workbench__header { padding: 14px 24px; min-height: 76px; border-bottom-color: var(--os-rule); }
+.neumorphic-workspace .chat-workbench__header-actions { gap: 12px; }
+.neumorphic-workspace .chat-workbench__heading > svg { background: var(--os-canvas); padding: 9px; width: 38px; height: 38px; border-radius: 12px; box-shadow: var(--neu-raised); }
+.neumorphic-workspace .chat-workbench .chat-welcome { padding-block: 20px; }
+.neumorphic-workspace .chat-workbench .chat-welcome h2 { color: var(--os-ink); font-weight: 620; }
+.neumorphic-workspace .chat-workbench .chat-suggestions { border: 0; gap: 18px; padding: 4px; }
+.neumorphic-workspace .chat-workbench .chat-suggestions button {
+  border: 0;
+  border-radius: 16px;
+  background: var(--os-canvas);
+  box-shadow: var(--neu-raised);
+  padding: 20px 18px;
+  min-height: 126px;
+  color: var(--os-ink);
+}
+.neumorphic-workspace .chat-evidence-flow li > svg { background: var(--os-canvas); box-shadow: var(--neu-raised); border-radius: 18px; }
+.neumorphic-workspace .chat-evidence-flow li:nth-child(2) > svg { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); }
+.neumorphic-workspace .chat-evidence-flow li + li::before { background: #8ea4c1; }
+.neumorphic-workspace .chat-workbench .chat-composer-wrap { background: var(--os-canvas); padding-bottom: 20px; }
+.neumorphic-workspace.continuity-shell .chat-workbench .chat-composer {
+  background: var(--os-canvas);
+  border: 1px solid var(--os-control);
+  border-radius: 20px;
+  box-shadow: var(--neu-inset);
+  padding: 20px 20px 16px;
+}
+.neumorphic-workspace.continuity-shell .chat-workbench .chat-composer:focus-within { outline: 2px solid var(--os-primary); outline-offset: 3px; border-color: var(--os-primary); box-shadow: var(--neu-inset); }
+.neumorphic-workspace .chat-workbench .chat-composer textarea { background: transparent; color: var(--os-ink); box-shadow: none; }
+.neumorphic-workspace .chat-workbench .chat-composer__controls { gap: 12px; padding-top: 6px; }
+.neumorphic-workspace .chat-workbench .chat-composer .chat-tool-button { padding-inline: 10px; }
+.neumorphic-workspace .chat-workbench .chat-user-message { background: #e1e9f4; box-shadow: var(--neu-inset); border-radius: 16px 16px 6px 16px; }
+.neumorphic-workspace .chat-workbench .chat-source-strip { background: var(--os-canvas); border: 0; padding: 18px; border-radius: 16px; box-shadow: var(--neu-inset); }
+.neumorphic-workspace .chat-workbench .chat-source-strip > div button { background: var(--os-canvas); border: 0; box-shadow: var(--neu-raised); border-radius: 8px; }
+.neumorphic-workspace .chat-evidence-panel__body { background: var(--os-canvas); }
+.neumorphic-workspace .chat-evidence-panel > footer, .neumorphic-workspace .chat-evidence-panel__focus { background: var(--os-canvas); }
+.neumorphic-workspace .chat-evidence-panel__passage { background: var(--os-inset); border: 0; border-radius: 14px; box-shadow: var(--neu-inset); }
+.neumorphic-workspace .chat-evidence-panel__tabs { gap: 12px; }
+.neumorphic-workspace .chat-evidence-panel__tabs button[aria-pressed="true"] { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); color: var(--os-primary-deep); }
+.neumorphic-app :is(.chat-thread-menu > div, .chat-option-menu__popover,
+  .chat-find__bar, .chat-source-picker, .chat-library, .workspace-save-view,
+  .workspace-command, .workspace-inspector, .continuity-assistant,
+  .continuity-comparison, .continuity-mobile-nav) {
+  background: var(--os-surface);
+  color: var(--os-ink);
+  border: 0;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--os-shadow-float);
+}
+.neumorphic-app :is(.chat-thread-menu, .chat-library, .workspace-command) button { background: var(--os-canvas); color: var(--os-ink); }
+.neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar) { background: var(--os-canvas); border: 1px solid var(--os-control); border-radius: 12px; box-shadow: var(--neu-inset); }
+.neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar) input { background: transparent; color: var(--os-ink); box-shadow: none; }
+.neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar):focus-within { outline: 2px solid var(--os-primary); outline-offset: 3px; }
+.neumorphic-app :is(.workspace-command-item, .chat-library__item):hover { background: var(--os-primary-soft); }
+.neumorphic-app .continuity-mobile-nav { border-radius: 0 20px 20px 0; }
+.neumorphic-app .continuity-mobile-nav .continuity-brand { margin-inline-end: 48px; }
+.neumorphic-app .continuity-mobile-close { z-index: 1; min-width: 44px; }
+.neumorphic-app :is(.workspace-inspector, .continuity-assistant) { border-radius: 20px 0 0 20px; }
+.neumorphic-app .workspace-inspector blockquote { background: var(--os-inset); border: 0; border-radius: 12px; box-shadow: var(--neu-inset); padding: 18px; }
+.neumorphic-workspace.continuity-shell .continuity-assistant .chat-page > .chat-page__surface { background: var(--os-canvas); border-radius: 0; box-shadow: none; }
+.neumorphic-workspace.continuity-shell .continuity-assistant .chat-composer { background: var(--os-canvas); border-radius: 14px; box-shadow: var(--neu-inset); }
+.neumorphic-app .session-notice { background: transparent; color: var(--os-muted); }
+.neumorphic-app .session-notice summary { background: transparent; }
+
+/* Native dialogs retain top-layer/focus semantics through both transition legs. */
+@media (prefers-reduced-motion: no-preference) {
+  body.neumorphic-app :is(button, a[href], input, select, textarea, summary) {
+    transition: color 180ms var(--motion-ease), background-color 180ms var(--motion-ease),
+      border-color 180ms var(--motion-ease), box-shadow 180ms var(--motion-ease),
+      transform 180ms var(--motion-ease), scale 180ms var(--motion-ease), opacity 180ms ease;
+  }
+  .neumorphic-workspace.continuity-shell :is(.chat-suggestions button, .chat-tool-button,
+    .chat-new-button, .chat-send-button, .chat-composer, .workspace-viewbar button) {
+    transition: color 180ms var(--motion-ease), background-color 180ms var(--motion-ease),
+      border-color 180ms var(--motion-ease), box-shadow 180ms var(--motion-ease),
+      transform 180ms var(--motion-ease), scale 180ms var(--motion-ease), opacity 180ms ease;
+  }
+  .neumorphic-app dialog {
+    --dialog-shift: translateY(8px) scale(.99);
+    opacity: 0;
+    transform: var(--dialog-shift);
+    transition: opacity 180ms var(--motion-ease), transform 180ms var(--motion-ease),
+      display 180ms allow-discrete, overlay 180ms allow-discrete;
+  }
+  .neumorphic-app dialog[open] { opacity: 1; transform: none; animation: none; transition-duration: 260ms; }
+  .neumorphic-app dialog:not([open]) { pointer-events: none; }
+  .neumorphic-app dialog.continuity-mobile-nav { --dialog-shift: translateX(-24px); }
+  .neumorphic-app dialog:is(.workspace-inspector, .continuity-assistant) { --dialog-shift: translateX(20px); }
+  .neumorphic-app dialog::backdrop {
+    background: #334b6b00;
+    animation: none;
+    transition: background-color 180ms ease, display 180ms allow-discrete, overlay 180ms allow-discrete;
+  }
+  .neumorphic-app dialog[open]::backdrop { background: #334b6b45; }
+  @starting-style {
+    .neumorphic-app dialog[open] { opacity: 0; transform: var(--dialog-shift); }
+    .neumorphic-app dialog[open]::backdrop { background: #334b6b00; }
+  }
+  /* Animate native disclosures only when the browser can also make the exiting
+     pseudo-element inert. Older engines retain immediate, accessible closing. */
+  @supports (interpolate-size: allow-keywords) and (interactivity: inert) {
+    .neumorphic-app details { interpolate-size: allow-keywords; }
+    .neumorphic-app details::details-content {
+      block-size: 0;
+      opacity: 0;
+      overflow: clip;
+      transition: block-size 220ms var(--motion-ease), opacity 180ms ease, content-visibility 220ms allow-discrete;
+    }
+    .neumorphic-app details[open]::details-content { block-size: auto; opacity: 1; }
+    .neumorphic-app details:not([open])::details-content { interactivity: inert; pointer-events: none; }
+    /* Menus float outside their summary; clipping would hide their actions. */
+    .neumorphic-app .chat-thread-menu::details-content {
+      block-size: auto;
+      overflow: visible;
+      transform: translateY(-4px) scale(.98);
+      transform-origin: top right;
+      transition: opacity 160ms var(--motion-ease), transform 160ms var(--motion-ease), content-visibility 160ms allow-discrete;
+    }
+    .neumorphic-app .chat-thread-menu[open]::details-content { transform: none; }
+  }
+
+  /* Rows stay stationary: a continuous tint connects hover, focus and selection. */
+  .neumorphic-app :is(.letter-row, .continuity-table td, .workspace-list > li,
+    .chat-source-item, .chat-composer, .archive-search, .workspace-search, .chat-library__search) {
+    transition: background-color 180ms var(--motion-ease), border-color 180ms var(--motion-ease);
+  }
+  .neumorphic-app :is(.chat-tool-button, .chat-source-strip button)[aria-expanded] > svg:last-child {
+    transition: rotate 220ms var(--motion-ease);
+  }
+  .neumorphic-app .chat-tool-button[aria-expanded="true"] > svg:last-child:not(:first-child) { rotate: 180deg; }
+}
+
+/* Press feedback is shared by native buttons, links and disclosures, including
+   controls rendered by CSS modules. Logical actions never wait for the release. */
+.neumorphic-app :is(button, a[href], summary, input[type="button"], input[type="submit"], input[type="reset"]) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .neumorphic-app :is(button, summary, input[type="button"], input[type="submit"], input[type="reset"]):is(:active, [data-press-feedback]):not(:disabled):not([aria-disabled="true"]) {
+    scale: .98;
+    transition-duration: 110ms;
+  }
+  .neumorphic-app a[href][data-press-feedback]:not([aria-disabled="true"]) { scale: .99; }
+}
+.neumorphic-app :is(button, input, select, textarea):disabled { scale: 1; transform: none; }
+.neumorphic-app :is(button, a, summary)[aria-disabled="true"] { cursor: not-allowed; }
+.neumorphic-app :is(button, a, summary)[aria-busy="true"] { cursor: progress; }
+.neumorphic-app :is(input, select, textarea):not(:disabled):focus-visible { border-color: var(--os-primary); }
+.neumorphic-app :is(.chat-composer, .archive-search, .workspace-search, .chat-library__search):focus-within { border-color: var(--os-primary); }
+.neumorphic-app details[open] > summary { color: var(--os-primary-deep); }
+.neumorphic-app :is(.workspace-list > li, .letter-row):focus-within { background-color: var(--os-primary-soft); }
+
+@media (hover: hover) {
+  .neumorphic-app :is(.button, .chat-new-button, .chat-tool-button, .chat-icon-button,
+    .chat-export-button, .workspace-density, .workspace-pagination button,
+    .workspace-heading-actions > button, .workspace-bulk button, .research-run-list button,
+    .research-context button, .chat-find__bar button, .chat-thread-tools form button,
+    .chat-selected-letters button, .chat-source-strip > div button, .chat-evidence-panel__tabs button,
+    .filter-toggle, .reset-button, .archive-pagination button, .letter-row__actions button,
+    .letter-row__actions a, .page-guide__summary, .continuity-mobile-close, .continuity-collapse,
+    .continuity-topbar-actions > a, .continuity-topbar-actions > button):hover:not(:disabled),
+  .neumorphic-workspace .chat-workbench .chat-suggestions button:hover:not(:disabled) {
+    box-shadow: var(--neu-hover);
+    color: var(--os-primary-deep);
+  }
+}
+.neumorphic-app :is(.button, .continuity-primary, .chat-new-button, .chat-tool-button,
+  .chat-send-button, .chat-icon-button, .chat-export-button, .workspace-density,
+  .workspace-pagination button, .workspace-heading-actions > button, .workspace-bulk button,
+  .research-run-list button, .research-context button, .chat-find__bar button,
+  .chat-thread-tools form button, .chat-selected-letters button, .chat-source-strip > div button,
+  .chat-evidence-panel__tabs button, .filter-toggle, .reset-button, .archive-pagination button,
+  .letter-row__actions button, .letter-row__actions a, .page-guide__summary,
+  .continuity-mobile-close, .continuity-topbar-actions > a,
+  .continuity-topbar-actions > button, .continuity-collapse):is(:active, [data-press-feedback]):not(:disabled):not([aria-disabled="true"]),
+.neumorphic-workspace .chat-workbench .chat-suggestions button:is(:active, [data-press-feedback]):not(:disabled) {
+  box-shadow: var(--neu-pressed);
+  transform: translateY(1px);
+  transition-duration: 110ms;
+}
+.neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button):is(:active, [data-press-feedback]):not(:disabled):not([aria-disabled="true"]) {
+  color: #fff;
+  background: var(--os-primary-deep);
+  box-shadow: var(--neu-primary-pressed);
+}
+
+@media (max-width: 1000px) {
+  .neumorphic-workspace.continuity-shell .continuity-main:has(> .chat-page) { padding-inline: 14px; padding-bottom: 14px; }
+  .neumorphic-workspace .chat-workbench .chat-suggestions { gap: 12px; }
+}
+@media (max-width: 700px) {
+  .neumorphic-workspace.continuity-shell .continuity-main:has(> .chat-page) { padding: 64px 10px 10px; }
+  .neumorphic-workspace .chat-workbench__header { min-height: 62px; padding: 12px 14px; }
+  .neumorphic-workspace .chat-workbench__header-actions { gap: 8px; }
+  .neumorphic-workspace .chat-workbench__heading > svg { display: none; }
+  .neumorphic-workspace .chat-workbench .chat-suggestions { gap: 12px; padding: 4px; }
+  .neumorphic-workspace .chat-workbench .chat-suggestions button { min-height: 58px; padding: 14px; border-radius: 12px; }
+  .neumorphic-workspace .chat-workbench .chat-welcome { padding-block: 12px 20px; }
+  .neumorphic-workspace .chat-workbench .chat-welcome h2 { font-size: 32px; }
+  .neumorphic-workspace.continuity-shell .chat-workbench .chat-composer { padding: 16px 12px 12px; border-radius: 16px; }
+  .neumorphic-workspace .chat-workbench .chat-composer-wrap { padding: 10px 14px 14px; }
+  .neumorphic-workspace .chat-workbench .chat-composer__controls { gap: 8px; }
+  .neumorphic-workspace .chat-workbench .chat-composer .chat-tool-button { padding-inline: 7px; }
+  .neumorphic-workspace .chat-workbench .chat-composer .chat-send-button { width: 44px; min-width: 44px; height: 44px; padding: 0; }
+  .neumorphic-workspace .chat-workbench .chat-composer .chat-send-button span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .neumorphic-workspace .chat-workbench .chat-composer-note { font-size: 12px; }
+  .neumorphic-app :is(.workspace-inspector, .continuity-assistant) { border-radius: 16px 16px 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neumorphic-app, .neumorphic-app .neumorphic-workspace { --motion-press: 0ms; --motion-hover: 0ms; --motion-select: 0ms; --motion-panel: 0ms; --motion-context: 0ms; }
+  .neumorphic-app *, .neumorphic-app *::before, .neumorphic-app *::after,
+  .neumorphic-app dialog::backdrop, .neumorphic-app details::details-content {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .neumorphic-app :is(button, a, summary, input):is(:active, [data-press-feedback]):not(.chat-jump) { transform: none !important; }
+  .neumorphic-app .chat-tool-button[aria-expanded] > svg { rotate: none !important; }
+}
+@media (forced-colors: active) {
+  .neumorphic-app { --os-ink: CanvasText; --os-muted: CanvasText; --os-canvas: Canvas; --os-surface: Canvas; --os-inset: Canvas; --os-primary: LinkText; --os-primary-deep: LinkText; --os-rule: ButtonBorder; --os-control: ButtonBorder; --focus-ring: Highlight; }
+  .neumorphic-app :is(button, input, textarea, select, .button, .continuity-primary, dialog) { border: 1px solid ButtonText; box-shadow: none; }
+  .neumorphic-app [data-motion-indicator] { border: 2px solid Highlight; box-shadow: none; }
+  .neumorphic-app .continuity-nav[aria-current="page"] { outline: 1px solid Highlight; }
+  .neumorphic-app :is(button:disabled, input:disabled) { color: GrayText; border-color: GrayText; }
+}

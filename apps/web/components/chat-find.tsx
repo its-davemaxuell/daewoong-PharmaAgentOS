@@ -6,6 +6,7 @@ import { Search } from "./icons/Search";
 import { ArrowUp } from "./icons/ArrowUp";
 import { ArrowDown } from "./icons/ArrowDown";
 import { X } from "./icons/X";
+import { Presence, PresenceSurface } from "./motion/presence";
 
 export function ChatFind({ entries }: { entries: Array<{ id: string; text: string }> }) {
   const { text } = useI18n();
@@ -38,14 +39,15 @@ export function ChatFind({ entries }: { entries: Array<{ id: string; text: strin
     <button ref={trigger} type="button" className="chat-tool-button" aria-expanded={open} onClick={() => setOpen(value => !value)}>
       <Search size={16} />{text("Find in chat", "대화 내 검색")}
     </button>
-    {open && <div className="chat-find__bar" role="search" aria-label={text("Find in this conversation", "현재 대화에서 찾기")}>
+    <Presence initial={false}>{open && <PresenceSurface as="div" key="find" className="chat-find__bar" role="search" aria-label={text("Find in this conversation", "현재 대화에서 찾기")}
+      onKeyDown={event => { if (event.key === "Escape" && !event.nativeEvent.isComposing) { event.preventDefault(); event.stopPropagation(); close(); } }}>
       <input ref={input} type="search" maxLength={200} value={query} aria-label={text("Find in this chat", "이 대화에서 검색")} placeholder={text("Find a word or phrase…", "단어나 문구 찾기…")}
         onChange={event => { setQuery(event.target.value); setIndex(0); }}
-        onKeyDown={event => { if (event.key === "Escape") { event.preventDefault(); close(); } else if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); move(event.shiftKey ? -1 : 1); } }} />
+        onKeyDown={event => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); move(event.shiftKey ? -1 : 1); } }} />
       <span role="status">{term ? matches.length ? `${position + 1} / ${matches.length}` : text("No matches", "일치 없음") : text("Search messages", "메시지 검색")}</span>
       <button type="button" disabled={!matches.length} onClick={() => move(-1)} aria-label={text("Previous match", "이전 검색 결과")}><ArrowUp size={16} /></button>
       <button type="button" disabled={!matches.length} onClick={() => move(1)} aria-label={text("Next match", "다음 검색 결과")}><ArrowDown size={16} /></button>
       <button type="button" onClick={close} aria-label={text("Close find", "대화 검색 닫기")}><X size={16} /></button>
-    </div>}
+    </PresenceSurface>}</Presence>
   </div>;
 }

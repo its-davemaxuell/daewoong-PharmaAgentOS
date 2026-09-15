@@ -1,8 +1,9 @@
 "use client";
 
-import { AnimatePresence, useIsPresent, useReducedMotion } from "motion/react";
+import { AnimatePresence, useIsPresent } from "motion/react";
 import * as m from "motion/react-m";
 import type { ComponentProps } from "react";
+import { useMediaQuery } from "@/lib/ui-media";
 
 export { AnimatePresence as Presence };
 
@@ -10,7 +11,7 @@ type SurfaceProps = Omit<ComponentProps<typeof m.section>, "ref"> & { as?: "sect
 /** Parent owns logical visibility/focus. Exiting DOM becomes inert immediately. */
 export function PresenceSurface({ as = "section", direction = "up", children, ...props }: SurfaceProps) {
   const present = useIsPresent();
-  const reduced = useReducedMotion();
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const Element = as === "aside" ? m.aside : as === "div" ? m.div : m.section;
   const offset = reduced ? 0 : direction === "side" ? 8 : 5;
   return <Element {...props} inert={!present || undefined} aria-hidden={!present || undefined}

@@ -813,7 +813,7 @@ export function LetterDetail({ letter, initiallySaved }: { letter: Letter; initi
         <span>{text("Official source retained · bilingual AI results version-bound and reusable · parallel generation supported", "공식 원문 보존 · 이중 언어 AI 결과의 버전 연계 및 재사용 · 병렬 생성 지원")}</span>
         <code>MARCS-CMS {letter.marcsCms}</code>
       </footer>
-      {citationAnchor && <Inspector title={text("Source evidence", "원문 근거")} onClose={() => setCitationAnchor(undefined)}>
+      {citationAnchor && <Inspector key={citationAnchor} title={text("Source evidence", "원문 근거")} onClose={() => setCitationAnchor(undefined)}>
         <p className="continuity-source-label">FDA · {letter.marcsCms}</p><h3>{letter.company}</h3>
         <dl className="workspace-metadata"><dt>{text("Document version", "문서 버전")}</dt><dd>{letter.sourceVersion}</dd><dt>{text("Source section", "원문 섹션")}</dt><dd>{citationAnchor}</dd></dl>
         {letter.originalSections.filter(section => section.anchor === citationAnchor).map(section => <section className="continuity-cited-passage" key={section.anchor}><h4>{section.heading}</h4>{section.paragraphs.map((paragraph,index)=><p key={index} lang="en">{paragraph}</p>)}</section>)}

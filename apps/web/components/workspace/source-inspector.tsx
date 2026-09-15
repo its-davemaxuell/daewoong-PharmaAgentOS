@@ -19,7 +19,7 @@ export function SourceInspector({ id, source, onClose }: { id: string; source?: 
   const scope = useWorkspaceScope();
   const query = useQuery({ queryKey: [scope, "source", id], queryFn: ({ signal }) => fetchSource(id, signal), enabled: !source });
   const letter = source ? undefined : query.data;
-  return <Inspector title={text("Source evidence", "원문 근거")} onClose={onClose}>
+  return <Inspector key={source?.id ?? id} title={text("Source evidence", "원문 근거")} onClose={onClose}>
     {!source && query.isPending ? <WorkspaceLoading /> : !source && query.isError ? <WorkspaceErrorState retry={() => void query.refetch()} /> : <>
       <p className="workspace-eyebrow">{source ? text("Evidence retained with this research", "리서치에 보존된 근거") : text("Current source record", "현재 원문 기록")}</p>
       <h3>{source?.company ?? letter?.company}</h3>

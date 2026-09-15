@@ -46,7 +46,7 @@ export function SavedWorkspace() {
       <div className="workspace-pagination"><button disabled={!cursor} onClick={() => setWorkspaceParams({ cursor: null })}>{text("First page", "첫 페이지")}</button><button disabled={!views.data.has_more} onClick={() => setWorkspaceParams({ cursor: views.data.next_cursor || null })}>{text("Next page", "다음 페이지")}</button></div>
     </>}
     {editing && <ViewEditor key={editing.id} view={editing} onClose={() => setEditing(undefined)} />}
-    {brief && <BriefInspector id={brief} onClose={() => setWorkspaceParams({ brief: null })} />}
+    {brief && <BriefInspector key={brief} id={brief} onClose={() => setWorkspaceParams({ brief: null })} />}
   </section>;
 }
 function BriefInspector({ id, onClose }: { id: string; onClose: () => void }) {

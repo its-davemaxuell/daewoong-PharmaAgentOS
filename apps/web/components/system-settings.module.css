@@ -98,3 +98,6 @@
 .settings p { font-size: .9375rem; }
 .guideLink { background: var(--os-inset); border: 1px solid var(--os-rule); border-radius: 10px; }
 @media (max-width: 600px) { .settings section { padding: 18px; } }
+
+.settings section { border: 0; border-radius: var(--radius-panel); }
+.guideLink { border: 0; border-radius: 14px; background: var(--os-canvas); box-shadow: var(--neu-inset); }

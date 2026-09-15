@@ -1,6 +1,6 @@
 # PharmaAgent OS implementation handoff
 
-**Handoff date:** 2026-09-11
+**Handoff date:** 2026-09-15
 
 **Next engineer:** Start with [the transfer brief](NEXT_ENGINEER_HANDOFF.md) for
 the publication state, production blockers, verification and ordered
@@ -9,6 +9,39 @@ next steps. This file remains the authoritative implementation record.
 **Authoritative workspace:** `C:\Users\user\Desktop\PharmaAgentOS`  
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
+
+**2026-09-15 interaction follow-up (local implementation):** Extended the
+neumorphic site with shared quick tap and keyboard press feedback, cancellation
+handling, additional tactile actions, focus/row tint and options feedback.
+Mobile navigation retains inert content through exit and safely reopens. Find
+has interruptible presence and whole-panel Escape; action menus have native
+keyboard navigation and inaccessible exiting contents. Presence now responds
+to live reduced-motion changes. No API, dependency or deployment change.
+Final Chromium workflow/motion verification passes 42/42 checks, including ten
+new regressions, plus all four startup scenarios. Recorded desktop/mobile touch
+walkthroughs pass; 95 unit tests, production build/TypeScript and lint pass.
+See [interaction verification](docs/assurance/interactions-20260915.md) for
+implementation details, review fixes and preview artifacts.
+
+**2026-09-15 neumorphic website (local implementation):** Replaced the website's
+visual system with cool porcelain raised surfaces, recessed inputs, tactile
+controls and cobalt actions. Updated shared shell, Chat/Research, sources/readers,
+saved work, cases, agents, governance, Settings/Help, dialogs, loading and startup.
+Added continuous press-depth transitions and native dialog entry/exit; inspectors
+release focus immediately, remain inert during exit and use record identity to
+protect rapid source changes. Mobile Chat keeps its composer controls on one row.
+Preserved the original all-menu startup, bilingual content, source provenance,
+drafts/streaming, session ownership and role restrictions. No API, schema,
+dependency or deployment change. DESIGN.md, PRODUCT.md, source plan and surface
+briefs record the replacement design.
+
+Personally inspected Chromium renders. The 104-view English/Korean desktop/mobile
+inventory has no horizontal overflow or browser script errors. Unit tests (95),
+production build/TypeScript and lint pass. Final Chromium verification passes
+32/32 workflow/motion checks plus all four startup scenarios. This includes new
+press-depth, inert exit, focus, forced-color and rapid source-switching regressions.
+Details, test history, limitations and screenshots:
+[neumorphism verification](docs/assurance/neumorphism-20260915.md).
 
 **2026-09-12 visual UX refinement (deployed):** Inspected Chat,
 Research and shared working surfaces in English/Korean desktop/mobile. Increased

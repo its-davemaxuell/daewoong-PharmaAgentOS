@@ -2,11 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { BilingualText, I18nProvider, type Locale } from "@/lib/i18n";
+import { PressFeedback } from "@/components/motion/press-feedback";
 import "./globals.css";
 import "./tokens.css";
 import "./agent-theme.css";
 import "./workspace.css";
 import "./continuity.css";
+import "./neumorphism.css";
 
 
 const pretendard = localFont({
@@ -30,7 +32,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#ffffff",
+  themeColor: "#e9eef4",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -45,9 +47,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       suppressHydrationWarning
       className={pretendard.variable}
     >
-      <body className={pretendard.className}>
+      <body className={`${pretendard.className} neumorphic-app`}>
         <noscript id="workspace-noscript"><p>JavaScript is required to prepare the workspace. Enable JavaScript and reload this page. / 워크스페이스를 준비하려면 JavaScript를 활성화한 후 새로고침하세요.</p></noscript>
         <I18nProvider initialLocale={initialLocale}>
+          <PressFeedback />
           <a className="skip-link" href="#main-content">
             <BilingualText en="Skip to main content" ko="본문으로 건너뛰기" />
           </a>

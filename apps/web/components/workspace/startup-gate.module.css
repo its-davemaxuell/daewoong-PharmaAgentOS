@@ -27,3 +27,16 @@
 }
 @media (prefers-reduced-motion: reduce) { .sprite { animation: none; background-position: 0 -352px; } .gate[data-state="revealing"] .content, .gate[data-state="revealing"] .overlay { transition: none; } }
 @media (scripting: none) { .overlay { display: none; } .content { opacity: 1; } }
+
+/* Preserve the original folder sequence inside the shared tactile material. */
+.overlay { background: var(--os-canvas); color: var(--os-ink); }
+.panel { padding: 36px 24px; border-radius: 28px; background: var(--os-surface); box-shadow: var(--os-shadow-panel); }
+.sprite { border-radius: 24px; }
+.status, .unfinished { color: var(--os-muted); }
+.progress { height: 8px; border-radius: 8px; overflow: hidden; accent-color: var(--os-primary); box-shadow: var(--neu-inset); }
+.progress::-webkit-progress-bar { background: #dbe3ed; border-radius: 8px; box-shadow: var(--neu-inset); }
+.progress::-webkit-progress-value { background: var(--os-primary); border-radius: 8px; }
+@media (prefers-reduced-motion: no-preference) { .progress::-webkit-progress-value { transition: width 240ms var(--motion-ease); } }
+.progress::-moz-progress-bar { background: var(--os-primary); border-radius: 8px; }
+.actions button { background: var(--os-canvas); color: var(--os-ink); border: 0; border-radius: 10px; box-shadow: var(--neu-raised); }
+.actions button:first-child { background: var(--os-primary); color: #fff; box-shadow: var(--os-shadow-primary); }

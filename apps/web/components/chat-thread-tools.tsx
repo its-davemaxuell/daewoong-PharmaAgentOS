@@ -7,7 +7,7 @@ import { Download } from "@/components/icons/Download";
 import { MoreHorizontal } from "@/components/icons/MoreHorizontal";
 import { Pencil } from "@/components/icons/Pencil";
 import { Pin } from "@/components/icons/Pin";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { downloadChatConversation, manageChatConversation } from "@/app/(portal)/ask/actions";
 import { useChatHistory } from "@/components/chat-history-context";
 import { useI18n } from "@/lib/i18n";
@@ -23,6 +23,30 @@ export function ChatThreadTools({ thread, disabled, onChange }: {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
   const menu = useRef<HTMLDetailsElement>(null);
+  const navigateMenu = (event: KeyboardEvent<HTMLDetailsElement>) => {
+    if (event.nativeEvent.isComposing) return;
+    const details = event.currentTarget;
+    const summary = details.querySelector("summary");
+    if (event.key === "Escape") {
+      if (!details.open) return;
+      event.preventDefault(); event.stopPropagation(); details.open = false; summary?.focus(); return;
+    }
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    const choices = Array.from(details.querySelectorAll<HTMLButtonElement>("button:not(:disabled)"));
+    if (!choices.length) return;
+    event.preventDefault();
+    const index = choices.indexOf(document.activeElement as HTMLButtonElement);
+    const wasOpen = details.open;
+    details.open = true;
+    const next = event.key === "Home" ? 0 : event.key === "End" ? choices.length - 1
+      : index < 0 ? event.key === "ArrowUp" ? choices.length - 1 : 0
+      : (index + (event.key === "ArrowDown" ? 1 : -1) + choices.length) % choices.length;
+    // Native details exposes its contents on the next rendered frame.
+    if (wasOpen) choices[next].focus();
+    else requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (details.isConnected && details.open && document.activeElement === summary) choices[next].focus();
+    }));
+  };
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
       if (menu.current && !menu.current.contains(event.target as Node)) menu.current.open = false;
@@ -60,7 +84,8 @@ export function ChatThreadTools({ thread, disabled, onChange }: {
       <button type="button" onClick={() => setEditing(false)}>{text("Cancel", "취소")}</button>
     </form> : <strong className="chat-thread-tools__title" title={thread.title}>{thread.pinnedAt && <Pin size={14} />}{thread.title}</strong>}
     <button className="chat-export-button" type="button" disabled={pending || disabled} onClick={() => void download("markdown")}><Download size={16} />{text("Export", "내보내기")}</button>
-    <details ref={menu} className="chat-thread-menu" onKeyDown={(event) => { if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary")?.focus(); } }}>
+    <details ref={menu} className="chat-thread-menu" onKeyDown={navigateMenu}
+      onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) event.currentTarget.open = false; }}>
       <summary aria-label={text("Conversation actions", "대화 작업")}><MoreHorizontal size={21} /></summary>
       <div>
         {!thread.archivedAt && <>
