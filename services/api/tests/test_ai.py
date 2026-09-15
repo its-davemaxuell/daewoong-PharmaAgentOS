@@ -576,7 +576,7 @@ async def test_document_generator_uses_separate_stable_structured_profile() -> N
     task_text = body["contents"][0]["parts"][0]["text"]
     assert "Every FDA or regulatory official term and heading must contain Korean" in task_text
     assert "official terms, and immutable placeholders" not in task_text
-    assert generator.prompt_version == "letter-translation-ko-v5"
+    assert generator.prompt_version == "letter-translation-ko-v6"
 
 
 @pytest.mark.asyncio
@@ -679,7 +679,7 @@ async def test_document_translation_failure_exhausts_only_configured_document_mo
         * 3
     )
     assert requested_models[-1] == "gemini-3.1-flash-lite"
-    assert generator.prompt_version == "letter-translation-ko-v5"
+    assert generator.prompt_version == "letter-translation-ko-v6"
 
 
 @pytest.mark.asyncio
