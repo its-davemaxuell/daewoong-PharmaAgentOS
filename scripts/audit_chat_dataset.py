@@ -18,6 +18,7 @@ audit_chat_questions.QUESTIONS = [
     ("empty", "Show letters issued in September 2099"),
     ("phrase", 'Which letters contain the exact phrase "data integrity" in 2025?'),
     ("semantic-catalog", "Bring up the recently published notices"),
+    ("inventory", "Provide an inventory of our saved records"),
     ("semantic-count", "Tally the recipients in our records"),
     ("topic-recency", "Latest FDA letters about data integrity"),
     ("unsupported", "Show letters added to our database today"),

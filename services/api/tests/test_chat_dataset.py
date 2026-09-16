@@ -25,6 +25,7 @@ from app.rag_planner import plan_rag
         "what is the letter that went out this month",
         "Show me new letters",
         "What letters came out recently?",
+        "Bring up the recently published notices",
         "List all letters from this month",
         "Which companies received letters recently?",
         "What is new in our dataset?",
@@ -323,7 +324,7 @@ def test_ambiguous_metadata_language_still_reaches_semantic_planner(
 ):
     model = PlannerStub([DatasetSearchPlan(tool="catalog", date_field="posted").model_dump_json()])
     monkeypatch.setattr(client.app.state, "ai_generator", model)
-    result = ask(client, viewer_headers, "Bring up the recently published notices")
+    result = ask(client, viewer_headers, "Bring up recent documents")
     assert result["route_reason"] == "planned_catalog_lookup"
     assert "posting date" in result["answer"]
     assert len(result["citations"]) > 1
@@ -341,7 +342,7 @@ def test_planned_catalog_does_not_replace_selected_company_or_offices(
 ):
     model = PlannerStub([DatasetSearchPlan(tool="catalog", **plan).model_dump_json()])
     monkeypatch.setattr(client.app.state, "ai_generator", model)
-    result = ask(client, viewer_headers, "Bring up the recently published notices", filters=filters)
+    result = ask(client, viewer_headers, "Bring up recent documents", filters=filters)
     assert "conflicts" in result["answer"] and not result["citations"]
 
 

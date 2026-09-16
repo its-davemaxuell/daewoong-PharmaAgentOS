@@ -31,7 +31,7 @@ METADATA = re.compile(
     re.I,
 )
 DATASET = re.compile(
-    r"\b(?:letters?|dataset|database|catalog|saved (?:records|sources)|collection)\b|"
+    r"\b(?:letters?|notices?|dataset|database|catalog|saved (?:records|sources)|collection)\b|"
     r"경고(?:장|서한)|서한|데이터셋|데이터베이스|저장\s*(?:자료|원문)",
     re.I,
 )
@@ -417,7 +417,9 @@ def parse_metadata_question(
                 country = value
     posted = bool(
         re.search(
-            r"\bpost(?:ed|ing)\b|appeared on (?:the )?FDA (?:site|website)|게시", constraints, re.I
+            r"\b(?:post(?:ed|ing)|published)\b|appeared on (?:the )?FDA (?:site|website)|게시",
+            constraints,
+            re.I,
         )
     )
     issued = bool(re.search(r"\bissu(?:ed|e)\b|발행|발급", constraints, re.I))
