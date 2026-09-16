@@ -22,6 +22,8 @@ and clipboard recovery. Native Chromium inspection covers EN/KO at 320, 390, 768
 1024, 1440 and 1920px, three-source comparison tables, keyboard source selection,
 draft retention, options, follow-ups, collapsed navigation, enlarged text and the
 embedded assistant. No horizontal page overflow or page errors in those checks.
+The first hosted visual pass prompted tighter phone welcome spacing so all three
+English prompt choices fit at 390×844; the source/answer area stays scrollable.
 Scripts, before/after captures and publication checks are in
 `.artifacts/chat-full-width/`. Broader pre-existing UI CI issues remain recorded below.
 

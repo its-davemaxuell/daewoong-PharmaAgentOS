@@ -401,4 +401,7 @@
   .continuity-shell .chat-workbench:not([data-embedded]) .chat-page__surface { --chat-gutter: 14px; }
   .continuity-shell .chat-workbench:not([data-embedded]) .chat-page__conversation { padding-block: 16px; }
   .continuity-shell .chat-workbench:not([data-embedded]) .chat-composer-wrap { padding-block: 10px 14px; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-welcome { padding-block: 8px; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-evidence-flow { margin-bottom: 12px; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-welcome > p { margin: 6px auto 12px; }
 }
