@@ -580,13 +580,14 @@ def parse_metadata_question(
             limit=page_size,
             offset=inherited.offset + (inherited.limit or 5),
         )
-    if result.intent and re.search(
-        r"\b(?:ingested|downloaded|added to|first seen|closed out|closeout|excluding|except)\b|"
+    if (result.intent or dataset) and re.search(
+        r"\b(?:ingested|downloaded|added to|first seen|imported|collected|"
+        r"closed out|closeout|excluding|except)\b|"
         r"수집된|추가된|종결된|제외",
         question,
         re.I,
     ):
-        result = replace(result, error="dataset_query_required")
+        result = replace(result, intent=result.intent or "list", error="dataset_query_required")
     return result
 
 

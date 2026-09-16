@@ -192,8 +192,10 @@ def test_unsupported_catalog_constraints_require_clarification():
     for question in [
         "List the latest letters added to the dataset this month",
         "Count letters issued in 2025 excluding India",
+        "Show letters added to our database today",
     ]:
         assert parse_metadata_question(question).error == "dataset_query_required"
+        assert plan_rag(question=question).retrieval_strategy == "metadata"
 
 
 def test_saved_pagination_advances_by_displayed_rows_not_requested_limit(
