@@ -147,6 +147,38 @@ def test_empty_latest_selection_does_not_fall_back_to_global_passages(
     assert "2099" in result["answer"] and "**0 saved" in result["answer"]
 
 
+def test_latest_summaries_prefer_findings_over_high_overlap_boilerplate(
+    client, viewer_headers, metadata_rows
+):
+    from sqlalchemy import select
+
+    from app.models import DocumentChunk
+
+    async def prepare():
+        async with client.app.state.database.session_factory() as session:
+            seen = set()
+            for chunk in (
+                await session.scalars(select(DocumentChunk).order_by(DocumentChunk.ordinal))
+            ).all():
+                if chunk.warning_letter_id not in seen:
+                    chunk.source_anchor = "1-your-firm-failed-to-test"
+                    chunk.content = "Laboratory microbial testing failed to detect contamination."
+                    seen.add(chunk.warning_letter_id)
+                else:
+                    chunk.source_anchor = "conclusion"
+                    chunk.content = (
+                        "Latest warning letters summarize findings. Respond within fifteen days."
+                    )
+            await session.commit()
+
+    asyncio.run(prepare())
+    result = ask(
+        client, viewer_headers, "Find the two latest warning letters and summarize findings"
+    )
+    assert len({c["warning_letter_id"] for c in result["citations"][:2]}) == 2
+    assert all(c["source_anchor"] == "1-your-firm-failed-to-test" for c in result["citations"][:2])
+
+
 def test_topic_recency_searches_before_sorting():
     query = parse_metadata_question("Show the latest letters about data integrity")
     assert query.intent is None and query.sort_matches_by_date
@@ -284,6 +316,33 @@ async def test_model_cannot_answer_a_semantic_violation_count_with_all_records()
     assert result.tool == "clarify"
 
 
+def test_ambiguous_metadata_language_still_reaches_semantic_planner(
+    client, viewer_headers, metadata_rows, monkeypatch
+):
+    model = PlannerStub([DatasetSearchPlan(tool="catalog", date_field="posted").model_dump_json()])
+    monkeypatch.setattr(client.app.state, "ai_generator", model)
+    result = ask(client, viewer_headers, "Bring up the recently published notices")
+    assert result["route_reason"] == "planned_catalog_lookup"
+    assert "posting date" in result["answer"]
+    assert len(result["citations"]) > 1
+
+
+@pytest.mark.parametrize(
+    "plan,filters",
+    [
+        ({"company": "Company A"}, {"company": "Company B"}),
+        ({"office": "CDER"}, {"issuing_offices": ["CBER"]}),
+    ],
+)
+def test_planned_catalog_does_not_replace_selected_company_or_offices(
+    client, viewer_headers, metadata_rows, monkeypatch, plan, filters
+):
+    model = PlannerStub([DatasetSearchPlan(tool="catalog", **plan).model_dump_json()])
+    monkeypatch.setattr(client.app.state, "ai_generator", model)
+    result = ask(client, viewer_headers, "Bring up the recently published notices", filters=filters)
+    assert "conflicts" in result["answer"] and not result["citations"]
+
+
 def test_semantic_catalog_plan_honors_user_filters(
     client, viewer_headers, metadata_rows, monkeypatch
 ):
@@ -351,6 +410,15 @@ async def test_openai_planner_uses_validated_structured_output_without_external_
 def test_next_page_preserves_order_and_date_constraints():
     query = metadata_for_turn("Show more", ("Show the latest two letters issued in 2025",))
     assert query.offset == 2 and query.limit == 2 and query.start == date(2025, 1, 1)
+
+
+def test_new_calendar_request_does_not_inherit_previous_result_sample():
+    plan = plan_rag(
+        question="what is the letter that went out this month",
+        prior_user_questions=("Show the latest letters",),
+        prior_citation_letter_ids=("older-result-only",),
+    )
+    assert plan.retrieval_strategy == "metadata" and not plan.letter_ids
 
 
 @pytest.mark.parametrize("complete", [True, False])

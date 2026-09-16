@@ -2285,7 +2285,9 @@ async def _query_rag_impl(
     if (
         payload.retrieval_mode == "auto"
         and not (thread and thread.retrieval_preference == "none")
-        and metadata_query.intent is None
+        and (
+            metadata_query.intent is None or initial_probe.deterministic_response == "out_of_scope"
+        )
         and not metadata_query.error
         and initial_probe.deterministic_response != "capabilities"
         and not is_clearly_out_of_scope(payload.question)
@@ -2945,15 +2947,35 @@ async def _query_rag_impl(
             selected = matches[: min(payload.max_sources, metadata_query.limit or 5)]
             plan = replace(plan, route_reason="passages_sorted_by_date")
         if metadata_query.select_before_search:
-            # A summary of N selected letters must not spend every source slot on one letter.
-            first_per_letter = {}
-            for item in ranked:
-                first_per_letter.setdefault(item[3].id, item)
-            selected = [first_per_letter[key] for key in plan.letter_ids if key in first_per_letter]
-            selected_ids = {item[2].id for item in selected}
-            selected += [item for item in ranked if item[2].id not in selected_ids][
-                : max(0, payload.max_sources - len(selected))
-            ]
+            # Generic summary tokens often match introductions/closing instructions.
+            # Prefer actual finding sections and share evidence slots across selected letters.
+            def summary_order(item):
+                chunk = item[2]
+                boilerplate = bool(
+                    re.search(
+                        r"^(?:introduction|conclusion|contact|signature|footnotes?)(?:-|$)",
+                        chunk.source_anchor,
+                        re.I,
+                    )
+                )
+                finding = bool(
+                    re.search(
+                        r"^\d+-|failed-to|failure-to|violations?|deficienc",
+                        chunk.source_anchor,
+                        re.I,
+                    )
+                )
+                priority = 0 if boilerplate else 2 if finding else 1
+                return (-priority, -item[0], chunk.ordinal, chunk.id)
+
+            by_letter = {key: [] for key in plan.letter_ids}
+            for item in sorted(ranked, key=summary_order):
+                by_letter[item[3].id].append(item)
+            selected = []
+            for slot in range(payload.max_sources):
+                for key in plan.letter_ids:
+                    if slot < len(by_letter[key]) and len(selected) < payload.max_sources:
+                        selected.append(by_letter[key][slot])
         selected_version_ids = {
             chunk.document_version_id for _score, _overlap, chunk, _letter, _document in selected
         }

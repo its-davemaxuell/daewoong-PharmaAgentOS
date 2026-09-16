@@ -220,7 +220,11 @@ def plan_rag(
         # Stored metadata is deterministic even when a company or dossier is selected.
         # A displayed sample of a global count must never become the next count's scope.
         inherited = (
-            inherited_ids if _FOLLOW_UP_RE.search(question) and not metadata_query.followup else ()
+            inherited_ids
+            if _FOLLOW_UP_RE.search(question)
+            and not metadata_query.followup
+            and not (metadata_query.start or metadata_query.end or metadata_query.periods)
+            else ()
         )
         return RagPlan(
             "metadata",
