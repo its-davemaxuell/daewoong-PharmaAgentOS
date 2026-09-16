@@ -169,6 +169,8 @@ FORM: User-pinned neumorphism across the existing operational website.
 .neumorphic-workspace .continuity-continue .workspace-list { box-shadow: none; }
 .neumorphic-workspace .continuity-table th,
 .neumorphic-workspace .archive-ledger__head { background: #e8e1d7; }
+.neumorphic-workspace .workspace-usage-table { min-width: 0; table-layout: fixed; }
+.neumorphic-workspace .workspace-usage-table :is(th, td) { overflow-wrap: anywhere; white-space: normal; }
 .neumorphic-workspace :is(.continuity-table, .archive-ledger) { overflow: hidden; }
 .neumorphic-workspace .continuity-table tr:hover td,
 .neumorphic-workspace .letter-row:hover { background: #eee2d2; }

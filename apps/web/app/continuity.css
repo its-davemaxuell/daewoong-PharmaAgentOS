@@ -589,7 +589,7 @@
   max-width: calc(100% - 40px);
   height: 3px;
   border-radius: 2px;
-  background: #dbe7fc;
+  background: var(--os-primary-soft);
 }
 .continuity-signals .continuity-text-link {
   margin-top: 12px;

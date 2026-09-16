@@ -24,7 +24,7 @@ export function UsageWorkspace() {
       <button className="button button--secondary" disabled={!query.data || query.isError} onClick={download}>{text("Export CSV", "CSV 내보내기")}</button>
     </WorkspaceHeading>
     {query.isPending ? <WorkspaceLoading /> : query.isError ? <WorkspaceErrorState retry={() => void query.refetch()} /> : <>
-      <table className="continuity-table"><thead><tr><th>{text("Activity", "활동")}</th><th>{text("Recorded total", "기록된 합계")}</th></tr></thead><tbody>{metrics.map((key, index) => <tr key={key}><td>{names[index]}</td><td>{query.data[key].toLocaleString(locale)}</td></tr>)}</tbody></table>
+      <table className="continuity-table workspace-usage-table"><thead><tr><th>{text("Activity", "활동")}</th><th>{text("Recorded total", "기록된 합계")}</th></tr></thead><tbody>{metrics.map((key, index) => <tr key={key}><td>{names[index]}</td><td>{query.data[key].toLocaleString(locale)}</td></tr>)}</tbody></table>
       <p className="continuity-footnote">{text("As of", "집계 시각")} {new Date(query.data.as_of).toLocaleString(locale)}</p>
     </>}
     <p>{text("Research usage includes the accumulated calls and tokens of tasks created in this period. Chat token usage and billing costs are not currently recorded in this report.", "이 기간에 생성한 리서치 작업의 누적 호출 및 토큰 사용량입니다. 챗봇 토큰 사용량과 청구 비용은 이 보고서에 집계되지 않습니다.")}</p>

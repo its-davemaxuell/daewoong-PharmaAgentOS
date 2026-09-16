@@ -8,6 +8,11 @@ process.env.PLAYWRIGHT_BROWSERS_PATH ||= path.join(root, '.artifacts/playwright-
 const { chromium, firefox, webkit, expect } = require('../apps/web/node_modules/@playwright/test');
 const examples = require('../apps/web/content/examples/catalog.json');
 const base = process.argv[2] || 'https://pharmaagent-os-ochre.vercel.app';
+// Optional browser/locale allow a targeted repeat without auditing passed sessions again.
+const browserFilter = process.argv[4];
+const localeFilter = process.argv[5];
+if (browserFilter && !['chromium', 'firefox', 'webkit'].includes(browserFilter)) throw new Error('Unknown audit browser');
+if (localeFilter && !['en', 'ko'].includes(localeFilter)) throw new Error('Unknown audit locale');
 const output = path.join(root, '.artifacts', process.argv[3] || 'pipeline-examples/browser-hosted');
 if (!output.startsWith(path.join(root, '.artifacts') + path.sep)) throw new Error('Audit output must stay inside workspace .artifacts');
 fs.mkdirSync(output, { recursive: true });
@@ -64,6 +69,8 @@ async function audit(browser, name, locale, width) {
         await expect(page.locator('#example-result-view')).toContainText(example.sections.at(-1).title);
         await expect(page.getByRole('button', { name: t('Next section', '다음 구간'), exact: true })).toBeDisabled();
         await section.selectOption('0');
+        await expect(section).toHaveValue('0');
+        await expect(page.locator('#example-result-view')).toContainText(example.sections[0].title);
       }
       if (example.slug === 'document-translation') {
         await page.getByRole('button', { name: t('Next section', '다음 구간'), exact: true }).click();
@@ -132,9 +139,11 @@ async function audit(browser, name, locale, width) {
 (async () => {
   const results = [];
   for (const [name, kind] of Object.entries({ chromium, firefox, webkit })) {
+    if (browserFilter && browserFilter !== name) continue;
     const browser = await kind.launch();
     try {
       for (const [locale, width] of [['en', 1440], ['ko', 390]]) {
+        if (localeFilter && localeFilter !== locale) continue;
         const result = await audit(browser, name, locale, width);
         results.push(result);
         fs.writeFileSync(path.join(output, 'results.json'), JSON.stringify({ base, checkedAt: new Date().toISOString(), results }, null, 2));
