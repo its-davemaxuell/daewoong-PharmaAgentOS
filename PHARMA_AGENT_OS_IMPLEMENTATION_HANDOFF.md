@@ -10,6 +10,14 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 loading ball brand-color refinement:** Removed the animation tile's
+background, shadow and rounded container. The single ball now uses Daewoong orange
+`--os-brand` (`#f18a00`). Its bounce, readiness progress, recovery and reduced-motion
+behavior remain. Production build/type checks and lint pass; all 12 existing startup
+scenarios pass across Chromium, Firefox and WebKit. Personally inspected desktop and
+phone captures in `.artifacts/ui-audit/startup-browser/`. The hosted appearance/flow
+check and its captures are retained in `.artifacts/startup-brand-ball/`.
+
 **2026-09-16 agent workflow/tool reliability (deployed):** Audited five research tools and 16
 private MCP tools. Fixed malformed-provider crashes, stale rereads, unchecked replay,
 result bounds and missing dispatch deadlines. Research now retains pending tool calls,

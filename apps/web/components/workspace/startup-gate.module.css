@@ -7,8 +7,8 @@
 .panel { width: min(100%, 420px); text-align: center; }
 /* Single bouncing ball adapted from Rifayet's loading concept. Decorative motion;
    the separate progress element reports actual workspace readiness. */
-.loader { width: min(100%, 144px); aspect-ratio: 1; display: grid; place-items: center; margin: 0 auto 32px; overflow: hidden; border-radius: 24px; background: var(--os-brand); box-shadow: var(--os-shadow-panel); }
-.ball { width: 38px; aspect-ratio: 1; border-radius: 50%; background: #fffaf4; animation: bounce 1.5s cubic-bezier(.22,.7,.3,1) infinite; }
+.loader { width: min(100%, 144px); aspect-ratio: 1; display: grid; place-items: center; margin: 0 auto 32px; }
+.ball { width: 38px; aspect-ratio: 1; border-radius: 50%; background: var(--os-brand); animation: bounce 1.5s cubic-bezier(.22,.7,.3,1) infinite; }
 @keyframes bounce { 0%, 100% { transform: translateY(0) scale(1); } 25% { transform: translateY(-23px) scale(.94,1.06); } 48% { transform: translateY(10px) scale(1.16,.84); } 67% { transform: translateY(-9px) scale(.98,1.02); } 83% { transform: translateY(3px) scale(1.04,.96); } }
 .gate[data-document-hidden="true"] .ball, .gate[data-state="attention"] .ball { animation-play-state: paused; }
 .panel h1 { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 0 0 10px; }
@@ -24,5 +24,5 @@
 .actions button:hover { box-shadow: var(--neu-hover); }
 .actions button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .ball { animation: none; } .gate[data-state="revealing"] .content, .gate[data-state="revealing"] .overlay { transition: none; } }
-@media (forced-colors: active) { .loader { background: Canvas; border: 1px solid CanvasText; } .ball { background: CanvasText; } }
+@media (forced-colors: active) { .ball { background: CanvasText; } }
 @media (scripting: none) { .overlay { display: none; } .content { opacity: 1; } }

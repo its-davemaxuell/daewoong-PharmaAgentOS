@@ -26,6 +26,8 @@ Refine the first loading screen to the bouncing ball only, replacing the earlier
 four-animation composition. Keep the Daewoong palette, actual preparation progress,
 recovery controls, hidden-page pausing and reduced-motion support. Inspect desktop
 and phone renders, run the existing startup scenarios, then commit, push and deploy.
+Follow-up: remove the animation's tile background and shadow; color the single ball
+with the existing Daewoong logo-orange token while keeping its bounce and readiness flow.
 
 ## September 16 implementation addendum: Chat metadata and workflow testing
 
