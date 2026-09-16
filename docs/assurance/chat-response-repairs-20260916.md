@@ -3,8 +3,8 @@
 ## Reproduced problems and repairs
 
 - Every content-count question was rejected, even explicit word/phrase mentions.
-  Literal mention counts now scan all accessible current source chunks in bounded
-  batches, count each letter once, and select actual matching citation passages.
+  Literal mention counts now search all accessible current source chunks, count
+  each letter once, and select actual matching citation passages.
   The answer states the searched phrase; it does not label mentions as proven violations.
 - Company-count questions returned letter totals. They now count distinct stored
   company names, ignoring case and repeated whitespace; they do not infer corporate
@@ -23,8 +23,10 @@
 
 The existing current-version, source-availability, FDA Drugs scope, category and
 chunk ACL checks remain in force. Counts are over the accessible saved library.
-Source bodies are streamed only for text matching; full versions are loaded only
-for selected citation chunks. No schema migration or public example changes.
+PostgreSQL performs literal regex matching before transferring lightweight rows;
+the SQLite development fallback streams source bodies in bounded batches. Full
+versions are loaded only for selected citation chunks. No schema migration or
+public example changes.
 
 ## Verification
 
@@ -44,8 +46,18 @@ for selected citation chunks. No schema migration or public example changes.
 
 ## Publication
 
-Local implementation is verified. Deployment, hosted question reruns and browser
-clarification flows are pending; this section will be replaced with their results.
+Application `1c73a74` is deployed; all three deployment integrations succeed. All
+15 real question reruns return 200, and all 18 independent count/clarification/
+citation checks pass. Chromium English completes a four-turn flow: ambiguous date
+clarification, correction returning 269 letters, contamination count 280, then
+2025 follow-up count 104. All four turns survive reload, matching source excerpts
+open correctly, and 768/390/320px layouts have no horizontal overflow.
+
+The first hosted mention count took 25.58 seconds; reading small batches of text
+over the database network was the bottleneck. The follow-up moves PostgreSQL
+matching into the database and increases batches for lightweight rows. Six
+read-only PostgreSQL pattern checks cover case, line breaks, word boundaries and
+literal regex punctuation. Final publication and latency/browser reruns are pending.
 
 ## Intentional remaining boundaries
 

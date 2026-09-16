@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -24,6 +25,19 @@ async def main():
     )
     try:
         async with connection.transaction(readonly=True):
+            patterns_checked = []
+            for term, source, expected in [
+                ("contamination", "Contamination was observed.", True),
+                ("contamination", "decontamination", False),
+                ("data integrity", "DATA\nintegrity", True),
+                ("data integrity", "data integrityx", False),
+                ("a.*[b]", "Literal a.*[b] text", True),
+                ("a.*[b]", "axxxb", False),
+            ]:
+                pattern = r"(?<!\w)" + r"\s+".join(re.escape(w) for w in term.split()) + r"(?!\w)"
+                actual = await connection.fetchval("SELECT $1::text ~* $2::text", source, pattern)
+                assert actual == expected
+                patterns_checked.append({"term": term, "expected": expected, "actual": actual})
             # Independent SQL aggregation; never calls the chatbot's parser or counting code.
             records = await connection.fetch(
                 """
@@ -68,7 +82,11 @@ async def main():
                     pattern,
                 )
             catalog = [dict(r) for r in records]
-            output = {"counts": counts, "catalog": catalog}
+            output = {
+                "counts": counts,
+                "catalog": catalog,
+                "postgres_pattern_checks": patterns_checked,
+            }
             target = ROOT / ".artifacts/chat-repairs/independent-counts.json"
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(json.dumps(output, default=str, indent=2), encoding="utf-8")

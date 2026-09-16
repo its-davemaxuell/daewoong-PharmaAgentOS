@@ -1510,6 +1510,11 @@ async def _metadata_answer(
         ]
     # Authorize the whole result set with lightweight metadata, not every source body.
     # Full version/chunk text is loaded only for the handful of displayed citations.
+    text_pattern = (
+        mention_pattern(metadata_query.text_terms[0]) if metadata_query.text_terms else None
+    )
+    database_text_match = bool(text_pattern and session.get_bind().dialect.name == "postgresql")
+    read_content = bool(text_pattern and not database_text_match)
     access_rows = await session.stream(
         select(
             DocumentChunk.warning_letter_id,
@@ -1518,7 +1523,7 @@ async def _metadata_answer(
             DocumentChunk.regulatory_references,
             DocumentChunk.drug_subtypes,
             DocumentChunk.id,
-            *([DocumentChunk.content] if metadata_query.text_terms else []),
+            *([DocumentChunk.content] if read_content else []),
         )
         .join(WarningLetter, WarningLetter.id == DocumentChunk.warning_letter_id)
         .join(DocumentVersion, DocumentVersion.id == DocumentChunk.document_version_id)
@@ -1533,8 +1538,9 @@ async def _metadata_answer(
             DocumentVersion.scope_status == ScopeStatus.IN_SCOPE_DRUGS.value,
             DocumentChunk.corpus_id == "fda-drugs",
             DocumentChunk.chunker_version == chunker_version,
+            DocumentChunk.content.op("~*")(text_pattern.pattern) if database_text_match else True,
         )
-        .execution_options(yield_per=200)
+        .execution_options(yield_per=200 if read_content else 5000)
     )
     filters = payload.filters
     categories = [*filters.categories, *([filters.category] if filters.category else [])]
@@ -1545,9 +1551,6 @@ async def _metadata_answer(
     subtypes = [*filters.drug_subtypes, *([filters.drug_subtype] if filters.drug_subtype else [])]
     allowed_ids: set[str] = set()
     matching_chunks: dict[str, str] = {}
-    text_pattern = (
-        mention_pattern(metadata_query.text_terms[0]) if metadata_query.text_terms else None
-    )
     async for row in access_rows:
         if not (
             _acl_allows(row.acl, principal)
@@ -1563,7 +1566,7 @@ async def _metadata_answer(
             and (not subtypes or any(value in (row.drug_subtypes or []) for value in subtypes))
         ):
             continue
-        if text_pattern and not text_pattern.search(row.content):
+        if read_content and not text_pattern.search(row.content):
             continue
         allowed_ids.add(row.warning_letter_id)
         matching_chunks.setdefault(row.warning_letter_id, row.id)

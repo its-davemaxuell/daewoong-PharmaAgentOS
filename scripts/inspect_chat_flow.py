@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--locale", default="en", choices=["en", "ko"])
     parser.add_argument("--output", default=".artifacts/chat-metadata/ui-before")
     parser.add_argument("--followups", action="store_true")
+    parser.add_argument("--repair-flow", action="store_true", help="Exercise a date clarification, literal mention count and scoped follow-up.")
     parser.add_argument("--settled-reload", action="store_true", help="Wait for background navigation requests before reloading (diagnostic control).")
     args = parser.parse_args()
     out = (ROOT / args.output / f"{args.browser}-{args.locale}").resolve()
@@ -61,7 +62,10 @@ def main():
             page.get_by_role("button", name="Close filters" if args.locale == "en" else "필터 닫기", exact=True).click()
             expect(question).to_be_focused()
             checks.append("Filter panel closes to composer without losing draft")
-            question.fill("Show FDA warning-letter issue dates and source links." if args.locale == "en" else "FDA 경고서한 발행일과 원문 링크를 보여주세요.")
+            initial_prompt = "Show FDA warning-letter issue dates and source links." if args.locale == "en" else "FDA 경고서한 발행일과 원문 링크를 보여주세요."
+            if args.repair_flow:
+                initial_prompt = "Count FDA warning letters issued before 03/04/2025." if args.locale == "en" else "03/04/2025 이전에 발행된 FDA 경고서한은 몇 건인가요?"
+            question.fill(initial_prompt)
             send = page.get_by_role("button", name="Ask AI" if args.locale == "en" else "질문 보내기", exact=True)
             expect(send).to_be_enabled(timeout=30000)
             start = time.monotonic()
@@ -76,33 +80,44 @@ def main():
             checks.append(f"Answer transport {response.status}, {time.monotonic() - start:.1f}s")
             expect(page.locator(".chat-turn .chat-provenance")).to_be_visible(timeout=120000)
             page.screenshot(path=str(out / "answer-desktop.png"), full_page=True)
-            if args.followups:
-                for index, prompt in enumerate([
-                    "How many FDA warning letters were issued in 2025?" if args.locale == "en" else "2025년에 발행된 FDA 경고서한은 몇 건인가요?",
-                    "And in 2024?" if args.locale == "en" else "그럼 2024년에는요?",
-                ], start=2):
+            if args.followups or args.repair_flow:
+                turns = [
+                    ("How many FDA warning letters were issued in 2025?" if args.locale == "en" else "2025년에 발행된 FDA 경고서한은 몇 건인가요?", "315", "2025-01-01"),
+                    ("And in 2024?" if args.locale == "en" else "그럼 2024년에는요?", "172", "2024-01-01"),
+                ]
+                if args.repair_flow:
+                    independent = json.loads((ROOT / ".artifacts/chat-repairs/independent-counts.json").read_text(encoding="utf-8"))
+                    before = sum(bool(r["issue_date"] and r["issue_date"] <= "2025-03-03") for r in independent["catalog"])
+                    turns = [
+                        ("2025-03-04", str(before), "2025-03-03"),
+                        ("How many FDA warning letters mention contamination?" if args.locale == "en" else "오염을 언급한 FDA 경고서한은 몇 건인가요?", str(independent["counts"]["mentions"]), "contamination"),
+                        ("And in 2025?" if args.locale == "en" else "그럼 2025년에는요?", str(independent["counts"]["mentions-2025"]), "2025-01-01"),
+                    ]
+                for index, (prompt, expected_count, expected_constraint) in enumerate(turns, start=2):
                     expect(question).to_be_enabled(timeout=30000)
                     question.fill(prompt)
                     expect(send).to_be_enabled(timeout=30000)
                     expect(question).to_have_value(prompt)
                     question.press("Enter")
                     expect(page.locator(".chat-turn .chat-provenance")).to_have_count(index, timeout=120000)
-                    expect(page.locator(".chat-turn").last).to_contain_text("2025-01-01" if index == 2 else "2024-01-01")
-                    expect(page.locator(".chat-turn").last).to_contain_text("315" if index == 2 else "172")
-                checks.append("Date count and year follow-up both complete in the same conversation")
+                    expect(page.locator(".chat-turn").last).to_contain_text(expected_constraint)
+                    expect(page.locator(".chat-turn").last).to_contain_text(expected_count)
+                    checks.append(f"Turn {index}: verified count {expected_count} and {expected_constraint}")
                 if args.settled_reload:
                     page.wait_for_load_state("networkidle", timeout=60000)
                     checks.append("Background requests settled before reload")
                 phase = "reload"
                 page.reload()
-                expect(page.locator(".chat-turn .chat-provenance")).to_have_count(3, timeout=60000)
-                checks.append("Three completed turns survive reload")
+                expect(page.locator(".chat-turn .chat-provenance")).to_have_count(len(turns) + 1, timeout=60000)
+                checks.append(f"{len(turns) + 1} completed turns survive reload")
                 phase = "source inspection"
             if page.locator(".chat-source-strip__open").count():
                 page.locator(".chat-source-strip__open").last.click()
                 expect(page.locator("#evidence-panel-title")).to_be_focused()
                 expect(page.locator(".chat-evidence-panel")).to_contain_text("FDA posting date" if args.locale == "en" else "FDA 게시일")
                 expect(page.locator(".chat-evidence-panel")).to_have_css("opacity", "1")
+                if args.repair_flow:
+                    expect(page.locator(".chat-evidence-panel")).to_contain_text("Matched source passage:")
                 page.screenshot(path=str(out / "evidence-desktop.png"), full_page=True)
                 page.locator(".chat-evidence-panel").press("Escape")
                 expect(page.locator(".chat-evidence-panel")).to_have_count(0)
