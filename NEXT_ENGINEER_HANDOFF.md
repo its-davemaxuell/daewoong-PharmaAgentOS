@@ -4,6 +4,14 @@ Prepared: **2026-09-11**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest chatbot verification (2026-09-16):** Application `c5a0bb5` is deployed.
+Chat now queries retained issue/posting dates, exact metadata counts, country,
+company and date groups, with date-constrained content retrieval. All 767 saved
+letters already have both dates. First-answer route handoffs preserve the next
+draft and keyboard focus. The final hosted API matrix passes 21 requests and 20
+independent checks. See [the chatbot testing record](docs/assurance/chat-metadata-20260916.md)
+for interface evidence, question examples and supported-query limits.
+
 **Latest frontend refinement (2026-09-16):** Daewoong orange/charcoal, the requested
 circle startup motion, paired menu/tab fades and neutral text-entry focus replace
 the preceding blue theme. Application `d3309e8` is pushed and deployed; hosted

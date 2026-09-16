@@ -21,11 +21,14 @@ retain date filters. Ambiguous dates and exact semantic-content totals ask for
 clarification rather than returning an unfiltered count. The source panel labels
 both dates, and each answer shows effective filters. Local build/lint, 99 web unit
 tests, 221 targeted backend tests across runs and 60 browser cases across runs pass.
-Application `2b8a176` is deployed; all 16 hosted after-requests return 200 and the
-metadata totals match the 767-row catalog. A hosted follow-up test exposed draft
-loss during the first saved-conversation navigation; the fix and all three browser
-regressions pass locally. Its final publication and hosted interface reruns are
-pending. See [the chatbot testing record](docs/assurance/chat-metadata-20260916.md).
+Application revisions `2b8a176`, `eabd341` and `c5a0bb5` are deployed; all three
+deployment integrations report success. All 21 final hosted API requests return
+200, and all 20 independent response/catalog checks pass. A hosted follow-up test
+exposed draft loss during the first saved-conversation navigation. Drafts now
+belong to the created conversation immediately, with focus restored after the
+composer is enabled; all nine final metadata/handoff browser cases pass. Final
+hosted interface checks are recorded in
+[the chatbot testing record](docs/assurance/chat-metadata-20260916.md).
 
 **2026-09-16 Daewoong theme and complete fades (deployed):** Implemented official orange and
 charcoal on warm neumorphic surfaces; replaced startup artwork with the supplied

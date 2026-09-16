@@ -20,18 +20,24 @@ def main():
     parser.add_argument("--locale", default="en", choices=["en", "ko"])
     parser.add_argument("--output", default=".artifacts/chat-metadata/ui-before")
     parser.add_argument("--followups", action="store_true")
+    parser.add_argument("--settled-reload", action="store_true", help="Wait for background navigation requests before reloading (diagnostic control).")
     args = parser.parse_args()
     out = (ROOT / args.output / f"{args.browser}-{args.locale}").resolve()
     out.relative_to(ROOT)
     out.mkdir(parents=True, exist_ok=True)
-    errors, responses, checks = [], [], []
+    errors, responses, checks, diagnostics = [], [], [], []
+    phase = "opening"
     with sync_playwright() as p:
         browser = getattr(p, args.browser).launch(headless=True)
         try:
             context = browser.new_context(viewport={"width": 1440, "height": 1000})
             context.add_cookies([{"name": "dli_locale", "value": args.locale, "url": args.base}])
             page = context.new_page()
-            page.on("pageerror", lambda error: errors.append(str(error)))
+            def record_error(error):
+                errors.append(str(error))
+                diagnostics.append({"event": "pageerror", "phase": phase, "message": str(error), "time": time.monotonic()})
+            page.on("pageerror", record_error)
+            page.on("requestfailed", lambda request: diagnostics.append({"event": "requestfailed", "phase": phase, "url": request.url, "failure": request.failure, "time": time.monotonic()}))
             page.on("response", lambda response: responses.append({"url": response.url.split("?")[0], "status": response.status}) if response.status >= 400 else None)
             page.goto(args.base + "/ask")
             page.wait_for_load_state("networkidle")
@@ -42,6 +48,7 @@ def main():
                     page.locator("[data-startup-overlay] button").first.click()
                 page.wait_for_function("document.querySelector('[data-startup-gate]').dataset.state === 'entered'", timeout=45000)
             question = page.locator("#ai-question")
+            phase = "chat"
             expect(question).to_be_enabled(timeout=30000)
             expect(page.get_by_role("button", name="Ask AI" if args.locale == "en" else "질문 보내기", exact=True)).to_be_disabled()
             question.fill("Review FDA dates")
@@ -83,18 +90,26 @@ def main():
                     expect(page.locator(".chat-turn").last).to_contain_text("2025-01-01" if index == 2 else "2024-01-01")
                     expect(page.locator(".chat-turn").last).to_contain_text("315" if index == 2 else "172")
                 checks.append("Date count and year follow-up both complete in the same conversation")
+                if args.settled_reload:
+                    page.wait_for_load_state("networkidle", timeout=60000)
+                    checks.append("Background requests settled before reload")
+                phase = "reload"
                 page.reload()
                 expect(page.locator(".chat-turn .chat-provenance")).to_have_count(3, timeout=60000)
                 checks.append("Three completed turns survive reload")
+                phase = "source inspection"
             if page.locator(".chat-source-strip__open").count():
                 page.locator(".chat-source-strip__open").last.click()
                 expect(page.locator("#evidence-panel-title")).to_be_focused()
                 expect(page.locator(".chat-evidence-panel")).to_contain_text("FDA posting date" if args.locale == "en" else "FDA 게시일")
+                expect(page.locator(".chat-evidence-panel")).to_have_css("opacity", "1")
                 page.screenshot(path=str(out / "evidence-desktop.png"), full_page=True)
                 page.locator(".chat-evidence-panel").press("Escape")
+                expect(page.locator(".chat-evidence-panel")).to_have_count(0)
                 checks.append("Citations open, receive keyboard focus and close with Escape")
             for width in [768, 390, 320]:
                 page.set_viewport_size({"width": width, "height": 844})
+                page.locator(".chat-turn .chat-answer__copy").last.scroll_into_view_if_needed()
                 overflow = page.evaluate("document.documentElement.scrollWidth - innerWidth")
                 assert overflow <= 1, f"Overflow at {width}px: {overflow}"
                 checks.append(f"Width {width}: overflow {overflow}px")
@@ -105,7 +120,7 @@ def main():
             page.screenshot(path=str(out / "failure.png"), full_page=True)
             (out / "failure.txt").write_text(page.locator("body").inner_text(), encoding="utf-8")
         finally:
-            (out / "results.json").write_text(json.dumps({"checks": checks, "errors": errors, "http_errors": responses}, ensure_ascii=False, indent=2), encoding="utf-8")
+            (out / "results.json").write_text(json.dumps({"checks": checks, "errors": errors, "http_errors": responses, "diagnostics": diagnostics}, ensure_ascii=False, indent=2), encoding="utf-8")
             print(json.dumps({"checks": checks, "errors": [e[:500] for e in errors]}, ensure_ascii=True), flush=True)
             browser.close()
     if errors:
