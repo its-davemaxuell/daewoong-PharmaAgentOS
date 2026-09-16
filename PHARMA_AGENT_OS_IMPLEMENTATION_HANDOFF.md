@@ -10,6 +10,12 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 Chat centering follow-up:** The welcome diagram, heading and subtitle
+share the composer's horizontal center. Symmetric scrollbar space removes desktop
+drift; a shrinkable grid keeps the diagram centered on phones. Production build
+and Chromium checks pass for English/Korean at 1440, 1280, 768, 390 and 320px,
+with no overflow and working task starters. Evidence: `.artifacts/chat-centered/`.
+
 **2026-09-16 interaction refinement (deployed):** Examples now use selectable actual output
 previews and a section reader with original comparison, evidence search and run
 details. Help provides an editable question with retained previews and transfers

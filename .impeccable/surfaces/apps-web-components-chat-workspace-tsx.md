@@ -27,6 +27,9 @@ their alignment while pressed. Mobile drawer contents survive the visual exit.
 The September 12 visual refinement adds a source-to-review diagram, 32–48px
 opening heading, short task choices and 18px conversation text. Keep examples
 immediately visible, with 180–280ms interaction feedback and reduced-motion support.
+The September 16 screenshot follow-up centers the welcome diagram, heading and
+subtitle on the composer's axis. Reserve scrollbar space symmetrically in the
+empty conversation view so its center does not drift on desktop.
 The reading pane is central: open a numbered citation without losing the conversation.
 The narrow-screen reader temporarily occupies the workspace and restores focus
 when closed. Model options remain secondary to the question and source selection.

@@ -25,6 +25,9 @@ English/Korean Chromium/Firefox/WebKit sessions verify the deployed interaction
 paths and all 18 retained downloads. See the implementation handoff and
 `docs/assurance/interactive-interface-20260916.md` for publication evidence.
 
+Screenshot follow-up: center Chat's welcome diagram, heading and subtitle with the
+composer. Keep task controls and question entry usable across desktop/phone widths.
+
 ## September 15 implementation addendum: Neumorphic website
 
 Replace the website's visual system with a continuous cool porcelain canvas,
