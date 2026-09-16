@@ -1,6 +1,6 @@
 "use client";
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { Activity } from "@/components/icons/Activity";
 import { ArrowDownRight } from "@/components/icons/ArrowDownRight";
 import { ArrowRight } from "@/components/icons/ArrowRight";

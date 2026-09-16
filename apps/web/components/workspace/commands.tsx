@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import { changeView } from "@/components/motion/view-fade";
+import Link from "@/components/motion/workspace-link";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, useSyncExternalStore, type ButtonHTMLAttributes } from "react";
 import { useI18n } from "@/lib/i18n";
@@ -76,6 +77,6 @@ function CommandMenu({ roles, linearWorkspace }: { roles: AppRole[]; linearWorks
     <p className="workspace-eyebrow">{text("Actions in this view", "현재 화면 작업")}</p>
     {actions.filter(action => action.label.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(action => <button key={action.id} className="workspace-command-item" disabled={!action.enabled} onClick={() => { const current = list().find(item => item.id === action.id); if (current?.enabled) { close(); current.execute(); } }}>{action.label}</button>)}
     <p className="workspace-eyebrow">{text("Navigate", "이동")}</p>
-    {destinations.filter(({ en, ko }) => `${en} ${ko}`.toLowerCase().includes(query.toLowerCase())).map(({ en, ko, href }) => <button key={href} className="workspace-command-item" onClick={() => { close(); router.push(href); }}>{text(en, ko)}</button>)}
+    {destinations.filter(({ en, ko }) => `${en} ${ko}`.toLowerCase().includes(query.toLowerCase())).map(({ en, ko, href }) => <button key={href} className="workspace-command-item" onClick={() => { close(); changeView(() => router.push(href), undefined, true); }}>{text(en, ko)}</button>)}
   </dialog>;
 }

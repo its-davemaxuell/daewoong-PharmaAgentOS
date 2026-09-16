@@ -129,7 +129,7 @@
   padding: 38px;
 }
 .definition {
-  color: #596c8a;
+  color: var(--os-muted);
   font-size: 0.875rem;
 }
 .detail h2 {
@@ -252,7 +252,7 @@
 .workspace { border-radius: 16px; box-shadow: var(--os-shadow-panel); grid-template-columns: minmax(250px, .75fr) minmax(0, 1.5fr); }
 .roster { padding: 12px; }
 .roster button { padding: 14px 12px; margin-bottom: 4px; }
-.roster button[aria-pressed="true"] { background: white; border-color: #d5d1f3; box-shadow: var(--os-shadow-control); }
+.roster button[aria-pressed="true"] { background: white; border-color: var(--os-rule); box-shadow: var(--os-shadow-control); }
 @media (max-width: 760px) { .workspace { grid-template-columns: 1fr; } .roster { border-right: 0; border-bottom: 1px solid var(--os-rule); } }
 
 .workspace { background: var(--os-canvas); border: 0; border-radius: var(--radius-panel); }

@@ -1,38 +1,42 @@
 /*
 THESIS: Evidence work on one sculpted, tactile surface.
-OWN-WORLD: Cool porcelain, upper-left light, slate type, cobalt keys, recessed wells.
+OWN-WORLD: Warm porcelain, upper-left light, charcoal type, Daewoong orange keys, recessed wells.
 STORY: Ask a question, inspect its evidence, and retain the work for human review.
 FIRST VIEWPORT: Persistent navigation, a raised conversation frame, three task keys,
 and an anchored recessed composer. Source reading remains beside the conversation.
 FORM: User-pinned neumorphism across the existing operational website.
 */
 :root {
-  --os-ink: #243247;
-  --os-muted: #53647a;
-  --os-primary: #275bd6;
-  --os-primary-deep: #204cb5;
-  --os-primary-soft: #dce7fa;
-  --os-canvas: #e9eef4;
-  --os-surface: #e9eef4;
-  --os-inset: #f1f4f8;
-  --os-nav: #e9eef4;
-  --os-rule: #cbd5e1;
-  --os-control: #7c8ba0;
+  /* Official logo: Daewoong orange #F18A00 and charcoal #53575A. */
+  --os-brand: #f18a00;
+  --os-brand-ink: #33281c;
+  --os-brand-hover: #df7e00;
+  --os-ink: #302e2b;
+  --os-muted: #645f59;
+  --os-primary: #a64b00;
+  --os-primary-deep: #813700;
+  --os-primary-soft: #f5dfc6;
+  --os-canvas: #f1eee9;
+  --os-surface: #f1eee9;
+  --os-inset: #f8f5f0;
+  --os-nav: #f1eee9;
+  --os-rule: #d9d1c7;
+  --os-control: #918579;
   --neu-light: #ffffff;
-  --neu-shade: #c5cedb;
+  --neu-shade: #d0c7bb;
   /* Keep outer/inset slots matched: changing inset topology cannot interpolate. */
-  --neu-raised: 5px 5px 12px #c5cedbe6, -5px -5px 12px #ffffffeb, inset 0 0 0 #c5cedb00, inset 0 0 0 #ffffff00;
-  --neu-hover: 3px 3px 7px #c5cedbe6, -3px -3px 7px #ffffffeb, inset 0 0 0 #c5cedb00, inset 0 0 0 #ffffff00;
-  --neu-pressed: 0 0 0 #c5cedb00, 0 0 0 #ffffff00, inset 3px 3px 6px #c5cedbe6, inset -3px -3px 6px #ffffffeb;
-  --neu-primary-pressed: 0 0 0 #b0bfd600, 0 0 0 #ffffff00, inset 3px 3px 7px #16398c, inset -2px -2px 5px #5b80df;
-  --neu-inset: inset 4px 4px 9px #c5cedbd9, inset -4px -4px 9px #ffffffeb;
+  --neu-raised: 5px 5px 12px #d0c7bbe6, -5px -5px 12px #ffffffeb, inset 0 0 0 #d0c7bb00, inset 0 0 0 #ffffff00;
+  --neu-hover: 3px 3px 7px #d0c7bbe6, -3px -3px 7px #ffffffeb, inset 0 0 0 #d0c7bb00, inset 0 0 0 #ffffff00;
+  --neu-pressed: 0 0 0 #d0c7bb00, 0 0 0 #ffffff00, inset 3px 3px 6px #d0c7bbe6, inset -3px -3px 6px #ffffffeb;
+  --neu-primary-pressed: 0 0 0 #cbb9a500, 0 0 0 #ffffff00, inset 3px 3px 7px #b95d00, inset -2px -2px 5px #ffc16b;
+  --neu-inset: inset 4px 4px 9px #d0c7bbd9, inset -4px -4px 9px #ffffffeb;
   --os-shadow-control: var(--neu-raised);
-  --os-shadow-panel: 9px 9px 24px #c5cedbcc, -9px -9px 24px #ffffffd9;
-  --os-shadow-float: 14px 18px 42px #687b9561, -6px -6px 20px #ffffffb3;
-  --os-shadow-primary: 4px 4px 9px #b0bfd6, -4px -4px 9px #ffffffd9, inset 1px 1px 2px #ffffff40, inset -1px -1px 3px #13388966;
+  --os-shadow-panel: 9px 9px 24px #d0c7bbcc, -9px -9px 24px #ffffffd9;
+  --os-shadow-float: 14px 18px 42px #796b5b61, -6px -6px 20px #ffffffb3;
+  --os-shadow-primary: 4px 4px 9px #cbb9a5, -4px -4px 9px #ffffffd9, inset 1px 1px 2px #ffffff40, inset -1px -1px 3px #8d420066;
   --control-radius: 10px;
-  --control-border: #7c8ba0;
-  --focus-ring: #275bd6;
+  --control-border: #918579;
+  --focus-ring: #a64b00;
   --radius-inset: 14px;
   --radius-panel: 20px;
   --radius-xs: 6px;
@@ -41,9 +45,9 @@ FORM: User-pinned neumorphism across the existing operational website.
   --radius-lg: 20px;
   --paper: var(--os-canvas);
   --paper-bright: var(--os-surface);
-  --paper-deep: #dde5ef;
+  --paper-deep: #e7e0d6;
   --ink: var(--os-ink);
-  --ink-soft: #3d5069;
+  --ink-soft: #53575a;
   --muted: var(--os-muted);
   --rule: var(--os-rule);
   --rule-dark: var(--os-control);
@@ -53,7 +57,7 @@ FORM: User-pinned neumorphism across the existing operational website.
 }
 
 .neumorphic-app { background: var(--os-canvas); color: var(--os-ink); }
-.neumorphic-app ::selection { background: #c5d6f8; color: #18386f; }
+.neumorphic-app ::selection { background: #eadcc8; color: #432f1c; }
 .neumorphic-app :where(input, textarea)::placeholder { color: var(--os-muted); opacity: 1; }
 .neumorphic-app :where(button, a, input, textarea, select, summary):focus-visible {
   outline: 2px solid var(--focus-ring);
@@ -72,14 +76,14 @@ FORM: User-pinned neumorphism across the existing operational website.
 .neumorphic-workspace .continuity-sidebar {
   background: var(--os-canvas);
   border: 0;
-  box-shadow: 5px 0 14px #c5cedb80, inset -1px 0 0 #ffffffb3;
+  box-shadow: 5px 0 14px #d0c7bb80, inset -1px 0 0 #ffffffb3;
   scrollbar-width: thin;
-  scrollbar-color: #aebdce transparent;
+  scrollbar-color: #bcb1a4 transparent;
 }
 .neumorphic-workspace .continuity-topbar {
   background: var(--os-canvas);
   border: 0;
-  box-shadow: 0 3px 10px #c5cedb70, inset 0 -1px 0 #ffffffa6;
+  box-shadow: 0 3px 10px #d0c7bb70, inset 0 -1px 0 #ffffffa6;
 }
 .neumorphic-workspace .continuity-search {
   background: var(--os-canvas);
@@ -93,7 +97,7 @@ FORM: User-pinned neumorphism across the existing operational website.
   margin-block: 4px;
   color: var(--os-muted);
 }
-.neumorphic-workspace .continuity-nav:is(:hover, :focus-visible) { background: #dfe7f2; color: var(--os-primary-deep); }
+.neumorphic-workspace .continuity-nav:is(:hover, :focus-visible) { background: #e9dfd2; color: var(--os-primary-deep); }
 .neumorphic-workspace .continuity-nav.is-active,
 .neumorphic-workspace .continuity-nav.is-active:hover { background: transparent; color: var(--os-primary-deep); }
 .neumorphic-app [data-motion-indicator] { background: var(--os-canvas); box-shadow: var(--neu-raised); }
@@ -130,14 +134,14 @@ FORM: User-pinned neumorphism across the existing operational website.
   min-height: 36px;
 }
 .neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button) {
-  background: var(--os-primary);
-  color: #fff;
+  background: var(--os-brand);
+  color: var(--os-brand-ink);
   box-shadow: var(--os-shadow-primary);
 }
-.neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button):hover:not(:disabled) { background: var(--os-primary-deep); color: #fff; }
+.neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button):hover:not(:disabled) { background: var(--os-brand-hover); color: var(--os-brand-ink); }
 .neumorphic-app :is(button, .button)[disabled] { cursor: not-allowed; }
 .neumorphic-app .button:disabled,
-.neumorphic-app .chat-workbench .chat-send-button:disabled { opacity: 1; background: #dce3ed; color: #586a83; box-shadow: var(--neu-pressed); }
+.neumorphic-app .chat-workbench .chat-send-button:disabled { opacity: 1; background: #e4dcd1; color: #6b6055; box-shadow: var(--neu-pressed); }
 .neumorphic-app :is(.workspace-viewbar, .chat-library__tabs) {
   background: var(--os-canvas);
   border: 0;
@@ -164,10 +168,10 @@ FORM: User-pinned neumorphism across the existing operational website.
 .neumorphic-workspace .workspace-collection .workspace-list { box-shadow: none; border-radius: 0; }
 .neumorphic-workspace .continuity-continue .workspace-list { box-shadow: none; }
 .neumorphic-workspace .continuity-table th,
-.neumorphic-workspace .archive-ledger__head { background: #e1e8f1; }
+.neumorphic-workspace .archive-ledger__head { background: #e8e1d7; }
 .neumorphic-workspace :is(.continuity-table, .archive-ledger) { overflow: hidden; }
 .neumorphic-workspace .continuity-table tr:hover td,
-.neumorphic-workspace .letter-row:hover { background: #e0e9f5; }
+.neumorphic-workspace .letter-row:hover { background: #eee2d2; }
 .neumorphic-workspace .continuity-table tr[data-selected="true"] td,
 .neumorphic-workspace .letter-row[data-selected="true"] { background: var(--os-primary-soft); }
 .neumorphic-workspace .workspace-list > li > :is(a, button) { box-shadow: none; }
@@ -241,7 +245,7 @@ FORM: User-pinned neumorphism across the existing operational website.
 }
 .neumorphic-workspace .chat-evidence-flow li > a > svg { background: var(--os-canvas); box-shadow: var(--neu-raised); border-radius: 18px; }
 .neumorphic-workspace .chat-evidence-flow li:nth-child(2) > a > svg { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); }
-.neumorphic-workspace .chat-evidence-flow li + li::before { background: #8ea4c1; }
+.neumorphic-workspace .chat-evidence-flow li + li::before { background: #b69b7e; }
 .neumorphic-workspace .chat-workbench .chat-composer-wrap { background: var(--os-canvas); padding-bottom: 20px; }
 .neumorphic-workspace.continuity-shell .chat-workbench .chat-composer {
   background: var(--os-canvas);
@@ -250,11 +254,11 @@ FORM: User-pinned neumorphism across the existing operational website.
   box-shadow: var(--neu-inset);
   padding: 20px 20px 16px;
 }
-.neumorphic-workspace.continuity-shell .chat-workbench .chat-composer:focus-within { outline: 2px solid var(--os-primary); outline-offset: 3px; border-color: var(--os-primary); box-shadow: var(--neu-inset); }
+.neumorphic-workspace.continuity-shell .chat-workbench .chat-composer:focus-within { outline: none; border-color: var(--os-control); box-shadow: var(--neu-inset); }
 .neumorphic-workspace .chat-workbench .chat-composer textarea { background: transparent; color: var(--os-ink); box-shadow: none; }
 .neumorphic-workspace .chat-workbench .chat-composer__controls { gap: 12px; padding-top: 6px; }
 .neumorphic-workspace .chat-workbench .chat-composer .chat-tool-button { padding-inline: 10px; }
-.neumorphic-workspace .chat-workbench .chat-user-message { background: #e1e9f4; box-shadow: var(--neu-inset); border-radius: 16px 16px 6px 16px; }
+.neumorphic-workspace .chat-workbench .chat-user-message { background: #eae1d5; box-shadow: var(--neu-inset); border-radius: 16px 16px 6px 16px; }
 .neumorphic-workspace .chat-workbench .chat-source-strip { background: var(--os-canvas); border: 0; padding: 18px; border-radius: 16px; box-shadow: var(--neu-inset); }
 .neumorphic-workspace .chat-workbench .chat-source-strip > div button { background: var(--os-canvas); border: 0; box-shadow: var(--neu-raised); border-radius: 8px; }
 .neumorphic-workspace .chat-evidence-panel__body { background: var(--os-canvas); }
@@ -275,7 +279,7 @@ FORM: User-pinned neumorphism across the existing operational website.
 .neumorphic-app :is(.chat-thread-menu, .chat-library, .workspace-command) button { background: var(--os-canvas); color: var(--os-ink); }
 .neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar) { background: var(--os-canvas); border: 1px solid var(--os-control); border-radius: 12px; box-shadow: var(--neu-inset); }
 .neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar) input { background: transparent; color: var(--os-ink); box-shadow: none; }
-.neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar):focus-within { outline: 2px solid var(--os-primary); outline-offset: 3px; }
+.neumorphic-app :is(.chat-library__search, .workspace-search, .chat-find__bar):focus-within { outline: none; }
 .neumorphic-app :is(.workspace-command-item, .chat-library__item):hover { background: var(--os-primary-soft); }
 .neumorphic-app .continuity-mobile-nav { border-radius: 0 20px 20px 0; }
 .neumorphic-app .continuity-mobile-nav .continuity-brand { margin-inline-end: 48px; }
@@ -312,14 +316,14 @@ FORM: User-pinned neumorphism across the existing operational website.
   .neumorphic-app dialog.continuity-mobile-nav { --dialog-shift: translateX(-24px); }
   .neumorphic-app dialog:is(.workspace-inspector, .continuity-assistant) { --dialog-shift: translateX(20px); }
   .neumorphic-app dialog::backdrop {
-    background: #334b6b00;
+    background: #54443400;
     animation: none;
     transition: background-color 180ms ease, display 180ms allow-discrete, overlay 180ms allow-discrete;
   }
-  .neumorphic-app dialog[open]::backdrop { background: #334b6b45; }
+  .neumorphic-app dialog[open]::backdrop { background: #54443445; }
   @starting-style {
     .neumorphic-app dialog[open] { opacity: 0; transform: var(--dialog-shift); }
-    .neumorphic-app dialog[open]::backdrop { background: #334b6b00; }
+    .neumorphic-app dialog[open]::backdrop { background: #54443400; }
   }
   /* Animate native disclosures only when the browser can also make the exiting
      pseudo-element inert. Older engines retain immediate, accessible closing. */
@@ -405,8 +409,8 @@ FORM: User-pinned neumorphism across the existing operational website.
   transition-duration: 110ms;
 }
 .neumorphic-app :is(.button.button--primary, .continuity-primary.continuity-primary, .chat-workbench .chat-send-button):is(:active, [data-press-feedback]):not(:disabled):not([aria-disabled="true"]) {
-  color: #fff;
-  background: var(--os-primary-deep);
+  color: var(--os-brand-ink);
+  background: var(--os-brand-hover);
   box-shadow: var(--neu-primary-pressed);
 }
 
@@ -433,6 +437,21 @@ FORM: User-pinned neumorphism across the existing operational website.
   .neumorphic-app :is(.workspace-inspector, .continuity-assistant) { border-radius: 16px 16px 0 0; }
 }
 
+/* Text entry stays a neutral well. Focus never paints the whole compartment;
+   action keys keep their visible keyboard ring and native text remains selectable. */
+body.neumorphic-app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]), textarea):is(:focus, :focus-visible) {
+  outline: none !important;
+  border-color: var(--os-control);
+  caret-color: var(--os-ink);
+}
+body.neumorphic-app :is(label, form, div):focus-within:has(> :is(input, textarea)),
+body.neumorphic-app .chat-composer:focus-within {
+  outline: none !important;
+  border-color: var(--os-control);
+}
+body.neumorphic-app #main-content:focus { outline: none; }
+body.neumorphic-app :is(input, textarea) { -webkit-tap-highlight-color: transparent; }
+
 @media (prefers-reduced-motion: reduce) {
   .neumorphic-app, .neumorphic-app .neumorphic-workspace { --motion-press: 0ms; --motion-hover: 0ms; --motion-select: 0ms; --motion-panel: 0ms; --motion-context: 0ms; }
   .neumorphic-app *, .neumorphic-app *::before, .neumorphic-app *::after,
@@ -450,4 +469,5 @@ FORM: User-pinned neumorphism across the existing operational website.
   .neumorphic-app [data-motion-indicator] { border: 2px solid Highlight; box-shadow: none; }
   .neumorphic-app .continuity-nav[aria-current="page"] { outline: 1px solid Highlight; }
   .neumorphic-app :is(button:disabled, input:disabled) { color: GrayText; border-color: GrayText; }
+  body.neumorphic-app :is(input, textarea):focus-visible { outline: 2px solid Highlight !important; outline-offset: 2px; }
 }

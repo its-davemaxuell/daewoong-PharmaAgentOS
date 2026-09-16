@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import type { MenuData } from "@/lib/menu-data-types";
 import { BilingualText as T } from "@/lib/i18n";
 import { RuntimeControlForm } from "@/components/agent-platform/runtime-control-form";

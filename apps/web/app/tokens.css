@@ -1,18 +1,18 @@
 /* Evidence continuity design system. Historical names remain compatibility aliases. */
 :root {
-  --os-ink: #202124; --os-muted: #667085; --os-primary: #2563eb;
-  --os-primary-deep: #1d4ed8; --os-primary-soft: #eff6ff;
+  --os-ink: #202124; --os-muted: #667085; --os-primary: #a64b00;
+  --os-primary-deep: #813700; --os-primary-soft: #fbefdf;
   --os-surface: #fff; --os-canvas: #f7f8fa; --os-inset: #fbfbfc;
   --os-nav: #fff; --os-rule: #e6e8ec; --os-control: #858b9d;
   --os-shadow-control: 0 1px 2px #25244a14, inset 0 1px 0 #ffffffb3;
   --os-shadow-panel: none;
   --os-shadow-float: 0 4px 10px #25244a0d, 0 22px 60px -16px #34375238;
   --os-shadow-primary: 0 1px 2px #00000008;
-  --control-height: 2.25rem; --control-radius: 6px; --control-border: #858b9d; --focus-ring: #2563eb;
+  --control-height: 2.25rem; --control-radius: 6px; --control-border: #858b9d; --focus-ring: #a64b00;
   --paper: #f7f8fa; --paper-bright: #fff; --paper-deep: #e6e9f2;
   --ink: #202124; --ink-soft: #454b60; --muted: #667085;
-  --rule: #e6e8ec; --rule-dark: #b3b8ca; --brand-orange: #2563eb;
-  --brand-orange-dark: #1d4ed8; --brand-orange-light: #eff6ff;
+  --rule: #e6e8ec; --rule-dark: #b3b8ca; --brand-orange: #a64b00;
+  --brand-orange-dark: #813700; --brand-orange-light: #fbefdf;
   --sidebar: 232px; --topbar: 54px;
   --page-title-size: 22px; --section-title-size: 15px;
   --body-size: 14px; --label-size: 13px; --metadata-size: 12px;

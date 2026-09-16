@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { BilingualText } from "@/lib/i18n";
 import { ServiceState } from "./service-state";
 import { ArrowRight } from "@/components/icons/ArrowRight";

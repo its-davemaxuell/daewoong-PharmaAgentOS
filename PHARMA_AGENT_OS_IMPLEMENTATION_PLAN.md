@@ -7,6 +7,18 @@
 
 ---
 
+## September 16 implementation addendum: Daewoong palette and complete fades
+
+Use the official orange/charcoal palette throughout the existing neumorphic
+website. Replace the startup folder sequence with an authored adaptation of the
+requested Dribbble slide/pulse/drop/bounce composition. Preserve real readiness,
+Retry/Continue, hidden-page pausing and reduced motion. Add 90ms outgoing/160ms
+incoming fades to menu links, query tabs and local result/evidence selectors.
+Rapid selection must settle on the last target. Text-entry focus stays neutral,
+without colored compartment outlines. Preserve clear keyboard action focus.
+Inspect real browser frames and desktop/mobile English/Korean renders, validate
+Chromium/Firefox/WebKit, then commit, push and deploy under existing authorization.
+
 ## September 16 implementation addendum: Less explanation, more interaction
 
 Replace passive explanations with actual result previews, editable questions and

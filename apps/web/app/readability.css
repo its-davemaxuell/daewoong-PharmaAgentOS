@@ -17,7 +17,7 @@
   min-height: 40px;
   margin-block: 20px;
   gap: 10px;
-  color: #505967;
+  color: var(--os-muted);
 }
 
 /* The inherited search control fixes its font with !important; size its label. */

@@ -87,7 +87,7 @@
 .availability p {
   font-size: 0.9375rem;
   margin: 5px 0 0;
-  color: #465d7b;
+  color: var(--os-muted);
 }
 .availability > a {
   display: inline-flex;
@@ -175,7 +175,7 @@
   background: var(--os-inset);
 }
 .tasks label.selectedTask {
-  border-color: #6688df;
+  border-color: var(--os-primary);
   background: #f2f5fd;
 }
 .taskOptions {
@@ -345,7 +345,7 @@
 .secondaryButton {
   background: #fff;
   border: 1px solid #c1cbdd;
-  color: #334b71;
+  color: var(--os-primary-deep);
 }
 .secondaryButton:hover:not(:disabled) {
   background: #f2f5fc;
@@ -483,7 +483,7 @@
   gap: 10px;
   min-height: 54px;
   list-style: none;
-  color: #385480;
+  color: var(--os-primary-deep);
 }
 .workflow > p {
   color: var(--os-muted);

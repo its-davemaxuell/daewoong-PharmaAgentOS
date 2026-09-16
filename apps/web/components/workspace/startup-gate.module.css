@@ -1,42 +1,37 @@
 .gate { min-height: 100dvh; }
 .content { opacity: 0; }
-.gate[data-state="revealing"] .content { opacity: 1; transition: opacity 600ms cubic-bezier(.16,1,.3,1); }
+.gate[data-state="revealing"] .content { opacity: 1; transition: opacity 250ms ease-out; }
 .gate[data-state="entered"] .content { opacity: 1; }
-.overlay { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 24px; background: #fff; color: #18263a; overflow-y: auto; }
-.gate[data-state="revealing"] .overlay { opacity: 0; pointer-events: none; transition: opacity 180ms ease-out; }
-.panel { width: min(100%, 440px); text-align: center; }
-.sprite { width: 176px; height: 176px; margin: 0 auto 24px; background: url('/images/startup-folders.webp') 0 0 / 1056px 704px no-repeat; animation: folders 2s steps(1,end) infinite; }
-.gate[data-document-hidden="true"] .sprite { animation-play-state: paused; }
-.panel h1 { font-size: 20px; font-weight: 600; line-height: 1.4; margin: 0 0 10px; }
-.status { font-size: 14px; line-height: 1.6; color: #526176; margin: 0; }
-.progress { display: block; width: 160px; height: 3px; margin: 20px auto 0; accent-color: #5856d6; border: 0; }
-.progress::-webkit-progress-bar { background: #e9eaf0; }
-.progress::-webkit-progress-value { background: #5856d6; }
-.progress::-moz-progress-bar { background: #5856d6; }
-.unfinished { font-size: 13px; line-height: 1.7; margin: 14px 0; color: #526176; }
-.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
-.actions button { min-height: 44px; padding: 10px 16px; border: 1px solid #d3d8e0; border-radius: 8px; background: #fff; color: #18263a; font: inherit; font-size: 14px; cursor: pointer; }
-.actions button:first-child { background: #5856d6; color: #fff; border-color: #5856d6; }
-.actions button:hover { filter: brightness(.96); }
-.actions button:focus-visible { outline: 2px solid #5856d6; outline-offset: 3px; }
-@keyframes folders {
-  0% { background-position: 0 0; } 4.1667% { background-position: -176px 0; } 8.3333% { background-position: -352px 0; } 12.5% { background-position: -528px 0; } 16.6667% { background-position: -704px 0; } 20.8333% { background-position: -880px 0; }
-  25% { background-position: 0 -176px; } 29.1667% { background-position: -176px -176px; } 33.3333% { background-position: -352px -176px; } 37.5% { background-position: -528px -176px; } 41.6667% { background-position: -704px -176px; } 45.8333% { background-position: -880px -176px; }
-  50% { background-position: 0 -352px; } 54.1667% { background-position: -176px -352px; } 58.3333% { background-position: -352px -352px; } 62.5% { background-position: -528px -352px; } 66.6667% { background-position: -704px -352px; } 70.8333% { background-position: -880px -352px; }
-  75% { background-position: 0 -528px; } 79.1667% { background-position: -176px -528px; } 83.3333% { background-position: -352px -528px; } 87.5% { background-position: -528px -528px; } 91.6667% { background-position: -704px -528px; } 95.8333%, 100% { background-position: -880px -528px; }
-}
-@media (prefers-reduced-motion: reduce) { .sprite { animation: none; background-position: 0 -352px; } .gate[data-state="revealing"] .content, .gate[data-state="revealing"] .overlay { transition: none; } }
+.overlay { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 24px; background: var(--os-canvas); color: var(--os-ink); overflow-y: auto; }
+.gate[data-state="revealing"] .overlay { opacity: 0; pointer-events: none; transition: opacity 160ms ease-out; }
+.panel { width: min(100%, 420px); text-align: center; }
+/* CSS adaptation of Rifayet's slide/pulse/drop/bounce concept. Decorative dots;
+   the separate progress element reports actual workspace readiness. */
+.loader { width: min(100%, 288px); aspect-ratio: 4 / 3; display: grid; grid-template-columns: 1fr 1fr; margin: 0 auto 32px; overflow: hidden; border-radius: 24px; box-shadow: var(--os-shadow-panel); }
+.tile { display: grid; place-items: center; position: relative; overflow: hidden; background: var(--os-brand); }
+.tile:nth-child(2), .tile:nth-child(3) { background: #d76b00; }
+.dot { width: 38px; aspect-ratio: 1; border-radius: 50%; background: #fffaf4; animation-duration: 1.5s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(.22,.7,.3,1); }
+.tile[data-motion="slide"] .dot { animation-name: slide; }
+.tile[data-motion="pulse"] .dot { animation-name: pulse; }
+.tile[data-motion="drop"] .dot { animation-name: drop; }
+.tile[data-motion="bounce"] .dot { animation-name: bounce; }
+@keyframes slide { 0% { transform: translateX(-96px); } 28%, 68% { transform: translateX(0); } 100% { transform: translateX(96px); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 35%, 65% { transform: scale(.38); opacity: .55; } }
+@keyframes drop { 0% { transform: translateY(-76px) scale(.65); opacity: 0; } 35% { transform: translateY(0) scale(1.2); opacity: .7; } 65% { transform: translateY(0) scale(.95); opacity: 1; } 100% { transform: translateY(76px) scale(.65); opacity: 0; } }
+@keyframes bounce { 0%, 100% { transform: translateY(0) scale(1); } 25% { transform: translateY(-23px) scale(.94,1.06); } 48% { transform: translateY(10px) scale(1.16,.84); } 67% { transform: translateY(-9px) scale(.98,1.02); } 83% { transform: translateY(3px) scale(1.04,.96); } }
+.gate[data-document-hidden="true"] .dot, .gate[data-state="attention"] .dot { animation-play-state: paused; }
+.panel h1 { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 0 0 10px; }
+.status, .unfinished { font-size: 14px; line-height: 1.6; color: var(--os-muted); margin: 0; }
+.unfinished { font-size: 13px; margin: 14px 0; }
+.progress { display: block; width: 160px; height: 6px; margin: 20px auto 0; accent-color: var(--os-primary); border: 0; border-radius: 6px; overflow: hidden; background: var(--os-rule); box-shadow: var(--neu-inset); }
+.progress::-webkit-progress-bar { background: var(--os-rule); border-radius: 6px; }
+.progress::-webkit-progress-value { background: var(--os-primary); border-radius: 6px; }
+.progress::-moz-progress-bar { background: var(--os-primary); border-radius: 6px; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
+.actions button { min-height: 44px; padding: 10px 16px; border: 0; border-radius: 10px; background: var(--os-canvas); color: var(--os-ink); box-shadow: var(--neu-raised); font: inherit; font-size: 14px; cursor: pointer; }
+.actions button:first-child { background: var(--os-brand); color: var(--os-brand-ink); box-shadow: var(--os-shadow-primary); }
+.actions button:hover { box-shadow: var(--neu-hover); }
+.actions button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } .gate[data-state="revealing"] .content, .gate[data-state="revealing"] .overlay { transition: none; } }
+@media (forced-colors: active) { .tile { background: Canvas; border: 1px solid CanvasText; } .dot { background: CanvasText; } }
 @media (scripting: none) { .overlay { display: none; } .content { opacity: 1; } }
-
-/* Preserve the original folder sequence inside the shared tactile material. */
-.overlay { background: var(--os-canvas); color: var(--os-ink); }
-.panel { padding: 36px 24px; border-radius: 28px; background: var(--os-surface); box-shadow: var(--os-shadow-panel); }
-.sprite { border-radius: 24px; }
-.status, .unfinished { color: var(--os-muted); }
-.progress { height: 8px; border-radius: 8px; overflow: hidden; accent-color: var(--os-primary); box-shadow: var(--neu-inset); }
-.progress::-webkit-progress-bar { background: #dbe3ed; border-radius: 8px; box-shadow: var(--neu-inset); }
-.progress::-webkit-progress-value { background: var(--os-primary); border-radius: 8px; }
-@media (prefers-reduced-motion: no-preference) { .progress::-webkit-progress-value { transition: width 240ms var(--motion-ease); } }
-.progress::-moz-progress-bar { background: var(--os-primary); border-radius: 8px; }
-.actions button { background: var(--os-canvas); color: var(--os-ink); border: 0; border-radius: 10px; box-shadow: var(--neu-raised); }
-.actions button:first-child { background: var(--os-primary); color: #fff; box-shadow: var(--os-shadow-primary); }

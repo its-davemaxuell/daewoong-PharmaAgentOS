@@ -1,6 +1,7 @@
 "use client";
+import { cancelViewFade, changeView } from "@/components/motion/view-fade";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useState } from "react";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { Search } from "@/components/icons/Search";
@@ -28,16 +29,16 @@ export function ExamplesGallery({ examples }: { examples: ExampleSummary[] }) {
   const previewRef = useContextArrival<HTMLDivElement>(active?.slug ?? "", true);
   return <div className={styles.page}>
     <header className={styles.galleryHeader}><div><span className={styles.eyebrow}>{text("PUBLIC EXAMPLES", "공개 실행 예시")}</span><h1>{text("Explore real results.", "실제 결과를 살펴보세요.")}</h1><p className={styles.caption}>{text("Shared examples · Separate from private history · Unapproved drafts", "공개 예시 · 개인 기록과 별도 · 미승인 초안")}</p></div><Link className={styles.try} href="/research">{text("Start your research", "새 리서치")}<ArrowRight size={17} /></Link></header>
-    <SelectionGroup><div className={styles.filters} aria-label={text("Example categories", "예시 분류")}>{groups.map(([key, en, ko]) => <button key={key} type="button" className="ui-selection-control" aria-pressed={group === key} onClick={() => setGroup(key)}>{group === key && <SelectionIndicator />}{text(en, ko)}</button>)}</div></SelectionGroup>
+    <SelectionGroup><div className={styles.filters} aria-label={text("Example categories", "예시 분류")}>{groups.map(([key, en, ko]) => <button key={key} type="button" className="ui-selection-control" aria-pressed={group === key} onClick={() => { if (group !== key) changeView(() => setGroup(key)); else cancelViewFade(); }}>{group === key && <SelectionIndicator />}{text(en, ko)}</button>)}</div></SelectionGroup>
     <div className={styles.browseTools}>
       <label className={styles.search}><Search size={17} /><span className="sr-only">{text("Search examples", "예시 검색")}</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={text("Find an example", "예시 찾기")} /></label>
-      <label className={styles.originSelect}><span className="sr-only">{text("Example origin", "실행 자료 유형")}</span><select value={origin} onChange={event => setOrigin(event.target.value)}><option value="all">{text("All runs", "모든 실행")}</option><option value="live">{text("Public FDA sources", "공개 FDA 자료")}</option><option value="reference">{text("Synthetic demonstrations", "합성 자료 시연")}</option></select></label>
+      <label className={styles.originSelect}><span className="sr-only">{text("Example origin", "실행 자료 유형")}</span><select value={origin} onChange={event => { const value = event.target.value; changeView(() => setOrigin(value)); }}><option value="all">{text("All runs", "모든 실행")}</option><option value="live">{text("Public FDA sources", "공개 FDA 자료")}</option><option value="reference">{text("Synthetic demonstrations", "합성 자료 시연")}</option></select></label>
       <span className={styles.caption} role="status">{filtered.length} {text("examples", "개 예시")}</span>
     </div>
     {active ? <div className={styles.browseGrid}>
       <nav className={styles.resultList} aria-label={text("Choose a result", "실행 결과 선택")}>
         {filtered.map(example => <div className={styles.resultRow} data-selected={active.slug === example.slug} key={example.slug}>
-          <button type="button" aria-pressed={active.slug === example.slug} aria-controls="example-preview" onClick={() => setSelected(example.slug)}><span className={styles.origin} data-origin={example.origin}>{example.origin === "live" ? text("FDA", "FDA 자료") : text("Synthetic", "합성 자료")} · {example.language === "ko" ? "한국어" : "English"}</span><strong>{text(...example.title)}</strong></button>
+          <button type="button" aria-pressed={active.slug === example.slug} aria-controls="example-preview" onClick={() => { if (active.slug !== example.slug) changeView(() => setSelected(example.slug), previewRef.current); else cancelViewFade(previewRef.current); }}><span className={styles.origin} data-origin={example.origin}>{example.origin === "live" ? text("FDA", "FDA 자료") : text("Synthetic", "합성 자료")} · {example.language === "ko" ? "한국어" : "English"}</span><strong>{text(...example.title)}</strong></button>
           <Link href={`/examples/${example.slug}`} aria-label={`${text("Open", "열기")}: ${text(...example.title)}`}><ArrowRight size={18} /></Link>
         </div>)}
       </nav>

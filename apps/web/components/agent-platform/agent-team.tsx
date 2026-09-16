@@ -1,6 +1,7 @@
 "use client";
+import { cancelViewFade, changeView } from "@/components/motion/view-fade";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useState } from "react";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { GitBranch } from "@/components/icons/GitBranch";
@@ -82,7 +83,7 @@ export function AgentTeam({ examples }: { examples: ExampleSummary[] }) {
               type="button"
               aria-pressed={active?.key === agent.key}
               aria-controls="agent-detail"
-              onClick={() => setSelected(agent.key)}
+              onClick={() => { if (active?.key !== agent.key) changeView(() => setSelected(agent.key), detailRef.current); else cancelViewFade(detailRef.current); }}
             >
               {active?.key === agent.key ? <SelectionIndicator /> : null}
               <span className={styles.avatar}>

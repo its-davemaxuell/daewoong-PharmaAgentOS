@@ -3,7 +3,7 @@
 import { useWorkspaceAction } from "./workspace/commands";
 
 import "@/app/chat-workspace.css";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { applyStreamEvent } from "@/lib/chat-turn-state";
 import { ChatStreamFailure, consumeChatStream } from "@/lib/chat-stream";
 import { SessionNotice } from "@/components/session-notice";

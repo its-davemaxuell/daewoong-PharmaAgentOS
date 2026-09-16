@@ -102,7 +102,7 @@
   min-height: 36px;
   padding: 8px 10px;
   text-decoration: none;
-  color: #505967;
+  color: var(--os-muted);
   font-size: 13px;
   border-radius: 6px;
   margin-block: 2px;
@@ -118,7 +118,7 @@
 }
 .continuity-nav.is-active {
   background: #eaf0fa;
-  color: #1d4ed8;
+  color: #813700;
   font-weight: 600;
 }
 .continuity-home-icon {
@@ -344,8 +344,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  border: 1px solid #2563eb;
-  background: #2563eb;
+  border: 1px solid #a64b00;
+  background: #a64b00;
   color: white;
   text-decoration: none;
   border-radius: 6px;
@@ -524,12 +524,12 @@
 }
 .continuity-topic {
   font-size: 12px;
-  color: #596474;
+  color: var(--os-muted);
 }
 .continuity-source-label {
   font-size: 12px;
   font-weight: 600;
-  color: #45628a;
+  color: var(--os-primary-deep);
   border: 1px solid #dfe7f1;
   border-radius: 4px;
   padding: 2px 5px;
@@ -702,7 +702,7 @@
   line-height: 1.75;
 }
 .continuity-cited-passage {
-  background: #eff6ff;
+  background: #fbefdf;
   padding: 16px;
   margin-block: 16px;
   border-radius: 6px;
@@ -772,8 +772,8 @@
 .continuity-assistant-context button {
   padding: 5px 8px;
   border: 1px solid #d7e3f6;
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #fbefdf;
+  color: #813700;
   border-radius: 4px;
   margin: 0 4px 4px 0;
   max-width: 100%;

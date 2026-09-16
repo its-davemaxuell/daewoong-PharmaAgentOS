@@ -1,6 +1,7 @@
 "use client";
+import { cancelViewFade, changeView } from "@/components/motion/view-fade";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "@/components/icons/ArrowRight";
@@ -36,7 +37,7 @@ export function EmployeeGuide({ examples }: { examples: ExampleSummary[] }) {
   const question = drafts[draftKey] ?? text(topic.prompt[0], topic.prompt[1]);
   const example = examples.find(item => item.slug === topic.slug);
   const useQuestion = () => {
-    try { sessionStorage.setItem(RESEARCH_DRAFT_KEY, question); router.push("/research"); }
+    try { sessionStorage.setItem(RESEARCH_DRAFT_KEY, question); changeView(() => router.push("/research"), undefined, true); }
     catch { setError(true); }
   };
   const destinations = [
@@ -56,7 +57,7 @@ export function EmployeeGuide({ examples }: { examples: ExampleSummary[] }) {
     <header><h1>{text("Help", "도움말")}</h1><p>{text("Try a question. Inspect a real result.", "질문을 만들고 실제 결과를 확인하세요.")}</p></header>
     <div className={styles.tryGrid}>
       <section className={styles.builder} aria-labelledby="guide-draft-heading"><h2 id="guide-draft-heading">{text("Build a question", "질문 만들기")}</h2>
-        <SelectionGroup><div className={styles.topics} aria-label={text("Research topic", "리서치 주제")}>{topics.map((item, i) => <button className="ui-selection-control" type="button" key={item.slug} disabled={!hydrated} aria-pressed={selected === i} onClick={() => { setSelected(i); setError(false); }}>{selected === i && <SelectionIndicator />}{text(item.title[0], item.title[1])}</button>)}</div></SelectionGroup>
+        <SelectionGroup><div className={styles.topics} aria-label={text("Research topic", "리서치 주제")}>{topics.map((item, i) => <button className="ui-selection-control" type="button" key={item.slug} disabled={!hydrated} aria-pressed={selected === i} onClick={() => { if (selected !== i) changeView(() => { setSelected(i); setError(false); }); else cancelViewFade(); }}>{selected === i && <SelectionIndicator />}{text(item.title[0], item.title[1])}</button>)}</div></SelectionGroup>
         <label htmlFor="guide-question">{text("Your question", "질문 내용")}</label><textarea id="guide-question" rows={7} maxLength={2000} value={question} disabled={!hydrated} onChange={event => { const value = event.target.value; setDrafts(current => ({ ...current, [draftKey]: value })); }} />
         <div className={styles.useQuestion}><span>{text("Editable draft", "편집 가능한 초안")}</span><button type="button" className="button button--primary" disabled={!hydrated || question.trim().length < 8} onClick={useQuestion}>{text("Use in Research", "리서치에서 사용")}<ArrowRight size={17} /></button></div>
         {error && <p role="alert">{text("Could not transfer the draft. Copy your question into Research.", "초안을 전달하지 못했습니다. 질문을 복사해 리서치에 붙여 넣으세요.")} <Link href="/research">{text("Open Research", "리서치 열기")}</Link></p>}
@@ -66,6 +67,6 @@ export function EmployeeGuide({ examples }: { examples: ExampleSummary[] }) {
     <nav className={styles.destinations} aria-label={text("Workspace shortcuts", "워크스페이스 바로가기")}>{destinations.map(({ icon: Icon, href, title }) => <Link key={href} href={href}><Icon size={21} /><span>{title}</span><ArrowRight size={17} /></Link>)}</nav>
     <section id="availability" className={styles.availability}><ServiceScope /></section>
     <section className={styles.faq}><h2>{text("Common questions", "자주 묻는 질문")}</h2>{questions.map(([en, ko, bodyEn, bodyKo]) => <details key={en}><summary>{text(en, ko)}</summary><p>{text(bodyEn, bodyKo)}</p></details>)}</section>
-    <details id="credits" className={styles.credits}><summary>{text("Icon credits", "아이콘 출처")}</summary><p>Ultimate Light · <a href="https://www.streamlinehq.com/">Streamline</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. {text("Colors, weight and selected symbols adapted for this workspace.", "색상, 선 굵기와 일부 기호를 이 워크스페이스에 맞게 조정했습니다.")}</p></details>
+    <details id="credits" className={styles.credits}><summary>{text("Design credits", "디자인 출처")}</summary><p>Ultimate Light · <a href="https://www.streamlinehq.com/">Streamline</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. {text("Colors, weight and selected symbols adapted for this workspace.", "색상, 선 굵기와 일부 기호를 이 워크스페이스에 맞게 조정했습니다.")}</p><p>{text("Loading motion inspired by", "로딩 모션 참고")} <a href="https://dribbble.com/shots/27695417-Loading-Animation-Concept">Rifayet · Loading Animation Concept</a>.</p></details>
   </article>;
 }

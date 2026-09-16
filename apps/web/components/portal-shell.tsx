@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { portalNavigation, secondaryDestinations } from "@/lib/navigation";

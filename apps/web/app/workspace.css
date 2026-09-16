@@ -11,7 +11,7 @@
 .research-context button:disabled { opacity: .55; cursor: not-allowed; }
 .research-context button:not(:disabled):hover { background: var(--os-inset); }
 .research-context summary { cursor: pointer; padding-block: 8px; }
-.research-context :focus-visible { outline: 2px solid var(--os-primary, #5856d6); outline-offset: 3px; }
+.research-context :focus-visible { outline: 2px solid var(--os-primary, #a64b00); outline-offset: 3px; }
 .linear-workspace { --sidebar: 240px; --topbar: 52px; --motion-hover: 100ms; --motion-panel: 200ms; --motion-select: 0ms; --motion-context: 0ms; --os-control-canvas: #767d90; }
 .linear-workspace.portal-shell .portal-sidebar { top: 0; left: 0; bottom: 0; width: 240px; height: 100dvh; border: 0; border-right: 1px solid var(--os-rule); border-radius: 0; box-shadow: none; background: #f5f6fa; }
 .linear-workspace.portal-shell .portal-header { top: 0; left: var(--portal-sidebar-offset); right: 0; height: 52px; border: 0; border-bottom: 1px solid var(--os-rule); border-radius: 0; box-shadow: none; padding: 0 24px; }

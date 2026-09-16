@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useEffect, useState } from "react";
 import { useChatHistory } from "@/components/chat-history-context";
 import { useI18n } from "@/lib/i18n";

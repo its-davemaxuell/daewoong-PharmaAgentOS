@@ -1,7 +1,7 @@
 "use client";
 import { LoadingIndicator } from "../controls";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { BookOpen } from "@/components/icons/BookOpen";

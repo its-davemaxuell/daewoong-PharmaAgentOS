@@ -10,6 +10,18 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 Daewoong theme and complete fades:** Implemented official orange and
+charcoal on warm neumorphic surfaces; replaced startup artwork with the supplied
+four-circle motion concept. Menu/tab changes have 90ms exit and 160ms entry fades,
+interruption and reduced-motion handling. Text-entry focus stays neutral; action
+keyboard focus and native selection remain usable. Citation focus waits for the
+destination DOM commit. Build/type checks, lint, 99 unit tests, 108 final focused
+browser checks and 12 startup scenarios pass across Chromium/Firefox/WebKit. The
+earlier run additionally passed 33 cache/neumorphism checks. Twenty routes were
+inspected at desktop/phone widths in English/Korean. Public example snapshots and
+hashes are unchanged. Publication is pending the authorized push and hosted check.
+See [release evidence](docs/assurance/daewoong-theme-20260916.md).
+
 **2026-09-16 Chat centering follow-up:** The welcome diagram, heading and subtitle
 share the composer's horizontal center. Symmetric scrollbar space removes desktop
 drift; a shrinkable grid keeps the diagram centered on phones. Production build

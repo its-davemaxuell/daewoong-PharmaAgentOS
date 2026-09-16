@@ -27,13 +27,13 @@ test("selection is immediate and workspace transitions retain the shell", async 
   await page.locator('.continuity-sidebar a[href="/drug-letters"]').click();
   await expect(page).toHaveURL(/\/drug-letters$/);
   await expect(page.locator("main")).toHaveAttribute("data-retained-shell", "true");
-  await expect(page.locator("main")).toHaveAttribute("data-transition-count", "1");
+  await expect(page.locator("main")).toHaveAttribute("data-transition-count", "2");
   // The transition never remounts the shell or blocks destination interaction.
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.locator('.continuity-sidebar a[href="/saved-work"]').click();
   await expect(page).toHaveURL(/\/saved-work$/);
   expect(await page.locator("main").evaluate(node => node.getAnimations().length)).toBe(0);
-  await expect(page.locator("main")).toHaveAttribute("data-transition-count", "1");
+  await expect(page.locator("main")).toHaveAttribute("data-transition-count", "2");
 });
 
 test("rapid view selection preserves semantics and reduced motion stops movement", async ({ page }) => {

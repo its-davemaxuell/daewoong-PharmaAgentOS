@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { ArrowLeft } from "@/components/icons/ArrowLeft";
 import { RotateCcw } from "@/components/icons/RotateCcw";
 import { useTransition } from "react";

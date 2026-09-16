@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useI18n } from "@/lib/i18n";
 import { workspaceJson } from "@/lib/workspace-client";
 import type { BriefSummary } from "@/lib/workspace-types";

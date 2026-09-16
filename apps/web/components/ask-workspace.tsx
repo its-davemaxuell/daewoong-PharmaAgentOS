@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { BookOpen } from "@/components/icons/BookOpen";
 import { BookmarkPlus } from "@/components/icons/BookmarkPlus";

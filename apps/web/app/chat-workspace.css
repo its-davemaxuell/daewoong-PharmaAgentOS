@@ -206,7 +206,7 @@
 .chat-source-strip > div button { background: white; border: 1px solid var(--os-rule); box-shadow: var(--os-shadow-control); }
 .chat-workbench .chat-composer-wrap { position: relative; z-index: 10; flex: 0 0 auto; padding: 10px max(24px, calc((100% - 760px) / 2)) 16px; background: white; }
 .chat-workbench .chat-composer { border-radius: 14px; border-color: #a6a9c1; background: white; box-shadow: 0 3px 6px #3437520a, 0 12px 24px -10px #34375225; }
-.chat-workbench .chat-composer:focus-within { border-color: var(--os-primary); outline: 2px solid #5856d626; outline-offset: 2px; box-shadow: var(--os-shadow-panel); }
+.chat-workbench .chat-composer:focus-within { border-color: var(--os-primary); outline: 2px solid #a64b0026; outline-offset: 2px; box-shadow: var(--os-shadow-panel); }
 .chat-workbench .chat-composer textarea { font-size: 1rem; }
 .chat-workbench .chat-send-button { background: var(--os-primary); box-shadow: var(--os-shadow-primary); }
 .chat-workbench .chat-tool-button:hover { background: var(--os-inset); }

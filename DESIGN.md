@@ -6,18 +6,24 @@ in ordinary office lighting. Product truth and scope remain in PRODUCT.md.
 
 ## Material and color
 
-Use a continuous cool porcelain canvas (#e9eef4), dark slate text (#243247),
-secondary slate (#53647a), and a restrained cobalt accent (#275bd6).
+The September 16 brand request supersedes the earlier cobalt palette. Use warm
+porcelain (#f1eee9), charcoal text (#302e2b), secondary warm gray (#645f59), and
+Daewoong orange (#f18a00). The official Daewoong logo pairs orange with charcoal
+(#53575a): https://www.daewoong.co.kr/images/daewoong-logo-basic.svg.
+Bright orange keys use dark text (#33281c); links use a readable darker orange
+(#a64b00 / #813700). Selected navigation uses a soft orange inset (#f5dfc6).
 Panels and controls share the canvas color. Paired upper-left white highlights
-and lower-right slate shadows define raised surfaces. Inputs and selected
+and lower-right warm gray shadows define raised surfaces. Inputs and selected
 navigation are recessed. Retained source passages use a brighter inset reading
-surface (#f1f4f8). Semantic success, warning and error colors retain labels.
+surface (#f8f5f0). Semantic success, warning and error colors retain labels.
 
 Depth has three roles: stationary panels, small tactile controls, and floating
 dialogs. Do not apply large shadows to individual table rows or animate large
 panel shadows. Hairlines divide content; outer panel boundaries use depth.
-Interactive fields retain a visible outline. Keyboard focus uses a 2px blue
-outline with 3px clearance. Text contrast is at least 4.5:1. Forced colors restores
+Text fields retain their neutral boundary and caret without colored focus rings
+or compartment highlights. Native text selection remains usable. Action controls
+use a 2px dark orange keyboard outline with 3px clearance. Text contrast is at
+least 4.5:1. Forced colors restores
 system outlines when shadows disappear.
 
 ## Geometry and typography
@@ -34,7 +40,7 @@ No global scaling. No decorative copy, invented metrics or capability claims.
 
 The chat canvas sits in a soft raised frame. Three task choices are tactile keys;
 the source → answer → review diagram carries matching depth. The composer is a
-recessed input well with raised source/options controls and a cobalt send key.
+recessed input well with raised source/options controls and a Daewoong orange send key.
 Research, Overview, sources, saved work, cases, governance, agents, usage, settings
 and Help use the same panel/control material. Source passages keep their readable
 measure and visible provenance. Dialogs and mobile navigation share the material.
@@ -67,8 +73,16 @@ remain focusable during the visual exit. Mobile navigation retains inert content
 until the browser finishes its exit, with reopening invalidating old cleanup.
 All presence surfaces subscribe to preference changes while already mounted.
 
-Retain the original animated all-menu startup and honest Retry/Continue fallback.
-Its progress and containing panel inherit the material. Reveal once per entry.
+Menu and tab changes fade the previous content out in 90ms, then the new content
+in over 160ms. Keep live DOM and drafts mounted; latest selection cancels an
+unfinished departure. Slow or failed navigation must restore visibility. Reduced
+motion and hidden-document changes settle pending navigation immediately.
+
+Startup uses an authored CSS adaptation of Rifayet's slide/pulse/drop/bounce
+circle composition: https://dribbble.com/shots/27695417-Loading-Animation-Concept.
+Use a compact orange 2×2 composition, no external video dependency or motion labels.
+Progress still reports actual readiness across all menus; keep honest Retry/Continue.
+Pause dots on service attention and hidden documents. Reveal once per entry.
 Reduced motion removes nonessential movement, loops and transitions, including
 when the preference changes during a session. Forced colors keeps every control
 and selection distinguishable without shadows.

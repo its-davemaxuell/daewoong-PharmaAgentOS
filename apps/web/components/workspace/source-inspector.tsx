@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useQuery } from "@tanstack/react-query";
 import type { Letter } from "@/lib/types";
 import type { ResearchSource } from "@/lib/research-types";

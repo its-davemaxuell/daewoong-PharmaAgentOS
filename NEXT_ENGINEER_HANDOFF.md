@@ -4,6 +4,13 @@ Prepared: **2026-09-11**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest frontend refinement (2026-09-16):** Daewoong orange/charcoal, the requested
+circle startup motion, paired menu/tab fades and neutral text-entry focus replace
+the preceding blue theme. The 18 public pipeline examples and centered Chat remain.
+Start with the current [implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md)
+and [theme verification](docs/assurance/daewoong-theme-20260916.md) for publication status.
+The dated descriptions below are historical.
+
 **Latest visual refinement (2026-09-11):** Clearer Workspaces is deployed at
 revision `e56ebe2`. Research/Inbox/Saved work lead daily navigation; Overview leads
 with active work; mobile research and source inspection use the new compact

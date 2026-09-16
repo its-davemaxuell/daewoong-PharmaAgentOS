@@ -1,6 +1,6 @@
 "use client";
 import { SelectionGroup, SelectionIndicator } from "../motion/selection";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { briefListOptions, savedViewsOptions } from "@/lib/workspace-queries";

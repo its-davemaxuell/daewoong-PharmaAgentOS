@@ -1,7 +1,8 @@
 "use client";
+import { cancelViewFade, changeView } from "@/components/motion/view-fade";
 
 import { useIsPresent } from "motion/react";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { SourceLink } from "@/components/source-link";
 import { ExternalLink } from "@/components/icons/ExternalLink";
 import { FileText } from "@/components/icons/FileText";
@@ -28,7 +29,7 @@ export function ChatEvidencePanel({ citations, selected, onSelect, onClose, onFo
     <header><div><span>{text("Evidence", "근거 자료")}</span><h2 id="evidence-panel-title" ref={heading} tabIndex={-1}>{text("Read the source", "원문 확인")}</h2></div>
       <IconButton onClick={onClose} label={text("Close evidence panel", "근거 패널 닫기")}><X size={20} /></IconButton></header>
     <SelectionGroup><nav className="chat-evidence-panel__tabs" aria-label={text("Answer sources", "답변 출처")}>
-      {citations.map((source, index) => <button key={source.id} className="ui-selection-control" type="button" aria-pressed={index === selected} onClick={() => onSelect(index)} aria-label={text(`Source ${index + 1}: ${source.company}`, `출처 ${index + 1}: ${source.company}`)}>{index === selected && <SelectionIndicator />}{index + 1}</button>)}
+      {citations.map((source, index) => <button key={source.id} className="ui-selection-control" type="button" aria-pressed={index === selected} onClick={() => { if (selected !== index) changeView(() => onSelect(index), document.querySelector<HTMLElement>(".chat-evidence-panel__body")); else cancelViewFade(document.querySelector<HTMLElement>(".chat-evidence-panel__body")); }} aria-label={text(`Source ${index + 1}: ${source.company}`, `출처 ${index + 1}: ${source.company}`)}>{index === selected && <SelectionIndicator />}{index + 1}</button>)}
     </nav></SelectionGroup>
     <div className="chat-evidence-panel__body">
       <span className="chat-evidence-panel__label">FDA · {text("Warning letter", "경고서한")}</span>

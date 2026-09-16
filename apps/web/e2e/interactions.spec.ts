@@ -212,7 +212,7 @@ test("changing reduced motion while find is open stops its exit and Escape works
   await expect(trigger).toBeFocused();
 });
 
-test("primary buttons keep cobalt depth while pressing and do not submit before release", async ({ page }) => {
+test("primary buttons keep Daewoong orange depth while pressing and do not submit before release", async ({ page }) => {
   await page.goto("/ask");
   await page.locator("#ai-question").fill("A prepared question");
   const send = page.locator(".chat-send-button");
@@ -220,8 +220,8 @@ test("primary buttons keep cobalt depth while pressing and do not submit before 
   await send.hover(); await page.mouse.down();
   await send.evaluate(node => Promise.allSettled(node.getAnimations().map(animation => animation.finished)));
   const pressed = await send.evaluate(node => ({ shadow: getComputedStyle(node).boxShadow, text: getComputedStyle(node).color }));
-  expect(pressed.shadow).toContain("rgb(22, 57, 140)");
-  expect(pressed.text).toBe("rgb(255, 255, 255)");
+  expect(pressed.shadow).toContain("rgb(185, 93, 0)");
+  expect(pressed.text).toBe("rgb(51, 40, 28)");
   await page.mouse.move(1, 1); await page.mouse.up();
   await expect(page.locator("#ai-question")).toHaveValue("A prepared question");
 });

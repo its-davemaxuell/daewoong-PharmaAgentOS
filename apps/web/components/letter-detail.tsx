@@ -4,7 +4,7 @@ import { SelectionGroup, SelectionIndicator } from "./motion/selection";
 import { useContextArrival } from "./motion/use-context-arrival";
 
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { SourceLink } from "@/components/source-link";
 import { useSearchParams } from "next/navigation";
 import { setWorkspaceParams } from "@/lib/workspace-client";

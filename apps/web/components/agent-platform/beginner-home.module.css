@@ -19,7 +19,7 @@
 .intro { font-size: .875rem; color: var(--os-muted); margin: 0 0 14px; line-height: 1.7; max-width: 62ch; }
 .objective label { display: block; margin-bottom: 8px; font-size: .8125rem; font-weight: 600; }
 .inputTray { border: 1px solid var(--control-border); border-radius: 10px; background: #fbfbfe; overflow: hidden; box-shadow: inset 0 2px 4px #20233204; }
-.inputTray:focus-within { border-color: var(--os-primary); outline: 2px solid #5856d626; outline-offset: 2px; }
+.inputTray:focus-within { border-color: var(--os-primary); outline: 2px solid #a64b0026; outline-offset: 2px; }
 .inputTray textarea { display: block; width: 100%; padding: 16px; border: 0; background: transparent; color: var(--os-ink); resize: vertical; font: inherit; font-size: 1rem; height: 104px; min-height: 98px; max-height: 320px; line-height: 1.8; outline: none !important; }
 .composerFoot { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 10px; border-top: 1px solid var(--os-rule); background: #fff; flex-wrap: wrap; }
 .composerFoot > span { font-size: .75rem; color: var(--os-muted); padding-left: 4px; }

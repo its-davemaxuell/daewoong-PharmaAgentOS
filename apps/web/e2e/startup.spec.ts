@@ -9,7 +9,7 @@ async function fixture(page: Page) {
   await page.route("**/api/usage", route => route.fulfill({ json: usage }));
 }
 
-test("all menus prepare before revealing the site and navigation does not replay startup", async ({ page }) => {
+test("all menus prepare before revealing the site and navigation does not replay startup", async ({ page }, info) => {
   await fixture(page);
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
@@ -20,6 +20,25 @@ test("all menus prepare before revealing the site and navigation does not replay
     await expect(page.locator("[data-startup-gate] > [inert]").filter({ has: page.locator("main") })).toHaveAttribute("aria-hidden", "true");
     await page.keyboard.press("Control+k");
     await expect(page.locator(".workspace-command")).not.toBeVisible();
+    const dots = page.locator("[data-startup-motion] [data-motion] > span");
+    await expect(dots).toHaveCount(4);
+    const before = await dots.evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+    await page.waitForTimeout(240);
+    const after = await dots.evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+    expect(after).not.toEqual(before);
+    expect(await dots.evaluateAll(nodes => nodes.every(node => node.getAnimations().length === 1))).toBe(true);
+    expect(await page.evaluate(() => performance.getEntriesByType("resource").some(entry => entry.name.includes("startup-folders")))).toBe(false);
+    await page.screenshot({ path: info.outputPath("startup-motion.png") });
+    const viewport = page.viewportSize()!;
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: info.outputPath("startup-mobile.png") });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    await page.setViewportSize(viewport);
+    await page.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, value: true }); document.dispatchEvent(new Event("visibilitychange")); });
+    expect(await dots.evaluateAll(nodes => nodes.every(node => getComputedStyle(node).animationPlayState === "paused"))).toBe(true);
+    await page.evaluate(() => { Reflect.deleteProperty(document, "hidden"); document.dispatchEvent(new Event("visibilitychange")); });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await dots.evaluateAll(nodes => nodes.every(node => node.getAnimations().length === 0))).toBe(true);
   } finally { release(); }
   await expect(page.locator("[data-startup-gate]")).toHaveAttribute("data-state", "entered", { timeout: 40000 });
   await expect(page.getByRole("heading", { name: "Overview", exact: true })).toBeVisible();

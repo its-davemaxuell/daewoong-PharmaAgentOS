@@ -9,7 +9,7 @@ related_targets: ["apps/web/components/agent-platform/beginner-home.tsx","apps/w
 
 Mode: Operate. Primary surface: Overview and the persistent portal shell.
 Audience: mixed Korean/English employees, with specialist review accessible.
-Visual authority: DESIGN.md; cool porcelain raised panels, recessed selections,
+Visual authority: DESIGN.md; warm porcelain raised panels, Daewoong orange/charcoal, recessed selections,
 tactile controls, local Pretendard and existing Daewoong/Streamline assets.
 
 Overview: page heading and New research; Continue your work with real research
@@ -24,3 +24,7 @@ records exist. Research history collapses only on mobile. Shell,
 query cache, session identity, deep URLs, source versions and review permissions
 persist. Never substitute a successful run, count, finding or decision for missing
 data. Details and related commands retain access to specialist tools.
+
+Menu changes have both exit and entrance fades without remounting the shell.
+Startup adapts the requested four-circle loading reference to the brand palette;
+its actual all-menu readiness and Retry/Continue remain the access boundary.

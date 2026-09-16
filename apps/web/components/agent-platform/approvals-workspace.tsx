@@ -1,6 +1,6 @@
 "use client";
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import type { ApprovalCenterItem } from "@/lib/governance-api-client";
 import { useI18n } from "@/lib/i18n";
 import { formatDate } from "@/components/ui";

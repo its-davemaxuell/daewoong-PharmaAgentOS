@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { RefreshCw } from "@/components/icons/RefreshCw";

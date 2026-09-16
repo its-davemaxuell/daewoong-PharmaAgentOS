@@ -1,6 +1,7 @@
 "use client";
+import { changeView } from "@/components/motion/view-fade";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { AlertTriangle } from "@/components/icons/AlertTriangle";
 import { Check } from "@/components/icons/Check";
 import { CheckCircle2 } from "@/components/icons/CheckCircle2";
@@ -114,11 +115,13 @@ export function ReviewConsole({
           cursor: nextCursor,
           pageSize,
         });
-        setQueue(result.data);
-        setView(nextView);
-        setCursor(nextCursor);
-        const stillPresent = result.data.items.find((item) => item.id === selectedId);
-        resetEditor(stillPresent ?? result.data.items[0]);
+        changeView(() => {
+          setQueue(result.data);
+          setView(nextView);
+          setCursor(nextCursor);
+          const stillPresent = result.data.items.find((item) => item.id === selectedId);
+          resetEditor(stillPresent ?? result.data.items[0]);
+        });
       } catch {
         setQueueError(true);
       }
@@ -128,7 +131,7 @@ export function ReviewConsole({
   const executeAction = (action: DeferredAction) => {
     setDeferredAction(undefined);
     if (action.kind === "select") {
-      resetEditor(queue.items.find((item) => item.id === action.itemId));
+      changeView(() => resetEditor(queue.items.find((item) => item.id === action.itemId)), document.querySelector<HTMLElement>(".review-stage"));
       return;
     }
     loadQueue(action.view, action.cursor, action.pageSize);

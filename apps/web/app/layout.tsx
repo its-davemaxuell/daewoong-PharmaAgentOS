@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#e9eef4",
+  themeColor: "#f1eee9",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

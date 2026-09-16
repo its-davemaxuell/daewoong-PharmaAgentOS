@@ -30,6 +30,9 @@ immediately visible, with 180–280ms interaction feedback and reduced-motion su
 The September 16 screenshot follow-up centers the welcome diagram, heading and
 subtitle on the composer's axis. Reserve scrollbar space symmetrically in the
 empty conversation view so its center does not drift on desktop.
+The later September 16 request uses Daewoong orange/charcoal on warm porcelain,
+with neutral text-entry focus and no compartment highlight. Menus and source
+selectors fade out in 90ms and in over 160ms while retaining live state.
 The reading pane is central: open a numbered citation without losing the conversation.
 The narrow-screen reader temporarily occupies the workspace and restores focus
 when closed. Model options remain secondary to the question and source selection.

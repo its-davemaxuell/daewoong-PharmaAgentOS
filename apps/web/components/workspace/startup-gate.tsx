@@ -60,8 +60,7 @@ export function StartupGate({ children, roles, linearWorkspace }: { children: Re
     const list = preparationTasks(client, scope, roleKey.split(",") as AppRole[], linearWorkspace, new URL(window.location.href));
     const readiness: PreparationTask[] = [
       { id: "appearance", en: "Workspace appearance", ko: "워크스페이스 화면", run: async () => {
-        const artwork = new Image(); artwork.src = "/images/startup-folders.webp";
-        await Promise.all([artwork.decode(), document.fonts.ready]);
+        await document.fonts.ready;
       } },
       { id: "history", en: "Conversation history", ko: "대화 기록", run: () => waitFor(() => {
         if (history.current === "unavailable") throw new Error("History unavailable");
@@ -97,7 +96,7 @@ export function StartupGate({ children, roles, linearWorkspace }: { children: Re
     const timer = setTimeout(() => {
       setState("entered");
       performance.mark("workspace-startup-entered");
-    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 600);
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 250);
     return () => clearTimeout(timer);
   }, [state]);
   const retry = async () => {
@@ -110,11 +109,12 @@ export function StartupGate({ children, roles, linearWorkspace }: { children: Re
   const readyCount = tasks.filter(task => statuses[task.id] === "ready").length;
   const unfinished = tasks.filter(task => statuses[task.id] !== "ready");
   return <div ref={gate} className={styles.gate} data-startup-gate data-state={state}>
-    <link rel="preload" href="/images/startup-folders.webp" as="image" />
     <StartupReady.Provider value={state === "entered"}><div className={styles.content} ref={content} inert={state !== "entered"} aria-hidden={state !== "entered" ? true : undefined}>{children}</div></StartupReady.Provider>
     {state !== "entered" && <div className={styles.overlay} data-startup-overlay>
       <div className={styles.panel}>
-        <div className={styles.sprite} aria-hidden="true" />
+        <div className={styles.loader} aria-hidden="true" data-startup-motion>
+          {(["slide", "pulse", "drop", "bounce"] as const).map(motion => <div key={motion} className={styles.tile} data-motion={motion}><span className={styles.dot} /></div>)}
+        </div>
         <h1>{state === "attention" ? text("Some menus need more time", "일부 메뉴 준비가 지연되고 있습니다") : text("Preparing your workspace", "워크스페이스를 준비하고 있습니다")}</h1>
         <p className={styles.status} role="status" aria-live="polite">{tasks.length ? text(`${readyCount} of ${tasks.length} steps ready`, `${tasks.length}개 중 ${readyCount}개 준비 완료`) : text("Getting everything ready for you…", "이용할 화면을 준비하고 있습니다…")}</p>
         <progress className={styles.progress} max={tasks.length || 1} value={readyCount} aria-label={text("Workspace preparation", "워크스페이스 준비")} />

@@ -1,6 +1,6 @@
 "use client";
 import { LoadingIndicator } from "../controls";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/lib/i18n";
 import { useWorkspaceScope } from "./provider";

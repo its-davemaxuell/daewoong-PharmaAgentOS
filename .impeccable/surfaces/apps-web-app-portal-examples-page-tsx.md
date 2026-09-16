@@ -8,7 +8,7 @@ related_targets: ["apps/web/app/(portal)/examples/[slug]/page.tsx","apps/web/com
 # Public pipeline examples
 
 Mode: Explore. Audience: visitors who want to see a service's output before running
-a task. Visual authority: DESIGN.md and the deployed cool porcelain neumorphism.
+a task. Visual authority: DESIGN.md and the Daewoong warm porcelain neumorphism.
 
 The gallery starts with a public label and separates hosted FDA runs from synthetic
 reference demonstrations. Categories, origin and search narrow a compact selection
@@ -18,10 +18,11 @@ translation/original comparison. Evidence search and exact source disclosures fo
 a separate view; input and execution provenance remain available on demand.
 Keep original generated language explicit with English/Korean interface labels.
 
-Paired shadows, recessed search, shared tactile controls and cobalt selections
+Paired shadows, recessed search, shared tactile controls and dark orange selections
 extend the existing shell. Two columns become one on mobile. Long source anchors,
 hashes and structured inputs must wrap. Source reference links open their exact
-disclosure; copy failures stay visible. Motion respects reduced-motion settings.
+disclosure after the new tab commits; copy failures stay visible. Paired exit and
+entrance fades preserve output and evidence state, including reduced motion.
 
 Data is an offline curated catalog, separate from private history. Visiting or
 downloading an example does not start generation. Reference reviewers are simulated;

@@ -1,6 +1,7 @@
 "use client";
+import { cancelViewFade, changeView } from "@/components/motion/view-fade";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { Archive } from "@/components/icons/Archive";
 import { ArchiveRestore } from "@/components/icons/ArchiveRestore";
 import { MessageSquare } from "@/components/icons/MessageSquare";
@@ -89,7 +90,7 @@ export function ChatLibrary({ open, onClose, onUpdated }: { open: boolean; onClo
         </label>
         <SelectionGroup><div className="chat-library__tabs" role="group" aria-label={text("Conversation view", "대화 보기")}>
           {[false, true].map((value) => <button key={String(value)} className="ui-selection-control" type="button" aria-pressed={archived === value}
-            onClick={() => { setArchived(value); setPage(1); setLoading(true); }}>
+            onClick={() => { if (archived !== value) changeView(() => { setArchived(value); setPage(1); setLoading(true); }, document.querySelector<HTMLElement>(".chat-library__results")); else cancelViewFade(document.querySelector<HTMLElement>(".chat-library__results")); }}>
             {archived === value && <SelectionIndicator />}
             {value ? <Archive size={16} /> : <MessageSquare size={16} />}
             {value ? text("Archived", "보관됨") : text("Recent & pinned", "최근·고정 대화")}

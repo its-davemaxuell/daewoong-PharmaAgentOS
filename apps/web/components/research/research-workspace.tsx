@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { useQueryClient } from "@tanstack/react-query";
 import { ResearchRunList } from "../workspace/research-list";
 import { SaveBriefButton } from "../workspace/save-brief-button";

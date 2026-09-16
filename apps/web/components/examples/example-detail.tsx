@@ -1,7 +1,8 @@
 "use client";
+import { cancelViewFade, changeView } from "@/components/motion/view-fade";
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from "@/components/motion/workspace-link";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
 import { useContextArrival } from "@/components/motion/use-context-arrival";
@@ -17,18 +18,22 @@ export function ExampleDetail({ example }: { example: PublicExample }) {
   const [compare, setCompare] = useState(false);
   const [sourceQuery, setSourceQuery] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const pendingSource = useRef<string | null>(null);
   const resultRef = useContextArrival<HTMLDivElement>(`${index}:${showAll}`, true);
   const reference = example.origin === "reference";
   const selectedSection = example.sections[index];
   const original = example.sources.find(source => selectedSection.sourceIds?.includes(source.id));
   const serviceHref = example.slug.startsWith("research-") ? "/research" : example.slug === "corpus-trends" ? "/trends" : example.slug === "source-search" ? "/search" : example.group === "sources" ? "/drug-letters" : reference ? "/requests" : "/ask";
   const inspectSource = (id: string) => {
-    setSourceQuery(""); setView("evidence");
-    requestAnimationFrame(() => {
-      const target = document.getElementById(`source-${id}`);
-      if (target instanceof HTMLDetailsElement) { target.open = true; target.querySelector("summary")?.focus(); }
-    });
+    changeView(() => { pendingSource.current = id; setSourceQuery(""); setView("evidence"); });
   };
+  useLayoutEffect(() => {
+    if (view === "evidence" && pendingSource.current) {
+      const target = document.getElementById(`source-${pendingSource.current}`);
+      if (target instanceof HTMLDetailsElement) { target.open = true; target.querySelector("summary")?.focus(); }
+      pendingSource.current = null;
+    }
+  }, [view, sourceQuery]);
   const copy = async () => {
     try {
       await navigator.clipboard.writeText([
@@ -45,7 +50,7 @@ export function ExampleDetail({ example }: { example: PublicExample }) {
       <div className={styles.metadata}><span>{example.language === "ko" ? "한국어" : "English"}</span><time dateTime={example.executedAt}>{example.executedAt.slice(0, 10)} UTC</time><span>{reference ? text("Simulated reviews · Unapproved draft", "검토 시뮬레이션 · 미승인 초안") : text("Draft for human review", "담당자 검토용 초안")}</span></div>
     </header>
     <div className={styles.readerToolbar}>
-      <SelectionGroup><div className={styles.filters} aria-label={text("Result views", "결과 보기 방식")}>{([['result', text("Result", "결과")], ['evidence', `${text("Evidence", "근거")} ${example.sources.length}`], ['run', text("Run details", "실행 정보")]] as const).map(([key, label]) => <button className="ui-selection-control" type="button" key={key} aria-pressed={view === key} aria-controls={`example-${key}-view`} onClick={() => setView(key)}>{view === key && <SelectionIndicator />}{label}</button>)}</div></SelectionGroup>
+      <SelectionGroup><div className={styles.filters} aria-label={text("Result views", "결과 보기 방식")}>{([['result', text("Result", "결과")], ['evidence', `${text("Evidence", "근거")} ${example.sources.length}`], ['run', text("Run details", "실행 정보")]] as const).map(([key, label]) => <button className="ui-selection-control" type="button" key={key} aria-pressed={view === key} aria-controls={`example-${key}-view`} onClick={() => { if (view !== key) changeView(() => setView(key)); else cancelViewFade(); }}>{view === key && <SelectionIndicator />}{label}</button>)}</div></SelectionGroup>
       <a className={styles.downloadLink} href={example.download} download>{text("Download result JSON", "결과 JSON 다운로드")} ↓</a>
     </div>
     <div id="example-result-view" hidden={view !== "result"}>
@@ -54,9 +59,9 @@ export function ExampleDetail({ example }: { example: PublicExample }) {
         <div className={styles.resultHeading}><h2 id="example-result-heading">{text("The result", "실행 결과")}</h2><button type="button" onClick={copy}>{copyState === "copied" ? text("Copied", "복사됨") : text("Copy result", "결과 복사")}</button></div>
         <span role="status" className={copyState === "failed" ? styles.copyError : "sr-only"}>{copyState === "failed" ? text("Copy unavailable. Use Download JSON.", "복사할 수 없습니다. JSON 다운로드를 사용하세요.") : copyState === "copied" ? text("Result copied to clipboard.", "결과가 클립보드에 복사되었습니다.") : ""}</span>
         {example.sections.length > 1 && <div className={styles.sectionControls}>
-          <label><span className="sr-only">{text("Result section", "결과 구간")}</span><select value={index} disabled={showAll} onChange={event => setIndex(Number(event.target.value))}>{example.sections.map((section, i) => <option key={i} value={i}>{i + 1}. {section.title}</option>)}</select></label>
-          <div className={styles.paging}><button type="button" aria-label={text("Previous section", "이전 구간")} disabled={showAll || index === 0} onClick={() => setIndex(index - 1)}>←</button><span aria-live="polite">{showAll ? text("All", "전체") : `${index + 1} / ${example.sections.length}`}</span><button type="button" aria-label={text("Next section", "다음 구간")} disabled={showAll || index === example.sections.length - 1} onClick={() => setIndex(index + 1)}>→</button></div>
-          <button type="button" aria-pressed={showAll} onClick={() => setShowAll(!showAll)}>{text("Complete output", "전체 결과")}</button>
+          <label><span className="sr-only">{text("Result section", "결과 구간")}</span><select value={index} disabled={showAll} onChange={event => { const value = Number(event.target.value); changeView(() => setIndex(value), resultRef.current); }}>{example.sections.map((section, i) => <option key={i} value={i}>{i + 1}. {section.title}</option>)}</select></label>
+          <div className={styles.paging}><button type="button" aria-label={text("Previous section", "이전 구간")} disabled={showAll || index === 0} onClick={() => changeView(() => setIndex(index - 1), resultRef.current)}>←</button><span aria-live="polite">{showAll ? text("All", "전체") : `${index + 1} / ${example.sections.length}`}</span><button type="button" aria-label={text("Next section", "다음 구간")} disabled={showAll || index === example.sections.length - 1} onClick={() => changeView(() => setIndex(index + 1), resultRef.current)}>→</button></div>
+          <button type="button" aria-pressed={showAll} onClick={() => changeView(() => setShowAll(!showAll), resultRef.current)}>{text("Complete output", "전체 결과")}</button>
           {example.slug === "document-translation" && <button type="button" disabled={showAll} aria-pressed={compare} onClick={() => setCompare(!compare)}>{text("Compare original", "원문 대조")}</button>}
         </div>}
         <div ref={resultRef} className={compare && !showAll ? styles.comparison : undefined}>

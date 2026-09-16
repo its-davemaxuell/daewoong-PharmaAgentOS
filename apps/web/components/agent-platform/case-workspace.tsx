@@ -1,5 +1,5 @@
 import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
-import Link from "next/link";
+import Link from "@/components/motion/workspace-link";
 import { ArrowLeft } from "@/components/icons/ArrowLeft";
 import { ArrowUpRight } from "@/components/icons/ArrowUpRight";
 import { CheckCircle2 } from "@/components/icons/CheckCircle2";

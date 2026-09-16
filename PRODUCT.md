@@ -1,5 +1,14 @@
 # PharmaAgent OS
 
+## September 16 Daewoong theme and motion
+
+Replace the startup artwork with the supplied slide/pulse/drop/bounce loading
+concept, adapted to Daewoong orange and charcoal. Keep real all-menu preparation
+and recovery. Menu/tab changes require quick exit and entrance fades, including
+interrupted navigation and reduced motion. Remove colored focus highlights from
+text-entry compartments; preserve native selection and keyboard action focus.
+The user authorized browser inspection, commit, push and deployment.
+
 ## September 16 interaction refinement
 
 Lead with useful actions and real output. Visitors select a public result, inspect
