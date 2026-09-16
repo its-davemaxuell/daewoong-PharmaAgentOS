@@ -66,7 +66,13 @@ from app.models import (
     utcnow,
 )
 from app.pagination import InvalidCursor, decode_cursor, encode_cursor, page_window
-from app.rag_metadata import MetadataQuery, clarification, country_matches, metadata_for_turn
+from app.rag_metadata import (
+    MetadataQuery,
+    clarification,
+    country_matches,
+    mention_pattern,
+    metadata_for_turn,
+)
 from app.rag_planner import (
     RagPlan,
     choose_model_profile,
@@ -1357,6 +1363,7 @@ async def _authorized_letter_sources(
     letter_ids: tuple[str, ...] | list[str],
     principal: Principal,
     chunker_version: str,
+    preferred_chunk_ids: tuple[str, ...] = (),
 ) -> dict[str, tuple[DocumentChunk, Document, DocumentVersion]]:
     """Return one current, available, ACL-authorized source chunk per letter."""
 
@@ -1381,6 +1388,7 @@ async def _authorized_letter_sources(
                 DocumentVersion.scope_status == ScopeStatus.IN_SCOPE_DRUGS.value,
                 DocumentChunk.corpus_id == "fda-drugs",
                 DocumentChunk.chunker_version == chunker_version,
+                DocumentChunk.id.in_(preferred_chunk_ids) if preferred_chunk_ids else True,
             )
             .order_by(DocumentChunk.warning_letter_id, DocumentChunk.ordinal, DocumentChunk.id)
         )
@@ -1483,33 +1491,51 @@ async def _metadata_answer(
         rows = [
             letter for letter in rows if country_matches(letter.country, payload.filters.country)
         ]
+    if metadata_query.countries:
+        rows = [
+            letter
+            for letter in rows
+            if any(country_matches(letter.country, country) for country in metadata_query.countries)
+        ]
+    if metadata_query.periods:
+        rows = [
+            letter
+            for letter in rows
+            if (
+                value := getattr(
+                    letter, "posted_date" if metadata_query.date_field == "posted" else "issue_date"
+                )
+            )
+            and any(start <= value <= end for start, end in metadata_query.periods)
+        ]
     # Authorize the whole result set with lightweight metadata, not every source body.
     # Full version/chunk text is loaded only for the handful of displayed citations.
-    access_rows = (
-        await session.execute(
-            select(
-                DocumentChunk.warning_letter_id,
-                DocumentChunk.acl,
-                DocumentChunk.categories,
-                DocumentChunk.regulatory_references,
-                DocumentChunk.drug_subtypes,
-            )
-            .join(WarningLetter, WarningLetter.id == DocumentChunk.warning_letter_id)
-            .join(DocumentVersion, DocumentVersion.id == DocumentChunk.document_version_id)
-            .join(Document, Document.id == DocumentVersion.document_id)
-            .where(
-                WarningLetter.id.in_([letter.id for letter in rows]),
-                WarningLetter.current_version_id == DocumentVersion.id,
-                Document.warning_letter_id == WarningLetter.id,
-                Document.current_version_id == DocumentVersion.id,
-                Document.current_in_scope.is_(True),
-                Document.source_available.is_(True),
-                DocumentVersion.scope_status == ScopeStatus.IN_SCOPE_DRUGS.value,
-                DocumentChunk.corpus_id == "fda-drugs",
-                DocumentChunk.chunker_version == chunker_version,
-            )
+    access_rows = await session.stream(
+        select(
+            DocumentChunk.warning_letter_id,
+            DocumentChunk.acl,
+            DocumentChunk.categories,
+            DocumentChunk.regulatory_references,
+            DocumentChunk.drug_subtypes,
+            DocumentChunk.id,
+            *([DocumentChunk.content] if metadata_query.text_terms else []),
         )
-    ).all()
+        .join(WarningLetter, WarningLetter.id == DocumentChunk.warning_letter_id)
+        .join(DocumentVersion, DocumentVersion.id == DocumentChunk.document_version_id)
+        .join(Document, Document.id == DocumentVersion.document_id)
+        .where(
+            WarningLetter.id.in_([letter.id for letter in rows]),
+            WarningLetter.current_version_id == DocumentVersion.id,
+            Document.warning_letter_id == WarningLetter.id,
+            Document.current_version_id == DocumentVersion.id,
+            Document.current_in_scope.is_(True),
+            Document.source_available.is_(True),
+            DocumentVersion.scope_status == ScopeStatus.IN_SCOPE_DRUGS.value,
+            DocumentChunk.corpus_id == "fda-drugs",
+            DocumentChunk.chunker_version == chunker_version,
+        )
+        .execution_options(yield_per=200)
+    )
     filters = payload.filters
     categories = [*filters.categories, *([filters.category] if filters.category else [])]
     regulations = [
@@ -1517,33 +1543,59 @@ async def _metadata_answer(
         *([filters.regulation] if filters.regulation else []),
     ]
     subtypes = [*filters.drug_subtypes, *([filters.drug_subtype] if filters.drug_subtype else [])]
-    allowed_ids = {
-        row.warning_letter_id
-        for row in access_rows
-        if _acl_allows(row.acl, principal)
-        and (not categories or any(value in (row.categories or []) for value in categories))
-        and (
-            not regulations
-            or any(
-                wanted.casefold() in value.casefold()
-                for wanted in regulations
-                for value in (row.regulatory_references or [])
+    allowed_ids: set[str] = set()
+    matching_chunks: dict[str, str] = {}
+    text_pattern = (
+        mention_pattern(metadata_query.text_terms[0]) if metadata_query.text_terms else None
+    )
+    async for row in access_rows:
+        if not (
+            _acl_allows(row.acl, principal)
+            and (not categories or any(value in (row.categories or []) for value in categories))
+            and (
+                not regulations
+                or any(
+                    wanted.casefold() in value.casefold()
+                    for wanted in regulations
+                    for value in (row.regulatory_references or [])
+                )
             )
-        )
-        and (not subtypes or any(value in (row.drug_subtypes or []) for value in subtypes))
-    }
+            and (not subtypes or any(value in (row.drug_subtypes or []) for value in subtypes))
+        ):
+            continue
+        if text_pattern and not text_pattern.search(row.content):
+            continue
+        allowed_ids.add(row.warning_letter_id)
+        matching_chunks.setdefault(row.warning_letter_id, row.id)
+    await access_rows.close()
     rows = [letter for letter in rows if letter.id in allowed_ids]
-    total = len(rows)
+
+    def record_key(letter):
+        return (
+            " ".join(letter.company_name.casefold().split())
+            if metadata_query.count_unit == "companies"
+            else letter.id
+        )
+
+    total = len({record_key(letter) for letter in rows})
     displayed = rows[: min(payload.max_sources, metadata_query.limit or payload.max_sources)]
     authorized_sources = await _authorized_letter_sources(
         session,
         letter_ids=[letter.id for letter in displayed],
         principal=principal,
         chunker_version=chunker_version,
+        preferred_chunk_ids=tuple(matching_chunks[letter.id] for letter in displayed),
     )
     citations: list[CitationResponse] = []
     for letter in displayed:
         chunk, document, version = authorized_sources[letter.id]
+        match = text_pattern.search(chunk.content) if text_pattern else None
+        matched_excerpt = (
+            "\nMatched source passage: "
+            + chunk.content[max(0, match.start() - 180) : match.end() + 260]
+            if match
+            else ""
+        )
         citations.append(
             CitationResponse(
                 chunk_id=chunk.id,
@@ -1560,7 +1612,7 @@ async def _metadata_answer(
                     f"Recipient country: {letter.country or 'Not specified'}\n"
                     "Issuing office: "
                     f"{', '.join(letter.issuing_offices or []) or 'Not specified'}\n"
-                    f"MARCS-CMS: {letter.marcs_cms_number or 'Not specified'}"
+                    f"MARCS-CMS: {letter.marcs_cms_number or 'Not specified'}{matched_excerpt}"
                 ),
                 source_url=document.canonical_url,
                 score=1.0,
@@ -1596,11 +1648,29 @@ async def _metadata_answer(
         if value
     )
     scope = " · ".join(scope_parts)
+    if metadata_query.countries:
+        scope += (" · " if scope else "") + ", ".join(metadata_query.countries)
+    if metadata_query.periods:
+        scope += (" · " if scope else "") + "; ".join(
+            f"{a} – {b}" for a, b in metadata_query.periods
+        )
+    if metadata_query.fiscal:
+        scope += " · " + (
+            "FDA 회계연도 기준(10월–9월)"
+            if language == "ko"
+            else "FDA fiscal calendar (October–September)"
+        )
     prefix = (
         f"저장된 FDA 의약품 경고서한 중 조건에 맞는 서한은 **{total}건**입니다."
         if language == "ko"
         else f"**{total} saved FDA Drug warning letters** match this query."
     )
+    if metadata_query.count_unit == "companies":
+        prefix = (
+            f"조건에 맞는 저장된 회사명은 **{total}개**입니다."
+            if language == "ko"
+            else f"**{total} distinct recorded company names** match this query."
+        )
     prefix += (
         "\n\n"
         + (f"{scope}. " if scope else "")
@@ -1610,8 +1680,25 @@ async def _metadata_answer(
             else "This counts accessible saved records, not every letter issued by FDA."
         )
     )
+    if text_pattern:
+        term = metadata_query.text_terms[0]
+        prefix += (
+            f"\n\n검색 문구: “{term}”. 접근 가능한 현재 저장 원문 전체에서 "
+            "대소문자 구분 없이 문구를 검색하며, 서한당 한 번 집계합니다. "
+            "위반 여부 판단 건수는 아닙니다."
+            if language == "ko"
+            else f"\n\nPhrase: “{term}”. Case-insensitive word/phrase search across all accessible "
+            "current saved text; each letter counts once. "
+            "This counts mentions, not confirmed violations."
+        )
     if metadata_query.group_by:
-        groups: dict[str, int] = defaultdict(int)
+        groups: dict[str, set[str]] = defaultdict(set)
+        if metadata_query.countries and not metadata_query.periods:
+            for country in metadata_query.countries:
+                groups[country.title()]
+        if metadata_query.periods:
+            for a, b in metadata_query.periods:
+                groups[f"{a} – {b}"]
         for letter in rows:
             date_value = (
                 letter.posted_date if metadata_query.date_field == "posted" else letter.issue_date
@@ -1626,16 +1713,29 @@ async def _metadata_answer(
                 else ("미확인" if language == "ko" else "Not specified")
             )
             if metadata_query.group_by == "country":
-                key = letter.country or ("미확인" if language == "ko" else "Not specified")
+                requested = next(
+                    (c for c in metadata_query.countries if country_matches(letter.country, c)),
+                    None,
+                )
+                key = (
+                    requested.title()
+                    if requested
+                    else letter.country or ("미확인" if language == "ko" else "Not specified")
+                )
             elif metadata_query.group_by == "office":
                 key = ", ".join(sorted(letter.issuing_offices or [])) or (
                     "미확인" if language == "ko" else "Not specified"
                 )
-            groups[key] += 1
+            if metadata_query.periods:
+                for a, b in metadata_query.periods:
+                    if date_value and a <= date_value <= b:
+                        groups[f"{a} – {b}"].add(record_key(letter))
+            else:
+                groups[key].add(record_key(letter))
         return (
             prefix
             + "\n\n"
-            + "\n".join(f"- {key}: **{count}**" for key, count in sorted(groups.items())),
+            + "\n".join(f"- {key}: **{len(records)}**" for key, records in sorted(groups.items())),
             citations,
             "sufficient",
         )
@@ -2126,6 +2226,15 @@ async def _query_rag_impl(
         effective_filters.country, metadata_query.country
     ):
         metadata_query = replace(metadata_query, error="filter_conflict")
+    if (
+        metadata_query.countries
+        and effective_filters.country
+        and not any(
+            country_matches(effective_filters.country, country)
+            for country in metadata_query.countries
+        )
+    ):
+        metadata_query = replace(metadata_query, error="filter_conflict")
     if metadata_query.company and not effective_filters.company:
         effective_filters.company = metadata_query.company
     if metadata_query.office and not effective_filters.issuing_office:
@@ -2156,7 +2265,9 @@ async def _query_rag_impl(
     else:
         resolved_letter_ids = await _resolve_question_letter_ids(
             session,
-            payload,
+            payload.model_copy(update={"question": re.sub(r'["“][^"”]+["”]', "", payload.question)})
+            if metadata_query.text_terms
+            else payload,
             principal=principal,
             chunker_version=settings.chunker_version,
         )
@@ -2491,6 +2602,18 @@ async def _query_rag_impl(
                 continue
             if filters.country and not country_matches(letter.country, filters.country):
                 continue
+            if metadata_query.countries and not any(
+                country_matches(letter.country, country) for country in metadata_query.countries
+            ):
+                continue
+            if metadata_query.periods:
+                value = (
+                    letter.posted_date
+                    if metadata_query.date_field == "posted"
+                    else letter.issue_date
+                )
+                if not value or not any(a <= value <= b for a, b in metadata_query.periods):
+                    continue
             if allowed_letter_ids and letter.id not in allowed_letter_ids:
                 continue
             office_filters = [

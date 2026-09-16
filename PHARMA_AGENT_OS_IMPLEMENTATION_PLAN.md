@@ -3209,6 +3209,17 @@ The following public sources informed the commercial architecture patterns in th
 
 > **PharmaAgent OS must make agent behavior controllable, evidence traceable, actions permissioned, releases testable, failures recoverable, and regulated decisions human-owned.**
 
+## 2026-09-16 weak chatbot response repairs
+
+Follow the user's correction: reproduce weak questions, diagnose the cause, and
+repair the query path rather than only listing unsupported questions. Add full
+accessible-text literal mention counts with matching evidence, separate company
+and letter totals, country unions and disjoint-period comparisons, FDA fiscal
+calendar and common relative periods, and context-preserving clarification replies.
+Keep genuinely ambiguous dates and semantic violation judgments explicit. Validate
+with independent read-only database counts, backend regressions and hosted browser
+conversations before recording publication as complete.
+
 ## 2026-09-11 evidence-continuity UI upgrade
 
 The user's full UI/UX specification supersedes the prepared-startup and Layered Desk presentation. Primary principle: **Evidence stays fixed. Intelligence moves around it.** This is an implementation of the UI foundation and connected evidence interactions, not a claim that every backend capability in the 90-section target is available.

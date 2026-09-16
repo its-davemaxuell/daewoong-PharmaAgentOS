@@ -13,7 +13,7 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Literal
 
 COUNT = re.compile(
-    r"\b(?:how many|count|number of)\b|몇\s*(?:건|개)|몇\s*건|건수|개수|총\s*수", re.I
+    r"\b(?:how many|counts?|number of)\b|몇\s*(?:건|개)|몇\s*건|건수|개수|총\s*수", re.I
 )
 CONTENT = re.compile(
     r"\b(?:findings?|violations?|deficienc\w*|observations?|contamination|data integrity|"
@@ -61,12 +61,18 @@ class MetadataQuery:
     end: date | None = None
     ascending: bool = False
     limit: int | None = None
-    group_by: Literal["year", "month", "country", "office"] | None = None
+    group_by: Literal["year", "month", "country", "office", "period"] | None = None
     country: str | None = None
     error: str | None = None
     followup: bool = False
     company: str | None = None
     office: str | None = None
+    countries: tuple[str, ...] = ()
+    periods: tuple[tuple[date, date], ...] = ()
+    text_terms: tuple[str, ...] = ()
+    fiscal: bool = False
+    count_unit: Literal["letters", "companies"] = "letters"
+    date_relation: str | None = None
 
 
 def _period(year: int, month: int | None = None, day: int | None = None):
@@ -79,10 +85,60 @@ def _period(year: int, month: int | None = None, day: int | None = None):
 
 
 def _dates(question: str, today: date) -> tuple[date | None, date | None, str | None]:
-    if re.search(r"\d{1,4}/\d{1,2}/\d{1,4}|\bFY\s*\d{2,4}\b", question, re.I):
+    if re.search(r"\d{1,4}/\d{1,2}/\d{1,4}", question, re.I):
         return None, None, "calendar_required"
-    if re.search(r"fiscal|financial year|회계연도|회계 연도", question, re.I):
+    fiscal = re.search(
+        r"\bFY\s*((?:19|20)\d{2})\b|(?:fiscal|financial)\s+year\s+((?:19|20)\d{2})|((?:19|20)\d{2})\s*회계\s*연도",
+        question,
+        re.I,
+    )
+    if fiscal:
+        if len(re.findall(r"(?:19|20)\d{2}", question)) > 1:
+            return None, None, "multiple_periods"
+        year = int(next(value for value in fiscal.groups() if value))
+        # FDA's fiscal year ends September 30; the label is the ending year.
+        quarter = re.search(r"\bQ([1-4])\b|([1-4])\s*분기", question, re.I)
+        if quarter:
+            offset = (int(quarter.group(1) or quarter.group(2)) - 1) * 3
+            month = (9 + offset) % 12 + 1
+            start_year = year - 1 if month == 10 else year
+            return date(start_year, month, 1), _period(start_year, month + 2)[1], None
+        return date(year - 1, 10, 1), date(year, 9, 30), None
+    if re.search(r"fiscal|financial year|회계\s*연도|\bFY\b", question, re.I):
         return None, None, "calendar_required"
+    week = re.search(r"\b(last|previous|this)\s+week\b|지난\s*주|이번\s*주", question, re.I)
+    if week:
+        start = today - timedelta(days=today.weekday())
+        previous = week.group().casefold().startswith(("last", "previous", "지난"))
+        return (
+            (start - timedelta(days=7), start - timedelta(days=1), None)
+            if previous
+            else (start, today, None)
+        )
+    quarter = re.search(
+        r"\b(last|previous|this)\s+quarter\b|지난\s*분기|이번\s*분기", question, re.I
+    )
+    if quarter:
+        first = date(today.year, ((today.month - 1) // 3) * 3 + 1, 1)
+        previous = quarter.group().casefold().startswith(("last", "previous", "지난"))
+        target = first - timedelta(days=1) if previous else today
+        month = ((target.month - 1) // 3) * 3 + 1
+        return (
+            date(target.year, month, 1),
+            _period(target.year, month + 2)[1] if previous else today,
+            None,
+        )
+    months = re.search(
+        r"\b(?:past|last)\s+(\d{1,3})\s+months?\b|최근\s*(\d{1,3})\s*개월", question, re.I
+    )
+    if months:
+        number = int(months.group(1) or months.group(2))
+        if not number:
+            return None, None, "invalid_date"
+        serial = today.year * 12 + today.month - 1 - number
+        year, month0 = divmod(serial, 12)
+        start = date(year, month0 + 1, min(today.day, calendar.monthrange(year, month0 + 1)[1]))
+        return start, today, None
     relative = re.search(
         r"\b(this|last|previous)\s+(year|month)\b|올해|작년|지난해|이번\s*달|지난\s*달",
         question,
@@ -178,10 +234,38 @@ def parse_metadata_question(
 ) -> MetadataQuery:
     today = today or datetime.now(UTC).date()
     question = " ".join(question.split())
+    inherited = (
+        previous
+        if isinstance(previous, MetadataQuery)
+        else parse_metadata_question(previous, today=today)
+        if previous
+        else MetadataQuery()
+    )
     count = bool(COUNT.search(question))
     is_content = bool(CONTENT.search(question))
+    quoted_reply = bool(
+        inherited.error == "content_count" and re.fullmatch(r'["“][^"”]{1,120}["”][.!?]?', question)
+    )
+    if quoted_reply:
+        count, is_content = True, True
+    unit_reply = bool(
+        inherited.error == "count_unit_required"
+        and re.fullmatch(r"(?:letters?|서한|경고서한)[.!?]?", question, re.I)
+    )
+    if unit_reply:
+        count, is_content = True, False
     metadata = bool(METADATA.search(question))
-    start, end, error = _dates(question, today)
+    constraints = re.sub(r'["“][^"”]+["”]', "", question)
+    start, end, error = _dates(constraints, today)
+    periods: tuple[tuple[date, date], ...] = ()
+    if error == "multiple_periods":
+        parts = re.split(
+            r"\b(?:and|or|vs\.?|versus)\b|대비|또는|(?<=년)\s*(?:과|와)", question, flags=re.I
+        )
+        parsed = [_dates(part, today) for part in parts]
+        if 2 <= len(parsed) <= 4 and all(a and b and not e for a, b, e in parsed):
+            periods = tuple(dict.fromkeys((a, b) for a, b, _ in parsed))
+            start, end, error = None, None, None
     intent = "count" if count else "list" if metadata and not is_content else None
     group_by = None
     for field, pattern in {
@@ -192,59 +276,139 @@ def parse_metadata_question(
     }.items():
         if re.search(pattern, question, re.I):
             group_by, intent = field, "group"
+    text_terms = ()
     if count and is_content:
-        error = "content_count"
+        quoted = re.findall(r'["“]([^"”]{1,120})["”]', question)
+        topics = {
+            "contamination": r"\bcontamination\b|오염",
+            "data integrity": r"\bdata integrity\b|데이터\s*무결성",
+            "quality unit": r"\bquality.unit\b|품질\s*부서",
+            "aseptic": r"\baseptic\b|무균",
+            "validation": r"\bvalidation\b|밸리데이션",
+            "cleaning": r"\bcleaning\b|세척",
+        }
+        candidates = quoted or [
+            term for term, pattern in topics.items() if re.search(pattern, question, re.I)
+        ]
+        # A literal mention count is distinct from judging which letters have a topic/violation.
+        mentions = re.search(
+            r"\b(?:mention\w*|contain\w*|word|phrase)\b|언급|포함|단어|문구", question, re.I
+        )
+        if (
+            len(candidates) == 1
+            and (mentions or quoted_reply)
+            and not re.search(r"\b(?:not|without|exclude|excluding)\b|않|제외|없는", question, re.I)
+        ):
+            text_terms = (" ".join(candidates[0].casefold().split()),)
+        else:
+            error = error or "content_count"
+    if count and re.search(
+        r"\b(?:how many|count|number of)\s+(?:FDA\s+)?"
+        r"(?:observations?|findings?|violations?)\b|지적\s*사항.*몇",
+        question,
+        re.I,
+    ):
+        error = "count_unit_required"
     if (
         not is_content
         and (start or end or error)
         and re.search(r"\bletters?\b|경고(?:장|서한)", question, re.I)
     ):
         intent = intent or "list"
-    # A date-only follow-up inherits a prior structured operation, not its displayed sample IDs.
-    followup = bool(previous and FOLLOWUP.search(question) and (start or end or metadata))
-    inherited = (
-        previous
-        if isinstance(previous, MetadataQuery)
-        else parse_metadata_question(previous, today=today)
-        if followup
-        else MetadataQuery()
-    )
-    if followup and inherited.intent:
-        intent = intent or inherited.intent
-        group_by = group_by or inherited.group_by
     country = None
     matched_countries = []
     for canonical, aliases in COUNTRY_ALIASES.items():
         if any(
-            re.search(rf"(?<![A-Za-z]){re.escape(alias)}(?![A-Za-z])", question, re.I)
+            re.search(rf"(?<![A-Za-z]){re.escape(alias)}(?![A-Za-z])", constraints, re.I)
             for alias in aliases
         ):
             matched_countries.append(canonical)
-    if len(matched_countries) > 1:
-        error = "multiple_countries"
-    country = matched_countries[0] if matched_countries else None
-    if not country:
-        named_country = re.search(
-            r"\b(?:companies|manufacturers|letters)\s+(?:in|from|to)\s+"
-            r"([A-Za-z][A-Za-z .]+?)(?=\s+"
-            r"(?:in|issued|posted|during|between|since|before|after)\b|[?.!]|$)",
-            question,
-            re.I,
-        )
-        if named_country:
-            value = named_country.group(1).strip().casefold()
-            if not re.search(
-                r"\b(?:library|corpus|database|collection|scope|saved|stored)\b", value
-            ):
+    country = matched_countries[0] if len(matched_countries) == 1 else None
+    named_country = re.search(
+        r"\b(?:companies|manufacturers|letters)\s+(?:in|from)\s+"
+        r"([A-Za-z][A-Za-z .,]+?)(?=\s+"
+        r"(?:in|issued|posted|during|between|since|before|after|mentioning)\b|[?.!]|$)",
+        constraints,
+        re.I,
+    )
+    if named_country:
+        value = named_country.group(1).strip().casefold()
+        if not re.search(r"\b(?:library|corpus|database|collection|scope|saved|stored)\b", value):
+            named_values = re.split(r"\s+(?:and|or|versus|vs\.?)\s+|\s*,\s*", value)
+            if len(named_values) > 1:
+                matched_countries = list(
+                    dict.fromkeys(
+                        next(
+                            (
+                                canonical
+                                for canonical, aliases in COUNTRY_ALIASES.items()
+                                if item in {canonical, *(a.casefold() for a in aliases)}
+                            ),
+                            item,
+                        )
+                        for item in named_values
+                    )
+                )
+                country = None
+            elif not matched_countries:
                 country = value
-    posted = bool(re.search(r"\bpost(?:ed|ing)\b|게시", question, re.I))
-    issued = bool(re.search(r"\bissu(?:ed|e)\b|발행|발급", question, re.I))
+    posted = bool(re.search(r"\bpost(?:ed|ing)\b|게시", constraints, re.I))
+    issued = bool(re.search(r"\bissu(?:ed|e)\b|발행|발급", constraints, re.I))
+    # Retain the original operation for a short clarification answer, not citation sample IDs.
+    followup = bool(
+        inherited.intent
+        and (FOLLOWUP.search(question) or inherited.error)
+        and (
+            start
+            or end
+            or periods
+            or metadata
+            or country
+            or matched_countries
+            or text_terms
+            or unit_reply
+        )
+        and not (
+            inherited.error
+            and count
+            and not unit_reply
+            and re.search(r"\bletters?\b|경고", question, re.I)
+        )
+    )
+    if followup:
+        intent = intent if count else inherited.intent
+        group_by = group_by or inherited.group_by
     # A question asking for both dates may list both, but a shared range is ambiguous.
     if posted and issued and (start or end):
         error = "date_basis_required"
     field = "posted" if posted and not issued else "issue"
     if followup and not posted and not issued:
         field = inherited.date_field
+    relation = next(
+        (
+            name
+            for name, pattern in {
+                "before": r"\b(?:before|earlier than)\b|이전",
+                "after": r"\b(?:after|later than)\b|이후",
+                "since": r"\bsince\b|부터",
+                "until": r"\b(?:until|through|on or before)\b|까지",
+            }.items()
+            if re.search(pattern, question, re.I)
+        ),
+        None,
+    )
+    if followup and not start and not end and not periods:
+        start, end, periods = inherited.start, inherited.end, inherited.periods
+    elif followup and inherited.error in {"calendar_required", "invalid_date"} and not relation:
+        relation = inherited.date_relation
+        if relation == "before" and start:
+            start, end = None, start - timedelta(days=1)
+        elif relation == "after" and end:
+            start, end = end + timedelta(days=1), None
+        elif relation == "since":
+            end = None
+        elif relation == "until":
+            start = None
     ascending = bool(
         re.search(r"\b(?:oldest|earliest|ascending)\b|가장\s*오래|최초|오름차순", question, re.I)
     )
@@ -271,13 +435,36 @@ def parse_metadata_question(
     result = MetadataQuery(
         intent, field, start, end, ascending, limit, group_by, country, error, followup
     )
+    companies = bool(
+        re.search(
+            r"\b(?:how many|count|number of)\s+(?:distinct\s+|unique\s+)?"
+            r"(?:companies|manufacturers)\b|회사.*몇\s*(?:개|곳)|업체.*몇\s*(?:개|곳)",
+            question,
+            re.I,
+        )
+    )
+    result = replace(
+        result,
+        countries=tuple(matched_countries) if len(matched_countries) > 1 else (),
+        periods=periods,
+        text_terms=text_terms,
+        fiscal=bool(re.search(r"\bFY\s*\d|fiscal|financial year|회계\s*연도", constraints, re.I)),
+        count_unit="companies" if companies else "letters",
+        date_relation=relation,
+        group_by=group_by
+        or (
+            ("period" if periods else "country" if len(matched_countries) > 1 else None)
+            if intent == "count"
+            else None
+        ),
+    )
     company_match = re.search(
         r"\b(?:letters?\s+(?:for|to)|company\s+named)\s+(.+?)"
         r"(?=\s+(?:issued|posted|in\s+\d{4}|between|since|before|after)\b|[?!]|$)",
         question,
         re.I,
     )
-    if company_match and not country:
+    if company_match and not country and not result.countries:
         result = replace(result, company=company_match.group(1).strip().rstrip("."))
     office_match = re.search(r"\b(CDER|CBER|CDRH|CVM|CFSAN)\b", question, re.I)
     if office_match:
@@ -285,9 +472,12 @@ def parse_metadata_question(
     if inherited.intent and followup:
         result = replace(
             result,
-            country=country or inherited.country,
+            country=country if result.countries else country or inherited.country,
+            countries=result.countries or (() if country else inherited.countries),
             company=result.company or inherited.company,
             office=result.office or inherited.office,
+            text_terms=result.text_terms or inherited.text_terms,
+            count_unit="companies" if companies else inherited.count_unit,
         )
     return result
 
@@ -309,6 +499,13 @@ def country_matches(stored: str | None, requested: str) -> bool:
     return (stored or "").casefold() in values
 
 
+def mention_pattern(term: str) -> re.Pattern[str]:
+    """Literal whole-word/phrase search, tolerant of source line breaks."""
+    return re.compile(
+        r"(?<!\w)" + r"\s+".join(re.escape(word) for word in term.split()) + r"(?!\w)", re.I
+    )
+
+
 def clarification(error: str, language: str) -> str:
     messages = {
         "filter_conflict": (
@@ -317,12 +514,19 @@ def clarification(error: str, language: str) -> str:
             "질문과 선택한 필터가 서로 다릅니다. 필터를 지우거나 변경한 뒤 다시 시도해 주세요.",
         ),
         "content_count": (
-            "I can count saved letters by date, company or country. An exact count of letters "
-            "mentioning a topic requires a complete content review; retrieved examples are not "
-            "a total. Ask for cited examples, or use Research to investigate the topic.",
-            "저장된 서한을 날짜·회사·국가별로 집계할 수 있습니다. 특정 주제를 언급한 서한의 "
-            "정확한 총수는 전체 내용 검토가 필요하며, 검색된 예시 수를 총수로 볼 수 없습니다. "
-            "근거가 있는 예시를 요청하거나 리서치에서 해당 주제를 조사해 주세요.",
+            "Which exact word or phrase should I count? "
+            'For example: letters mentioning "contamination". '
+            "I can search all accessible saved text for that phrase. Deciding whether each letter "
+            "establishes a particular violation requires content review.",
+            '어떤 정확한 단어나 문구를 집계할까요? 예: "contamination"을 언급한 서한. '
+            "접근 가능한 저장 원문 전체에서 문구를 검색할 수 있습니다. 각 서한이 특정 위반을 "
+            "지적하는지 판단하려면 내용 검토가 필요합니다.",
+        ),
+        "count_unit_required": (
+            "Do you want the number of letters, or individual findings inside them? "
+            "Letter counts are available; a complete finding count requires reviewing each letter.",
+            "서한 수를 원하시나요, 서한 안의 개별 지적 사항 수를 원하시나요? "
+            "서한 수는 집계할 수 있지만 전체 지적 사항 수는 각 서한 검토가 필요합니다.",
         ),
         "date_basis_required": (
             "Should this date range apply to the issue date or the FDA posting date?",
