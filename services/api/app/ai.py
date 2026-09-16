@@ -593,6 +593,49 @@ class ValidatedChatGenerator:
 class GeminiGenerator(ValidatedChatGenerator):
     provider = "google-gemini"
 
+    async def plan_dataset_query(self, *, instructions, schema, payload):
+        """Propose one typed read-only query; the caller validates and executes it."""
+        model = quote(self.model_id, safe="-._")
+        body = {
+            "systemInstruction": {"parts": [{"text": instructions}]},
+            "contents": [
+                {"role": "user", "parts": [{"text": json.dumps(payload, ensure_ascii=False)}]}
+            ],
+            "generationConfig": {
+                "maxOutputTokens": 1500,
+                "thinkingConfig": {"thinkingLevel": self.thinking_level},
+                "responseMimeType": "application/json",
+                "responseJsonSchema": schema,
+            },
+        }
+        try:
+            async with httpx.AsyncClient(
+                timeout=self._timeout, follow_redirects=False, transport=self._transport
+            ) as client:
+                response = await client.post(
+                    f"{GEMINI_API_BASE_URL}/models/{model}:generateContent",
+                    headers={"x-goog-api-key": self._api_key.get_secret_value()},
+                    json=body,
+                )
+                response.raise_for_status()
+            candidate = response.json()["candidates"][0]
+            if candidate.get("finishReason") != "STOP":
+                raise AiGenerationError("Gemini dataset plan did not complete")
+            raw = "".join(
+                part["text"]
+                for part in candidate["content"]["parts"]
+                if isinstance(part, dict)
+                and isinstance(part.get("text"), str)
+                and not part.get("thought")
+            )
+            if not raw.strip():
+                raise AiGenerationError("Gemini returned an empty dataset plan")
+            return raw
+        except httpx.HTTPError:
+            raise AiGenerationError("Gemini dataset planning request failed") from None
+        except (KeyError, IndexError, TypeError, ValueError, AttributeError):
+            raise AiGenerationError("Gemini returned an invalid dataset plan") from None
+
     def __init__(
         self,
         settings: Settings,
@@ -1688,7 +1731,9 @@ class ValidatedDocumentGenerator:
                 generator = copy(self)
                 generator._unavailable_model_ids = set(self._unavailable_model_ids)
                 restored = await translate_batch(
-                    batch, batch_index=index, batch_path=f"{index + 1}/{len(batches)}",
+                    batch,
+                    batch_index=index,
+                    batch_path=f"{index + 1}/{len(batches)}",
                     generator=generator,
                 )
                 return restored, generator.model_id

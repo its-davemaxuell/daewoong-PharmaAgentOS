@@ -7,6 +7,17 @@
 
 ---
 
+## September 16 implementation addendum: Dataset-aware chat routing
+
+Route ordinary latest/month/recipient requests directly to authorized saved-letter
+metadata, with no source-body ranking. Resolve issue versus posting dates explicitly.
+Add a bounded typed planner for natural catalog phrasing and mixed requests; let the
+application validate filters, authorize rows, and execute read-only searches. Select
+newest records before summarizing them, and search topical content before chronological
+ordering when the topic constrains the selection. Preserve query state for pagination.
+Verify real English/Korean questions, unsupported constraints, provider failures,
+filter conflicts and browser flows; commit, push and verify deployment.
+
 ## September 16 implementation addendum: Agent and tool reliability
 
 Audit the deployed Research Agent and all private specialist tool contracts. Reproduce

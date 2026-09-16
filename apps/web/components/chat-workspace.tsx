@@ -1577,7 +1577,9 @@ export function ChatWorkspace({
                               "Source excerpts · AI explanation unavailable",
                               "원문 발췌 · AI 설명 미완료",
                             )
-                        : text("No model used", "규칙 기반 응답 · 모델 미사용")}
+                        : turn.answer.retrievalStrategy === "metadata"
+                          ? text("Dataset lookup", "저장 자료 조회")
+                          : text("No model used", "규칙 기반 응답 · 모델 미사용")}
                     </span>
                     {turn.persistedContext ? (
                       <span><Check size={13} />{text(

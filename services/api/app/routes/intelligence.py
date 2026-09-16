@@ -17,10 +17,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import StreamingResponse
+from pydantic import TypeAdapter, ValidationError
 from sqlalchemy import false, func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import load_only, selectinload
 
 from app.ai import (
     DOCUMENT_ANALYSIS_SCHEMA_VERSION,
@@ -66,12 +67,14 @@ from app.models import (
     utcnow,
 )
 from app.pagination import InvalidCursor, decode_cursor, encode_cursor, page_window
+from app.rag_agent import propose_dataset_plan
 from app.rag_metadata import (
     MetadataQuery,
     clarification,
     country_matches,
     mention_pattern,
     metadata_for_turn,
+    parse_metadata_question,
 )
 from app.rag_planner import (
     RagPlan,
@@ -1364,6 +1367,7 @@ async def _authorized_letter_sources(
     principal: Principal,
     chunker_version: str,
     preferred_chunk_ids: tuple[str, ...] = (),
+    include_content: bool = True,
 ) -> dict[str, tuple[DocumentChunk, Document, DocumentVersion]]:
     """Return one current, available, ACL-authorized source chunk per letter."""
 
@@ -1373,6 +1377,27 @@ async def _authorized_letter_sources(
     rows = (
         await session.execute(
             select(DocumentChunk, Document, DocumentVersion)
+            .options(
+                load_only(
+                    DocumentVersion.id,
+                    DocumentVersion.version_number,
+                    DocumentVersion.canonical_hash,
+                ),
+                *(
+                    []
+                    if include_content
+                    else [
+                        load_only(
+                            DocumentChunk.id,
+                            DocumentChunk.warning_letter_id,
+                            DocumentChunk.document_version_id,
+                            DocumentChunk.source_anchor,
+                            DocumentChunk.acl,
+                            DocumentChunk.ordinal,
+                        )
+                    ]
+                ),
+            )
             .join(WarningLetter, WarningLetter.id == DocumentChunk.warning_letter_id)
             .join(DocumentVersion, DocumentVersion.id == DocumentChunk.document_version_id)
             .join(Document, Document.id == DocumentVersion.document_id)
@@ -1581,13 +1606,15 @@ async def _metadata_answer(
         )
 
     total = len({record_key(letter) for letter in rows})
-    displayed = rows[: min(payload.max_sources, metadata_query.limit or payload.max_sources)]
+    page_size = min(payload.max_sources, metadata_query.limit or payload.max_sources)
+    displayed = rows[metadata_query.offset : metadata_query.offset + page_size]
     authorized_sources = await _authorized_letter_sources(
         session,
         letter_ids=[letter.id for letter in displayed],
         principal=principal,
         chunker_version=chunker_version,
         preferred_chunk_ids=tuple(matching_chunks[letter.id] for letter in displayed),
+        include_content=bool(text_pattern),
     )
     citations: list[CitationResponse] = []
     for letter in displayed:
@@ -1746,11 +1773,25 @@ async def _metadata_answer(
         if metadata_query.intent == "count":
             return prefix, [], "sufficient"
         answer = (
-            "현재 필터와 문서 범위에 맞는 FDA 의약품 경고장 메타데이터가 없습니다."
-            if language == "ko"
-            else "No FDA Drug warning-letter metadata matched the current filters and scope."
+            prefix
+            + "\n\n"
+            + (
+                "표시할 서한이 없습니다. 이는 저장 자료의 검색 결과이며 "
+                "FDA가 서한을 발행하지 않았다는 뜻은 아닙니다."
+                if language == "ko"
+                else "No saved letters to display. This is a dataset result, "
+                "not a claim that FDA issued no letters."
+            )
         )
-        return answer, citations, "insufficient"
+        return (
+            answer,
+            citations,
+            (
+                "sufficient"
+                if (lower or upper) and not plan.letter_ids and not payload.filters.company
+                else "insufficient"
+            ),
+        )
     if metadata_query.intent == "count":
         sample = "표본 서한" if language == "ko" else "Sample records"
         return (
@@ -1785,9 +1826,20 @@ async def _metadata_answer(
         else ("oldest first" if metadata_query.ascending else "newest first")
     )
     sample_label = (
-        f"{basis} {order_label} · {len(displayed)}건 표시"
+        f"{basis} {order_label} · {total}건 중 "
+        f"{metadata_query.offset + 1}–{metadata_query.offset + len(displayed)}건 표시"
         if language == "ko"
         else f"By {basis_en}, {order_label} · showing {len(displayed)} of {total}"
+        + (
+            f" (records {metadata_query.offset + 1}–{metadata_query.offset + len(displayed)})"
+            if metadata_query.offset
+            else ""
+        )
+    )
+    scope += (" · " if scope else "") + (
+        "접근 가능한 저장 자료 기준 · 실시간 FDA 조회 아님"
+        if language == "ko"
+        else "Accessible saved dataset; not a live FDA lookup"
     )
     return (
         "\n".join(lines) + f"\n\n{sample_label}" + (f"\n\n{scope}" if scope else ""),
@@ -2094,6 +2146,7 @@ async def _query_rag_impl(
     prior_citation_ids: tuple[str, ...] = ()
     user_message: ChatMessage | None = None
     assistant_message: ChatMessage | None = None
+    latest_assistant: ChatMessage | None = None
     if payload.thread_id:
         thread = (
             await session.execute(
@@ -2203,6 +2256,60 @@ async def _query_rag_impl(
     metadata_query = metadata_for_turn(
         payload.question, prior_user_questions, today=generated_at.date()
     )
+    if latest_assistant and (saved_query := latest_assistant.route_metadata.get("dataset_query")):
+        try:
+            previous_query = TypeAdapter(MetadataQuery).validate_python(saved_query)
+            metadata_query = parse_metadata_question(
+                payload.question,
+                previous=previous_query,
+                today=generated_at.date(),
+            )
+            if metadata_query.offset > previous_query.offset:
+                metadata_query = replace(
+                    metadata_query,
+                    offset=previous_query.offset + len(latest_assistant.citations or []),
+                )
+        except (ValidationError, TypeError, ValueError):
+            pass  # Old/malformed saved route data cannot supply an executable query.
+    agent_search_plan = None
+    search_planning = {"status": "deterministic", "calls": 0}
+    initial_probe = plan_rag(
+        question=payload.question,
+        requested_mode=payload.retrieval_mode,
+        explicit_letter_ids=explicit_letter_ids,
+        thread_active_letter_ids=thread_letter_ids,
+        prior_citation_letter_ids=prior_citation_ids,
+        prior_user_questions=prior_user_questions,
+        metadata_query=metadata_query,
+    )
+    if (
+        payload.retrieval_mode == "auto"
+        and not (thread and thread.retrieval_preference == "none")
+        and metadata_query.intent is None
+        and not metadata_query.error
+        and initial_probe.deterministic_response != "capabilities"
+        and not is_clearly_out_of_scope(payload.question)
+        and (
+            metadata_query.select_before_search
+            or metadata_query.sort_matches_by_date
+            or initial_probe.deterministic_response == "out_of_scope"
+        )
+    ):
+        agent_search_plan, search_planning = await propose_dataset_plan(
+            _chat_generator_candidates(ai_generator, settings=settings, effective_profile="fast"),
+            question=payload.question,
+            prior_questions=prior_user_questions,
+            today=generated_at.date(),
+        )
+        if agent_search_plan and agent_search_plan.tool in {
+            "catalog",
+            "passages",
+            "catalog_then_passages",
+            "passages_by_date",
+        }:
+            metadata_query = agent_search_plan.metadata(metadata_query)
+        elif agent_search_plan and agent_search_plan.tool == "clarify":
+            metadata_query = replace(metadata_query, intent="list", error="dataset_query_required")
     # Keep the original request fingerprint for idempotent retries; only the effective
     # retrieval filters are enriched. User-supplied controls are intersected, never widened.
     effective_filters = payload.filters.model_copy(deep=True)
@@ -2240,8 +2347,27 @@ async def _query_rag_impl(
         metadata_query = replace(metadata_query, error="filter_conflict")
     if metadata_query.company and not effective_filters.company:
         effective_filters.company = metadata_query.company
+    elif metadata_query.company and (
+        metadata_query.company.casefold() != effective_filters.company.casefold()
+    ):
+        metadata_query = replace(metadata_query, error="filter_conflict")
     if metadata_query.office and not effective_filters.issuing_office:
         effective_filters.issuing_office = metadata_query.office
+    elif metadata_query.office and (
+        metadata_query.office.casefold() != effective_filters.issuing_office.casefold()
+    ):
+        metadata_query = replace(metadata_query, error="filter_conflict")
+    if metadata_query.office and effective_filters.issuing_offices:
+        selected_offices = [
+            office
+            for office in effective_filters.issuing_offices
+            if metadata_query.office.casefold() in office.casefold()
+            or office.casefold() in metadata_query.office.casefold()
+        ]
+        if not selected_offices:
+            metadata_query = replace(metadata_query, error="filter_conflict")
+        else:
+            effective_filters.issuing_offices = selected_offices
     for lower, upper in (
         (effective_filters.issue_date_from, effective_filters.issue_date_to),
         (effective_filters.posted_from, effective_filters.posted_to),
@@ -2259,6 +2385,10 @@ async def _query_rag_impl(
         thread_active_letter_ids=thread_letter_ids,
         prior_citation_letter_ids=prior_citation_ids,
         prior_user_questions=prior_user_questions,
+        metadata_query=metadata_query,
+        semantic_domain_relevant=bool(
+            agent_search_plan and agent_search_plan.tool != "conversation"
+        ),
     )
     if scope_probe.deterministic_response == "capabilities" or (
         scope_probe.deterministic_response == "out_of_scope"
@@ -2300,7 +2430,30 @@ async def _query_rag_impl(
             thread_active_letter_ids=thread_letter_ids,
             prior_citation_letter_ids=prior_citation_ids,
             prior_user_questions=prior_user_questions,
+            metadata_query=metadata_query,
+            semantic_domain_relevant=bool(
+                agent_search_plan and agent_search_plan.tool != "conversation"
+            ),
         )
+        if agent_search_plan and agent_search_plan.tool in {
+            "passages",
+            "catalog_then_passages",
+            "passages_by_date",
+        }:
+            if plan.deterministic_response is None and planning_mode != "none":
+                plan = replace(
+                    plan,
+                    retrieval_strategy=("multi_letter" if len(plan.letter_ids) > 1 else "letter")
+                    if plan.letter_ids
+                    else "corpus",
+                    route_reason="planned_passage_search",
+                )
+        elif (
+            agent_search_plan
+            and agent_search_plan.tool == "catalog"
+            and plan.retrieval_strategy == "metadata"
+        ):
+            plan = replace(plan, route_reason="planned_catalog_lookup")
         if plan.deterministic_response == "out_of_scope":
             scope_history = (
                 [
@@ -2333,6 +2486,7 @@ async def _query_rag_impl(
                     prior_citation_letter_ids=prior_citation_ids,
                     prior_user_questions=prior_user_questions,
                     semantic_domain_relevant=True,
+                    metadata_query=metadata_query,
                 )
     if (
         metadata_query.error
@@ -2485,6 +2639,34 @@ async def _query_rag_impl(
     semantic_fallback: str | None = None
     stream_validation_completed = False
 
+    catalog_result = None
+    if (
+        metadata_query.select_before_search
+        and plan.deterministic_response is None
+        and plan.retrieval_strategy != "none"
+    ):
+        # A bounded two-step read: authorize/date-sort the catalog, then pass only those
+        # IDs to the normal passage executor. Empty selections never widen to the corpus.
+        catalog_result = await _metadata_answer(
+            session,
+            payload=payload,
+            plan=plan,
+            language=effective_language,
+            principal=principal,
+            chunker_version=settings.chunker_version,
+            metadata_query=replace(metadata_query, intent="list", limit=metadata_query.limit or 3),
+        )
+        selected_ids = tuple(dict.fromkeys(str(c.warning_letter_id) for c in catalog_result[1]))
+        plan = replace(
+            plan,
+            retrieval_strategy=("multi_letter" if len(selected_ids) > 1 else "letter")
+            if selected_ids
+            else "metadata",
+            letter_ids=selected_ids,
+            route_reason="catalog_then_passages" if selected_ids else "catalog_selection_empty",
+        )
+        search_planning["selected_letter_count"] = len(selected_ids)
+
     if plan.retrieval_strategy == "none":
         # The planner runs before this branch; no document-chunk statement is issued.
         if plan.deterministic_response is not None:
@@ -2559,7 +2741,7 @@ async def _query_rag_impl(
                 "fallback": "model_not_configured_no_retrieval",
             }
     elif plan.retrieval_strategy == "metadata":
-        answer, citations, evidence_sufficiency = await _metadata_answer(
+        answer, citations, evidence_sufficiency = catalog_result or await _metadata_answer(
             session,
             payload=payload,
             plan=plan,
@@ -2670,6 +2852,8 @@ async def _query_rag_impl(
             else []
         )
         retrieval_text = "\n".join([*prior_user_messages, payload.question])
+        if agent_search_plan and agent_search_plan.search_query:
+            retrieval_text = agent_search_plan.search_query
         question_tokens = _query_tokens(retrieval_text)
         korean_query = re.search(r"[가-힣]", retrieval_text) is not None
         constrained_version_ids = {
@@ -2745,6 +2929,31 @@ async def _query_rag_impl(
             )
         )
         selected = ranked[: payload.max_sources]
+        if metadata_query.sort_matches_by_date:
+            # Search first; only then sort matching letters. Never substitute unrelated
+            # recent catalog rows for topical evidence or imply an exhaustive classification.
+            best_per_letter = {}
+            for item in ranked:
+                best_per_letter.setdefault(item[3].id, item)
+            matches = list(best_per_letter.values())
+            field = "posted_date" if metadata_query.date_field == "posted" else "issue_date"
+            matches = [item for item in matches if getattr(item[3], field)]
+            matches.sort(
+                key=lambda item: (getattr(item[3], field), item[3].id),
+                reverse=not metadata_query.ascending,
+            )
+            selected = matches[: min(payload.max_sources, metadata_query.limit or 5)]
+            plan = replace(plan, route_reason="passages_sorted_by_date")
+        if metadata_query.select_before_search:
+            # A summary of N selected letters must not spend every source slot on one letter.
+            first_per_letter = {}
+            for item in ranked:
+                first_per_letter.setdefault(item[3].id, item)
+            selected = [first_per_letter[key] for key in plan.letter_ids if key in first_per_letter]
+            selected_ids = {item[2].id for item in selected}
+            selected += [item for item in ranked if item[2].id not in selected_ids][
+                : max(0, payload.max_sources - len(selected))
+            ]
         selected_version_ids = {
             chunk.document_version_id for _score, _overlap, chunk, _letter, _document in selected
         }
@@ -2973,6 +3182,10 @@ async def _query_rag_impl(
                 ),
             },
             "generation": generation_context,
+            "search_planning": search_planning,
+            "dataset_query": TypeAdapter(MetadataQuery).dump_python(metadata_query, mode="json")
+            if plan.retrieval_strategy == "metadata"
+            else None,
         },
     )
     notice = (
@@ -3014,6 +3227,10 @@ async def _query_rag_impl(
             "internal_comparison": plan.internal_comparison,
             "notice": notice,
             "generated_at": generated_at.isoformat(),
+            "search_planning": search_planning,
+            "dataset_query": TypeAdapter(MetadataQuery).dump_python(metadata_query, mode="json")
+            if plan.retrieval_strategy == "metadata"
+            else None,
         }
         completed_model_metadata = {
             "requested_profile": payload.model_profile,

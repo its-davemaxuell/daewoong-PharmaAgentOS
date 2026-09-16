@@ -1143,7 +1143,7 @@ def test_metadata_excludes_letter_when_no_source_chunk_is_authorized(
     assert body["retrieval_strategy"] == "metadata"
     assert body["citations"] == []
     assert body["evidence_sufficiency"] == "insufficient"
-    assert "No FDA Drug warning-letter metadata matched" in body["answer"]
+    assert "No saved letters to display" in body["answer"]
 
 
 @pytest.mark.parametrize("company_filter", ["%", "_", "\\"])

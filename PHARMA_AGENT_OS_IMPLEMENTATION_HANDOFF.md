@@ -2,6 +2,20 @@
 
 **Handoff date:** 2026-09-16
 
+**2026-09-16 dataset-aware chat routing (publication validation in progress):**
+Reproduced plural-latest returning one letter, natural month requests rejected as
+out of scope, `from this month` parsed as a country, posting synonyms using issue
+dates, and latest summaries selecting older relevant letters. Fixed deterministic
+metadata routing and added a typed read-only query planner for OpenAI/Gemini: at most
+two proposals within 12 seconds, schema validation and application-owned execution.
+Catalog queries preserve ACL/current-source checks and avoid loading passage bodies;
+mixed summaries select records first, topical recency searches match passages first.
+Persisted metadata queries keep dates/sort/page offsets across follow-ups. Unsupported
+ingestion/live-feed/semantic-total requests clarify rather than invent totals.
+Backend targeted suite: 210 passing; web build/lint passing. Publication and hosted
+answer/browser evidence will be appended after completion. Audit material lives in
+`.artifacts/chat-dataset/`; reusable question matrix is `scripts/audit_chat_dataset.py`.
+
 **Next engineer:** Start with [the transfer brief](NEXT_ENGINEER_HANDOFF.md) for
 the publication state, production blockers, verification and ordered
 next steps. This file remains the authoritative implementation record.

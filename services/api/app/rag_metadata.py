@@ -24,9 +24,25 @@ CONTENT = re.compile(
 )
 METADATA = re.compile(
     r"\b(?:metadata|issue dates?|issued|posted|posting dates?|posted dates?|recipient countr\w*|"
-    r"issuing office|latest|newest|oldest|earliest|most recent|source (?:links?|urls?)|"
+    r"issuing office|latest|newest|oldest|earliest|most recent|recent(?:ly)?|"
+    r"source (?:links?|urls?)|"
     r"official (?:links?|urls?)|by (?:issue |posting )?(?:year|month|country|office))\b|"
     r"발행|발급|게시|최신|최근|가장\s*오래|최초|메타데이터|국가|발행\s*부서|원문\s*(?:링크|주소)|연도별|월별",
+    re.I,
+)
+DATASET = re.compile(
+    r"\b(?:letters?|dataset|database|catalog|saved (?:records|sources)|collection)\b|"
+    r"경고(?:장|서한)|서한|데이터셋|데이터베이스|저장\s*(?:자료|원문)",
+    re.I,
+)
+RECENCY = re.compile(
+    r"\b(?:latest|newest|oldest|earliest|most recent|recent(?:ly)?|new)\b|"
+    r"최신|최근|가장\s*오래|최초|새로운|새로",
+    re.I,
+)
+CONTENT_ACTION = re.compile(
+    r"\b(?:summari[sz]e|summary|explain|findings?|violations?|compare|analy[sz]e)\b|"
+    r"요약|설명|지적|위반|비교|분석",
     re.I,
 )
 FOLLOWUP = re.compile(
@@ -74,6 +90,10 @@ class MetadataQuery:
     fiscal: bool = False
     count_unit: Literal["letters", "companies"] = "letters"
     date_relation: str | None = None
+    select_before_search: bool = False
+    offset: int = 0
+    date_basis_explicit: bool = False
+    sort_matches_by_date: bool = False
 
 
 def _period(year: int, month: int | None = None, day: int | None = None):
@@ -255,7 +275,16 @@ def parse_metadata_question(
     )
     if unit_reply:
         count, is_content = True, False
-    metadata = bool(METADATA.search(question))
+    dataset = bool(DATASET.search(question))
+    metadata = bool(METADATA.search(question) or (dataset and RECENCY.search(question)))
+    is_content = is_content or bool(dataset and CONTENT_ACTION.search(question) and not count)
+    # 'Tell me about the latest letters' requests a list, not passage analysis.
+    if re.search(
+        r"\babout (?:the )?(?:latest|newest|most recent) (?:FDA |warning )*letters?[.!?]?$",
+        question,
+        re.I,
+    ) and not CONTENT_ACTION.search(question):
+        is_content = False
     constraints = re.sub(r'["“][^"”]+["”]', "", question)
     start, end, error = _dates(constraints, today)
     periods: tuple[tuple[date, date], ...] = ()
@@ -268,6 +297,16 @@ def parse_metadata_question(
             periods = tuple(dict.fromkeys((a, b) for a, b, _ in parsed))
             start, end, error = None, None, None
     intent = "count" if count else "list" if metadata and not is_content else None
+    if (
+        dataset
+        and not is_content
+        and re.search(
+            r"^(?:show(?: me)?|list)(?: all| the| saved| FDA| drug| warning)* letters[?.!]*$",
+            question,
+            re.I,
+        )
+    ):
+        intent = intent or "list"
     group_by = None
     for field, pattern in {
         "year": r"\bby (?:issue |posting )?year\b|연도별|년도별",
@@ -278,7 +317,12 @@ def parse_metadata_question(
         if re.search(pattern, constraints, re.I):
             group_by, intent = field, "group"
     text_terms = ()
-    if count and is_content:
+    literal_list = bool(
+        dataset
+        and re.search(r"\b(?:mention\w*|contain\w*|exact phrase)\b|언급|문구", question, re.I)
+        and not CONTENT_ACTION.search(question)
+    )
+    if (count and is_content) or literal_list:
         quoted = re.findall(r'["“]([^"”]{1,120})["”]', question)
         topics = {
             "contamination": r"\bcontamination\b|오염",
@@ -314,6 +358,7 @@ def parse_metadata_question(
             and not re.search(r"\b(?:not|without|exclude|excluding)\b|않|제외|없는", question, re.I)
         ):
             text_terms = (" ".join(candidates[0].casefold().split()),)
+            intent = intent or "list"
             if not quoted and plain_phrase:
                 constraints = question[: plain_phrase.start(1)] + question[plain_phrase.end(1) :]
                 if not periods:
@@ -327,11 +372,7 @@ def parse_metadata_question(
         re.I,
     ):
         error = "count_unit_required"
-    if (
-        not is_content
-        and (start or end or error)
-        and re.search(r"\bletters?\b|경고(?:장|서한)", question, re.I)
-    ):
+    if not is_content and (start or end or error) and dataset:
         intent = intent or "list"
     country = None
     matched_countries = []
@@ -351,7 +392,11 @@ def parse_metadata_question(
     )
     if named_country:
         value = named_country.group(1).strip().casefold()
-        if not re.search(r"\b(?:library|corpus|database|collection|scope|saved|stored)\b", value):
+        if not re.search(
+            rf"\b(?:library|corpus|database|dataset|collection|scope|saved|stored|this|last|"
+            rf"past|previous|today|yesterday|recent\w*|month|week|year|quarter|{MONTH_PATTERN})\b",
+            value,
+        ):
             named_values = re.split(r"\s+(?:and|or|versus|vs\.?)\s+|\s*,\s*", value)
             if len(named_values) > 1:
                 matched_countries = list(
@@ -370,7 +415,11 @@ def parse_metadata_question(
                 country = None
             elif not matched_countries:
                 country = value
-    posted = bool(re.search(r"\bpost(?:ed|ing)\b|게시", constraints, re.I))
+    posted = bool(
+        re.search(
+            r"\bpost(?:ed|ing)\b|appeared on (?:the )?FDA (?:site|website)|게시", constraints, re.I
+        )
+    )
     issued = bool(re.search(r"\bissu(?:ed|e)\b|발행|발급", constraints, re.I))
     # Retain the original operation for a short clarification answer, not citation sample IDs.
     followup = bool(
@@ -432,20 +481,23 @@ def parse_metadata_question(
     )
     limit = None
     number = re.search(
-        r"\b(?:top|first|latest|last|show|list)\s+(?:the\s+)?"
-        r"(\d{1,3}|one|two|three|four|five|ten)\b|(?:최근|최신)\s*(\d{1,3})\s*(?:건|개)",
+        r"\b(?:top|first|latest|last|show|list|find|next)\s+(?:me\s+)?(?:the\s+)?"
+        r"(\d{1,3}|one|two|three|four|five|ten)\b|(?:최근|최신)\s*(\d{1,3})\s*(?:건|개)|"
+        r"(?:경고서한|경고장|서한)\s*(\d{1,3})\s*(?:건|개)",
         question,
         re.I,
     )
     if number:
-        value = (number.group(1) or number.group(2)).casefold()
+        value = next(value for value in number.groups() if value).casefold()
         limit = (
             int(value)
             if value.isdigit()
             else {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "ten": 10}[value]
         )
     elif re.search(
-        r"\b(?:which is|what is|the oldest|the latest|the newest|the earliest)\b|가장\s*오래|최초",
+        r"\b(?:which|what) is (?:the )?(?:(?:oldest|latest|newest|earliest) )?"
+        r"(?:FDA |warning )*letter\b|\bthe (?:oldest|latest|newest|earliest) "
+        r"(?:FDA |warning )*letter\b|가장\s*오래|최초",
         question,
         re.I,
     ):
@@ -469,6 +521,22 @@ def parse_metadata_question(
         fiscal=bool(re.search(r"\bFY\s*\d|fiscal|financial year|회계\s*연도", constraints, re.I)),
         count_unit="companies" if companies else "letters",
         date_relation=relation,
+        date_basis_explicit=posted or issued,
+        select_before_search=bool(
+            dataset
+            and RECENCY.search(question)
+            and is_content
+            and not count
+            and CONTENT_ACTION.search(question)
+        ),
+        sort_matches_by_date=bool(
+            dataset
+            and RECENCY.search(question)
+            and is_content
+            and not count
+            and not CONTENT_ACTION.search(question)
+            and not text_terms
+        ),
         group_by=group_by
         or (
             ("period" if periods else "country" if len(matched_countries) > 1 else None)
@@ -496,7 +564,29 @@ def parse_metadata_question(
             office=result.office or inherited.office,
             text_terms=result.text_terms or inherited.text_terms,
             count_unit="companies" if companies else inherited.count_unit,
+            limit=result.limit or inherited.limit,
         )
+    more = re.fullmatch(
+        r"(?:show (?:me )?(?:more|the next(?: \d{1,2})?)|next(?: \d{1,2})?|"
+        r"더\s*보여\s*줘|다음(?:\s*\d{1,2}건)?)[.!?]?",
+        question,
+        re.I,
+    )
+    if inherited.intent == "list" and more:
+        page_size = result.limit or inherited.limit or 5
+        return replace(
+            inherited,
+            followup=True,
+            limit=page_size,
+            offset=inherited.offset + (inherited.limit or 5),
+        )
+    if result.intent and re.search(
+        r"\b(?:ingested|downloaded|added to|first seen|closed out|closeout|excluding|except)\b|"
+        r"수집된|추가된|종결된|제외",
+        question,
+        re.I,
+    ):
+        result = replace(result, error="dataset_query_required")
     return result
 
 
@@ -525,6 +615,15 @@ def mention_pattern(term: str) -> re.Pattern[str]:
 
 
 def clarification(error: str, language: str) -> str:
+    if error == "dataset_query_required":
+        return (
+            "저장된 서한의 발행일·게시일, 회사, 국가, 발행 부서로 검색할 수 있습니다. "
+            "어떤 기준으로 찾을까요? 실시간 FDA 조회나 수집 일시는 이 검색에서 지원하지 않습니다."
+            if language == "ko"
+            else "I can search saved letters by issue/posting date, company, country "
+            "or issuing office. Which should I use? Live FDA lookups and ingestion dates "
+            "are not supported by this search."
+        )
     messages = {
         "filter_conflict": (
             "Your question conflicts with the selected filters. "

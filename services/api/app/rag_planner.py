@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass
 from typing import Literal
 
-from app.rag_metadata import metadata_for_turn
+from app.rag_metadata import DATASET, MetadataQuery, metadata_for_turn
 
 RetrievalMode = Literal["auto", "none", "metadata", "letter", "corpus"]
 RetrievalStrategy = Literal["none", "metadata", "letter", "multi_letter", "corpus"]
@@ -143,6 +143,7 @@ def plan_rag(
     prior_citation_letter_ids: tuple[str, ...] = (),
     prior_user_questions: tuple[str, ...] = (),
     semantic_domain_relevant: bool = False,
+    metadata_query: MetadataQuery | None = None,
 ) -> RagPlan:
     """Choose a retrieval tool without inspecting document chunks or calling an LLM.
 
@@ -150,7 +151,7 @@ def plan_rag(
     """
 
     question = " ".join(question.split())
-    metadata_query = metadata_for_turn(question, prior_user_questions)
+    metadata_query = metadata_query or metadata_for_turn(question, prior_user_questions)
     comparison = bool(_COMPARISON_RE.search(question))
     direct_ids = _unique_ids(explicit_letter_ids, resolved_letter_ids)
     inherited_ids = _unique_ids(thread_active_letter_ids, prior_citation_letter_ids)
@@ -178,6 +179,14 @@ def plan_rag(
         or has_scoped_evidence_intent
         or _DOMAIN_RE.search(question)
         or semantic_domain_relevant
+        or (
+            DATASET.search(question)
+            and (
+                metadata_query.intent
+                or metadata_query.select_before_search
+                or metadata_query.sort_matches_by_date
+            )
+        )
         or (metadata_query.followup and metadata_query.intent)
     )
     if is_clearly_out_of_scope(question) or not domain_relevant:
@@ -194,6 +203,15 @@ def plan_rag(
         return RagPlan("none", "user_requested_no_retrieval")
     if requested_mode == "metadata":
         return RagPlan("metadata", "user_requested_metadata", direct_ids or inherited_ids)
+    if metadata_query.select_before_search:
+        return RagPlan(
+            "corpus",
+            "catalog_selection_required",
+            direct_ids
+            or tuple(thread_active_letter_ids)
+            or (inherited_ids if requested_mode == "letter" else ()),
+            internal_comparison=comparison,
+        )
     if (metadata_query.intent or metadata_query.error) and requested_mode in {
         "auto",
         "corpus",

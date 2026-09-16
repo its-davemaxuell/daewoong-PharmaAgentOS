@@ -119,6 +119,17 @@ class _ResponsesTransport:
 class OpenAIGenerator(_ResponsesTransport, ValidatedChatGenerator):
     provider = "openai"
 
+    async def plan_dataset_query(self, *, instructions, schema, payload):
+        body = self._body(
+            instructions=instructions,
+            input_text=json.dumps(payload, ensure_ascii=False),
+            model=self.model_id,
+            effort="minimal",
+            schema=schema,
+        )
+        body["max_output_tokens"] = 1000
+        return await self._request(body)
+
     def __init__(
         self,
         settings: Settings,
