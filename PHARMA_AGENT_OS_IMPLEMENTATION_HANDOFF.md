@@ -2,7 +2,7 @@
 
 **Handoff date:** 2026-09-16
 
-**2026-09-16 dataset-aware chat routing (publication validation in progress):**
+**2026-09-16 dataset-aware chat routing (deployed):**
 Reproduced plural-latest returning one letter, natural month requests rejected as
 out of scope, `from this month` parsed as a country, posting synonyms using issue
 dates, and latest summaries selecting older relevant letters. Fixed deterministic
@@ -12,9 +12,27 @@ Catalog queries preserve ACL/current-source checks and avoid loading passage bod
 mixed summaries select records first, topical recency searches match passages first.
 Persisted metadata queries keep dates/sort/page offsets across follow-ups. Unsupported
 ingestion/live-feed/semantic-total requests clarify rather than invent totals.
-Backend targeted suite: 210 passing; web build/lint passing. Publication and hosted
-answer/browser evidence will be appended after completion. Audit material lives in
-`.artifacts/chat-dataset/`; reusable question matrix is `scripts/audit_chat_dataset.py`.
+Final targeted backend suite: 216 passing; web build/lint and all nine targeted
+Chromium/Firefox/WebKit checks pass. Full backend, contracts, PostgreSQL, Temporal,
+container, frontend and security CI checks pass for application `e85283a`. All three
+deployment integrations report success. The broader browser CI has pre-existing
+failures noted below; do not describe the whole-site suite as green.
+
+Nineteen real hosted questions passed after answer review and repairs. Independent
+catalog verification covered 767 records with no missing issue/posting dates, two
+September issue-date matches, 315 letters issued in 2025, and 752 distinct normalized
+company names. Review caught and fixed summaries dominated by closing boilerplate,
+unrequested grouping, rejection of published-notice wording, and ingestion dates
+mistaken for posting dates. Native Chromium passed reload, next-page continuation,
+source inspection, draft retention and new calendar queries at desktop/phone sizes
+with no page errors or horizontal overflow. The first automation attempts submitted
+before reload/hydration had settled; waiting for the ready composer, enabled send
+button and completed navigation resolved that test synchronization issue. Initial
+hosted startup still needed its existing Retry once.
+
+Evidence: `.artifacts/chat-dataset/` (`after`, `after-fix`, `after-final`, catalog
+validation and browser captures). Reusable matrix: `scripts/audit_chat_dataset.py`.
+Behavior, limits and provider contracts: [dataset routing](docs/chat-dataset-routing.md).
 
 **Next engineer:** Start with [the transfer brief](NEXT_ENGINEER_HANDOFF.md) for
 the publication state, production blockers, verification and ordered
