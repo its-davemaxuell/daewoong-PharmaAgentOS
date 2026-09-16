@@ -19,6 +19,12 @@ Retain public/private separation, exact sources/downloads, visible review and
 synthetic qualifications, keyboard interaction and reduced motion. Inspect Chromium
 and validate all three browser engines before the authorized commit/push/deployment.
 
+Delivered in application revision `521760f`. Build/lint/type checks, 99 unit tests,
+90 focused browser cases and four startup scenarios pass. All six fresh hosted
+English/Korean Chromium/Firefox/WebKit sessions verify the deployed interaction
+paths and all 18 retained downloads. See the implementation handoff and
+`docs/assurance/interactive-interface-20260916.md` for publication evidence.
+
 ## September 15 implementation addendum: Neumorphic website
 
 Replace the website's visual system with a continuous cool porcelain canvas,

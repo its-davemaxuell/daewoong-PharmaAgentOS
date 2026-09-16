@@ -47,10 +47,35 @@ at desktop and phone widths, including Korean content and original comparison.
 ## Evidence
 
 Ignored local artifacts live under `.artifacts/interactive-refinement/`:
-`before.cjs`, `before.json`, baseline screenshots, `final-browser/` and `hosted/`.
+`before.cjs`, `before.json`, baseline screenshots, `final-browser/`, `startup/`
+and `hosted-final/`.
 The initial browser run is under `.artifacts/ui-audit/browser/`.
 `scripts/verify_public_examples.cjs` checks all 18 hosted snapshots, exact SHA-256
 downloads, section boundaries, source references, translation alignment and Help
 handoff in six fresh sessions (three engines, English desktop/Korean mobile).
 
-Publication is pending the final checks in this record.
+## Publication
+
+Application revision `521760f5daf693a96404a88e3be3dde249948248` is committed,
+pushed to `main` and deployed at https://pharmaagent-os-ochre.vercel.app/examples.
+Vercel and both Railway integrations report success. Web `/api/health` and API
+`/health/ready` return 200.
+
+Hosted verification: **6/6 fresh sessions pass**, covering **108 example pages**
+across Chromium, Firefox and WebKit (English 1440px desktop, Korean 390px mobile).
+All downloads match their recorded SHA-256; each session has zero script errors,
+zero generation submissions and no horizontal overflow. Section boundaries, exact
+translation/original comparison, Help draft preservation/handoff, specialist
+previews and Chat links pass. The original cold startup still requires one Retry
+in each fresh hosted session; its existing recovery behavior remains unchanged.
+
+The first hosted pass exposed an audit assertion that did not allow Chat's normal
+`?new=` conversation identifier. The corrected audit verifies origin and pathname
+while allowing that expected query parameter; the full six-session rerun passes.
+
+Application CI: [quality and security](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/35043860305)
+and [code security](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/35043860330).
+Code security passes. Quality jobs pass for frontend build/unit checks, backend,
+PostgreSQL schema, Temporal recovery, both containers, deployment rendering,
+contracts and secret scanning. The larger CI frontend-browser job remains running
+at this record; the focused local and independent hosted checks above are complete.

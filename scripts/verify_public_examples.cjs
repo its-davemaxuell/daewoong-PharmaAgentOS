@@ -46,7 +46,7 @@ async function audit(browser, name, locale, width) {
     const mobile = page.getByRole('button', { name: t('Open navigation', '탐색 메뉴 열기'), exact: true });
     if (await mobile.isVisible()) await mobile.click();
     await page.locator(`.continuity-nav[href="${route}"]:visible`).click();
-    await expect(page).toHaveURL(`${base}${route}`);
+    await expect(page).toHaveURL(url => url.origin === new URL(base).origin && url.pathname === route);
   };
   try {
     expect((await page.goto(`${base}/examples`, { waitUntil: 'domcontentloaded' })).status()).toBe(200);
