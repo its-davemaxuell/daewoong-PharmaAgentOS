@@ -121,7 +121,7 @@ attempt still approved the bad answer and was rejected during qualification.
 The corrected reviewer was tested against both real outputs: it accepted the relevant
 English brief and rejected the unrelated Korean brief. Regression tests cover topic
 ranking, exact snippet offsets and refusal to complete a factually supported but unrelated
-draft. A fresh hosted run of the corrected pipeline remains the next publication check.
+draft. Fresh hosted runs of the corrected pipeline are recorded below.
 Artifacts: `live/`, `relevance-live-review.json` and `relevance-final.xml` under the evidence
 directory above. The initial Korean output is failure evidence, not a successful example.
 
@@ -136,3 +136,35 @@ belong in cited findings, where date meanings must be preserved. Both finding-le
 brief-level validation enforce this, with English/Korean regression coverage. Review
 instructions also cover factual assumptions inside questions and limitations. This is an
 explicit limit of model-only review, not evidence that AI factual checking is infallible.
+
+### Final publication and live qualification
+
+Application `f39b090` is pushed/deployed. Vercel, Railway API and Railway worker report
+success; web/API health checks return 200. Two final Korean tasks completed with relevant
+data-integrity comparisons after the caveat correction:
+
+- Unipack/Shiva: five model calls, three findings and two cited passages. A read-only
+  check of this exact task confirmed completion after the browser harness lost its
+  polling connection to an `ECONNRESET`. This is completion/recovery evidence, not a
+  completed browser qualification. The interface already retries transient poll errors.
+- Fareva/Yangzhou: six model calls, two findings and two cited passages. Execution took
+  168 seconds; the full browser check took 206 seconds including navigation/reload.
+  The model corrected invalid citation IDs through the runtime feedback. Personally
+  checked both claims against their retained passages: non-contemporaneous microbiology
+  records and missing/rewritten original data. Desktop/390px checks, source inspection
+  and closing, saved-run reload and the caveat contract pass with no page errors.
+
+The harness now saves its own session locally and retries connection resets, so restarting
+the probe can inspect the same task without submitting a duplicate. Evidence is under
+`live-confirmed/`, `interrupted-browser-run.json`, `whole-draft-final.xml` (56 tests),
+and `private-complete.xml` (35 tests). Session-state files are private ignored artifacts.
+
+Full backend, PostgreSQL/schema, Temporal recovery, contracts, frontend build/unit/lint,
+container scans and secret scan jobs pass on `f39b090`. The full
+[browser CI run](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/35068276408)
+reports **373 passed and 11 failed**, so the aggregate quality workflow fails. Remaining
+checks: the outdated Icon credits heading (three browsers), Firefox example selection,
+WebKit menu fade, two WebKit press-interpolation checks, three WebKit cached-inspector
+latency checks, and WebKit workspace-search request timing. These are recorded as
+unresolved frontend work; the 15 focused research/chat checks are not a substitute for
+a full UI pass. Raw failure evidence: `ci-browser-failure.log`.

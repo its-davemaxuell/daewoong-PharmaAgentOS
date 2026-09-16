@@ -10,19 +10,25 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-16 agent workflow/tool reliability:** Audited five research tools and 16
+**2026-09-16 agent workflow/tool reliability (deployed):** Audited five research tools and 16
 private MCP tools. Fixed malformed-provider crashes, stale rereads, unchecked replay,
 result bounds and missing dispatch deadlines. Research now retains pending tool calls,
 commits outcomes atomically, retries temporary failures within charged limits, records
 usage overruns and stops identical failure loops early. Private drafts remain local,
 idempotent and transactional. Backend regression: 157 passed plus one environment
-skip; final research suite 52 passed. Build/lint, 99 web unit tests and 15 focused
-cross-browser checks pass. Application `bbe3000` is deployed; isolated CI PostgreSQL,
-Temporal, backend, contracts and build jobs pass. Hosted English and Korean runs passed
-stop/resume, citation inspection, reload and phone checks. Manual review caught an
-irrelevant Korean answer despite valid citations; a follow-up adds topical search ranking
-and an explicit original-objective review. The revised live reviewer rejects that bad
-output and accepts the English output; fresh hosted qualification is next. See
+skip; final research suite 56 passed and private-tool suite 35 passed. Build/lint,
+99 web unit tests and 15 focused cross-browser checks pass. Application `f39b090` is
+pushed/deployed with successful Vercel, Railway API and worker statuses. Hosted runs
+passed stop/resume, citation inspection, reload and phone checks. Manual review caught
+an irrelevant Korean answer despite valid citations; topical search ranking and an
+explicit original-objective review fix that failure. A later caveat-date mistranslation
+led to a strict rule placing numerical claims in cited findings. Final Korean runs
+completed with relevant evidence; the browser-qualified run used six model calls and
+took 168 seconds, with no page errors. A separate run completed despite a test-browser
+network reset. CI PostgreSQL, Temporal, full backend, contracts, builds and container
+checks pass. **Broader UI CI is not green: 373 passed, 11 failed** (credits selector,
+Firefox example selection, WebKit motion/performance and workspace-search checks).
+These remain a frontend follow-up; no claim of whole-site or corporate qualification. See
 [the tool assessment](docs/assurance/agent-tool-reliability-20260916.md).
 
 **2026-09-16 single-ball startup refinement (deployed):** The first loading screen now shows
