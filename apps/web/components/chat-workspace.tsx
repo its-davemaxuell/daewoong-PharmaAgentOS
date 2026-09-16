@@ -1602,48 +1602,58 @@ export function ChatWorkspace({
                     )}
                   </div>
 
-                  {!turn.answer.generationUsed && turn.answer.attemptedModelId && turn.answer.citations.length > 0 ? (
-                    <div className="chat-fallback-guide" role="status">
-                      <h3>{text("We found sources, but could not finish the AI explanation.", "자료는 찾았지만 AI 설명을 완성하지 못했어요.")}</h3>
-                      <p>{text("Retry the answer or open a source below.", "답변을 다시 요청하거나 아래 원문을 확인하세요.")}</p>
-                      <details>
-                        <summary>{text("Read the original source excerpts", "원문 발췌 읽기")}</summary>
-                        <MarkdownCitationText text={turn.answer.answer} citations={turn.answer.citations} onSelect={(index, trigger) => selectCitation(turn.id, index, trigger)} />
-                      </details>
-                    </div>
-                  ) : <MarkdownCitationText
-                    text={turn.answer.answer}
-                    citations={turn.answer.citations}
-                    onSelect={(index, trigger) => selectCitation(turn.id, index, trigger)}
-                  />}
+                  <div className={`chat-answer__layout${turn.answer.citations.length ? " chat-answer__layout--cited" : ""}`}>
+                    <div className="chat-answer__body">
+                      {!turn.answer.generationUsed && turn.answer.attemptedModelId && turn.answer.citations.length > 0 ? (
+                        <div className="chat-fallback-guide" role="status">
+                          <h3>{text("We found sources, but could not finish the AI explanation.", "자료는 찾았지만 AI 설명을 완성하지 못했어요.")}</h3>
+                          <p>{text("Retry the answer or open a source below.", "답변을 다시 요청하거나 아래 원문을 확인하세요.")}</p>
+                          <details>
+                            <summary>{text("Read the original source excerpts", "원문 발췌 읽기")}</summary>
+                            <MarkdownCitationText text={turn.answer.answer} citations={turn.answer.citations} onSelect={(index, trigger) => selectCitation(turn.id, index, trigger)} />
+                          </details>
+                        </div>
+                      ) : <MarkdownCitationText
+                        text={turn.answer.answer}
+                        citations={turn.answer.citations}
+                        onSelect={(index, trigger) => selectCitation(turn.id, index, trigger)}
+                      />}
 
-                  <p className="chat-review-state">{text("Human review: No decision recorded for this answer", "담당자 검토: 이 답변에 대한 판단 기록 없음")}</p>
-                  {turn.answer.evidenceSufficiency !== "sufficient" ? (
-                    <div className="chat-evidence-warning">
-                      <CircleAlert size={16} />
-                      {turn.answer.evidenceSufficiency === "unknown" ? text("Evidence coverage: Not assessed. Citation links alone do not establish complete support. Human review has not been recorded for this answer.", "근거 충족도: 미평가. 인용 링크만으로 충분한 근거가 확인되지는 않습니다. 이 답변에 대한 담당자 검토 기록이 없습니다.") : turn.answer.evidenceSufficiency === "partial"
-                        ? text(
-                            "The retrieved evidence is limited. Treat the answer as a lead and verify the cited passage before use.",
-                            "검색된 근거가 제한적입니다. 답변을 참고 단서로만 사용하고 활용 전에 인용 원문을 확인하세요.",
-                          )
-                        : text(
-                            "The authorized corpus did not contain enough matching evidence. Broaden the filters or revise the query.",
-                            "승인된 코퍼스에서 충분한 근거를 찾지 못했습니다. 필터 범위를 넓히거나 질문을 수정하세요.",
-                          )}
-                    </div>
-                  ) : null}
+                      <p className="chat-review-state">{text("Human review: No decision recorded for this answer", "담당자 검토: 이 답변에 대한 판단 기록 없음")}</p>
+                      {turn.answer.evidenceSufficiency !== "sufficient" ? (
+                        <div className="chat-evidence-warning">
+                          <CircleAlert size={16} />
+                          {turn.answer.evidenceSufficiency === "unknown" ? text("Evidence coverage: Not assessed. Citation links alone do not establish complete support. Human review has not been recorded for this answer.", "근거 충족도: 미평가. 인용 링크만으로 충분한 근거가 확인되지는 않습니다. 이 답변에 대한 담당자 검토 기록이 없습니다.") : turn.answer.evidenceSufficiency === "partial"
+                            ? text(
+                                "The retrieved evidence is limited. Treat the answer as a lead and verify the cited passage before use.",
+                                "검색된 근거가 제한적입니다. 답변을 참고 단서로만 사용하고 활용 전에 인용 원문을 확인하세요.",
+                              )
+                            : text(
+                                "The authorized corpus did not contain enough matching evidence. Broaden the filters or revise the query.",
+                                "승인된 코퍼스에서 충분한 근거를 찾지 못했습니다. 필터 범위를 넓히거나 질문을 수정하세요.",
+                              )}
+                        </div>
+                      ) : null}
 
-                  {turn.answer.citations.length ? (
-                    <div className="chat-source-strip" id={`sources-${turn.id}`}>
-                      <button type="button" className="chat-source-strip__open" onClick={(event) => selectCitation(turn.id, 0, event.currentTarget)} aria-expanded={evidenceTurnId === turn.id}>
-                        <FileText size={16} />{text(`Sources (${turn.answer.citations.length})`, `출처 (${turn.answer.citations.length})`)}
-                      </button>
-                      <div>{turn.answer.citations.slice(0, 3).map((citation, index) => (
-                        <button key={citation.id} type="button" onClick={(event) => selectCitation(turn.id, index, event.currentTarget)}><span>{index + 1}</span>{citation.company}</button>
-                      ))}</div>
                     </div>
-                  ) : null}
+                    {turn.answer.citations.length ? (
+                      <div className="chat-source-strip" id={`sources-${turn.id}`}>
+                        <button type="button" className="chat-source-strip__open" onClick={(event) => selectCitation(turn.id, 0, event.currentTarget)} aria-expanded={evidenceTurnId === turn.id}>
+                          <FileText size={16} />{text(`Sources (${turn.answer.citations.length})`, `출처 (${turn.answer.citations.length})`)}
+                        </button>
+                        <div>{turn.answer.citations.slice(0, 3).map((citation, index) => (
+                          <button key={citation.id} type="button" aria-label={text(`Source ${index + 1}: ${citation.company}`, `출처 ${index + 1}: ${citation.company}`)} onClick={(event) => selectCitation(turn.id, index, event.currentTarget)}>
+                            <span aria-hidden="true">{index + 1}</span>
+                            <span className="chat-source-strip__info">
+                              <strong>{citation.company}</strong>
+                              {!embedded && citation.excerpt ? <small>{citation.excerpt}</small> : null}
+                            </span>
+                          </button>
+                        ))}</div>
+                      </div>
+                    ) : null}
 
+                  </div>
                   <details className="chat-provenance">
                     <summary>{text("Answer record", "답변 기록")}</summary>
                     <dl>

@@ -3310,3 +3310,12 @@ Delivered at https://pharmaagent-os-ochre.vercel.app/examples in application rev
 `94563f8`. Six fresh hosted Chromium/Firefox/WebKit sessions verify all 18 examples
 in English desktop/Korean mobile, source links and exact download fingerprints.
 Private history remains separate; synthetic demonstrations remain explicitly labeled.
+
+## Full-width chatbot workspace — requested 2026-09-16
+
+Use the empty left/right space within the RAG Chat tab. Expand the transcript,
+composer and prompt controls with small responsive gutters. Keep the welcome
+centered; put source previews beside answers on wide panes and below on narrower
+panes. Preserve readable prose, wide comparison tables, the existing Daewoong
+neumorphism, keyboard/source focus, draft continuity and bilingual content.
+Verify desktop and phone interactions in actual browsers before publication.

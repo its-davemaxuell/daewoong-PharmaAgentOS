@@ -33,6 +33,13 @@ empty conversation view so its center does not drift on desktop.
 The later September 16 request uses Daewoong orange/charcoal on warm porcelain,
 with neutral text-entry focus and no compartment highlight. Menus and source
 selectors fade out in 90ms and in over 160ms while retaining live state.
+The full-width follow-up removes the centered 760px working column. Use 24px
+desktop / 14px phone gutters for the anchored composer and conversation. Keep
+the welcome centered, with compact horizontal task keys. Above 1100px of actual
+chat-pane width, place source previews beside the answer; stack them below when
+the pane narrows. Prose stays within 75ch while comparison tables use available
+width. Follow-up choices share a row when space permits. Preserve the embedded
+assistant drawer, draft, citation focus return and all existing trust labels.
 The reading pane is central: open a numbered citation without losing the conversation.
 The narrow-screen reader temporarily occupies the workspace and restores focus
 when closed. Model options remain secondary to the question and source selection.

@@ -10,6 +10,21 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 full-width chatbot refinement:** Removed the 760px chat-column limit.
+The composer now fills 1600px of a 1648px desktop pane, with 24px desktop / 14px
+phone gutters. The centered welcome has compact task keys; source excerpts appear
+beside answers above 1100px of pane width and below on narrower panes. Prose keeps
+a readable measure, tables use available width, and follow-up choices share a row.
+Existing Daewoong styling, source reader, trust labels and embedded drawer remain.
+Production build/type checks and lint pass; 21 targeted Chromium/Firefox/WebKit
+checks pass for dates, source focus, first-answer drafts, streaming, long history
+and clipboard recovery. Native Chromium inspection covers EN/KO at 320, 390, 768,
+1024, 1440 and 1920px, three-source comparison tables, keyboard source selection,
+draft retention, options, follow-ups, collapsed navigation, enlarged text and the
+embedded assistant. No horizontal page overflow or page errors in those checks.
+Scripts, before/after captures and publication checks are in
+`.artifacts/chat-full-width/`. Broader pre-existing UI CI issues remain recorded below.
+
 **2026-09-16 loading ball brand-color refinement:** Removed the animation tile's
 background, shadow and rounded container. The single ball now uses Daewoong orange
 `--os-brand` (`#f18a00`). Its bounce, readiness progress, recovery and reduced-motion

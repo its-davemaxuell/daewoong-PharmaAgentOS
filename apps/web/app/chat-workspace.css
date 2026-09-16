@@ -1,5 +1,5 @@
-/* Operate: a quiet conversation column, persistent composer and inspectable FDA evidence.
-   Extend the existing navy/cobalt review workbench; preserve bilingual content and scope.
+/* Operate: a full-width conversation workspace, persistent composer and inspectable FDA evidence.
+   Extend the Daewoong neumorphic workbench; preserve bilingual content and scope.
    The primary path is question → answer → cited passage, with organization on demand. */
 .chat-page.chat-workbench { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); background: var(--surface, #fff); }
 .portal-shell .chat-workbench .chat-page__surface { background: #fff; }
@@ -52,6 +52,8 @@
 .chat-source-strip > div button { padding: 8px 10px; background: var(--os-inset); border-radius: 8px; text-align: left; max-width: 100%; overflow-wrap: anywhere; }
 .chat-source-strip button:hover { background: var(--os-primary-soft); color: var(--os-primary-deep); }
 .chat-source-strip button span { color: var(--os-primary); font-weight: 700; }
+.chat-source-strip .chat-source-strip__info { min-width: 0; color: var(--os-ink); }
+.chat-source-strip__info strong { font-weight: 600; }
 .chat-followups { display: grid; gap: 8px; margin: 0 0 20px; }
 .chat-followups > span { font-weight: 700; font-size: .875rem; margin-bottom: 4px; }
 .chat-followups button { display: flex; justify-content: space-between; text-align: left; gap: 12px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--os-rule); background: transparent; color: var(--os-ink); font-size: .9375rem; }
@@ -321,4 +323,82 @@
  .chat-workbench .chat-composer .chat-tool-button { font-size: 13px; padding-inline: 4px; }
  .chat-workbench .chat-send-button { font-size: 14px; padding-inline: 10px; }
  .chat-keyboard-hint { display: none; }
+}
+
+/* Use the available tab width. Prose keeps a reading measure; tables and controls
+   can expand. Container queries also adapt when the evidence reader is open. */
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-page__surface {
+  container: chat-surface / inline-size;
+  --chat-gutter: 24px;
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-page__conversation {
+  padding: 24px var(--chat-gutter);
+  scrollbar-gutter: stable both-edges;
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-composer-wrap {
+  padding: 10px var(--chat-gutter) 18px;
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-welcome { max-width: none; }
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-suggestions { gap: 16px; }
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-suggestions button {
+  grid-template-columns: 28px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 14px;
+  min-height: 84px;
+  padding: 18px 20px;
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-suggestions button > svg:first-child { grid-column: auto; }
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-user-message {
+  width: fit-content;
+  max-width: min(100%, 75ch);
+}
+.chat-answer__layout, .chat-answer__body { min-width: 0; }
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-answer__copy > :is(p, ul, ol, blockquote) { max-width: 75ch; }
+.continuity-shell .chat-workbench:not([data-embedded]) :is(.chat-review-state, .chat-evidence-warning) { max-width: 85ch; }
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-source-strip > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-source-strip > div button {
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  min-height: 44px;
+}
+.chat-source-strip__info { display: grid; gap: 6px; text-align: left; }
+.chat-source-strip__info small {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--os-muted);
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-followups {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+}
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-followups > span { grid-column: 1 / -1; }
+.continuity-shell .chat-workbench:not([data-embedded]) .chat-followups button { align-items: center; min-height: 44px; }
+@container chat-surface (min-width: 1100px) {
+  .chat-workbench:not([data-embedded]) .chat-answer__layout--cited {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 24cqi, 380px);
+    gap: 32px;
+    align-items: start;
+  }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-answer__layout--cited .chat-source-strip { margin-top: 0; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-answer__layout--cited .chat-source-strip > div { grid-template-columns: minmax(0, 1fr); }
+}
+@container chat-surface (max-width: 760px) {
+  .continuity-shell .chat-workbench:not([data-embedded]) :is(.chat-suggestions, .chat-followups) { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-suggestions button { min-height: 58px; padding: 14px; }
+}
+@media (max-width: 700px) {
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-page__surface { --chat-gutter: 14px; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-page__conversation { padding-block: 16px; }
+  .continuity-shell .chat-workbench:not([data-embedded]) .chat-composer-wrap { padding-block: 10px 14px; }
 }
