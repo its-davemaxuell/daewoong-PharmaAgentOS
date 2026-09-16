@@ -59,6 +59,19 @@ def knowledge_result():
     ).model_dump(mode="json")
 
 
+def test_knowledge_warning_and_anchor_bounds_match_the_published_contract():
+    result = knowledge_result()
+    result["warnings"] = ["x" * 501]
+    with pytest.raises(ValidationError):
+        KnowledgeSuccess.model_validate(result)
+    result["warnings"] = []
+    result["provenance"] = [
+        {"source_version_id": str(uuid4()), "source_hash": "a" * 64, "anchor_id": "x" * 257}
+    ]
+    with pytest.raises(ValidationError):
+        KnowledgeSuccess.model_validate(result)
+
+
 @pytest.mark.parametrize("failure", ["oversize", "wrong_tool", "wrong_version", "tampered"])
 def test_private_results_reject_overflow_identity_and_integrity_errors(failure):
     result = knowledge_result()

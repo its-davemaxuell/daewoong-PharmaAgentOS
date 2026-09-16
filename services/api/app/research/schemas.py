@@ -96,6 +96,9 @@ class NoEvidence(Strict):
 
 
 class EvidenceCheck(Strict):
+    answers_objective: bool = Field(
+        description="Whether findings substantively answer the original topic and comparison."
+    )
     supported: bool
     issues: list[Annotated[str, Field(min_length=1, max_length=500)]] = Field(max_length=8)
 

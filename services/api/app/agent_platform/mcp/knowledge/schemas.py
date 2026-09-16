@@ -51,7 +51,7 @@ class KnowledgeRecord(StrictToolModel):
 class KnowledgeProvenance(StrictToolModel):
     source_version_id: UUID
     source_hash: Sha256
-    anchor_id: str | None = None
+    anchor_id: str | None = Field(default=None, min_length=1, max_length=256)
 
 
 class KnowledgeData(StrictToolModel):
@@ -74,7 +74,7 @@ class KnowledgeSuccess(StrictToolModel):
     tool_version: Literal["1.0.0"] = "1.0.0"
     data: KnowledgeData
     provenance: list[KnowledgeProvenance] = Field(max_length=100)
-    warnings: list[str] = Field(max_length=20)
+    warnings: list[Annotated[str, Field(max_length=500)]] = Field(max_length=20)
 
 
 class KnowledgeErrorCode(StrEnum):
@@ -101,4 +101,6 @@ class KnowledgeErrorResult(StrictToolModel):
     tool_name: str = Field(pattern=r"^knowledge\.[a-z][a-z0-9_]*$")
     tool_version: Literal["1.0.0"] = "1.0.0"
     error: KnowledgeError
-    next_valid_actions: list[str] = Field(max_length=10)
+    next_valid_actions: list[Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,63}$")]] = Field(
+        max_length=10
+    )

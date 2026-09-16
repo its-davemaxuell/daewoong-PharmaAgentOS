@@ -107,6 +107,8 @@ async def test_evidence_check_receives_readable_korean_and_bounds_feedback(setti
     def transport(request):
         body = json.loads(request.content)
         assert "세척 밸리데이션" in body["input"]
+        assert json.loads(body["input"])["objective"] == "두 회사의 세척 밸리데이션 비교"
+        assert "answers_objective" in body["text"]["format"]["schema"]["required"]
         assert "\\u" not in body["input"]
         assert body["text"]["format"]["schema"]["properties"]["issues"]["items"]["maxLength"] == 500
         return httpx.Response(
@@ -120,7 +122,10 @@ async def test_evidence_check_receives_readable_korean_and_bounds_feedback(setti
                         "role": "assistant",
                         "status": "completed",
                         "content": [
-                            {"type": "output_text", "text": '{"supported":true,"issues":[]}'}
+                            {
+                                "type": "output_text",
+                                "text": '{"supported":true,"answers_objective":true,"issues":[]}',
+                            }
                         ],
                     }
                 ],
@@ -128,5 +133,7 @@ async def test_evidence_check_receives_readable_korean_and_bounds_feedback(setti
         )
 
     model = OpenAIResearchModel(settings, transport=httpx.MockTransport(transport))
-    checked, tokens = await model.verify({"title": "세척 밸리데이션"}, [], "ko")
+    checked, tokens = await model.verify(
+        {"title": "세척 밸리데이션"}, [], "ko", "두 회사의 세척 밸리데이션 비교"
+    )
     assert checked.supported and tokens == 100

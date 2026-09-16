@@ -16,6 +16,9 @@ repeated failures. Validate tool output identity, size and replay integrity; rec
 access and preserve draft-only, idempotent writes. Exercise all 21 tool contracts, actual
 dispatchers, cancellation/recovery and live research runs. Record evidence and remaining
 qualification limits, then commit, push and verify deployment under standing authorization.
+Live output review must check relevance to the original objective, not only valid citations.
+Prioritize topical search phrases over corpus boilerplate; require the evidence reviewer
+to reject unrelated findings even when the cited passages faithfully support them.
 
 ## September 16 implementation addendum: Single startup ball
 

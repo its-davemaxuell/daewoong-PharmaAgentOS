@@ -111,12 +111,30 @@ def public_source_filter(session):
 
 
 async def search_sources(database, query: str, selected_chunk_ids: list[str] | None = None):
-    terms = list(dict.fromkeys(re.findall(r"[a-zA-Z0-9가-힣]{2,}", query.lower())))[:10]
-    terms = [term for term in terms if term not in {"the", "and", "for", "with", "fda"}]
+    # Corpus boilerplate occurs in almost every introduction and must not outrank
+    # the requested topic. Filter before the bound so boilerplate cannot crowd it out.
+    stopwords = {
+        "the", "and", "for", "with", "from", "about", "fda", "warning", "warnings",
+        "letter", "letters", "drug", "drugs", "site", "gov", "www", "com", "https",
+    }
+    words = [
+        term for term in re.findall(r"[a-zA-Z0-9가-힣]{2,}", query.lower())
+        if term not in stopwords
+    ]
+    terms = list(dict.fromkeys(words))[:10]
     if not terms:
         return []
     matches = [DocumentChunk.content.ilike(f"%{term}%") for term in terms]
     score = sum(case((match, 1), else_=0) for match in matches)
+    phrases = list(dict.fromkeys(
+        f"{left} {right}" for left, right in zip(words, words[1:], strict=False)
+        if left in terms and right in terms and left != right
+    ))[:9]
+    # Phrase matches such as data integrity outrank incidental single-word matches.
+    phrase_score = sum(
+        case((DocumentChunk.content.ilike(f"%{phrase}%"), 12), else_=0)
+        for phrase in phrases
+    )
     statement = source_query().where(or_(*matches))
     if selected_chunk_ids:
         statement = statement.where(DocumentChunk.id.in_(selected_chunk_ids))
@@ -125,7 +143,7 @@ async def search_sources(database, query: str, selected_chunk_ids: list[str] | N
             await session.execute(
                 statement.where(public_source_filter(session))
                 .order_by(
-                    score.desc(),
+                    (score + phrase_score).desc(),
                     WarningLetter.posted_date.desc(),
                     DocumentChunk.id,
                 )
@@ -142,8 +160,16 @@ async def search_sources(database, query: str, selected_chunk_ids: list[str] | N
         if count >= 2:
             continue
         company_counts[item["letter_id"]] = count + 1
-        item["excerpt"] = item["excerpt"][:500]
-        item["end_offset"] = len(item["excerpt"])
+        excerpt = item["excerpt"]
+        positions = [excerpt.lower().find(phrase) for phrase in phrases]
+        positions = [position for position in positions if position >= 0]
+        if not positions:
+            positions = [excerpt.lower().find(term) for term in terms]
+            positions = [position for position in positions if position >= 0]
+        start = max(0, min(positions) - 100) if positions else 0
+        item["excerpt"] = excerpt[start:start + 500]
+        item["start_offset"] = start
+        item["end_offset"] = start + len(item["excerpt"])
         selected.append(item)
         if len(selected) == 8:
             break

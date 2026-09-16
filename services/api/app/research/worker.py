@@ -352,12 +352,18 @@ async def _execute_tool(database, model, run, state, proposal):
     check, _ = await model_call(
         database,
         run,
-        {"brief": brief, "evidence": sources},
-        lambda: model.verify(brief, sources, run.language),
-        max_output=1_500,
+        {"objective": run.objective, "brief": brief, "evidence": sources},
+        lambda: model.verify(brief, sources, run.language, run.objective),
+        max_output=3_000,
     )
     state["checks"] = state.get("checks", 0) + 1
-    if not check.supported or check.issues:
+    if not check.supported or not check.answers_objective or check.issues:
+        if not check.answers_objective and not check.issues:
+            check.issues = [
+                "요청한 주제를 뒷받침하는 자료를 다시 검색하고 읽은 뒤 비교해 주세요."
+                if run.language == "ko"
+                else "Search and read sources about the requested topic before comparing findings."
+            ]
         await event(database, run, "check_needs_revision", data={"issues": check.issues[:8]})
         return {"error": "revise_unsupported_findings", "issues": check.issues[:8]}, None
     # Source changes during verification also invalidate completion.

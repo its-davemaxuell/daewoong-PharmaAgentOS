@@ -100,13 +100,14 @@ class ScriptedModel:
             },
         )
 
-    async def verify(self, brief, evidence, language):
+    async def verify(self, brief, evidence, language, objective):
         self.checks += 1
         if self.reject_first and self.checks == 1:
             return EvidenceCheck(
-                supported=False, issues=["Attribute the finding more precisely"]
+                supported=False, answers_objective=True,
+                issues=["Attribute the finding more precisely"]
             ), 100
-        return EvidenceCheck(supported=True, issues=[]), 100
+        return EvidenceCheck(supported=True, answers_objective=True, issues=[]), 100
 
 
 @pytest.fixture

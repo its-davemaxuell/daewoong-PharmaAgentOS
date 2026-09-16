@@ -88,11 +88,38 @@ corporate system qualification or external message delivery.
 
 - Expanded backend regression: 157 passed, one Temporal-server-dependent skip.
 - Final research regression including usage-overrun protection: 52 passed.
+- Follow-up private-tool bounds and replay regression: 35 passed. Knowledge warning
+  and anchor bounds now match the published contract.
 - Web production build, TypeScript, lint and 99 unit tests pass.
 - 15 Chromium/Firefox/WebKit checks pass for research context, source inspection,
   chat metadata and first-answer draft preservation, including phone layouts.
-- Docker is unavailable locally; fresh PostgreSQL/Temporal recovery qualification
-  is delegated to the existing isolated CI jobs. SQLite is not proof of locking.
+- The isolated CI PostgreSQL concurrency/schema and Temporal recovery jobs pass on
+  application `bbe3000`, as do full backend, contracts, frontend and container jobs.
+  The full CI browser job remains running at this checkpoint. Docker is unavailable
+  locally; SQLite was not used as proof of locking.
 - Evidence: `.artifacts/agent-workflow/`, including JUnit reports and failure probes.
 
-Deployment and actual hosted research-run results will be recorded after publication.
+### Hosted review and relevance correction
+
+Application `bbe3000` deployed successfully to Vercel, Railway API and Railway worker.
+Two actual Chromium runs completed in English and Korean with two cited findings each.
+The Korean run stopped and resumed successfully and corrected invalid citations from a
+persisted tool observation. Source inspection, saved-run reload and 390px overflow checks
+passed without page errors. Execution took approximately 127 seconds in English and
+181 seconds in Korean (including its stop/resume interval).
+
+Manual review rejected the Korean output despite those mechanics passing: it cited
+generic CGMP/import-refusal passages for a data-integrity comparison. Search over-weighted
+corpus boilerplate, and the evidence reviewer had never received the original objective.
+The fix filters boilerplate, boosts adjacent topic phrases, shows snippets around matches,
+and supplies concise local-search guidance. Completion now requires an explicit
+`answers_objective` result from the independent evidence review. The review uses medium
+reasoning with a bounded 3,000-output-token reservation. A low-reasoning prompt-only
+attempt still approved the bad answer and was rejected during qualification.
+
+The corrected reviewer was tested against both real outputs: it accepted the relevant
+English brief and rejected the unrelated Korean brief. Regression tests cover topic
+ranking, exact snippet offsets and refusal to complete a factually supported but unrelated
+draft. A fresh hosted run of the corrected pipeline remains the next publication check.
+Artifacts: `live/`, `relevance-live-review.json` and `relevance-final.xml` under the evidence
+directory above. The initial Korean output is failure evidence, not a successful example.

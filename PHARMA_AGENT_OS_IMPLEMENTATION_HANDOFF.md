@@ -17,7 +17,12 @@ commits outcomes atomically, retries temporary failures within charged limits, r
 usage overruns and stops identical failure loops early. Private drafts remain local,
 idempotent and transactional. Backend regression: 157 passed plus one environment
 skip; final research suite 52 passed. Build/lint, 99 web unit tests and 15 focused
-cross-browser checks pass. Publication/live runs are next. See
+cross-browser checks pass. Application `bbe3000` is deployed; isolated CI PostgreSQL,
+Temporal, backend, contracts and build jobs pass. Hosted English and Korean runs passed
+stop/resume, citation inspection, reload and phone checks. Manual review caught an
+irrelevant Korean answer despite valid citations; a follow-up adds topical search ranking
+and an explicit original-objective review. The revised live reviewer rejects that bad
+output and accepts the English output; fresh hosted qualification is next. See
 [the tool assessment](docs/assurance/agent-tool-reliability-20260916.md).
 
 **2026-09-16 single-ball startup refinement (deployed):** The first loading screen now shows

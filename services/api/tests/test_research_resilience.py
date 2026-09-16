@@ -19,8 +19,56 @@ from app.ai import AiGenerationError
 from app.models import ResearchRun
 from app.research import worker
 from app.research.provider import OpenAIResearchModel, ResearchModelError
-from app.research.tools import read_sources, search_sources
+from app.research.schemas import EvidenceCheck
+from app.research.tools import read_sources, search_sources, source_query
 from app.research.worker import claim, execute_tool
+
+
+def test_topic_passage_outranks_warning_letter_boilerplate(research):  # noqa: F811
+    client, _, database = research
+
+    async def check():
+        async with database.session_factory() as session:
+            rows = (await session.execute(source_query().limit(2))).all()
+            assert len(rows) == 2
+            rows[0][0].content = "FDA warning letter drug site gov data company introduction."
+            topic = ("Background detail. " * 40) + "Data integrity: records were deleted."
+            rows[1][0].content = topic
+            rows[0][0].acl = rows[1][0].acl = {"roles": ["viewer"]}
+            ids = [row[0].id for row in rows]
+            await session.commit()
+        matches = await search_sources(
+            database, "data integrity warning letter FDA drug site: fda.gov", ids
+        )
+        assert matches[0]["chunk_id"] == ids[1]
+        assert "Data integrity: records were deleted" in matches[0]["excerpt"]
+        assert matches[0]["start_offset"] > 0
+        assert topic[matches[0]["start_offset"]:matches[0]["end_offset"]] == matches[0]["excerpt"]
+        # Boilerplate alone cannot manufacture topic evidence.
+        assert await search_sources(database, "FDA warning letter drug site gov", ids) == []
+
+    client.portal.call(check)
+
+
+def test_supported_but_off_topic_draft_cannot_complete(research):  # noqa: F811
+    objective = "Compare two data integrity findings"
+    run, _ = create(research, objective=objective)
+
+    class OffTopicModel(ScriptedModel):
+        async def verify(self, brief, evidence, language, original_objective):
+            assert original_objective == objective
+            self.checks += 1
+            return EvidenceCheck(supported=True, answers_objective=False, issues=[]), 100
+
+    model = OffTopicModel()
+    execute(research, model)
+    result = get(research, run["id"])
+    assert result["status"] == "insufficient_evidence"
+    assert model.checks == 2
+    assert result["result"].get("evidence_check") != "ai_checked"
+    assert "completed" not in [event["kind"] for event in result["events"]]
+    revision = next(event for event in result["events"] if event["kind"] == "check_needs_revision")
+    assert "requested topic" in revision["data"]["issues"][0]
 
 
 @pytest.mark.asyncio
