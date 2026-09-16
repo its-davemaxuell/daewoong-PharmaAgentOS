@@ -698,6 +698,7 @@ export function ChatWorkspace({
   const [focusPending, startFocusTransition] = useTransition();
   const [preferencesPending, startHistoryTransition] = useTransition();
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const restoreDraftFocus = useRef(false);
   const conversationRef = useRef<HTMLDivElement>(null);
   const conversationEndRef = useRef<HTMLDivElement>(null);
   const followConversationRef = useRef(true);
@@ -716,7 +717,10 @@ export function ChatWorkspace({
     const frame = requestAnimationFrame(() => {
       try {
         const saved = sessionStorage.getItem(draftKey);
-        if (saved) setQuestion(saved.slice(0, 2000));
+        if (saved) {
+          setQuestion(saved.slice(0, 2000));
+          restoreDraftFocus.current = true;
+        }
       } catch { /* The composer works when browser storage is disabled. */ }
       setDraftLoaded(true);
     });
@@ -731,6 +735,11 @@ export function ChatWorkspace({
     } catch { /* Draft recovery is optional, sending is independent. */ }
     const composer = composerRef.current;
     if (composer) {
+      // Focus after React enables the restored composer, not while it is disabled.
+      if (restoreDraftFocus.current) {
+        restoreDraftFocus.current = false;
+        composer.focus({ preventScroll: true });
+      }
       composer.style.height = "auto";
       composer.style.height = `${Math.min(composer.scrollHeight, 200)}px`;
     }

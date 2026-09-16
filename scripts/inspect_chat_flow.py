@@ -80,7 +80,8 @@ def main():
                     expect(question).to_have_value(prompt)
                     question.press("Enter")
                     expect(page.locator(".chat-turn .chat-provenance")).to_have_count(index, timeout=120000)
-                    expect(page.locator(".chat-turn").last()).to_contain_text("2025-01-01" if index == 2 else "2024-01-01")
+                    expect(page.locator(".chat-turn").last).to_contain_text("2025-01-01" if index == 2 else "2024-01-01")
+                    expect(page.locator(".chat-turn").last).to_contain_text("315" if index == 2 else "172")
                 checks.append("Date count and year follow-up both complete in the same conversation")
                 page.reload()
                 expect(page.locator(".chat-turn .chat-provenance")).to_have_count(3, timeout=60000)
@@ -88,6 +89,7 @@ def main():
             if page.locator(".chat-source-strip__open").count():
                 page.locator(".chat-source-strip__open").last.click()
                 expect(page.locator("#evidence-panel-title")).to_be_focused()
+                expect(page.locator(".chat-evidence-panel")).to_contain_text("FDA posting date" if args.locale == "en" else "FDA 게시일")
                 page.screenshot(path=str(out / "evidence-desktop.png"), full_page=True)
                 page.locator(".chat-evidence-panel").press("Escape")
                 checks.append("Citations open, receive keyboard focus and close with Escape")

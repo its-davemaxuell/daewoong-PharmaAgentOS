@@ -101,6 +101,7 @@ test("typing during the first answer's route handoff preserves the next draft", 
     release();
     await expect(page).toHaveURL(/\/chat\//);
     await expect(page.locator("#ai-question")).toHaveValue("And what about 2025? Keep this draft.");
+    await expect(page.locator("#ai-question")).toBeFocused();
     await expect(page.getByRole("button", { name: "Ask AI", exact: true })).toBeEnabled();
     await expect(page.locator(".chat-turn")).toHaveCount(1);
   } finally { release(); }
