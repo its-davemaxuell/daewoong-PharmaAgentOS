@@ -58,6 +58,8 @@ def test_calendar_dates(question, field, start, end):
     [
         ("How many FDA letters were issued in 2025-02-30?", "invalid_date"),
         ("Count FDA letters in fiscal year 2025", "calendar_required"),
+        ("Count FDA letters in FY2025", "calendar_required"),
+        ("Count FDA letters from the past 3 months", "calendar_required"),
         ("Count FDA letters before 03/04/2025", "calendar_required"),
         ("Count FDA letters issued and posted in 2025", "date_basis_required"),
         ("Count FDA letters in 2024 or 2026", "multiple_periods"),

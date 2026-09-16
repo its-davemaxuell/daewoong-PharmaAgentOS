@@ -707,7 +707,9 @@ export function ChatWorkspace({
   const requestIdentityRef = useRef<{ threadId?: string; clientMessageId?: string }>({});
   const focusMutationRef = useRef(false);
   const preferenceMutationRef = useRef(false);
-  const draftKey = `pharma-chat-draft:${initialThread?.id ?? landingSeed}`;
+  // Adopt the server-created ID immediately. Keystrokes during the first answer's
+  // route transition must already belong to the destination conversation.
+  const draftKey = `pharma-chat-draft:${activeThreadId ?? landingSeed}`;
   const evidenceTrigger = useRef<HTMLElement | null>(null);
 
   useEffect(() => {

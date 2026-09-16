@@ -26,6 +26,11 @@ QUESTIONS = [
     ("content", "Give two specific quality-unit oversight findings from FDA warning letters, citing each company."),
     ("content-count", "How many FDA warning letters mention contamination?"),
     ("unrelated", "What is the weather in Seoul today?"),
+    ("fiscal-year", "How many FDA warning letters were issued in fiscal year 2025?"),
+    ("ambiguous-date", "Count FDA warning letters issued before 03/04/2025."),
+    ("invalid-date", "Count FDA warning letters issued in 2025-02-30."),
+    ("two-countries", "Count FDA warning letters from India and China in 2025."),
+    ("unknown-company", "Count FDA warning letters for Nonexistent Testing Pharma in 2025."),
 ]
 
 

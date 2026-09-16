@@ -79,7 +79,7 @@ def _period(year: int, month: int | None = None, day: int | None = None):
 
 
 def _dates(question: str, today: date) -> tuple[date | None, date | None, str | None]:
-    if re.search(r"\d{1,2}/\d{1,2}/\d{2,4}", question):
+    if re.search(r"\d{1,4}/\d{1,2}/\d{1,4}|\bFY\s*\d{2,4}\b", question, re.I):
         return None, None, "calendar_required"
     if re.search(r"fiscal|financial year|회계연도|회계 연도", question, re.I):
         return None, None, "calendar_required"
@@ -164,7 +164,8 @@ def _dates(question: str, today: date) -> tuple[date | None, date | None, str | 
                 return None, end, None
         return (start, end, None) if start <= end else (None, None, "invalid_date")
     if re.search(
-        r"\b(?:last|this|past|previous|next)\s+(?:week|quarter)|\d{1,2}/\d{1,2}/\d{2,4}|지난\s*주|이번\s*주|지난\s*분기",
+        r"\b(?:last|this|past|previous|next)\s+(?:\d+\s+)?(?:weeks?|months?|quarters?|years?)\b|"
+        r"지난\s*주|이번\s*주|지난\s*분기",
         question,
         re.I,
     ):

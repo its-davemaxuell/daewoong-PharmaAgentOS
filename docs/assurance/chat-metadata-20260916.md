@@ -63,22 +63,38 @@ latest/oldest lists, grouped counts and date-constrained content questions.
 ## Local verification
 
 - Production build/TypeScript and frontend/backend lint pass; 99 web unit tests pass.
-- 217 distinct backend cases pass across the recorded runs, covering metadata,
+- 221 distinct backend cases pass across the recorded runs, covering metadata,
   ingestion/parsing, chat state, routing, source focus, streaming and provider
   validation. New metadata regression coverage includes authorization-compatible
   counting, exact totals beyond the citation cap, empty totals, date intersections,
   repeat/idempotent follow-ups and unsupported-query behavior.
 - 51 existing Chat/motion/workspace browser cases pass across Chromium, Firefox
-  and WebKit. Six new English/Korean metadata cases pass in the same engines at
+  and WebKit. Nine new English/Korean metadata and draft-handoff cases pass in the same engines at
   desktop and 390/320px widths. The first new-test run used a nonpersistent API
   mock; router refresh correctly reloaded the old fixture. The loopback fixture
   now persists its completed answer, and all six targeted repeats pass.
+- The first hosted after-test exposed a separate first-answer navigation race:
+  typing a follow-up while the saved conversation route loaded could lose the
+  draft. The composer now adopts its server-created conversation ID immediately.
+  A regression holds that navigation open, types the next draft, then verifies it
+  survives. All three browsers pass. Sending still waits for the current operation
+  to settle, and never silently submits an unfinished draft.
 - Desktop and narrow-phone source-panel captures were personally inspected.
 
 ## Publication
 
-Pending authorized push and hosted after-tests. Preserve baseline failures as
-evidence; do not replace them with passing captures.
+Application `2b8a176` is pushed and deployed; Vercel and both Railway integrations
+report success. All 16 initial hosted after-requests return 200, including metadata
+requests that previously restarted the API. Independent catalog comparisons match:
+315 issued in 2025, 11 posted in August 2026, 19 India recipients issued in 2025,
+58 issued in Q1 2025, and 767 total records grouped by issue year. Content questions
+now retrieve cited passages, including the 2025 date constraint. The semantic
+content-total request correctly states its limitation.
+
+The follow-up revision preserves drafts during the first conversation handoff,
+shortens count answers while keeping source inspection, and clarifies additional
+ambiguous date forms. Its publication and final hosted interface checks are pending.
+Baseline failures remain preserved.
 
 ## Evidence
 

@@ -1581,18 +1581,34 @@ async def _metadata_answer(
         if metadata_query.date_field == "posted"
         else payload.filters.issue_date_to
     )
-    scope = f"{basis if language == 'ko' else basis_en}: {lower or '…'} – {upper or '…'}"
-    if payload.filters.country:
-        scope += f" · {payload.filters.country}"
+    scope_parts = []
+    if lower or upper:
+        scope_parts.append(
+            f"{basis if language == 'ko' else basis_en}: {lower or '…'} – {upper or '…'}"
+        )
+    scope_parts.extend(
+        value
+        for value in (
+            payload.filters.country,
+            payload.filters.company,
+            payload.filters.issuing_office,
+        )
+        if value
+    )
+    scope = " · ".join(scope_parts)
     prefix = (
         f"저장된 FDA 의약품 경고서한 중 조건에 맞는 서한은 **{total}건**입니다."
         if language == "ko"
         else f"**{total} saved FDA Drug warning letters** match this query."
     )
-    prefix += f"\n\n{scope}. " + (
-        "현재 접근 가능한 저장 자료 기준이며, FDA 전체 발행 건수가 아닙니다."
-        if language == "ko"
-        else "This counts accessible saved records, not every letter issued by FDA."
+    prefix += (
+        "\n\n"
+        + (f"{scope}. " if scope else "")
+        + (
+            "현재 접근 가능한 저장 자료 기준이며, FDA 전체 발행 건수가 아닙니다."
+            if language == "ko"
+            else "This counts accessible saved records, not every letter issued by FDA."
+        )
     )
     if metadata_query.group_by:
         groups: dict[str, int] = defaultdict(int)
@@ -1632,6 +1648,15 @@ async def _metadata_answer(
             else "No FDA Drug warning-letter metadata matched the current filters and scope."
         )
         return answer, citations, "insufficient"
+    if metadata_query.intent == "count":
+        sample = "표본 서한" if language == "ko" else "Sample records"
+        return (
+            prefix
+            + f"\n\n{sample}: "
+            + " ".join(f"[{index}]" for index in range(1, len(citations) + 1)),
+            citations,
+            "sufficient",
+        )
     lines: list[str] = []
     for index, letter in enumerate(displayed, 1):
         unknown = "미확인" if language == "ko" else "Not specified"
@@ -1661,7 +1686,11 @@ async def _metadata_answer(
         if language == "ko"
         else f"By {basis_en}, {order_label} · showing {len(displayed)} of {total}"
     )
-    return f"{prefix}\n\n{sample_label}\n\n" + "\n".join(lines), citations, "sufficient"
+    return (
+        "\n".join(lines) + f"\n\n{sample_label}" + (f"\n\n{scope}" if scope else ""),
+        citations,
+        "sufficient",
+    )
 
 
 def _chat_request_snapshot(payload: RagQueryRequest) -> dict[str, object]:

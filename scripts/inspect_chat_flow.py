@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--browser", default="chromium", choices=["chromium", "firefox", "webkit"])
     parser.add_argument("--locale", default="en", choices=["en", "ko"])
     parser.add_argument("--output", default=".artifacts/chat-metadata/ui-before")
+    parser.add_argument("--followups", action="store_true")
     args = parser.parse_args()
     out = (ROOT / args.output / f"{args.browser}-{args.locale}").resolve()
     out.relative_to(ROOT)
@@ -42,7 +43,7 @@ def main():
                 page.wait_for_function("document.querySelector('[data-startup-gate]').dataset.state === 'entered'", timeout=45000)
             question = page.locator("#ai-question")
             expect(question).to_be_enabled(timeout=30000)
-            expect(page.get_by_role("button", name="Ask AI" if args.locale == "en" else "AI에게 질문", exact=True)).to_be_disabled()
+            expect(page.get_by_role("button", name="Ask AI" if args.locale == "en" else "질문 보내기", exact=True)).to_be_disabled()
             question.fill("Review FDA dates")
             question.press("Shift+Enter")
             expect(question).to_have_value("Review FDA dates\n")
@@ -54,6 +55,8 @@ def main():
             expect(question).to_be_focused()
             checks.append("Filter panel closes to composer without losing draft")
             question.fill("Show FDA warning-letter issue dates and source links." if args.locale == "en" else "FDA 경고서한 발행일과 원문 링크를 보여주세요.")
+            send = page.get_by_role("button", name="Ask AI" if args.locale == "en" else "질문 보내기", exact=True)
+            expect(send).to_be_enabled(timeout=30000)
             start = time.monotonic()
             with page.expect_response(lambda r: r.url.endswith("/api/chat/query") and r.request.method == "POST", timeout=120000) as pending:
                 question.press("Enter")
@@ -66,6 +69,22 @@ def main():
             checks.append(f"Answer transport {response.status}, {time.monotonic() - start:.1f}s")
             expect(page.locator(".chat-turn .chat-provenance")).to_be_visible(timeout=120000)
             page.screenshot(path=str(out / "answer-desktop.png"), full_page=True)
+            if args.followups:
+                for index, prompt in enumerate([
+                    "How many FDA warning letters were issued in 2025?" if args.locale == "en" else "2025년에 발행된 FDA 경고서한은 몇 건인가요?",
+                    "And in 2024?" if args.locale == "en" else "그럼 2024년에는요?",
+                ], start=2):
+                    expect(question).to_be_enabled(timeout=30000)
+                    question.fill(prompt)
+                    expect(send).to_be_enabled(timeout=30000)
+                    expect(question).to_have_value(prompt)
+                    question.press("Enter")
+                    expect(page.locator(".chat-turn .chat-provenance")).to_have_count(index, timeout=120000)
+                    expect(page.locator(".chat-turn").last()).to_contain_text("2025-01-01" if index == 2 else "2024-01-01")
+                checks.append("Date count and year follow-up both complete in the same conversation")
+                page.reload()
+                expect(page.locator(".chat-turn .chat-provenance")).to_have_count(3, timeout=60000)
+                checks.append("Three completed turns survive reload")
             if page.locator(".chat-source-strip__open").count():
                 page.locator(".chat-source-strip__open").last.click()
                 expect(page.locator("#evidence-panel-title")).to_be_focused()
@@ -75,6 +94,7 @@ def main():
             for width in [768, 390, 320]:
                 page.set_viewport_size({"width": width, "height": 844})
                 overflow = page.evaluate("document.documentElement.scrollWidth - innerWidth")
+                assert overflow <= 1, f"Overflow at {width}px: {overflow}"
                 checks.append(f"Width {width}: overflow {overflow}px")
                 page.screenshot(path=str(out / f"answer-{width}.png"), full_page=True)
             checks.append("Conversation URL " + page.url)
@@ -84,8 +104,10 @@ def main():
             (out / "failure.txt").write_text(page.locator("body").inner_text(), encoding="utf-8")
         finally:
             (out / "results.json").write_text(json.dumps({"checks": checks, "errors": errors, "http_errors": responses}, ensure_ascii=False, indent=2), encoding="utf-8")
-            print(json.dumps({"checks": checks, "errors": errors}, ensure_ascii=True), flush=True)
+            print(json.dumps({"checks": checks, "errors": [e[:500] for e in errors]}, ensure_ascii=True), flush=True)
             browser.close()
+    if errors:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

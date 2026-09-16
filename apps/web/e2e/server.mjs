@@ -25,6 +25,15 @@ const api = createServer((req, res) => {
     req.on("end", () => { const value = JSON.parse(body); testThreads.set(value.id, value); res.end("{}"); });
     return;
   }
+  if (url.pathname === "/api/v1/chat/threads" && req.method === "POST") {
+    let body = ""; req.on("data", chunk => { body += chunk; });
+    req.on("end", () => {
+      const input = JSON.parse(body);
+      const value = { ...input, id: randomUUID(), created_at: stamp, updated_at: stamp, messages: [] };
+      testThreads.set(value.id, value); res.statusCode = 201; res.end(JSON.stringify(value));
+    });
+    return;
+  }
   if (req.method === "GET" && url.pathname.startsWith("/api/v1/chat/threads/") && testThreads.has(url.pathname.split("/").at(-1))) {
     res.end(JSON.stringify(testThreads.get(url.pathname.split("/").at(-1)))); return;
   }

@@ -65,3 +65,43 @@ for (const locale of ["en", "ko"] as const) {
     await expect(question).toBeEnabled();
   });
 }
+
+test("typing during the first answer's route handoff preserves the next draft", async ({ page, context }) => {
+  await context.addCookies([{ name: "dli_locale", value: "en", url: "http://127.0.0.1:3100" }]);
+  await retainFixtureSession(page);
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  let navigating!: () => void;
+  const departure = new Promise<void>(resolve => { navigating = resolve; });
+  let requests = 0;
+  await page.route("**/chat/**", async route => { navigating(); await gate; await route.continue(); });
+  await page.route("**/api/chat/query", async route => {
+    requests++;
+    const input = route.request().postDataJSON();
+    const id = input.options.threadId;
+    const stamp = "2026-09-16T00:00:00Z";
+    const result = { thread_id: id, answer: "Fictional metadata count: zero.", retrieval_strategy: "metadata", evidence_sufficiency: "sufficient", generated_at: stamp, citations: [] };
+    await page.request.post("http://127.0.0.1:8100/__fixtures/chat", { data: {
+      id, title: "New metadata conversation", created_at: stamp, updated_at: stamp, active_letter_ids: [],
+      messages: [
+        { id: "handoff-q", role: "user", sequence: 1, status: "completed", content: input.question, created_at: stamp },
+        { id: "handoff-a", role: "assistant", sequence: 2, status: "completed", content: result.answer, route_metadata: result, created_at: stamp },
+      ],
+    } });
+    await route.fulfill({ contentType: "application/x-ndjson", body: JSON.stringify({ type: "complete", data: result }) + "\n" });
+  });
+  try {
+    await page.goto("/ask");
+    await page.locator("#ai-question").fill("How many FDA warning letters were issued in 2099?");
+    await page.getByRole("button", { name: "Ask AI", exact: true }).click();
+    await departure;
+    await page.locator("#ai-question").fill("And what about 2025? Keep this draft.");
+    await page.locator("#ai-question").press("Enter");
+    expect(requests).toBe(1);
+    release();
+    await expect(page).toHaveURL(/\/chat\//);
+    await expect(page.locator("#ai-question")).toHaveValue("And what about 2025? Keep this draft.");
+    await expect(page.getByRole("button", { name: "Ask AI", exact: true })).toBeEnabled();
+    await expect(page.locator(".chat-turn")).toHaveCount(1);
+  } finally { release(); }
+});
