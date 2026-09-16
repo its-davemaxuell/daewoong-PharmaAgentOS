@@ -5,7 +5,7 @@ import json
 
 import httpx
 import pytest
-from pydantic import SecretStr
+from pydantic import SecretStr, ValidationError
 from test_research_agent import (  # noqa: F401
     ScriptedModel,
     create,
@@ -19,9 +19,27 @@ from app.ai import AiGenerationError
 from app.models import ResearchRun
 from app.research import worker
 from app.research.provider import OpenAIResearchModel, ResearchModelError
-from app.research.schemas import EvidenceCheck
+from app.research.schemas import CitedFinding, EvidenceCheck, SubmitBrief
 from app.research.tools import read_sources, search_sources, source_query
 from app.research.worker import claim, execute_tool
+
+
+@pytest.mark.parametrize("gap", ["Samples manufactured on 2024-01-10.", "검토 범위는 2024년이다."])
+def test_incidental_dates_in_caveats_cannot_bypass_cited_claim_review(gap):
+    finding = {
+        "statement": "The cited passage describes samples collected on January 10, 2024.",
+        "citation_ids": ["S1"],
+        "limitations": ["The full investigation was not included."],
+    }
+    assert CitedFinding.model_validate(finding)
+    with pytest.raises(ValidationError):
+        CitedFinding.model_validate({**finding, "limitations": [gap]})
+    with pytest.raises(ValidationError):
+        SubmitBrief.model_validate({
+            "title": "Data integrity comparison", "findings": [finding],
+            "review_questions": ["Which records would help resolve the evidence gaps?"],
+            "limitations": [gap],
+        })
 
 
 def test_topic_passage_outranks_warning_letter_boilerplate(research):  # noqa: F811

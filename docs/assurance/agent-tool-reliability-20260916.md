@@ -87,7 +87,8 @@ corporate system qualification or external message delivery.
 ## Verification and publication
 
 - Expanded backend regression: 157 passed, one Temporal-server-dependent skip.
-- Final research regression including usage-overrun protection: 52 passed.
+- Final research regression including usage-overrun protection and objective relevance:
+  56 passed.
 - Follow-up private-tool bounds and replay regression: 35 passed. Knowledge warning
   and anchor bounds now match the published contract.
 - Web production build, TypeScript, lint and 99 unit tests pass.
@@ -95,7 +96,7 @@ corporate system qualification or external message delivery.
   chat metadata and first-answer draft preservation, including phone layouts.
 - The isolated CI PostgreSQL concurrency/schema and Temporal recovery jobs pass on
   application `bbe3000`, as do full backend, contracts, frontend and container jobs.
-  The full CI browser job remains running at this checkpoint. Docker is unavailable
+  The full CI browser job was superseded by the follow-up push. Docker is unavailable
   locally; SQLite was not used as proof of locking.
 - Evidence: `.artifacts/agent-workflow/`, including JUnit reports and failure probes.
 
@@ -123,3 +124,15 @@ ranking, exact snippet offsets and refusal to complete a factually supported but
 draft. A fresh hosted run of the corrected pipeline remains the next publication check.
 Artifacts: `live/`, `relevance-live-review.json` and `relevance-final.xml` under the evidence
 directory above. The initial Korean output is failure evidence, not a successful example.
+
+The first corrected hosted run (`88575ce`) retrieved concrete fabrication/missing-record
+passages from Brassica and Shoolin and completed the requested comparison in six model
+calls. It also rejected an unknown source ID and recovered using returned search IDs.
+Desktop/mobile, source-panel close and saved-run reload checks passed without page errors.
+Manual review then caught a smaller factual error in a limitation: a sample-collection
+date was called a manufacturing date. The expanded model review alone still missed it.
+The tool contract now requires evidence-gap caveats without digits; numerical/date claims
+belong in cited findings, where date meanings must be preserved. Both finding-level and
+brief-level validation enforce this, with English/Korean regression coverage. Review
+instructions also cover factual assumptions inside questions and limitations. This is an
+explicit limit of model-only review, not evidence that AI factual checking is infallible.

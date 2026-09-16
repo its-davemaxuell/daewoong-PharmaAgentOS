@@ -8,6 +8,10 @@ MAX_TOTAL_TOKENS = 90_000
 MAX_EVIDENCE = 12
 MAX_ACTION_FAILURES = 3
 
+# Keep incidental dates/counts out of caveats, where they can evade claim review.
+# Numerical evidence belongs in the cited finding, with its original meaning.
+EvidenceGap = Annotated[str, Field(min_length=1, max_length=600, pattern=r"^[^0-9]*$")]
+
 
 class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
@@ -60,7 +64,7 @@ class CitedFinding(Strict):
     statement: str = Field(min_length=10, max_length=1_200)
     citation_ids: list[str] = Field(max_length=4)
     support: Literal["supported", "contradicted", "insufficient"] = "supported"
-    limitations: list[Annotated[str, Field(min_length=1, max_length=600)]] = Field(
+    limitations: list[EvidenceGap] = Field(
         default_factory=list, max_length=5
     )
 
@@ -79,7 +83,7 @@ class SubmitBrief(Strict):
     review_questions: list[Annotated[str, Field(min_length=1, max_length=600)]] = Field(
         min_length=1, max_length=6
     )
-    limitations: list[Annotated[str, Field(min_length=1, max_length=600)]] = Field(
+    limitations: list[EvidenceGap] = Field(
         min_length=1, max_length=5
     )
 

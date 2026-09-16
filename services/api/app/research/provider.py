@@ -47,9 +47,14 @@ supported requires passages supporting the statement; contradicted requires pass
 contradicting it; insufficient identifies an unanswered question and explains the missing
 evidence in limitations. Never fill an unknown with invented information. Cite source IDs
 for supported and contradicted findings. Prefer concise paraphrases; any quotation must
-copy an exact contiguous source span. Include practical review QUESTIONS (not directives, compliance
-conclusions or a CAPA) and honest limitations. Questions must not assume that our facilities
-have any observed deficiency or practice; use conditional wording for unknown activities.
+copy an exact contiguous source span. Keep limitations short and limited to missing evidence;
+do not add incidental dates, numbers or new factual claims there. Limitations must not
+contain digits; put necessary numerical details in cited findings. Preserve date meanings:
+sample collection, inspection, manufacture and letter issue dates are distinct.
+Include practical review QUESTIONS (not directives, compliance conclusions or a CAPA).
+Questions must not assume that our facilities have any observed deficiency or practice,
+or that a cited company took an action not shown in its passage; use conditional wording
+for unknown activities and requests.
 All user-visible text must use the requested
 language; preserve company names and regulation numbers. The system checks source integrity
 and runs a separate evidence review. If it returns issues, correct or remove unsupported
@@ -235,6 +240,12 @@ The phrase 'Office of Drug Security, Integrity, and Response' is an office name,
 evidence of data-integrity findings. A draft admitting that neither cited passage covers
 the requested topic must get answers_objective=false. Require concrete relevant findings.
 Check every finding's declared support against its cited passages and company attribution.
+Check factual details throughout the entire draft, including limitations and assumptions
+inside questions. A correct main finding does not excuse an incorrect date, number or
+attribution in a limitation. Sample-collection dates are not manufacturing dates.
+Questions must not presuppose an FDA request or company action absent from that company's
+supplied passages; ask conditionally when unknown. Return supported=false for such errors
+and identify the precise correction without demanding optional additional facts.
 Supported findings need supporting evidence; contradicted findings need contradictory
 evidence. Insufficient findings must explain what remains unknown without inventing facts.
 For historical findings without a support field, require supporting evidence.

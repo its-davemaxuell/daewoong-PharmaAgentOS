@@ -4,6 +4,15 @@ Prepared: **2026-09-11**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest agent reliability (2026-09-16):** Application `88575ce` is deployed after
+hardening all 21 research/private tool contracts, retry and recovery boundaries,
+saved-result validation and transactional draft writes. Live review caught and fixed
+a cited-but-unrelated research answer: search prioritizes topic phrases, and the
+independent review now checks the original objective. Final research regression:
+54 passed; private-tool regression: 35 passed. See the current
+[tool assessment](docs/assurance/agent-tool-reliability-20260916.md) and
+[implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md) for hosted results.
+
 **Latest chatbot repairs (2026-09-16):** Application `41d3e7b` is deployed. Previously
 rejected literal mention, fiscal-calendar, country-pair and disjoint-year queries
 now execute; company counts no longer return letter totals, and clarification
