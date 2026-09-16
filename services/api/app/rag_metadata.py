@@ -17,7 +17,8 @@ COUNT = re.compile(
 )
 CONTENT = re.compile(
     r"\b(?:findings?|violations?|deficienc\w*|observations?|contamination|data integrity|"
-    r"quality.unit|aseptic|cleaning|validation|mention\w*|discuss\w*|contain\w*)\b|"
+    r"quality.unit|aseptic|cleaning|validation|mention\w*|discuss\w*|contain\w*|"
+    r"about|concerning|related to|regarding)\b|"
     r"지적|위반|결함|관찰사항|오염|무결성|품질\s*부서|밸리데이션|언급|내용",
     re.I,
 )
@@ -274,7 +275,7 @@ def parse_metadata_question(
         "country": r"\bby (?:recipient )?countr(?:y|ies)\b|국가별",
         "office": r"\bby (?:issuing )?office\b|부서별",
     }.items():
-        if re.search(pattern, question, re.I):
+        if re.search(pattern, constraints, re.I):
             group_by, intent = field, "group"
     text_terms = ()
     if count and is_content:
@@ -290,6 +291,19 @@ def parse_metadata_question(
         candidates = quoted or [
             term for term, pattern in topics.items() if re.search(pattern, question, re.I)
         ]
+        plain_phrase = re.search(
+            r"\b(?:mention(?:ing|s)?|contain(?:ing|s)?)\s+(?:the\s+(?:word|phrase)\s+)?"
+            rf"(.+?)(?=\s+(?:in\s+(?:(?:19|20)\d{{2}}|{MONTH_PATTERN}|Q[1-4])|"
+            r"issued|posted|during|between|from|before|after)\b|[?.!]|$)",
+            question,
+            re.I,
+        )
+        if not quoted and plain_phrase:
+            phrase = plain_phrase.group(1).strip()
+            if re.search(r"\b(?:and|or|not|without)\b", phrase, re.I) or len(phrase) > 120:
+                candidates = []
+            else:
+                candidates = [phrase]
         # A literal mention count is distinct from judging which letters have a topic/violation.
         mentions = re.search(
             r"\b(?:mention\w*|contain\w*|word|phrase)\b|언급|포함|단어|문구", question, re.I
@@ -300,6 +314,10 @@ def parse_metadata_question(
             and not re.search(r"\b(?:not|without|exclude|excluding)\b|않|제외|없는", question, re.I)
         ):
             text_terms = (" ".join(candidates[0].casefold().split()),)
+            if not quoted and plain_phrase:
+                constraints = question[: plain_phrase.start(1)] + question[plain_phrase.end(1) :]
+                if not periods:
+                    start, end, error = _dates(constraints, today)
         else:
             error = error or "content_count"
     if count and re.search(
@@ -460,7 +478,7 @@ def parse_metadata_question(
     )
     company_match = re.search(
         r"\b(?:letters?\s+(?:for|to)|company\s+named)\s+(.+?)"
-        r"(?=\s+(?:issued|posted|in\s+\d{4}|between|since|before|after)\b|[?!]|$)",
+        r"(?=\s+(?:issued|posted|in\s+\d{4}|between|since|before|after|mention\w*|contain\w*)\b|[?!]|$)",
         question,
         re.I,
     )

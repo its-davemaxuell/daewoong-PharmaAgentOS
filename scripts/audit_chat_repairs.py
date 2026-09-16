@@ -19,9 +19,25 @@ audit_chat_questions.QUESTIONS = [
     ("quarter", "Count FDA warning letters issued last quarter."),
     ("week", "Count FDA warning letters issued last week."),
     ("companies", "How many companies received FDA warning letters in 2025?"),
-    ("zero-term", 'Count FDA warning letters mentioning "PharmaAgentOS nonexistent test phrase".'),
+    (
+        "zero-term",
+        'Count FDA warning letters mentioning "PharmaAgentOS nonexistent test phrase".',
+    ),
     ("ambiguous", "Count FDA warning letters issued before 03/04/2025."),
-    ("observations", "How many observations are in FDA warning letters issued in 2025?"),
+    (
+        "observations",
+        "How many observations are in FDA warning letters issued in 2025?",
+    ),
+    ("plain-country-term", "Count FDA warning letters mentioning India in 2025."),
+    (
+        "plain-zero",
+        "Count FDA warning letters mentioning PharmaAgentOS nonexistent test phrase.",
+    ),
+    ("unknown-topic", "Count FDA warning letters about nitrosamines."),
+    (
+        "compound-topic",
+        "Count FDA warning letters mentioning nitrosamines or contamination.",
+    ),
 ]
 
 if __name__ == "__main__":

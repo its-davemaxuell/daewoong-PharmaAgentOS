@@ -1,6 +1,7 @@
 """Check actual responses against independent read-only database/catalog results."""
 
 import argparse
+import calendar
 import json
 import re
 from datetime import UTC, date, datetime, timedelta
@@ -13,12 +14,18 @@ args = parser.parse_args()
 folder = (ROOT / args.output).resolve()
 folder.relative_to(ROOT)
 independent = json.loads(
-    (ROOT / ".artifacts/chat-repairs/independent-counts.json").read_text(encoding="utf-8")
+    (ROOT / ".artifacts/chat-repairs/independent-counts.json").read_text(
+        encoding="utf-8"
+    )
 )
 rows = independent["catalog"]
 today = datetime.now(UTC).date()
 serial = today.year * 12 + today.month - 4
-month_start = date(serial // 12, serial % 12 + 1, today.day)
+month_start = date(
+    serial // 12,
+    serial % 12 + 1,
+    min(today.day, calendar.monthrange(serial // 12, serial % 12 + 1)[1]),
+)
 quarter_end = date(today.year, (today.month - 1) // 3 * 3 + 1, 1) - timedelta(days=1)
 quarter_start = date(quarter_end.year, (quarter_end.month - 1) // 3 * 3 + 1, 1)
 week_end = today - timedelta(days=today.weekday() + 1)
@@ -52,6 +59,7 @@ expected = {
     ),
 }
 expected["countries-group"] = expected["countries"]
+expected["plain-zero"] = expected["zero-term"]
 checks = []
 for path in sorted(folder.glob("*.json")):
     if path.stem == "catalog-page":
@@ -64,7 +72,8 @@ for path in sorted(folder.glob("*.json")):
         number = re.search(r"\*\*(\d+)(?:건|개)?(?: saved| distinct|\*\*)", answer)
         actual = int(number[1]) if number else None
         passed &= (
-            actual == expected[path.stem] and result.get("evidenceSufficiency") == "sufficient"
+            actual == expected[path.stem]
+            and result.get("evidenceSufficiency") == "sufficient"
         )
         checks.append(
             {
@@ -75,18 +84,52 @@ for path in sorted(folder.glob("*.json")):
             }
         )
     else:
-        passed &= result.get("evidenceSufficiency") == "insufficient" and not result.get(
-            "citations"
-        )
+        passed &= result.get(
+            "evidenceSufficiency"
+        ) == "insufficient" and not result.get("citations")
         checks.append({"question": path.stem, "clarification": True, "passed": passed})
     if path.stem in {"mentions", "quoted", "mentions-ko"}:
         term = "contamination" if path.stem == "mentions" else "data integrity"
         passed = bool(result.get("citations")) and all(
-            re.search(r"\b" + r"\s+".join(term.split()) + r"\b", c.get("excerpt", ""), re.I)
+            re.search(
+                r"\b" + r"\s+".join(term.split()) + r"\b", c.get("excerpt", ""), re.I
+            )
             for c in result["citations"]
         )
-        checks.append({"question": path.stem, "matching_citation_excerpts": True, "passed": passed})
-summary = {"checks": checks, "passed": len(checks) >= 18 and all(c["passed"] for c in checks)}
+        checks.append(
+            {
+                "question": path.stem,
+                "matching_citation_excerpts": True,
+                "passed": passed,
+            }
+        )
+    if path.stem in {"countries", "countries-group"}:
+        for country in ["India", "China"]:
+            total = sum(
+                in_range(r, "2025-01-01", "2025-12-31") and r["country"] == country
+                for r in rows
+            )
+            checks.append(
+                {
+                    "question": path.stem,
+                    "group": country,
+                    "passed": f"{country}: **{total}**" in answer,
+                }
+            )
+    if path.stem == "years":
+        for year in [2024, 2026]:
+            total = sum((r["issue_date"] or "").startswith(str(year)) for r in rows)
+            checks.append(
+                {
+                    "question": path.stem,
+                    "group": year,
+                    "passed": f"{year}-01-01 – {year}-12-31: **{total}**" in answer,
+                }
+            )
+summary = {
+    "checks": checks,
+    "passed": len(checks) >= 18 and all(c["passed"] for c in checks),
+}
 (folder.parent / (folder.name + "-verification.json")).write_text(
     json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
 )

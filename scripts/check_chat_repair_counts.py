@@ -61,6 +61,7 @@ async def main():
                 ("mentions", r"\mcontamination\M", None),
                 ("mentions-2025", r"\mcontamination\M", 2025),
                 ("quoted", r"\mdata\s+integrity\M", 2025),
+                ("plain-country-term", r"\mIndia\M", 2025),
                 ("zero-term", r"\mPharmaAgentOS nonexistent test phrase\M", None),
             ]:
                 ids = [

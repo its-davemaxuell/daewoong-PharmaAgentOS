@@ -360,6 +360,30 @@ def test_quoted_search_content_is_not_interpreted_as_country_or_date_filters():
     assert not query.country and not query.countries and not query.start and not query.end
 
 
+def test_plain_mention_phrase_does_not_need_a_predefined_topic():
+    query = parse_metadata_question("Count FDA letters mentioning nitrosamines in 2025")
+    assert query.text_terms == ("nitrosamines",) and query.error is None
+    assert query.start == date(2025, 1, 1)
+
+
+def test_plain_mentions_do_not_turn_search_words_into_metadata_constraints():
+    query = parse_metadata_question("Count FDA letters mentioning India in August 2025")
+    assert query.text_terms == ("india",) and query.country is None
+    assert query.start == date(2025, 8, 1)
+    query = parse_metadata_question("Count FDA letters mentioning 2025")
+    assert query.text_terms == ("2025",) and query.start is None
+
+
+def test_partly_recognized_compound_topic_is_not_silently_narrowed():
+    query = parse_metadata_question("Count FDA letters mentioning nitrosamines or contamination")
+    assert query.error == "content_count" and not query.text_terms
+
+
+def test_unknown_semantic_topic_does_not_become_an_unfiltered_total():
+    query = parse_metadata_question("Count FDA letters about nitrosamines")
+    assert query.error == "content_count"
+
+
 def test_unlisted_country_is_not_dropped_from_a_country_pair():
     query = parse_metadata_question("Count FDA letters from France and Germany in 2025")
     assert query.countries == ("france", "germany")

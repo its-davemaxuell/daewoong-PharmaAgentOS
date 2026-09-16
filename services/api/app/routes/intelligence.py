@@ -2268,7 +2268,13 @@ async def _query_rag_impl(
     else:
         resolved_letter_ids = await _resolve_question_letter_ids(
             session,
-            payload.model_copy(update={"question": re.sub(r'["“][^"”]+["”]', "", payload.question)})
+            payload.model_copy(
+                update={
+                    "question": mention_pattern(metadata_query.text_terms[0]).sub(
+                        "", payload.question
+                    )
+                }
+            )
             if metadata_query.text_terms
             else payload,
             principal=principal,
