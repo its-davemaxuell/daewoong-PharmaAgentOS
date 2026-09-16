@@ -20,6 +20,9 @@
   clarifications lost the prior operation. They now retain its date, country and
   count context. Quoted search phrases cannot silently become date/country filters
   or select only the company whose name appears inside the phrase.
+- Plain English mention phrases no longer need a fixed topic dictionary. A partly
+  recognized compound topic is clarified instead of silently counting just one
+  recognized word. A generic semantic topic cannot fall through to an unfiltered count.
 
 The existing current-version, source-availability, FDA Drugs scope, category and
 chunk ACL checks remain in force. Counts are over the accessible saved library.
@@ -30,8 +33,23 @@ public example changes.
 
 ## Verification
 
+| Question | Verified saved-library result |
+| --- | --- |
+| How many letters mention contamination? | 280, with matching source excerpts |
+| How many issued in 2025 mention data integrity? | 21 |
+| How many companies received letters in 2025? | 311 distinct recorded names; the letter total is 315 |
+| India and China, 2025? | 43 total: India 19, China 24 |
+| Compare 2024 and 2026 counts. | 172 and 220; 2025 is excluded |
+| Fiscal year 2025? | 277, using 2024-10-01 through 2025-09-30 |
+| Q1 FY2025? | 41, using October–December 2024 |
+| Past three months? | 58 on the September 16 audit date |
+| Last quarter? | 118 |
+| Last week? | Zero; an empty result is valid |
+
+These totals describe the audited snapshot, not fixed future values.
+
 - 15 real baseline requests retained under `.artifacts/chat-repairs/before/`.
-- 154 focused backend tests pass across metadata, existing RAG, conversation
+- 158 focused backend tests pass across metadata, existing RAG, conversation
   persistence, source focus and streaming. App/test Ruff checks pass.
 - Controlled tests cover repeated matches, line breaks, whole-word boundaries,
   restricted text, citation caps, empty results, selected dates, multiple countries,
@@ -53,11 +71,37 @@ clarification, correction returning 269 letters, contamination count 280, then
 2025 follow-up count 104. All four turns survive reload, matching source excerpts
 open correctly, and 768/390/320px layouts have no horizontal overflow.
 
-The first hosted mention count took 25.58 seconds; reading small batches of text
-over the database network was the bottleneck. The follow-up moves PostgreSQL
+The first hosted mention count took 25.58 seconds while transferring small batches
+of text over the database network. The follow-up moves PostgreSQL
 matching into the database and increases batches for lightweight rows. Six
 read-only PostgreSQL pattern checks cover case, line breaks, word boundaries and
-literal regex punctuation. Final publication and latency/browser reruns are pending.
+literal regex punctuation. The optimized path is included in the final deployment below.
+
+Application `7762aa3` also deploys successfully. Its 15-question repeat passes all
+24 independent checks, including each country/period subgroup. The contamination
+request drops from 25.58 to 7.94 seconds; the nonexistent phrase drops from 22.91 to
+6.00 seconds. Firefox Korean passes the same four-turn browser flow with zero page
+errors. Final plain-phrase guards are deployed in `41d3e7b`; Vercel and both Railway
+services report success. Its expanded 19-question matrix returns 200 for every
+request and passes all 28 independent checks. The final contamination request takes
+7.61 seconds, with the same 280 total. A 2025 text mention of India returns 23,
+distinct from the 19 letters addressed to India. Web/API health return 200.
+
+WebKit Korean completes all four answer, follow-up, reload, source-focus and
+768/390/320px overflow assertions. Its existing hard-reload menu-prefetch console
+issue recurs (15 messages, all in the reload phase); the audit exits nonzero and
+retains those diagnostics. No HTTP errors, failed questions or lost answers occur.
+This is not claimed as a clean WebKit console pass. Chromium English and Firefox
+Korean have zero page errors. Final phone and desktop source/answer screenshots
+were personally inspected.
+
+Code security and nine quality CI jobs pass at the `41d3e7b` checkpoint, including
+the full backend suite, frontend build/tests, both containers, schema and contracts.
+The full CI browser job is still running at this checkpoint.
+
+Evidence: `.artifacts/chat-repairs/after-final/`, `after-final-verification.json`,
+`independent-counts.json`, and `ui/` / `ui-final/`. Earlier baseline and slower
+after-runs remain preserved. Repeat captures use private isolated sessions.
 
 ## Intentional remaining boundaries
 

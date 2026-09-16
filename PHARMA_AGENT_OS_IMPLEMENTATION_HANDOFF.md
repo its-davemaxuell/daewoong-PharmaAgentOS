@@ -10,15 +10,22 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-16 weak chatbot response repairs (publication in progress):** A new
+**2026-09-16 weak chatbot response repairs (deployed):** A new
 15-question baseline reproduced avoidable refusals and a wrong company count
 (letters were counted as companies). The metadata parser/executor now supports
 literal mention counts over streamed authorized current text, distinct recorded
 company names, country unions, separate periods, fiscal years/quarters and common
 relative periods. Short clarification replies retain the operation and constraints.
-154 focused backend cases and app/test lint pass; independent read-only production
+158 focused backend cases and app/test lint pass; independent read-only production
 SQL finds 280 contamination mentions and 21 data-integrity mentions in 2025.
-Deployment and hosted reruns remain pending. See
+Application `41d3e7b` is pushed/deployed with successful Vercel/Railway statuses and
+healthy web/API endpoints. All 19 final live requests return 200, and all 28
+independent checks pass. The mention count improves from 25.58 to 7.61 seconds.
+Chromium English, Firefox Korean and WebKit Korean complete four-turn clarification,
+literal-count, follow-up and reload flows, including source focus and phone layouts.
+WebKit retains the previously recorded menu-prefetch errors during hard reload;
+this is not a clean console pass. Code security and nine quality CI jobs pass;
+the full CI browser job is still running at the publication checkpoint. See
 [the repair record](docs/assurance/chat-response-repairs-20260916.md).
 
 **2026-09-16 chatbot metadata and workflow testing:** The hosted catalog contains

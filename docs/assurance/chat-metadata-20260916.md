@@ -3,6 +3,11 @@
 Date: September 16, 2026. Scope: Chat question routing, retained FDA metadata,
 source inspection and the existing English/Korean interaction flow.
 
+**Follow-up:** Several limitations below were subsequently repaired. See
+[the response repair record](chat-response-repairs-20260916.md) for literal mention
+counts, fiscal calendars, multiple countries/periods and clarification follow-ups.
+This document preserves the original testing checkpoint.
+
 ## Baseline findings
 
 The live catalog has **767 letters**, with **zero missing issue dates** and

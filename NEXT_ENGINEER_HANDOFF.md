@@ -4,6 +4,15 @@ Prepared: **2026-09-11**
 Requested outcome: **launch-ready production on Vercel and Supabase**  
 Current status: **FDA library, grounded OpenAI chat and durable FDA Research Agent hosted; full internal case-agent qualification incomplete**
 
+**Latest chatbot repairs (2026-09-16):** Application `41d3e7b` is deployed. Previously
+rejected literal mention, fiscal-calendar, country-pair and disjoint-year queries
+now execute; company counts no longer return letter totals, and clarification
+replies retain context. PostgreSQL matching reduces the tested mention query from
+25.58 to 7.61 seconds. Final verification: 158 focused backend cases, 19 live
+questions/28 independent checks, and three hosted browser flows. See
+[the response repair record](docs/assurance/chat-response-repairs-20260916.md)
+for exact scope, the remaining WebKit prefetch diagnostics, and evidence.
+
 **Latest chatbot verification (2026-09-16):** Application `c5a0bb5` is deployed.
 Chat now queries retained issue/posting dates, exact metadata counts, country,
 company and date groups, with date-constrained content retrieval. All 767 saved
