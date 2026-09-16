@@ -10,14 +10,20 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-16 single-ball startup refinement:** The first loading screen now shows
+**2026-09-16 single-ball startup refinement (deployed):** The first loading screen now shows
 one centered bouncing ball in a Daewoong-orange tile. Removed the slide, pulse and
 drop variants and the four-tile grid. Actual preparation progress, recovery controls,
 hidden-page pausing and reduced motion remain. Production build (including TypeScript)
 and lint pass. All 12 startup scenarios pass across Chromium, Firefox and WebKit,
 including exactly one animated ball, phone layouts, reduced motion, retry, continue,
 and navigation without replay. Personally inspected desktop and phone screenshots
-under `.artifacts/ui-audit/startup-browser/`. Publication verification follows the push.
+under `.artifacts/ui-audit/startup-browser/`. Application `21478f0` is pushed and
+deployed; Vercel and both Railway integrations report success. A native Python
+Playwright check confirms the hosted ball animates, remains centered at 1280px and
+390px, respects reduced motion and enters Overview. Web health returns 200 and
+Chromium reports no page errors. The fresh session used the existing Retry recovery.
+Hosted captures/results are in `.artifacts/startup-single-ball/`. Code-security CI
+passes; the wider quality workflow is still running at this publication checkpoint.
 
 **2026-09-16 weak chatbot response repairs (deployed):** A new
 15-question baseline reproduced avoidable refusals and a wrong company count
