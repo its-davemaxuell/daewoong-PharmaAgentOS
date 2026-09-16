@@ -18,4 +18,7 @@ export type PublicExample = {
   download: string;
   sha256: string;
 };
-export type ExampleSummary = Omit<PublicExample, "sections" | "sources" | "input" | "steps" | "limitations" | "sha256"> & { sourceCount: number };
+export type ExampleSummary = Omit<PublicExample, "sections" | "sources" | "input" | "steps" | "limitations" | "sha256"> & {
+  sourceCount: number;
+  preview: PublicExample["sections"][number];
+};

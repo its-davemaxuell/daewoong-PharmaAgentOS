@@ -1,5 +1,15 @@
 # PharmaAgent OS
 
+## September 16 interaction refinement
+
+Lead with useful actions and real output. Visitors select a public result, inspect
+its sections, compare translations with the FDA original, and search its evidence.
+Help offers an editable question and a retained example; transferring the question
+prepares Research without starting it. Specialist selection previews actual
+reference output while keeping unavailable execution and simulated review explicit.
+Long explanations belong in disclosures. Keep provenance, human-review labels and
+complete downloads accessible. Preserve the existing neumorphism and motion rules.
+
 ## Public pipeline examples
 
 The Examples area is visible to every visitor and separate from private browser

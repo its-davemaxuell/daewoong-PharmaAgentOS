@@ -73,6 +73,16 @@ Reduced motion removes nonessential movement, loops and transitions, including
 when the preference changes during a session. Forced colors keeps every control
 and selection distinguishable without shadows.
 
+## Content and interaction
+
+Prefer an editable question, result selector, evidence search or direct action to
+an explanatory paragraph. Examples use a compact selection list and actual output
+preview. Result readers expose one section at a time with complete output available;
+translation comparison pairs each section with its exact retained original.
+Keep input, run provenance, role definitions and guidance one disclosure away.
+Preserve visible draft/synthetic labels, complete source text and full exports.
+Mobile selectors scroll within their own bounds and retain native keyboard access.
+
 ## Verification
 
 Inspect Chromium renders at desktop, tablet and phone widths in both languages,

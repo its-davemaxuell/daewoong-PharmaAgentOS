@@ -10,6 +10,17 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 interaction refinement:** Examples now use selectable actual output
+previews and a section reader with original comparison, evidence search and run
+details. Help provides an editable question with retained previews and transfers
+only a draft to Research. Specialists show actual synthetic outputs with roles and
+tools in disclosures; Chat/Research orientation and Overview inbox counts are direct
+actions. The 18 published snapshots and their hashes are unchanged. Existing review,
+source provenance, session privacy, unavailable execution and motion rules remain.
+Build, TypeScript, lint, 99 unit tests and 90 focused browser cases pass across the
+recorded runs. All four Chromium startup scenarios pass. Publication is tracked in
+[the refinement record](docs/assurance/interactive-interface-20260916.md).
+
 **2026-09-16 public pipeline examples (deployed):** Published a public `/examples` gallery
 and 18 inspectable results across Chat, Research, document summary/findings/translation,
 search, trends, specialist services, review and operations. Nine results use hosted

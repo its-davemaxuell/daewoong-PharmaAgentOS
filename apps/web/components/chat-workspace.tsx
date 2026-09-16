@@ -1408,9 +1408,9 @@ export function ChatWorkspace({
         {!turns.length ? (
           <section className="chat-welcome" key={activeLandingSeed}>
             <ol className="chat-evidence-flow" aria-label={text("From source to review", "원문부터 검토까지")}>
-              <li><FileText size={32} aria-hidden="true" /><span>{text("FDA sources", "FDA 원문")}</span></li>
-              <li><MessageSquare size={32} aria-hidden="true" /><span>{text("Cited answers", "근거 있는 답변")}</span></li>
-              <li><ShieldCheck size={32} aria-hidden="true" /><span>{text("Your review", "직접 검토")}</span></li>
+              <li><Link href="/drug-letters"><FileText size={32} aria-hidden="true" /><span>{text("FDA sources", "FDA 원문")}</span></Link></li>
+              <li><Link href="/examples/chat-quality-unit"><MessageSquare size={32} aria-hidden="true" /><span>{text("Cited answers", "근거 있는 답변")}</span></Link></li>
+              <li><Link href="/examples/review-package"><ShieldCheck size={32} aria-hidden="true" /><span>{text("Your review", "직접 검토")}</span></Link></li>
             </ol>
             <h2>{text(
               initialLetterId ? "Let's read this letter." : "A question. A clearer picture.",

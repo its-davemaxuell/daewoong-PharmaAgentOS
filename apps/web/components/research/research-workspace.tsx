@@ -280,9 +280,9 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
       </section>
       <section className={styles.examples} aria-labelledby="research-examples"><h2 id="research-examples">{text("Try a topic", "주제로 시작하기")}</h2><div className={styles.exampleTopics}>{examples.map((example) => <button key={example.en} type="button" disabled={pending || !hydrated} onClick={() => { setObjective(example.prompt); document.getElementById("research-goal")?.focus(); }}><example.icon size={22} aria-hidden="true" /><span>{text(example.en, example.ko)}</span><ArrowRight className={styles.exampleArrow} size={18} aria-hidden="true" /></button>)}</div></section>
       <ol className={styles.workflow} aria-label={text("How research works", "리서치 진행 방식")}>
-        <li><Target size={25} aria-hidden="true" /><span>{text("Your question", "질문 입력")}</span><ArrowRight size={17} aria-hidden="true" /></li>
-        <li><Search size={25} aria-hidden="true" /><span>{text("Agent checks sources", "에이전트 근거 확인")}</span><ArrowRight size={17} aria-hidden="true" /></li>
-        <li><FileText size={25} aria-hidden="true" /><span>{text("Your review", "담당자 검토")}</span></li>
+        <li><button type="button" onClick={() => document.getElementById("research-goal")?.focus()}><Target size={25} aria-hidden="true" /><span>{text("Edit question", "질문 편집")}</span></button><ArrowRight size={17} aria-hidden="true" /></li>
+        <li><Link href="/drug-letters"><Search size={25} aria-hidden="true" /><span>{text("Explore sources", "원문 탐색")}</span></Link><ArrowRight size={17} aria-hidden="true" /></li>
+        <li><Link href={`/examples/${locale === "ko" ? "research-laboratory-ko" : "research-contamination"}`}><FileText size={25} aria-hidden="true" /><span>{text("Open a real brief", "실제 브리핑 열기")}</span></Link></li>
       </ol>
       <ServiceScope />
     </div> : !run && !error ? <div className={styles.taskLoading}>

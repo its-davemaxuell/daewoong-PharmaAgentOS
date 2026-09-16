@@ -12,5 +12,5 @@ export default async function ExamplePage({ params }: Props) {
   const { slug } = await params;
   const example = publicExamples.find(item => item.slug === slug);
   if (!example) notFound();
-  return <ExampleDetail example={example} />;
+  return <ExampleDetail key={example.slug} example={example} />;
 }

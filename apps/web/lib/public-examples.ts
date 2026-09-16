@@ -11,5 +11,6 @@ export function exampleSummaries(): ExampleSummary[] {
     group: example.group, origin: example.origin, language: example.language,
     executedAt: example.executedAt, status: example.status, method: example.method,
     recordId: example.recordId, download: example.download, sourceCount: example.sources.length,
+    preview: example.sections[example.slug === "document-translation" ? 1 : 0],
   }));
 }

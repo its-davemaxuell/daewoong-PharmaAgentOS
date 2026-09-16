@@ -429,6 +429,9 @@
   color: var(--os-muted);
   font-size: 12px;
 }
+.overview-inbox-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.overview-inbox-shortcuts a { display: grid; gap: 8px; min-height: 72px; padding: 14px 8px; border-radius: 14px; color: var(--os-muted); text-align: center; text-decoration: none; background: var(--os-canvas); box-shadow: var(--neu-raised); }
+.overview-inbox-shortcuts strong { color: var(--os-ink); font-size: 24px; }
 .continuity-overview-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;

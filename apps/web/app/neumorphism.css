@@ -239,8 +239,8 @@ FORM: User-pinned neumorphism across the existing operational website.
   min-height: 126px;
   color: var(--os-ink);
 }
-.neumorphic-workspace .chat-evidence-flow li > svg { background: var(--os-canvas); box-shadow: var(--neu-raised); border-radius: 18px; }
-.neumorphic-workspace .chat-evidence-flow li:nth-child(2) > svg { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); }
+.neumorphic-workspace .chat-evidence-flow li > a > svg { background: var(--os-canvas); box-shadow: var(--neu-raised); border-radius: 18px; }
+.neumorphic-workspace .chat-evidence-flow li:nth-child(2) > a > svg { background: var(--os-primary-soft); box-shadow: var(--neu-pressed); }
 .neumorphic-workspace .chat-evidence-flow li + li::before { background: #8ea4c1; }
 .neumorphic-workspace .chat-workbench .chat-composer-wrap { background: var(--os-canvas); padding-bottom: 20px; }
 .neumorphic-workspace.continuity-shell .chat-workbench .chat-composer {

@@ -1,49 +1,71 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "@/components/icons/ArrowRight";
 import { BookOpen } from "@/components/icons/BookOpen";
 import { Download } from "@/components/icons/Download";
 import { MessageSquareText } from "@/components/icons/MessageSquareText";
-import { Network } from "@/components/icons/Network";
-import { Play } from "@/components/icons/Play";
 import { Settings } from "@/components/icons/Settings";
-import { ShieldCheck } from "@/components/icons/ShieldCheck";
-import { Square } from "@/components/icons/Square";
+import { ExamplePreview } from "@/components/examples/example-preview";
+import { SelectionGroup, SelectionIndicator } from "@/components/motion/selection";
+import type { ExampleSummary } from "@/lib/example-types";
+import { RESEARCH_DRAFT_KEY } from "@/lib/research-draft";
 import { useI18n } from "@/lib/i18n";
-import { ResearchJourney } from "./research-journey";
 import { ServiceScope } from "./service-scope";
 import styles from "./employee-guide.module.css";
 
-export function EmployeeGuide() {
-  const { text } = useI18n();
+const topics = [
+  { slug: "research-contamination", title: ["Contamination control", "오염 관리"], prompt: ["Compare contamination-control observations in at least two companies' saved FDA warning letters. Cite the evidence and suggest conditional review questions for a sterile-products team.", "저장된 FDA 경고서한에서 최소 두 회사의 오염 관리 관찰사항을 비교하세요. 근거를 인용하고 무균 제품 담당 팀이 검토할 조건부 질문을 제시하세요."] },
+  { slug: "research-laboratory-ko", title: ["Laboratory investigations", "시험실 조사"], prompt: ["Compare laboratory investigations and out-of-specification results in at least two companies' FDA warning letters. Identify supported findings, differences and questions for a human reviewer.", "FDA 경고서한에서 최소 두 회사의 시험실 조사와 규격 일탈 결과 처리를 비교하세요. 근거가 있는 발견사항, 차이점, 담당자가 검토할 질문을 정리하세요."] },
+] as const;
+const subscribeHydration = () => () => {};
+const hydratedSnapshot = () => true;
+const serverHydrationSnapshot = () => false;
+
+export function EmployeeGuide({ examples }: { examples: ExampleSummary[] }) {
+  const { text, locale } = useI18n();
+  const router = useRouter();
+  const hydrated = useSyncExternalStore(subscribeHydration, hydratedSnapshot, serverHydrationSnapshot);
+  const [selected, setSelected] = useState(0);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [error, setError] = useState(false);
+  const topic = topics[selected];
+  const draftKey = `${selected}:${locale}`;
+  const question = drafts[draftKey] ?? text(topic.prompt[0], topic.prompt[1]);
+  const example = examples.find(item => item.slug === topic.slug);
+  const useQuestion = () => {
+    try { sessionStorage.setItem(RESEARCH_DRAFT_KEY, question); router.push("/research"); }
+    catch { setError(true); }
+  };
   const destinations = [
-    { icon: Network, href: "/research", title: text("Research", "리서치"), detail: text("Start a question or continue a saved research task.", "새 질문을 시작하거나 저장된 리서치를 이어가세요.") },
-    { icon: BookOpen, href: "/drug-letters", title: text("FDA sources", "FDA 원문"), detail: text("Find warning letters and inspect the original evidence.", "경고서한을 찾고 원문 근거를 확인하세요.") },
-    { icon: Download, href: "/saved-work", title: text("Saved work", "저장한 작업"), detail: text("Find brief snapshots, bookmarked sources, saved views, and local drafts.", "브리핑 스냅샷, 저장한 원문, 저장한 보기와 기기 내 초안을 찾으세요.") },
-    { icon: MessageSquareText, href: "/inbox", title: text("Inbox", "받은 자료"), detail: text("Organize source updates. Personal triage does not approve evidence.", "원문 업데이트를 정리하세요. 개인 자료 분류는 근거 승인이 아닙니다.") },
-    { icon: Settings, href: "/settings", title: text("Settings", "설정"), detail: text("Language and workspace preferences.", "언어 및 워크스페이스 환경설정입니다.") },
-  ];
-  const controls = [
-    { icon: Square, title: text("Stop research", "리서치 중지"), detail: text("Stop further work; retain progress.", "추가 작업 중지 · 진행 내용 보관") },
-    { icon: Play, title: text("Resume research", "리서치 이어서 진행"), detail: text("Continue from saved progress.", "저장한 단계부터 다시 진행") },
-    { icon: BookOpen, title: text("Source references", "출처 번호"), detail: text("Select S1, S2… to open evidence.", "S1, S2… 선택으로 원문 열기") },
-    { icon: Download, title: text("Download", "다운로드"), detail: text("Keep the brief and its sources.", "브리핑과 출처를 파일로 보관") },
+    { icon: BookOpen, href: "/drug-letters", title: text("Find FDA sources", "FDA 원문 찾기") },
+    { icon: Download, href: "/saved-work", title: text("Open saved work", "저장한 작업 열기") },
+    { icon: MessageSquareText, href: "/inbox", title: text("Organize inbox", "받은 자료 정리") },
+    { icon: Settings, href: "/settings", title: text("Change preferences", "환경설정 변경") },
   ];
   const questions = [
-    ["Will research continue after I close the page?", "페이지를 닫아도 계속 진행되나요?", "Yes. Reopen Research agent in the same browser session to see saved progress and results.", "네. 같은 브라우저 세션에서 리서치 에이전트를 다시 열면 진행 상황과 결과를 확인할 수 있습니다."],
-    ["Do I need AI settings or an account?", "AI 설정이나 계정이 필요한가요?", "No. Choose an example or write your goal in Korean or English.", "필요하지 않습니다. 예시를 고르거나 한국어·영어로 목표를 적어 주세요."],
-    ["How do I ask about a particular letter?", "특정 경고서한을 질문하려면?", "Find the company in the FDA library, open its letter, then choose the AI question action.", "FDA 자료실에서 회사명 검색 → 경고서한 열기 → AI 질문을 선택하세요."],
-    ["Where is my previous work?", "이전 작업은 어디에 있나요?", "Continue tasks in Research. Open brief snapshots and bookmarks in Saved work. Recent conversations are in the sidebar. Local drafts are separate device-only notes that have not been submitted.", "진행 중인 작업은 리서치에서, 브리핑 스냅샷과 원문 즐겨찾기는 저장한 작업에서 찾으세요. 최근 대화는 사이드바에 있습니다. 기기 내 초안은 제출되지 않은 별도 메모입니다."],
-    ["What if a task or source fails?", "작업이나 자료를 불러오지 못하면?", "Retry or reload. If evidence is insufficient, narrow the topic or select a specific company. Contact your service administrator if the problem continues.", "다시 시도하거나 새로고침하세요. 근거가 부족하면 주제나 회사를 구체적으로 지정하세요. 문제가 계속되면 서비스 담당자에게 알려주세요."],
+    ["Will research continue after I close the page?", "페이지를 닫아도 계속 진행되나요?", "Yes. Reopen Research in the same browser session to continue.", "네. 같은 브라우저 세션에서 리서치를 다시 열어 이어가세요."],
+    ["Do I need AI settings or an account?", "AI 설정이나 계정이 필요한가요?", "No. Edit a question and open Research.", "필요하지 않습니다. 질문을 편집하고 리서치를 여세요."],
+    ["How do I ask about a particular letter?", "특정 경고서한을 질문하려면?", "FDA sources → find a company → open its letter → Ask AI.", "FDA 원문 → 회사 검색 → 경고서한 열기 → AI 질문."],
+    ["Where is my previous work?", "이전 작업은 어디에 있나요?", "Research: tasks. Saved work: briefs and sources. Sidebar: chats. Local drafts: unsubmitted device-only notes.", "리서치: 작업. 저장한 작업: 브리핑과 원문. 사이드바: 대화. 기기 내 초안: 제출되지 않은 메모."],
+    ["What if a task or source fails?", "작업이나 자료를 불러오지 못하면?", "Retry. For insufficient evidence, narrow the topic or company. Contact your service administrator if the problem continues.", "다시 시도하세요. 근거가 부족하면 주제나 회사를 좁혀 주세요. 계속 실패하면 서비스 담당자에게 알려주세요."],
   ];
   return <article className={styles.guide}>
-    <header><h1>{text("Help", "도움말")}</h1><ResearchJourney /><Link className="button button--primary" href="/research">{text("Start agent research", "에이전트 리서치 시작")}<ArrowRight size={18} aria-hidden="true" /></Link></header>
-    <section aria-labelledby="guide-destinations"><h2 id="guide-destinations">{text("Choose your task", "필요한 작업 선택")}</h2><div className={styles.destinations}>{destinations.map(({icon: Icon, href, title, detail}) => <Link key={href} href={href}><Icon size={25} aria-hidden="true" /><span><strong>{title}</strong><small>{detail}</small></span><ArrowRight size={19} aria-hidden="true" /></Link>)}</div></section>
-    <section aria-labelledby="guide-controls"><h2 id="guide-controls">{text("Controls at a glance", "주요 기능 한눈에 보기")}</h2><dl className={styles.controls}>{controls.map(({icon: Icon, title, detail}) => <div key={title}><dt><Icon size={21} aria-hidden="true" />{title}</dt><dd>{detail}</dd></div>)}</dl></section>
-    <section id="availability"><h2>{text("Scope & storage", "이용 범위와 저장")}</h2><ServiceScope /></section>
+    <header><h1>{text("Help", "도움말")}</h1><p>{text("Try a question. Inspect a real result.", "질문을 만들고 실제 결과를 확인하세요.")}</p></header>
+    <div className={styles.tryGrid}>
+      <section className={styles.builder} aria-labelledby="guide-draft-heading"><h2 id="guide-draft-heading">{text("Build a question", "질문 만들기")}</h2>
+        <SelectionGroup><div className={styles.topics} aria-label={text("Research topic", "리서치 주제")}>{topics.map((item, i) => <button className="ui-selection-control" type="button" key={item.slug} disabled={!hydrated} aria-pressed={selected === i} onClick={() => { setSelected(i); setError(false); }}>{selected === i && <SelectionIndicator />}{text(item.title[0], item.title[1])}</button>)}</div></SelectionGroup>
+        <label htmlFor="guide-question">{text("Your question", "질문 내용")}</label><textarea id="guide-question" rows={7} maxLength={2000} value={question} disabled={!hydrated} onChange={event => { const value = event.target.value; setDrafts(current => ({ ...current, [draftKey]: value })); }} />
+        <div className={styles.useQuestion}><span>{text("Editable draft", "편집 가능한 초안")}</span><button type="button" className="button button--primary" disabled={!hydrated || question.trim().length < 8} onClick={useQuestion}>{text("Use in Research", "리서치에서 사용")}<ArrowRight size={17} /></button></div>
+        {error && <p role="alert">{text("Could not transfer the draft. Copy your question into Research.", "초안을 전달하지 못했습니다. 질문을 복사해 리서치에 붙여 넣으세요.")} <Link href="/research">{text("Open Research", "리서치 열기")}</Link></p>}
+      </section>
+      {example && <ExamplePreview example={example} />}
+    </div>
+    <nav className={styles.destinations} aria-label={text("Workspace shortcuts", "워크스페이스 바로가기")}>{destinations.map(({ icon: Icon, href, title }) => <Link key={href} href={href}><Icon size={21} /><span>{title}</span><ArrowRight size={17} /></Link>)}</nav>
+    <section id="availability" className={styles.availability}><ServiceScope /></section>
     <section className={styles.faq}><h2>{text("Common questions", "자주 묻는 질문")}</h2>{questions.map(([en, ko, bodyEn, bodyKo]) => <details key={en}><summary>{text(en, ko)}</summary><p>{text(bodyEn, bodyKo)}</p></details>)}</section>
-    <section id="credits" aria-labelledby="guide-credits"><h2 id="guide-credits">{text("Icon credits", "아이콘 출처")}</h2><p>{text("Ultimate Light icons by ", "Ultimate Light 아이콘 제작: ")}<a href="https://www.streamlinehq.com/">Streamline</a>{text(". Used under ", ". 이용 라이선스: ")}<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>{text("; colors, weight and selected symbols adapted for this workspace.", ". 이 워크스페이스에 맞게 색상, 선 굵기와 일부 기호를 조정했습니다.")}</p></section>
-    <footer><ShieldCheck size={20} aria-hidden="true" /><p>{text("AI drafts can be wrong. Check the FDA originals before use.", "AI 초안에는 오류가 있을 수 있습니다. 사용 전 FDA 원문을 확인하세요.")}</p></footer>
+    <details id="credits" className={styles.credits}><summary>{text("Icon credits", "아이콘 출처")}</summary><p>Ultimate Light · <a href="https://www.streamlinehq.com/">Streamline</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. {text("Colors, weight and selected symbols adapted for this workspace.", "색상, 선 굵기와 일부 기호를 이 워크스페이스에 맞게 조정했습니다.")}</p></details>
   </article>;
 }

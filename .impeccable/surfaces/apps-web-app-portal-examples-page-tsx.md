@@ -11,10 +11,12 @@ Mode: Explore. Audience: visitors who want to see a service's output before runn
 a task. Visual authority: DESIGN.md and the deployed cool porcelain neumorphism.
 
 The gallery starts with a public label and separates hosted FDA runs from synthetic
-reference demonstrations. Categories and search narrow the collection without a
-route change. Detail pages show actual input and readable output before evidence,
-execution details and downloadable provenance. Keep original generated language
-explicit while providing English/Korean interface labels.
+reference demonstrations. Categories, origin and search narrow a compact selection
+list. Selecting a result shows an actual retained excerpt beside it. Detail pages
+lead with a section reader: previous/next, section selection, complete output and
+translation/original comparison. Evidence search and exact source disclosures form
+a separate view; input and execution provenance remain available on demand.
+Keep original generated language explicit with English/Korean interface labels.
 
 Paired shadows, recessed search, shared tactile controls and cobalt selections
 extend the existing shell. Two columns become one on mobile. Long source anchors,

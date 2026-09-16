@@ -3,6 +3,11 @@
   margin: 0 auto;
   color: var(--os-ink);
 }
+.definitionDetails { margin-bottom: 22px; }
+.definitionDetails summary { min-height: 44px; padding: 12px 0; font-weight: 600; color: var(--os-primary); }
+.definitionDetails p { line-height: 1.8; }
+.detail [data-example-preview] { box-shadow: none; padding: 8px 0; border-radius: 0; }
+.detail [data-example-preview] h2 { font-size: 1.3rem; }
 .page * {
   box-sizing: border-box;
 }
@@ -216,6 +221,8 @@
     grid-template-columns: 1fr;
   }
   .roster {
+    max-height: 240px;
+    overflow-y: auto;
     border-right: 0;
     border-bottom: 1px solid var(--os-rule);
     padding: 12px;

@@ -8,7 +8,8 @@ process.env.PLAYWRIGHT_BROWSERS_PATH ||= path.join(root, '.artifacts/playwright-
 const { chromium, firefox, webkit, expect } = require('../apps/web/node_modules/@playwright/test');
 const examples = require('../apps/web/content/examples/catalog.json');
 const base = process.argv[2] || 'https://pharmaagent-os-ochre.vercel.app';
-const output = path.join(root, '.artifacts/pipeline-examples/browser-hosted');
+const output = path.join(root, '.artifacts', process.argv[3] || 'pipeline-examples/browser-hosted');
+if (!output.startsWith(path.join(root, '.artifacts') + path.sep)) throw new Error('Audit output must stay inside workspace .artifacts');
 fs.mkdirSync(output, { recursive: true });
 
 async function ready(page, locale, result) {
@@ -16,7 +17,7 @@ async function ready(page, locale, result) {
     const gate = document.querySelector('[data-startup-gate]');
     return !gate || ['entered', 'attention'].includes(gate.dataset.state);
   }, undefined, { timeout: 45000 });
-  if (await page.locator('[data-startup-gate]').getAttribute('data-state') === 'attention') {
+  if (await page.locator('[data-startup-gate]').count() && await page.locator('[data-startup-gate]').getAttribute('data-state') === 'attention') {
     result.startupRetry = true;
     await page.getByRole('button', { name: locale === 'en' ? 'Retry' : '다시 시도', exact: true }).click();
     await expect(page.locator('[data-startup-gate]')).toHaveAttribute('data-state', 'entered', { timeout: 40000 });
@@ -37,20 +38,42 @@ async function audit(browser, name, locale, width) {
   });
   const screenshot = async label => {
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.screenshot({ path: path.join(output, `${name}-${locale}-${width}-${label}.png`), fullPage: label !== 'translation' });
+    await page.screenshot({ path: path.join(output, `${name}-${locale}-${width}-${label}.png`), fullPage: label !== 'translation', animations: 'disabled' });
   };
   const noOverflow = async () => expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  const t = (en, ko) => locale === 'en' ? en : ko;
+  const navigate = async route => {
+    const mobile = page.getByRole('button', { name: t('Open navigation', '탐색 메뉴 열기'), exact: true });
+    if (await mobile.isVisible()) await mobile.click();
+    await page.locator(`.continuity-nav[href="${route}"]:visible`).click();
+    await expect(page).toHaveURL(`${base}${route}`);
+  };
   try {
     expect((await page.goto(`${base}/examples`, { waitUntil: 'domcontentloaded' })).status()).toBe(200);
     await ready(page, locale, result);
-    await expect(page.locator('main a[href^="/examples/"]').filter({ has: page.locator('h2') })).toHaveCount(examples.length);
+    await expect(page.locator('main nav a[href^="/examples/"]')).toHaveCount(examples.length);
     await noOverflow();
     await screenshot('gallery');
     for (const example of examples) {
-      await page.locator(`main a[href="/examples/${example.slug}"]`).click();
+      await page.locator(`main nav a[href="/examples/${example.slug}"]`).click();
       await expect(page.locator('main h1')).toHaveText(example.title[locale === 'ko' ? 1 : 0]);
       await noOverflow();
-      const references = page.getByRole('link', { name: /^(Source|근거) [DEI]/ });
+      if (example.sections.length > 1) {
+        const section = page.getByRole('combobox', { name: t('Result section', '결과 구간') });
+        await section.selectOption(String(example.sections.length - 1));
+        await expect(page.locator('#example-result-view')).toContainText(example.sections.at(-1).title);
+        await expect(page.getByRole('button', { name: t('Next section', '다음 구간'), exact: true })).toBeDisabled();
+        await section.selectOption('0');
+      }
+      if (example.slug === 'document-translation') {
+        await page.getByRole('button', { name: t('Next section', '다음 구간'), exact: true }).click();
+        await page.getByRole('button', { name: t('Compare original', '원문 대조'), exact: true }).click();
+        const source = example.sources.find(source => example.sections[1].sourceIds.includes(source.id));
+        await expect(page.locator('#example-result-view blockquote')).toHaveText(source.excerpt);
+        await noOverflow();
+        await screenshot('translation');
+      }
+      const references = page.getByRole('link', { name: /^(Source|근거) [DESI]/ });
       if (await references.count()) {
         const target = await references.first().getAttribute('href');
         await references.first().click();
@@ -66,11 +89,34 @@ async function audit(browser, name, locale, width) {
       expect(snapshot.human_approved).toBe(false);
       expect(snapshot.synthetic_sources).toBe(example.origin === 'reference');
       if (['document-findings', 'review-package'].includes(example.slug)) await screenshot(example.slug);
-      if (example.slug === 'document-translation' && locale === 'ko') await screenshot('translation');
       result.inspected.push(example.slug);
       await page.locator('main a[href="/examples"]').click();
-      await expect(page.locator('main a[href^="/examples/"]').filter({ has: page.locator('h2') })).toHaveCount(examples.length);
+      await expect(page.locator('main nav a[href^="/examples/"]')).toHaveCount(examples.length);
     }
+    await navigate('/help');
+    const question = page.getByRole('textbox', { name: t('Your question', '질문 내용'), exact: true });
+    const draft = t('Compare cleaning-validation evidence and list questions for human review.', '세척 밸리데이션 근거를 비교하고 담당자가 검토할 질문을 정리하세요.');
+    await question.fill(draft);
+    await page.getByRole('button', { name: t('Laboratory investigations', '시험실 조사'), exact: true }).click();
+    await expect(page.locator('[data-example-preview="research-laboratory-ko"]')).toBeVisible();
+    await page.getByRole('button', { name: t('Contamination control', '오염 관리'), exact: true }).click();
+    await expect(question).toHaveValue(draft);
+    await noOverflow();
+    await screenshot('help');
+    await page.getByRole('button', { name: t('Use in Research', '리서치에서 사용'), exact: true }).click();
+    await expect(page.locator('#research-goal').filter({ visible: true })).toHaveValue(draft);
+    await page.getByRole('button', { name: t('Edit question', '질문 편집'), exact: true }).click();
+    await expect(page.locator('#research-goal').filter({ visible: true })).toBeFocused();
+    await screenshot('research');
+    await navigate('/agents');
+    await page.getByRole('navigation', { name: t('Agent definitions', '에이전트 정의') }).getByRole('button', { name: /Internal knowledge|내부 지식 에이전트/ }).click();
+    await expect(page.locator('[data-example-preview="internal-knowledge"]')).toBeVisible();
+    await noOverflow();
+    await screenshot('agents');
+    await navigate('/ask');
+    await expect(page.locator('.chat-evidence-flow a')).toHaveCount(3);
+    await noOverflow();
+    await screenshot('chat');
     expect(result.errors).toEqual([]);
     expect(result.submissions).toEqual([]);
     result.passed = true;

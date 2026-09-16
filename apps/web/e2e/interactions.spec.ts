@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { retainFixtureSession } from "./session-fixture";
+import { samplePress } from "./press-samples";
 
 const thread = "11111111-1111-4111-8111-111111111111";
 test.beforeEach(async ({ context }) => {
@@ -140,6 +141,7 @@ test("conversation actions support arrow keys, Home, End, Escape and native Tab 
   await page.goto(`/chat/${thread}`);
   const menu = page.locator(".chat-thread-menu");
   const summary = menu.locator("summary");
+  await expect(menu.locator("button").first()).toBeEnabled();
   await summary.focus(); await page.keyboard.press("ArrowDown");
   await expect(menu).toHaveAttribute("open", "");
   const choices = menu.locator("button:enabled");
@@ -162,15 +164,7 @@ test("research task keys interpolate keyboard depth without starting a run", asy
   await expect(task).toBeEnabled(); await task.focus();
   await task.evaluate(node => Promise.allSettled(node.getAnimations().map(animation => animation.finished)));
   const raised = await task.evaluate(node => getComputedStyle(node).boxShadow);
-  await page.keyboard.down("Space");
-  const samples = await task.evaluate(node => new Promise<string[]>(resolve => {
-    const values: string[] = [], start = performance.now();
-    const frame = () => {
-      values.push(getComputedStyle(node).boxShadow);
-      if (performance.now() - start < 200) requestAnimationFrame(frame); else resolve(values);
-    };
-    requestAnimationFrame(frame);
-  }));
+  const samples = await samplePress(task, "keydown", () => page.keyboard.down("Space"));
   expect(new Set(samples).size).toBeGreaterThan(2);
   expect(samples.at(-1)).not.toBe(raised);
   await page.keyboard.up("Space");

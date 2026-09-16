@@ -7,12 +7,16 @@ import { GitBranch } from "@/components/icons/GitBranch";
 import { Search } from "@/components/icons/Search";
 import { ShieldCheck } from "@/components/icons/ShieldCheck";
 import { agentDefinitions } from "@/lib/agent-workspace";
+import type { ExampleSummary } from "@/lib/example-types";
+import { ExamplePreview } from "@/components/examples/example-preview";
 import { useI18n } from "@/lib/i18n";
 import { SelectionGroup, SelectionIndicator } from "../motion/selection";
 import { useContextArrival } from "../motion/use-context-arrival";
 import styles from "./agent-team.module.css";
 
-export function AgentTeam() {
+const sampleSlugs: Record<string, string> = { "case-orchestrator": "case-plan", "regulatory-evidence-agent": "regulatory-evidence", "internal-knowledge-agent": "internal-knowledge", "impact-analysis-agent": "impact-analysis", "verification-agent": "verification" };
+
+export function AgentTeam({ examples }: { examples: ExampleSummary[] }) {
   const { text } = useI18n();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string>(agentDefinitions[0].key);
@@ -24,7 +28,8 @@ export function AgentTeam() {
       .includes(query.toLowerCase().trim()),
   );
   const active = agents.find((agent) => agent.key === selected) ?? agents[0];
-  const detailRef = useContextArrival<HTMLElement>(selected, true);
+  const sample = examples.find(example => example.slug === sampleSlugs[active?.key ?? ""]);
+  const detailRef = useContextArrival<HTMLElement>(active?.key ?? "", true);
   return (
     <div className={styles.page}>
       <header>
@@ -34,14 +39,14 @@ export function AgentTeam() {
         </div>
         <h1>
           {text(
-              "Meet your review specialists.",
-              "검토를 돕는 전문 에이전트입니다.",
+              "Specialists, in action.",
+              "전문 에이전트의 실제 결과",
           )}
         </h1>
         <p>
           {text(
-            "Each agent has a specific role in the planned review. You do not need to select or configure them to prepare a request. Automated analysis is still being prepared.",
-            "각 에이전트가 정해진 역할로 검토를 돕도록 설계되어 있습니다. 요청을 작성할 때 직접 선택하거나 설정할 필요는 없습니다. 자동 분석 기능은 준비 중입니다.",
+            "Reference runs · Automatic specialist execution is unavailable.",
+            "참조 실행 결과 · 전문 에이전트 자동 실행은 아직 제공하지 않습니다.",
           )}
         </p>
       </header>
@@ -113,6 +118,9 @@ export function AgentTeam() {
               v{active.version} / {text("Agent definition", "에이전트 정의")}
             </span>
             <h2>{pick(active.name)}</h2>
+            {sample && <ExamplePreview example={sample} />}
+            <details className={styles.definitionDetails}>
+            <summary>{text("Role, input & tools", "역할, 입력 및 도구")}</summary>
             <p>{pick(active.role)}</p>
             <dl>
               <div>
@@ -139,12 +147,9 @@ export function AgentTeam() {
                 )}
               </p>
             </div>
+            </details>
             <Link href="/requests">
               {text("Prepare a review request", "검토 요청 작성하기")}
-              <ArrowRight size={16} />
-            </Link>
-            <Link href="/examples">
-              {text("See actual pipeline examples", "실제 파이프라인 예시 보기")}
               <ArrowRight size={16} />
             </Link>
             <details>

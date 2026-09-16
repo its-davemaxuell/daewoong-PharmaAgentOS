@@ -7,6 +7,18 @@
 
 ---
 
+## September 16 implementation addendum: Less explanation, more interaction
+
+Replace passive explanations with actual result previews, editable questions and
+direct workspace actions. Use the existing 18 pipeline snapshots in a filterable
+selection gallery, specialist previews and Help. Add section navigation, complete
+output, original/translation comparison, searchable evidence and on-demand run
+details. Help transfers an edited question into Research without executing it;
+Chat/Research orientation controls and Overview inbox counts become usable links.
+Retain public/private separation, exact sources/downloads, visible review and
+synthetic qualifications, keyboard interaction and reduced motion. Inspect Chromium
+and validate all three browser engines before the authorized commit/push/deployment.
+
 ## September 15 implementation addendum: Neumorphic website
 
 Replace the website's visual system with a continuous cool porcelain canvas,

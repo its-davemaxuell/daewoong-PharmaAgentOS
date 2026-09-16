@@ -263,8 +263,9 @@
 .chat-workbench .chat-suggestions button .chat-suggestion-arrow { color: var(--os-muted); }
 .chat-evidence-flow { list-style: none; display: flex; align-items: start; gap: 0; padding: 0; margin: 0 0 36px; width: min(100%, 420px); }
 .chat-evidence-flow li { position: relative; display: grid; justify-items: center; gap: 12px; flex: 1; color: var(--os-muted); font-size: 14px; line-height: 1.4; text-align: center; }
-.chat-evidence-flow li > svg { display: block; box-sizing: content-box; padding: 16px; border-radius: 16px; background: var(--os-inset); color: var(--os-primary); }
-.chat-evidence-flow li:nth-child(2) > svg { background: var(--os-primary-soft); }
+.chat-evidence-flow li > a { display: grid; justify-items: center; gap: inherit; color: inherit; text-decoration: none; border-radius: 16px; }
+.chat-evidence-flow li > a > svg { display: block; box-sizing: content-box; padding: 16px; border-radius: 16px; background: var(--os-inset); color: var(--os-primary); }
+.chat-evidence-flow li:nth-child(2) > a > svg { background: var(--os-primary-soft); }
 .chat-evidence-flow li + li::before { content: ""; position: absolute; height: 1px; width: calc(100% - 80px); right: calc(50% + 40px); top: 32px; background: var(--os-control); }
 .chat-workbench:not([data-embedded]):not(.chat-page--active) .chat-page__conversation { display: flex; align-items: safe center; }
 .chat-workbench .chat-user-message { border: 0; box-shadow: none; background: var(--os-inset); border-radius: 12px; }
@@ -309,7 +310,7 @@
  .chat-workbench .chat-welcome > p { font-size: 16px; margin-bottom: 20px; }
  .chat-evidence-flow { margin-bottom: 24px; width: 340px; max-width: 100%; }
  .chat-evidence-flow li { font-size: 12px; gap: 8px; }
- .chat-evidence-flow li > svg { padding: 12px; width: 26px; height: 26px; border-radius: 12px; }
+ .chat-evidence-flow li > a > svg { padding: 12px; width: 26px; height: 26px; border-radius: 12px; }
  .chat-evidence-flow li + li::before { top: 25px; width: calc(100% - 66px); right: calc(50% + 33px); }
  .chat-workbench .chat-suggestions { grid-template-columns: 1fr; }
  .chat-workbench .chat-suggestions button { grid-template-columns: 28px 1fr 18px; min-height: 52px; padding: 12px 4px; gap: 12px; align-items: center; font-size: 16px; }

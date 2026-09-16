@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { samplePress } from "./press-samples";
 
 test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name: "dli_locale", value: "en", url: "http://127.0.0.1:3100" }]);
@@ -13,15 +14,7 @@ test("pressed task controls interpolate depth and only prepare a draft", async (
   await key.hover();
   await key.evaluate(node => Promise.allSettled(node.getAnimations().map(animation => animation.finished)));
   const raised = await key.evaluate(node => getComputedStyle(node).boxShadow);
-  await page.mouse.down();
-  const samples = await key.evaluate(node => new Promise<string[]>(resolve => {
-    const values: string[] = [], start = performance.now();
-    const frame = () => {
-      values.push(getComputedStyle(node).boxShadow);
-      if (performance.now() - start < 180) requestAnimationFrame(frame); else resolve(values);
-    };
-    requestAnimationFrame(frame);
-  }));
+  const samples = await samplePress(key, "pointerdown", () => page.mouse.down());
   await page.mouse.up();
   expect(samples.at(-1)).not.toBe(raised);
   expect(new Set(samples).size).toBeGreaterThan(2);
