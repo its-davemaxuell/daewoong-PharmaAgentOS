@@ -112,8 +112,8 @@ export function StartupGate({ children, roles, linearWorkspace }: { children: Re
     <StartupReady.Provider value={state === "entered"}><div className={styles.content} ref={content} inert={state !== "entered"} aria-hidden={state !== "entered" ? true : undefined}>{children}</div></StartupReady.Provider>
     {state !== "entered" && <div className={styles.overlay} data-startup-overlay>
       <div className={styles.panel}>
-        <div className={styles.loader} aria-hidden="true" data-startup-motion>
-          {(["slide", "pulse", "drop", "bounce"] as const).map(motion => <div key={motion} className={styles.tile} data-motion={motion}><span className={styles.dot} /></div>)}
+        <div className={styles.loader} aria-hidden="true" data-startup-motion data-motion="bounce">
+          <span className={styles.ball} />
         </div>
         <h1>{state === "attention" ? text("Some menus need more time", "일부 메뉴 준비가 지연되고 있습니다") : text("Preparing your workspace", "워크스페이스를 준비하고 있습니다")}</h1>
         <p className={styles.status} role="status" aria-live="polite">{tasks.length ? text(`${readyCount} of ${tasks.length} steps ready`, `${tasks.length}개 중 ${readyCount}개 준비 완료`) : text("Getting everything ready for you…", "이용할 화면을 준비하고 있습니다…")}</p>

@@ -10,6 +10,15 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 single-ball startup refinement:** The first loading screen now shows
+one centered bouncing ball in a Daewoong-orange tile. Removed the slide, pulse and
+drop variants and the four-tile grid. Actual preparation progress, recovery controls,
+hidden-page pausing and reduced motion remain. Production build (including TypeScript)
+and lint pass. All 12 startup scenarios pass across Chromium, Firefox and WebKit,
+including exactly one animated ball, phone layouts, reduced motion, retry, continue,
+and navigation without replay. Personally inspected desktop and phone screenshots
+under `.artifacts/ui-audit/startup-browser/`. Publication verification follows the push.
+
 **2026-09-16 weak chatbot response repairs (deployed):** A new
 15-question baseline reproduced avoidable refusals and a wrong company count
 (letters were counted as companies). The metadata parser/executor now supports

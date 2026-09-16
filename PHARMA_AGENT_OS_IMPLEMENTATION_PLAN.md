@@ -7,6 +7,13 @@
 
 ---
 
+## September 16 implementation addendum: Single startup ball
+
+Refine the first loading screen to the bouncing ball only, replacing the earlier
+four-animation composition. Keep the Daewoong palette, actual preparation progress,
+recovery controls, hidden-page pausing and reduced-motion support. Inspect desktop
+and phone renders, run the existing startup scenarios, then commit, push and deploy.
+
 ## September 16 implementation addendum: Chat metadata and workflow testing
 
 Test the existing chatbot with real content, metadata and follow-up questions, plus

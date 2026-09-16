@@ -20,8 +20,9 @@ test("all menus prepare before revealing the site and navigation does not replay
     await expect(page.locator("[data-startup-gate] > [inert]").filter({ has: page.locator("main") })).toHaveAttribute("aria-hidden", "true");
     await page.keyboard.press("Control+k");
     await expect(page.locator(".workspace-command")).not.toBeVisible();
-    const dots = page.locator("[data-startup-motion] [data-motion] > span");
-    await expect(dots).toHaveCount(4);
+    await expect(page.locator("[data-startup-motion]")).toHaveAttribute("data-motion", "bounce");
+    const dots = page.locator("[data-startup-motion] > span");
+    await expect(dots).toHaveCount(1);
     const before = await dots.evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
     await page.waitForTimeout(240);
     const after = await dots.evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
