@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Mapping
 from copy import deepcopy
 from time import monotonic
@@ -26,6 +27,7 @@ from app.agent_platform.mcp.knowledge.schemas import (
     KnowledgeSuccess,
     SearchAssetsArguments,
 )
+from app.agent_platform.mcp.result_validation import bounded_result, same_actor
 from app.audit import add_audit_event
 from app.cases.hashing import canonical_sha256
 from app.internal_knowledge.retrieval import KnowledgeRepository
@@ -39,6 +41,7 @@ from app.models import (
     Case,
     CasePlanStep,
     CaseRun,
+    InternalAssetVersion,
     PolicyDecision,
     ToolInvocation,
     ToolVersion,
@@ -46,6 +49,7 @@ from app.models import (
 )
 
 TOOL_VERSION = "1.0.0"
+TOOL_TIMEOUT_SECONDS = 10
 BUNDLE_HASH = "324b65c53afbdcaa6e9af759a467fb86eccef99de97a9703419d34d460d3e2b1"
 POLICY_VERSION = "1.0.0"
 POLICY_DEFINITION = {
@@ -185,21 +189,35 @@ class KnowledgeMcpGateway:
                     replay.arguments_sha256 != arguments_hash
                     or replay.tool_name != tool_name
                     or replay.agent_name != context.agent_name
+                    or not same_actor(replay, context)
                 ):
                     raise GatewayDenied(
                         KnowledgeErrorCode.CONFLICT,
                         "Idempotency key was already used with different arguments.",
                         "use_new_idempotency_key",
                     )
-                return dict(replay.structured_result)
+                result = bounded_result(
+                    replay.structured_result,
+                    tool_name,
+                    40_000,
+                    expected_hash=replay.result_sha256,
+                )
+                if result.get("status") == "success":
+                    KnowledgeSuccess.model_validate(result)
+                    async with asyncio.timeout(TOOL_TIMEOUT_SECONDS):
+                        await self._authorize_result(result, context)
+                else:
+                    KnowledgeErrorResult.model_validate(result)
+                return deepcopy(result)
 
             self._consume_budget(access["run"], access["invocation"])
             try:
-                data, provenance, warnings = await self._execute(
-                    tool_name=tool_name,
-                    arguments=validated,
-                    context=context,
-                )
+                async with asyncio.timeout(TOOL_TIMEOUT_SECONDS):
+                    data, provenance, warnings = await self._execute(
+                        tool_name=tool_name,
+                        arguments=validated,
+                        context=context,
+                    )
                 result = KnowledgeSuccess(
                     request_id=request_id,
                     tool_name=tool_name,
@@ -207,6 +225,7 @@ class KnowledgeMcpGateway:
                     provenance=provenance,
                     warnings=warnings,
                 ).model_dump(mode="json")
+                bounded_result(result, tool_name, 40_000)
                 effect = "ALLOW"
                 status = "SUCCEEDED"
                 reason_codes = ["ACTIVE_APPROVED_PLAN", "ASSET_ACL_APPLIED"]
@@ -329,6 +348,36 @@ class KnowledgeMcpGateway:
                 next_valid_actions=["inspect_run_trace"],
             ).model_dump(mode="json")
 
+    async def _authorize_result(self, result, context):
+        """Replay does not make a revoked ACL or changed source valid again."""
+        authorized = await KnowledgeRepository(
+            self.session,
+            context.principal,
+        ).authorized_asset_ids()
+        if not {item["asset_id"] for item in result["data"]["records"]}.issubset(authorized):
+            raise GatewayDenied(
+                KnowledgeErrorCode.ACCESS_BLOCKED,
+                "The retained result is no longer accessible.",
+                "review_asset_access",
+            )
+        pins = {item["source_version_id"]: item["source_hash"] for item in result["provenance"]}
+        versions = (
+            await self.session.scalars(
+                select(InternalAssetVersion)
+                .where(InternalAssetVersion.id.in_(pins))
+                .execution_options(populate_existing=True)
+            )
+        ).all()
+        if {version.id for version in versions} != set(pins) or any(
+            version.asset_id not in authorized or version.content_sha256 != pins[version.id]
+            for version in versions
+        ):
+            raise GatewayDenied(
+                KnowledgeErrorCode.ACCESS_BLOCKED,
+                "The retained evidence is no longer accessible.",
+                "review_asset_access",
+            )
+
     async def _authorize(
         self,
         *,
@@ -425,8 +474,7 @@ class KnowledgeMcpGateway:
             agent is None
             or agent.agent_key != context.agent_name
             or agent.version != context.agent_version
-            or agent.manifest_sha256
-            != AGENT_HASHES[(context.agent_name, context.agent_version)]
+            or agent.manifest_sha256 != AGENT_HASHES[(context.agent_name, context.agent_version)]
             or not _reviewed_manifest_matches(
                 agent.manifest,
                 AGENT_HASHES[(context.agent_name, context.agent_version)],
@@ -449,9 +497,7 @@ class KnowledgeMcpGateway:
         tool_ids = {str(value) for value in (step.tool_version_ids if step else [])}
         tools = list(
             (
-                await self.session.scalars(
-                    select(ToolVersion).where(ToolVersion.id.in_(tool_ids))
-                )
+                await self.session.scalars(select(ToolVersion).where(ToolVersion.id.in_(tool_ids)))
             ).all()
         )
         matching = [
@@ -493,9 +539,9 @@ class KnowledgeMcpGateway:
             )
         budget["tool_calls"] = used + 1
         checkpoint["budget"] = budget
-        checkpoint["knowledge_mcp_tool_calls"] = int(
-            checkpoint.get("knowledge_mcp_tool_calls", 0)
-        ) + 1
+        checkpoint["knowledge_mcp_tool_calls"] = (
+            int(checkpoint.get("knowledge_mcp_tool_calls", 0)) + 1
+        )
         run.checkpoint = checkpoint
 
     async def _execute(
@@ -520,9 +566,7 @@ class KnowledgeMcpGateway:
             for item in response.items:
                 version = await repository.get_document_version(str(item.asset_version_id))
                 anchor = (
-                    item.internal_evidence_anchors[0]
-                    if item.internal_evidence_anchors
-                    else None
+                    item.internal_evidence_anchors[0] if item.internal_evidence_anchors else None
                 )
                 records.append(
                     KnowledgeRecord(

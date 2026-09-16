@@ -10,6 +10,7 @@ from app.agent_platform.mcp.knowledge import (
     KnowledgeInvocationContext,
     KnowledgeMcpGateway,
 )
+from app.agent_platform.mcp.knowledge.gateway import TOOL_SCOPES
 from app.models import AgentVersion, ToolInvocation, ToolVersion
 from app.security.auth import Principal
 from app.worker import process_next_job
@@ -27,9 +28,7 @@ def _create_case(client: TestClient) -> dict:
     letters = client.get("/api/v1/letters", headers=ANALYST)
     assert letters.status_code == 200
     letter_id = next(
-        item["id"]
-        for item in letters.json()["items"]
-        if item["review_state"] == "approved"
+        item["id"] for item in letters.json()["items"] if item["review_state"] == "approved"
     )
     detail = client.get(f"/api/v1/letters/{letter_id}", headers=ANALYST)
     version = detail.json()["current_version"]
@@ -109,9 +108,7 @@ def test_hybrid_retrieval_distinguishes_revisions_and_filters_acl(
         params={"q": "laboratory results immutable audit events", "limit": 20},
     )
     restricted = next(
-        item
-        for item in restricted_search.json()["items"]
-        if item["asset_key"] == "SYS-LIMS-007"
+        item for item in restricted_search.json()["items"] if item["asset_key"] == "SYS-LIMS-007"
     )
     denied = client.get(
         f"/api/v1/cases/{case['id']}/knowledge/assets/{restricted['asset_id']}",
@@ -153,9 +150,7 @@ def test_impact_hypotheses_have_dual_evidence_and_independent_review(
         json={"query": "data integrity audit trail review", "per_finding_limit": 5},
     )
     assert replay.status_code == 200
-    assert {item["id"] for item in replay.json()["items"]} == {
-        item["id"] for item in body["items"]
-    }
+    assert {item["id"] for item in replay.json()["items"]} == {item["id"] for item in body["items"]}
 
     item = body["items"][0]
     decision_path = f"/api/v1/cases/{case['id']}/impact/{item['id']}/decision"
@@ -188,7 +183,7 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
 ) -> None:
     case = _create_case(client)
 
-    async def registry_ids() -> tuple[str, str]:
+    async def registry_ids() -> tuple[str, list[str]]:
         async with client.app.state.database.session_factory() as session:
             agent_id = await session.scalar(
                 select(AgentVersion.id).where(
@@ -196,16 +191,18 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
                     AgentVersion.version == "1.1.0",
                 )
             )
-            tool_id = await session.scalar(
-                select(ToolVersion.id).where(
-                    ToolVersion.tool_key == "knowledge.search_assets",
-                    ToolVersion.version == "1.0.0",
+            tool_ids = list(
+                await session.scalars(
+                    select(ToolVersion.id).where(
+                        ToolVersion.tool_key.in_(TOOL_SCOPES),
+                        ToolVersion.version == "1.0.0",
+                    )
                 )
             )
-            assert agent_id and tool_id
-            return agent_id, tool_id
+            assert agent_id and len(tool_ids) == 6
+            return agent_id, tool_ids
 
-    agent_id, tool_id = asyncio.run(registry_ids())
+    agent_id, tool_ids = asyncio.run(registry_ids())
     plan = client.post(
         f"/api/v1/cases/{case['id']}/plans",
         headers={**ANALYST, "Idempotency-Key": _key("knowledge-mcp-plan")},
@@ -220,13 +217,13 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
                     "depends_on": [],
                     "agent_version_id": agent_id,
                     "skill_version_ids": [],
-                    "tool_version_ids": [tool_id],
+                    "tool_version_ids": tool_ids,
                     "output_schema_ref": "InternalAssetCandidateList@1.0.0",
                     "risk_level": "R1",
                     "requires_approval": False,
                     "limits": {
                         "max_turns": 2,
-                        "max_tool_calls": 5,
+                        "max_tool_calls": 12,
                         "max_input_tokens": 10000,
                         "max_output_tokens": 2000,
                         "max_runtime_seconds": 60,
@@ -272,7 +269,7 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
         agent_version="1.1.0",
         runtime_service="pharma-agent-runtime",
         idempotency_key=f"knowledge-search:{uuid4().hex}",
-        scopes=frozenset({"knowledge:search"}),
+        scopes=frozenset(TOOL_SCOPES.values()),
         user_authenticated=True,
         runtime_authenticated=True,
     )
@@ -302,7 +299,9 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
                 context=context,
             )
             count = await session.scalar(
-                select(func.count()).select_from(ToolInvocation).where(
+                select(func.count())
+                .select_from(ToolInvocation)
+                .where(
                     ToolInvocation.run_id == run_id,
                     ToolInvocation.tool_name == "knowledge.search_assets",
                 )
@@ -314,9 +313,40 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
     assert first == second
     assert count == 1
     assert first["data"]["acl_filtered_before_retrieval"] is True
-    assert "SYS-LIMS-007" not in {
-        item["asset_key"] for item in first["data"]["records"]
-    }
+    assert "SYS-LIMS-007" not in {item["asset_key"] for item in first["data"]["records"]}
+
+    async def exercise_remaining_tools():
+        record = first["data"]["records"][0]
+        for name in TOOL_SCOPES:
+            if name == "knowledge.search_assets":
+                continue
+            arguments = {"asset_id": record["asset_id"]}
+            if name in {"knowledge.get_document_version", "knowledge.get_anchor"}:
+                arguments = {"asset_version_id": record["asset_version_id"]}
+            if name == "knowledge.get_anchor":
+                arguments["anchor_id"] = record["anchor_id"]
+            tool_context = KnowledgeInvocationContext(
+                **{
+                    **context.__dict__,
+                    "idempotency_key": f"tool-check:{uuid4().hex}",
+                }
+            )
+            async with client.app.state.database.session_factory() as session:
+                gateway = KnowledgeMcpGateway(session)
+                result = await gateway.invoke(
+                    tool_name=name, arguments=arguments, context=tool_context
+                )
+                if name == "knowledge.get_asset":
+                    # This tool belongs to the impact agent, not this specialist.
+                    assert result["error"]["code"] == "PERMISSION_DENIED"
+                    continue
+                assert result["status"] == "success", (name, result)
+                replay = await gateway.invoke(
+                    tool_name=name, arguments=arguments, context=tool_context
+                )
+                assert replay == result
+
+    asyncio.run(exercise_remaining_tools())
 
     denied_context = KnowledgeInvocationContext(
         **{
@@ -326,6 +356,7 @@ def test_knowledge_mcp_requires_exact_plan_binding_and_attributes_replay(
             "idempotency_key": f"wrong-agent:{uuid4().hex}",
         }
     )
+
     async def invoke_denied() -> dict:
         async with client.app.state.database.session_factory() as session:
             return await KnowledgeMcpGateway(session).invoke(

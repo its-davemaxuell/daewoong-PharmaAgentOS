@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from typing import Any
 
 import httpx
@@ -58,10 +61,39 @@ DESCRIPTIONS = {
 @dataclass
 class ToolProposal:
     name: str
-    arguments: dict[str, Any]
+    arguments: Any
     call_id: str
     output: list[dict[str, Any]]
     tokens: int
+
+
+class ResearchModelError(AiGenerationError):
+    """Public error classification; never retains provider bodies or credentials."""
+
+    def __init__(self, code="model_unavailable", *, retryable=False, retry_after=None):
+        super().__init__("Research model request could not be completed")
+        self.code = code
+        self.retryable = retryable
+        self.retry_after = retry_after
+
+
+def retry_delay(value):
+    if not value:
+        return None
+    try:
+        seconds = float(value)
+    except ValueError:
+        try:
+            seconds = (parsedate_to_datetime(value) - datetime.now(UTC)).total_seconds()
+        except (TypeError, ValueError, OverflowError):
+            return None
+    return max(0, seconds) if math.isfinite(seconds) else None
+
+
+def reported_tokens(payload):
+    usage = payload.get("usage")
+    tokens = usage.get("total_tokens") if isinstance(usage, dict) else None
+    return tokens if type(tokens) is int and tokens > 0 else 0
 
 
 class OpenAIResearchModel:
@@ -91,11 +123,31 @@ class OpenAIResearchModel:
                 )
                 response.raise_for_status()
                 payload = response.json()
-            if payload.get("status") != "completed":
-                raise AiGenerationError("Research model response did not complete")
+            if not isinstance(payload, dict) or payload.get("status") != "completed":
+                raise ResearchModelError("model_invalid_response")
             return payload
+        except httpx.HTTPStatusError as exc:
+            status = exc.response.status_code
+            try:
+                detail = exc.response.json().get("error", {})
+                quota = detail.get("type") == "insufficient_quota" or detail.get("code") in {
+                    "insufficient_quota",
+                    "credit_balance_exhausted",
+                    "organization_spend_limit_exceeded",
+                    "project_spend_limit_exceeded",
+                    "organization_usage_limit_exceeded",
+                }
+            except (ValueError, AttributeError):
+                quota = False
+            raise ResearchModelError(
+                "model_rate_limited" if status == 429 else "model_unavailable",
+                retryable=not quota and status in {408, 429, 500, 502, 503, 504},
+                retry_after=retry_delay(exc.response.headers.get("retry-after")),
+            ) from None
+        except httpx.TransportError:
+            raise ResearchModelError(retryable=True) from None
         except (httpx.HTTPError, ValueError, AttributeError):
-            raise AiGenerationError("Research model request could not be completed") from None
+            raise ResearchModelError("model_invalid_response") from None
 
     async def propose(self, conversation: list[dict], remaining: int) -> ToolProposal:
         payload = await self.request(
@@ -120,22 +172,36 @@ class OpenAIResearchModel:
         )
         try:
             outputs = payload["output"]
+            if not isinstance(outputs, list) or not all(isinstance(item, dict) for item in outputs):
+                raise ValueError("Invalid output items")
             calls = [item for item in outputs if item.get("type") == "function_call"]
             if len(calls) != 1:
                 raise ValueError("Expected one function")
             call = calls[0]
-            arguments = json.loads(call["arguments"])
-            if not isinstance(arguments, dict):
-                raise ValueError("Invalid function arguments")
+            if any(
+                not isinstance(call.get(key), str) or not call[key].strip() or len(call[key]) > 200
+                for key in ("name", "call_id")
+            ):
+                raise ValueError("Invalid function identity")
+            if any(item.get("call_id") == call["call_id"] for item in conversation):
+                raise ValueError("Reused function identity")
+            if not isinstance(call.get("arguments"), str) or len(call["arguments"]) > 32_000:
+                raise ValueError("Invalid argument payload")
+            try:
+                arguments = json.loads(call["arguments"])
+            except ValueError:
+                # The identified call still gets an invalid_arguments observation,
+                # so the model can correct it without discarding the whole run.
+                arguments = call["arguments"]
             return ToolProposal(
                 call["name"],
                 arguments,
                 call["call_id"],
                 outputs,
-                int(payload.get("usage", {}).get("total_tokens", 0)),
+                reported_tokens(payload),
             )
         except (KeyError, ValueError, TypeError):
-            raise AiGenerationError("Research model returned an invalid action") from None
+            raise ResearchModelError("model_invalid_response") from None
 
     async def verify(self, brief: dict, evidence: list[dict], language: str):
         payload = await self.request(
@@ -176,9 +242,9 @@ include private reasoning, self-commentary or references outside the supplied so
         )
         try:
             result = EvidenceCheck.model_validate_json(_completed_text(payload))
-            return result, int(payload.get("usage", {}).get("total_tokens", 0))
-        except ValueError:
-            raise AiGenerationError("Evidence check did not return a valid result") from None
+            return result, reported_tokens(payload)
+        except (ValueError, TypeError, KeyError, AttributeError):
+            raise ResearchModelError("model_invalid_response") from None
 
 
 def build_research_model(settings: Settings):

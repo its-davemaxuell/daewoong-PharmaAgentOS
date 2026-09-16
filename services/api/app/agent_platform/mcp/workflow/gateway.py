@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Mapping
 from copy import deepcopy
 from time import monotonic
@@ -13,12 +14,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent_platform.controls import active_suspension
 from app.agent_platform.mcp.knowledge.context import KnowledgeInvocationContext
+from app.agent_platform.mcp.result_validation import bounded_result, same_actor
 from app.agent_platform.mcp.workflow.schemas import (
     CollaborationDraftArguments,
     DocumentMetadataArguments,
     EmailDraftArguments,
     InternalDraftArguments,
     TaskDraftArguments,
+    WorkflowSuccess,
 )
 from app.audit import add_audit_event
 from app.cases.hashing import canonical_sha256
@@ -41,6 +44,7 @@ from app.models import (
 )
 
 TOOL_VERSION = "1.0.0"
+TOOL_TIMEOUT_SECONDS = 10
 BUNDLE_HASH = "a0896543a821f9ee474e9ede7219cd689af09e141186908d0cf1ec5f4ea2f67c"
 AGENT_HASH = "4d1df30f66219c09cbce680ef23ed439b763f65a12620f1435b5e8db1c0beb42"
 ARGUMENT_MODELS: dict[str, type[BaseModel]] = {
@@ -98,22 +102,41 @@ class WorkflowMcpGateway:
                 )
             )
             if existing:
-                if existing.arguments_sha256 != arguments_sha256 or existing.tool_name != tool_name:
+                if (
+                    existing.arguments_sha256 != arguments_sha256
+                    or existing.tool_name != tool_name
+                    or not same_actor(existing, context)
+                ):
                     return self._error(
                         request_id,
                         tool_name,
                         "CONFLICT",
                         "Idempotency key is bound to different arguments",
                     )
-                return dict(existing.structured_result or {})
+                result = bounded_result(
+                    existing.structured_result,
+                    tool_name,
+                    12_000,
+                    expected_hash=existing.result_sha256,
+                )
+                WorkflowSuccess.model_validate(result)
+                if isinstance(validated, DocumentMetadataArguments):
+                    async with asyncio.timeout(TOOL_TIMEOUT_SECONDS):
+                        await KnowledgeRepository(self.session, context.principal).require_version(
+                            str(validated.asset_version_id),
+                        )
+                return deepcopy(result)
             self._consume_budget(access["run"], access["invocation"])
-            result = await self._execute(
-                request_id=request_id,
-                tool_name=tool_name,
-                arguments=validated,
-                context=context,
-                access=access,
-            )
+            async with asyncio.timeout(TOOL_TIMEOUT_SECONDS):
+                result = await self._execute(
+                    request_id=request_id,
+                    tool_name=tool_name,
+                    arguments=validated,
+                    context=context,
+                    access=access,
+                )
+            WorkflowSuccess.model_validate(result)
+            bounded_result(result, tool_name, 12_000)
             policy = PolicyDecision(
                 case_id=access["case"].id,
                 run_id=access["run"].id,

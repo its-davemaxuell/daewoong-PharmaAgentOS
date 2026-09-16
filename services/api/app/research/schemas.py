@@ -6,10 +6,11 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 MAX_MODEL_CALLS = 12
 MAX_TOTAL_TOKENS = 90_000
 MAX_EVIDENCE = 12
+MAX_ACTION_FAILURES = 3
 
 
 class Strict(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
 
 class CreateResearch(Strict):

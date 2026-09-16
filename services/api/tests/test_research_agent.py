@@ -225,7 +225,8 @@ def test_invalid_citations_cannot_complete_and_budget_is_enforced(research):
     result = get(research, run["id"])
     assert result["status"] == "limit_reached"
     assert result["result"] is None
-    assert result["model_calls"] == MAX_MODEL_CALLS
+    assert result["model_calls"] < MAX_MODEL_CALLS
+    assert result["error_code"] == "repeated_tool_failure"
     assert model.checks == 0
     assert not result["can_resume"]
 

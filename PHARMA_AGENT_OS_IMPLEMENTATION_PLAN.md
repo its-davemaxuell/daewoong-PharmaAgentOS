@@ -7,6 +7,16 @@
 
 ---
 
+## September 16 implementation addendum: Agent and tool reliability
+
+Audit the deployed Research Agent and all private specialist tool contracts. Reproduce
+malformed-provider and stale-read failures, then add bounded retries, per-call deadlines,
+durable pending actions, atomic outcomes, accurate budget accounting and early stops for
+repeated failures. Validate tool output identity, size and replay integrity; recheck source
+access and preserve draft-only, idempotent writes. Exercise all 21 tool contracts, actual
+dispatchers, cancellation/recovery and live research runs. Record evidence and remaining
+qualification limits, then commit, push and verify deployment under standing authorization.
+
 ## September 16 implementation addendum: Single startup ball
 
 Refine the first loading screen to the bouncing ball only, replacing the earlier

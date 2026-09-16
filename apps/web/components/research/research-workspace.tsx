@@ -61,6 +61,9 @@ const activities: Record<string, [string, string]> = {
   check_completed: ["Evidence check passed", "근거 검토 통과"],
   check_needs_revision: ["Revising the draft", "초안 보완 중"],
   action_needs_revision: ["Adjusting the approach", "조사 방법 조정"],
+  model_retry: ["Reconnecting to AI", "AI 연결 재시도 중"],
+  tool_retry: ["Retrying source access", "자료 접근 재시도 중"],
+  tool_completed: ["Step finished", "단계 완료"],
   checkpoint_saved: ["Progress saved", "진행 상황 저장"],
   completed: ["Brief ready", "브리핑 준비 완료"],
   stopped: ["Stopped · Work saved", "중지됨 · 작업 저장 완료"],
@@ -78,7 +81,7 @@ function ActivityIcon({ kind, size }: { kind: string; size: number }) {
   if (kind === "stopped") return <Square {...props} />;
   if (kind === "queued") return <Clock3 {...props} />;
   if (kind === "completed" || kind === "draft_prepared") return <FileCheck2 {...props} />;
-  if (kind === "action_needs_revision" || kind === "resumed") return <RotateCcw {...props} />;
+  if (["action_needs_revision", "resumed", "model_retry", "tool_retry"].includes(kind)) return <RotateCcw {...props} />;
   return <Network {...props} />;
 }
 const stages = [
@@ -252,7 +255,7 @@ function ResearchWorkspaceInner({ runId }: { runId: string }) {
   const active = run && researchActive(run.status);
   const lastEvent = run?.events.at(-1);
   const latestLabel = activityLabel(lastEvent);
-  const recordedEvents = run?.events.filter((event) => event.kind !== "choosing_action") || [];
+  const recordedEvents = run?.events.filter((event) => !["choosing_action", "tool_completed"].includes(event.kind)) || [];
   const visibleEvents = showAllActivity ? recordedEvents : recordedEvents.slice(-4);
   const elapsed = run?.started_at && now ? Math.max(0, Math.floor(((run.finished_at ? Date.parse(run.finished_at) : now) - Date.parse(run.started_at)) / 1_000)) : 0;
   const formatTime = (date: string) => new Date(date).toLocaleTimeString(locale === "ko" ? "ko-KR" : "en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });

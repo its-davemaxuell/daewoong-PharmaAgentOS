@@ -10,6 +10,16 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
+**2026-09-16 agent workflow/tool reliability:** Audited five research tools and 16
+private MCP tools. Fixed malformed-provider crashes, stale rereads, unchecked replay,
+result bounds and missing dispatch deadlines. Research now retains pending tool calls,
+commits outcomes atomically, retries temporary failures within charged limits, records
+usage overruns and stops identical failure loops early. Private drafts remain local,
+idempotent and transactional. Backend regression: 157 passed plus one environment
+skip; final research suite 52 passed. Build/lint, 99 web unit tests and 15 focused
+cross-browser checks pass. Publication/live runs are next. See
+[the tool assessment](docs/assurance/agent-tool-reliability-20260916.md).
+
 **2026-09-16 single-ball startup refinement (deployed):** The first loading screen now shows
 one centered bouncing ball in a Daewoong-orange tile. Removed the slide, pulse and
 drop variants and the four-tile grid. Actual preparation progress, recovery controls,
