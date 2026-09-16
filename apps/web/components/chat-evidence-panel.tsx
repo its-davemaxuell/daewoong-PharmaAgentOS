@@ -15,11 +15,12 @@ import { PresenceSurface } from "./motion/presence";
 import { SelectionGroup, SelectionIndicator } from "./motion/selection";
 import type { RagCitation } from "@/lib/types";
 
-export function ChatEvidencePanel({ citations, selected, onSelect, onClose, onFocus, disabled, focusedLetterId }: {
+export function ChatEvidencePanel({ citations, selected, onSelect, onClose, onFocus, disabled, focusedLetterId, metadata = false }: {
   citations: RagCitation[]; selected: number; onSelect: (index: number) => void;
   onClose: () => void; onFocus: (citation: RagCitation) => void; disabled: boolean; focusedLetterId?: string;
+  metadata?: boolean;
 }) {
-  const { text, locale } = useI18n();
+  const { text } = useI18n();
   const heading = useRef<HTMLHeadingElement>(null);
   const present = useIsPresent();
   useEffect(() => { if (present) heading.current?.focus(); }, [present]);
@@ -34,9 +35,13 @@ export function ChatEvidencePanel({ citations, selected, onSelect, onClose, onFo
     <div className="chat-evidence-panel__body">
       <span className="chat-evidence-panel__label">FDA · {text("Warning letter", "경고서한")}</span>
       <h3>{citation.title || citation.company}</h3>
-      <p>{citation.company}{citation.issueDate ? ` · ${new Date(citation.issueDate).toLocaleDateString(locale === "ko" ? "ko-KR" : "en-US")}` : ""}</p>
-      <div className="chat-evidence-panel__passage"><h4>{text("Cited passage", "인용 원문")}</h4><blockquote lang="en">{citation.excerpt}</blockquote></div>
-      <dl><div><dt>{text("Location", "위치")}</dt><dd>{citation.anchor}</dd></div>
+      <p>{citation.company}</p>
+      <dl>
+        <div><dt>{text("Issue date", "발행일")}</dt><dd>{citation.issueDate || text("Not specified", "미확인")}</dd></div>
+        <div><dt>{text("FDA posting date", "FDA 게시일")}</dt><dd>{citation.postedDate || text("Not specified", "미확인")}</dd></div>
+      </dl>
+      <div className="chat-evidence-panel__passage"><h4>{metadata ? text("Saved letter metadata", "저장된 서한 메타데이터") : text("Cited passage", "인용 원문")}</h4><blockquote lang="en">{citation.excerpt}</blockquote></div>
+      <dl>{!metadata && <div><dt>{text("Location", "위치")}</dt><dd>{citation.anchor}</dd></div>}
         <div><dt>{text("Source version", "원문 버전")}</dt><dd>{citation.sourceVersion || citation.documentVersionId || text("Version metadata unavailable", "버전 정보 없음")}</dd></div>
         {citation.sourceHash && <div><dt>SHA-256</dt><dd><code>{citation.sourceHash}</code></dd></div>}
       </dl>

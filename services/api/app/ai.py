@@ -248,6 +248,8 @@ class GroundedPassage:
     company_name: str
     source_anchor: str
     excerpt: str
+    issue_date: str | None = None
+    posted_date: str | None = None
 
 
 @dataclass(frozen=True)

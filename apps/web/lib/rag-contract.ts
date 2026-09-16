@@ -40,6 +40,7 @@ function normalizeFilter(value: unknown): RagFilter {
   return {
     letterId: asString(first(record, "letter_id", "letterId")) || undefined,
     company: asString(record.company) || undefined,
+    country: asString(record.country) || undefined,
     category: asString(record.category) || undefined,
     regulation: asString(record.regulation) || undefined,
     subtype: asString(first(record, "drug_subtype", "subtype")) || undefined,

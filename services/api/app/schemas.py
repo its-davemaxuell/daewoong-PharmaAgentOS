@@ -220,6 +220,7 @@ class DashboardResponse(StrictModel):
 class RagFilters(StrictModel):
     letter_id: UUID | None = None
     company: str | None = Field(default=None, max_length=300)
+    country: str | None = Field(default=None, max_length=120)
     issuing_office: str | None = Field(default=None, max_length=200)
     category: str | None = Field(default=None, max_length=300)
     regulation: str | None = Field(default=None, max_length=200)

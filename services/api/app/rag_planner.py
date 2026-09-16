@@ -4,6 +4,8 @@ import re
 from dataclasses import dataclass
 from typing import Literal
 
+from app.rag_metadata import metadata_for_turn
+
 RetrievalMode = Literal["auto", "none", "metadata", "letter", "corpus"]
 RetrievalStrategy = Literal["none", "metadata", "letter", "multi_letter", "corpus"]
 ModelProfile = Literal["auto", "fast", "balanced", "deep"]
@@ -72,13 +74,6 @@ _DOMAIN_RE = re.compile(
     r"위반\s*사항|요청(?:한|\s*)\s*조치|FDA가.{0,80}(?:요청|지적|설명)|코퍼스)",
     re.IGNORECASE,
 )
-_METADATA_RE = re.compile(
-    r"(?:official (?:url|link)|source (?:url|link)|when (?:was|did).*(?:issued|posted)|"
-    r"issue date|posted date|recipient country|issuing office|how many (?:letters|warning)|"
-    r"latest (?:letter|warning)|원문 (?:주소|링크)|발행일|게시일|수신인 국가|발행 부서|"
-    r"경고장 (?:수|개수)|최신 경고장)",
-    re.IGNORECASE,
-)
 _BROAD_RE = re.compile(
     r"(?:trend|pattern|across|common|overall|recurr|most often|over time|vary by|\bcompare\b|"
     r"all (?:letters|manufacturers)|which letters|추세|경향|공통|반복|가장 자주|시간에 따라|"
@@ -104,7 +99,7 @@ _FOLLOW_UP_RE = re.compile(
 )
 _EVIDENCE_RE = re.compile(
     r"(?:\b(?:search|find|show|retrieve|cite|citation|evidence|source passage|according to|"
-    r"manufacturer|finding|violation|observation|validation|cgmp|cfr|stability|retest|"
+    r"manufacturers?|findings?|violations?|observations?|validation|cgmp|cfr|stability|retest|"
     r"data integrity|quality unit|contamination|aseptic|sterile|investigation|complaint|"
     r"reference standard|reagent|sample handling|computerized laboratory|expiry|pull schedule|"
     r"supplier|incoming component|yield|material reconciliation|equipment cleaning|"
@@ -155,6 +150,7 @@ def plan_rag(
     """
 
     question = " ".join(question.split())
+    metadata_query = metadata_for_turn(question, prior_user_questions)
     comparison = bool(_COMPARISON_RE.search(question))
     direct_ids = _unique_ids(explicit_letter_ids, resolved_letter_ids)
     inherited_ids = _unique_ids(thread_active_letter_ids, prior_citation_letter_ids)
@@ -182,6 +178,7 @@ def plan_rag(
         or has_scoped_evidence_intent
         or _DOMAIN_RE.search(question)
         or semantic_domain_relevant
+        or (metadata_query.followup and metadata_query.intent)
     )
     if is_clearly_out_of_scope(question) or not domain_relevant:
         return RagPlan("none", "out_of_scope_request", deterministic_response="out_of_scope")
@@ -197,6 +194,21 @@ def plan_rag(
         return RagPlan("none", "user_requested_no_retrieval")
     if requested_mode == "metadata":
         return RagPlan("metadata", "user_requested_metadata", direct_ids or inherited_ids)
+    if (metadata_query.intent or metadata_query.error) and requested_mode in {
+        "auto",
+        "corpus",
+        "letter",
+    }:
+        # Stored metadata is deterministic even when a company or dossier is selected.
+        # A displayed sample of a global count must never become the next count's scope.
+        inherited = (
+            inherited_ids if _FOLLOW_UP_RE.search(question) and not metadata_query.followup else ()
+        )
+        return RagPlan(
+            "metadata",
+            "structured_metadata_intent",
+            direct_ids or tuple(thread_active_letter_ids) or inherited,
+        )
     if requested_mode == "corpus":
         # A concrete filter is an authorization-like retrieval boundary. Treat the
         # contradictory combination of an explicit letter filter and corpus mode as
@@ -217,8 +229,6 @@ def plan_rag(
 
     if direct_ids:
         return _letter_plan(direct_ids, "explicit_or_resolved_letter_scope", comparison=comparison)
-    if _METADATA_RE.search(question):
-        return RagPlan("metadata", "structured_metadata_intent", inherited_ids)
     if _BROAD_RE.search(question):
         return RagPlan("corpus", "broad_corpus_analysis", internal_comparison=comparison)
     if comparison and inherited_ids:

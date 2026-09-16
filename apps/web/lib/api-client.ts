@@ -157,6 +157,7 @@ function normalizeChatRetrievalStrategy(
 function normalizeRagFilter(value: unknown): RagFilter {
   const record = asRecord(value) ?? {};
   return {
+    country: asString(record.country) || undefined,
     letterId: asString(first(record, "letter_id", "letterId")) || undefined,
     company: asString(record.company) || undefined,
     category: asString(record.category) || undefined,
@@ -1698,6 +1699,7 @@ function buildRagRequestBody(
     filters: {
       letter_id: filters.letterId,
       company: filters.company,
+      country: filters.country,
       category: filters.category,
       regulation: filters.regulation,
       drug_subtype: filters.subtype,

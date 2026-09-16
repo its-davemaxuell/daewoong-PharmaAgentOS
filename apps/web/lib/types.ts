@@ -184,6 +184,7 @@ export type DashboardData = {
 };
 
 export type RagFilter = {
+  country?: string;
   dateFrom?: string;
   dateTo?: string;
   postedFrom?: string;

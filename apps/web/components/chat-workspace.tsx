@@ -403,6 +403,7 @@ function FilterLabel({ name, value }: { name: keyof RagFilter; value: string }) 
   const labels: Record<keyof RagFilter, ReactNode> = {
     letterId: text("Letter", "경고서한"),
     company: text("Company", "기업"),
+    country: text("Recipient country", "수신인 국가"),
     issuingOffice: text("FDA office", "FDA 담당 부서"),
     category: text("Finding", "지적 유형"),
     regulation: text("Citation", "규정 인용"),
@@ -1441,7 +1442,7 @@ export function ChatWorkspace({
         ) : null}
 
         {turns.map((turn, turnIndex) => {
-          const turnFilters = activeFilterEntries(turn.filters);
+          const turnFilters = activeFilterEntries(turn.answer?.filtersApplied ?? turn.filters);
           return (
             <section className="chat-turn" id={embedded ? `${embeddedId}-turn-${turn.id}` : `chat-turn-${turn.id}`} key={turn.id} data-introduced={introducedTurns.has(turn.id) || undefined}>
               <div className="chat-user-message">
@@ -1450,7 +1451,7 @@ export function ChatWorkspace({
                 {turnFilters.length ? (
                   <div className="chat-turn__filter-summary">
                     <Filter size={13} aria-hidden="true" />
-                    <span>{text(`${turnFilters.length} filters applied`, `필터 ${turnFilters.length}개 적용`)}</span>
+                    {turnFilters.map(([name, value]) => <span key={name}><FilterLabel name={name} value={value} /></span>)}
                   </div>
                 ) : null}
               </div>
@@ -1729,6 +1730,7 @@ export function ChatWorkspace({
             </header>
             <div className="chat-filter-panel__grid">
               <label className="chat-filter-field"><span>{text("Company", "기업")}</span><input value={filters.company ?? ""} onChange={event => setFilter("company", event.target.value)} maxLength={300} disabled={Boolean(primaryLetterId && !letterScopeSuspended)} /></label>
+              <label className="chat-filter-field"><span>{text("Recipient country", "수신인 국가")}</span><input value={filters.country ?? ""} onChange={event => setFilter("country", event.target.value)} maxLength={120} /></label>
               <FilterSelect label={text("Finding category", "지적 유형")} value={filters.category ?? ""} placeholder={text("Available findings", "사용 가능한 지적 유형")} options={categories} onChange={(value) => setFilter("category", value)} />
               <label className="chat-filter-field"><span>{text("Regulatory citation", "규정 인용")}</span><input value={filters.regulation ?? ""} onChange={event => setFilter("regulation", event.target.value)} maxLength={200} /></label>
               <FilterSelect label={text("Drug subtype", "의약품 유형")} value={filters.subtype ?? ""} placeholder={text("Available drug types", "사용 가능한 의약품 유형")} options={subtypes} onChange={(value) => setFilter("subtype", value)} />
@@ -1921,7 +1923,7 @@ export function ChatWorkspace({
         </p>
       </div>
       </div>
-      <Presence initial={false}>{evidenceTurn?.answer && <ChatEvidencePanel key={evidenceTurn.id} citations={evidenceTurn.answer.citations} selected={selectedCitation[evidenceTurn.id] ?? 0}
+      <Presence initial={false}>{evidenceTurn?.answer && <ChatEvidencePanel key={evidenceTurn.id} metadata={evidenceTurn.answer.retrievalStrategy === "metadata"} citations={evidenceTurn.answer.citations} selected={selectedCitation[evidenceTurn.id] ?? 0}
         onSelect={(index) => setSelectedCitation((current) => ({ ...current, [evidenceTurn.id]: index }))} onClose={closeEvidence}
         onFocus={(citation) => setCitationAsChatFocus(evidenceTurn, citation)} disabled={actionsDisabled || !!threadArchivedAt || !evidenceTurn.answer.assistantMessageId} focusedLetterId={documentFocus?.warningLetterId} />}</Presence>
     </div></MotionProvider>

@@ -14,10 +14,20 @@ const thread = { id, title: "Fictional saved question", created_at: stamp, updat
 ] };
 const reviewCase = { id, title: "Fictional cleaning-validation review", objective: "Inspect this fictional source and prepare questions for the quality team.", status: "DRAFT", owner_subject: "fixture-viewer", workflow_key: "regulatory-review", current_state_hash: "a".repeat(64), sources: [{ id, case_id: id, warning_letter_id: id, document_id: id, document_version_id: id, document_version_number: 1, source_role: "primary", source_sha256: "a".repeat(64), source_url: source.canonical_url, pinned_by: "Fixture reviewer", created_at: stamp, immutable: true }], created_at: stamp, updated_at: stamp };
 const savedBySession = new Map();
+const testThreads = new Map();
 const api = createServer((req, res) => {
   const url = new URL(req.url, "http://127.0.0.1");
   res.setHeader("Content-Type", "application/json"); res.setHeader("x-request-id", "fixture-request");
   let data = { items: [], has_more: false, total: 0 };
+  // Fixture-only control endpoint: UI tests persist a streamed answer before router.refresh.
+  if (url.pathname === "/__fixtures/chat" && req.method === "POST") {
+    let body = ""; req.on("data", chunk => { body += chunk; });
+    req.on("end", () => { const value = JSON.parse(body); testThreads.set(value.id, value); res.end("{}"); });
+    return;
+  }
+  if (req.method === "GET" && url.pathname.startsWith("/api/v1/chat/threads/") && testThreads.has(url.pathname.split("/").at(-1))) {
+    res.end(JSON.stringify(testThreads.get(url.pathname.split("/").at(-1)))); return;
+  }
   if (url.pathname === "/api/v1/saved-views") {
     // Loopback fixture only: separate test contexts by their signed-session subject.
     const subject = JSON.parse(Buffer.from(String(req.headers.authorization).split(".")[1], "base64url").toString()).sub;

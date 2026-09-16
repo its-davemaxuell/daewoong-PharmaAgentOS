@@ -4887,10 +4887,11 @@ h3,
 
 .chat-turn__filter-summary {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 5px;
   margin-top: 7px;
-  color: #858585;
+  color: var(--os-muted);
   font-size: 0.8125rem;
 }
 

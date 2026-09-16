@@ -22,6 +22,7 @@ const RETRIEVAL_MODES = new Set<ChatRetrievalMode>([
 const FILTER_KEYS = [
   "letterId",
   "company",
+  "country",
   "category",
   "regulation",
   "subtype",

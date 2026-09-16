@@ -7,6 +7,17 @@
 
 ---
 
+## September 16 implementation addendum: Chat metadata and workflow testing
+
+Test the existing chatbot with real content, metadata and follow-up questions, plus
+English/Korean desktop/mobile browser workflows. Connect stored issue and posting
+dates to natural-language ranges, exact retained-library counts, latest/oldest
+ordering, country filters and grouped counts. Preserve authorization, selected
+documents, idempotent retries and distinct date meanings. Expose applied filters and
+both source dates without adding onboarding prose. Report unsupported question
+types and any remaining production failures. Commit, push and verify deployment
+under the standing publication authorization.
+
 ## September 16 implementation addendum: Daewoong palette and complete fades
 
 Use the official orange/charcoal palette throughout the existing neumorphic

@@ -2669,6 +2669,7 @@ components:
           maxItems: 100
           items: { type: string, format: uuid }
         company: { type: [string, "null"], maxLength: 300 }
+        country: { type: [string, "null"], maxLength: 120 }
         issuing_office: { type: [string, "null"], maxLength: 200 }
         category: { type: [string, "null"], maxLength: 300 }
         regulation: { type: [string, "null"], maxLength: 200 }
