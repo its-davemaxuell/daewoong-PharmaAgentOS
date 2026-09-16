@@ -10,7 +10,7 @@ next steps. This file remains the authoritative implementation record.
 **Source plan:** `PHARMA_AGENT_OS_IMPLEMENTATION_PLAN.md`  
 **Implementation state:** Milestones 0–8 have reference implementations; production qualification is incomplete.
 
-**2026-09-16 Daewoong theme and complete fades:** Implemented official orange and
+**2026-09-16 Daewoong theme and complete fades (deployed):** Implemented official orange and
 charcoal on warm neumorphic surfaces; replaced startup artwork with the supplied
 four-circle motion concept. Menu/tab changes have 90ms exit and 160ms entry fades,
 interruption and reduced-motion handling. Text-entry focus stays neutral; action
@@ -18,8 +18,14 @@ keyboard focus and native selection remain usable. Citation focus waits for the
 destination DOM commit. Build/type checks, lint, 99 unit tests, 108 final focused
 browser checks and 12 startup scenarios pass across Chromium/Firefox/WebKit. The
 earlier run additionally passed 33 cache/neumorphism checks. Twenty routes were
-inspected at desktop/phone widths in English/Korean. Public example snapshots and
-hashes are unchanged. Publication is pending the authorized push and hosted check.
+inspected at desktop/phone widths in English/Korean. Application `2a4f78a` and final
+chart/phone Usage corrections `d3309e8` are pushed and deployed. Vercel/Railway
+statuses and web/API health pass. All six hosted example browser/locale combinations
+pass across the recorded runs, each checking 18 outputs and their exact download
+hashes. Hosted motion/startup captures and the final Overview/320–390px Usage checks
+pass. Fresh sessions retain the existing one-Retry startup recovery. Code security
+passes; full quality CI was still running at the publication checkpoint. Public
+example snapshots and hashes are unchanged.
 See [release evidence](docs/assurance/daewoong-theme-20260916.md).
 
 **2026-09-16 Chat centering follow-up:** The welcome diagram, heading and subtitle

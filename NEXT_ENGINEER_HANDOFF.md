@@ -6,7 +6,9 @@ Current status: **FDA library, grounded OpenAI chat and durable FDA Research Age
 
 **Latest frontend refinement (2026-09-16):** Daewoong orange/charcoal, the requested
 circle startup motion, paired menu/tab fades and neutral text-entry focus replace
-the preceding blue theme. The 18 public pipeline examples and centered Chat remain.
+the preceding blue theme. Application `d3309e8` is pushed and deployed; hosted
+browser checks, deployment integrations and web/API health pass. The 18 public
+pipeline examples and centered Chat remain.
 Start with the current [implementation record](PHARMA_AGENT_OS_IMPLEMENTATION_HANDOFF.md)
 and [theme verification](docs/assurance/daewoong-theme-20260916.md) for publication status.
 The dated descriptions below are historical.

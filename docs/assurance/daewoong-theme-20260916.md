@@ -53,8 +53,35 @@ composer; screenshots were personally inspected. Browser assertions verify
 All **12/12 startup scenarios** pass across the same three engines: actual menu
 readiness, animated dots, no sprite download, visibility-change pause, live reduced
 motion, phone layout, Retry, Continue and no startup replay on navigation. Desktop
-and phone startup screenshots were personally inspected. Publication follows the
-authorized push and is recorded below after hosted verification.
+and phone startup screenshots were personally inspected.
+
+## Publication and hosted verification
+
+Application revision `2a4f78a` and final visual corrections `d3309e8` are pushed
+to `main` and deployed at [PharmaAgent OS](https://pharmaagent-os-ochre.vercel.app).
+Vercel and both Railway deployment integrations report success for `d3309e8`;
+web health and API readiness return HTTP 200.
+
+The hosted 20-route English desktop/Korean phone audit found a remaining blue
+Overview chart and a Usage table that overflowed with real data. Both are fixed in
+`d3309e8`. Follow-up captures confirm no blue chart bars and no Usage overflow in
+English or Korean at 390px and 320px. Hosted startup, focused Chat and both menu
+fade stages were also captured and personally inspected.
+
+Public examples pass all six browser/locale combinations across the recorded runs:
+Chromium, Firefox and WebKit, each in English desktop and Korean phone. Every
+passing session inspects all 18 outputs and verifies exact download hashes, with
+no script errors or generation submissions. The initial WebKit English audit read
+a source link before the section fade committed; the audit now waits for the
+selected section and heading, and its targeted repeat passes all 18 examples.
+Fresh hosted sessions retain the existing one-Retry startup recovery.
+
+[Code security](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/35050052410)
+passes for `d3309e8`.
+[Full quality CI](https://github.com/its-davemaxuell/daewoong-PharmaAgentOS/actions/runs/35050052384)
+was still running at this publication checkpoint; this record does not claim that
+the entire repository CI suite passed. The earlier revision's quality run was
+superseded by the final visual corrections.
 
 ## Evidence
 
@@ -62,6 +89,10 @@ authorized push and is recorded below after hosted verification.
   route renders, computed-color audit, manual motion frames and the initial report.
 - `.artifacts/ui-audit/report/`: final 108-case report and frame/contrast attachments.
 - `.artifacts/ui-audit/startup-report/`: all-menu preparation/recovery checks.
+- `.artifacts/daewoong-theme/hosted/` and `motion-hosted/`: hosted route and motion captures.
+- `.artifacts/daewoong-theme/final-polish/`: final Overview and narrow Usage checks.
+- `.artifacts/daewoong-theme/public-hosted/` and `public-hosted-webkit/`: hosted
+  example/hash results and the passing targeted repeat.
 - `apps/web/e2e/daewoong-theme.spec.ts`: motion and theme regression checks.
 
 Fixtures are fictional and local. No live generation or approval is performed by
